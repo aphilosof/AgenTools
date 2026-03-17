@@ -1,0 +1,24 @@
+name: {{tool-name}}
+type: tool
+version: "0.1.0"
+description: >
+  {{One-paragraph description of what this tool does.}}
+
+tags:
+  - {{tag1}}
+  - {{tag2}}
+
+compatibility:
+  languages:
+    - {{language}}
+  frameworks: []
+  notes: ""
+
+dependencies: []
+
+usage:
+  examples:
+    - description: "Basic usage"
+      snippet: |
+        Include in your CLAUDE.md:
+        @/path/to/AgenTools/tools/{{category}}/{{tool-name}}/README.md
