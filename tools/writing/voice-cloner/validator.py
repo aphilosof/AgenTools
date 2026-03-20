@@ -16,6 +16,10 @@ from metrics import compute_metrics, compute_metrics_multi, FEATURE_WEIGHTS
 _TEST_TOPICS = [
     "Write about a person walking through a city at dawn, noticing small details.",
     "Write about why a common belief in your field is wrong, and what the evidence actually shows.",
+    "Write about a moment when you realized something you'd been doing for years was completely wrong.",
+    "Write about the difference between what people say they value and what they actually do.",
+    "Write about a place that changed you, and why you can never go back the same way.",
+    "Write about an idea that seems obvious now but was radical when someone first proposed it.",
 ]
 
 CV_THRESHOLD = 50   # drop features with coefficient of variation > 50%
@@ -42,7 +46,7 @@ def validate(
     target_metrics: dict,
     per_sample_metrics: list[dict],
     model: str | None = None,
-    n_samples: int = 2,
+    n_samples: int = 5,
 ) -> dict:
     """Generate test text with SKILL.md and compare metrics.
 
@@ -66,15 +70,65 @@ def validate(
     generated_texts = []
     topics = _TEST_TOPICS[:n_samples]
 
-    # Extract key targets for inline hints
+    # Build data-driven structural hints from target metrics
     t_pct_short = target_metrics.get("sent_pct_short", 0)
     t_pct_long = target_metrics.get("sent_pct_long", 0)
     t_pct_single = target_metrics.get("para_pct_single_sent", 0)
     t_avg_sents = target_metrics.get("para_avg_sentences", 0)
     t_open_art = target_metrics.get("open_article_pct", 0)
+    t_open_pron = target_metrics.get("open_pronoun_pct", 0)
     t_open_sub = target_metrics.get("open_subordinate_pct", 0)
     t_open_adv = target_metrics.get("open_adverb_pct", 0)
     t_colons = target_metrics.get("punct_colons_per_100w", 0)
+    t_contraction = target_metrics.get("contraction_rate", 0)
+
+    hints = []
+    # Sentence length
+    short_max = max(4, round(30 * t_pct_short / 100))
+    long_min = max(2, round(30 * t_pct_long / 100))
+    hints.append(f"- Only ~{t_pct_short:.0f}% of sentences should be ≤10 words (at most {short_max} out of 30)")
+    hints.append(f"- About ~{t_pct_long:.0f}% should be >25 words (at least {long_min} out of 30) — deliberately write long, clause-heavy sentences")
+    # Paragraph structure
+    hints.append(f"- Average {t_avg_sents:.1f} sentences per paragraph")
+    if t_avg_sents < 3.5:
+        para_max = max(4, round(t_avg_sents + 1.5))
+        hints.append(f"- Split any paragraph with {para_max}+ sentences")
+    else:
+        hints.append(f"- Write substantial paragraphs of ~{t_avg_sents:.0f} sentences — do NOT over-split")
+    if t_pct_single > 20:
+        standalone_n = max(3, round(15 * t_pct_single / 100))
+        hints.append(f"- CRITICAL: ~{t_pct_single:.0f}% of paragraphs must be single standalone sentences (at least {standalone_n} in a 15-paragraph piece)")
+    elif t_pct_single > 5:
+        hints.append(f"- About {t_pct_single:.0f}% of paragraphs should be single standalone sentences — use occasionally for emphasis")
+    # Openers
+    if t_open_art < 15:
+        hints.append(f"- Article-start sentences (The/A/An): cap at ~{t_open_art:.0f}% — avoid overusing \"The\"")
+    if t_open_pron < 15:
+        hints.append(f"- Pronoun-start sentences: cap at ~{t_open_pron:.0f}%")
+    if t_open_sub >= 5:
+        hints.append(f"- Subordinate-clause starts (If/When/Although): target ~{t_open_sub:.0f}%")
+    if t_open_adv >= 2:
+        hints.append(f"- Adverb starts (Perhaps/Still/Often): target ~{t_open_adv:.0f}%")
+    # Punctuation
+    if t_colons > 0.1:
+        hints.append("- Include at least 1 colon (:) to introduce an elaboration")
+    # Contractions
+    if t_contraction >= 0.3:
+        hints.append(f"- Use contractions (don't, can't, it's) — this author writes conversationally (~{t_contraction:.1f} per 100 words)")
+    hints_block = "\n".join(hints)
+
+    # Build self-editing steps conditionally
+    edits = []
+    if t_avg_sents < 3.5:
+        edits.append(f"Split any paragraph with {max(4, round(t_avg_sents + 1.5))}+ sentences")
+    if t_pct_single > 20:
+        edits.append(f"Count single-sentence paragraphs — if fewer than 1 in 3, isolate more sentences as standalone paragraphs")
+    edits.append("Ensure varied sentence openers — no more than 2 consecutive sentences starting with the same word")
+    if t_pct_long >= 10:
+        edits.append(f"Check that at least {long_min} sentences are >25 words")
+    if t_colons > 0.1:
+        edits.append("Verify you have at least 1 colon")
+    edit_steps = "\n".join(f"{i+1}. {e}" for i, e in enumerate(edits))
 
     for i, topic in enumerate(topics, 1):
         print(f"    Generating test passage {i}/{len(topics)}...")
@@ -85,28 +139,10 @@ The sentence length distribution, paragraph structure, and sentence opener
 targets are measured from the author's real text — match them precisely.
 
 KEY STRUCTURAL TARGETS (memorize these before writing):
-- HARD CAP: only ~{t_pct_short:.0f}% of sentences should be ≤10 words. In a 30-sentence piece, at most 8 should be short. Combine short sentences into longer ones if you have too many.
-- About ~{t_pct_long:.0f}% of sentences should be >25 words — deliberately write long, clause-heavy sentences with commas
-- Average {t_avg_sents:.1f} sentences per paragraph — split any paragraph with 4+ sentences
-- About {t_pct_single:.0f}% of paragraphs should be a single standalone sentence
-- Article-start sentences ("The/A/An..."): HARD CAP ~{t_open_art:.0f}% — if more than 1 in 10 start with The/A/An, rewrite some
-- Pronoun-start sentences: cap at ~13% — don't start too many with I/You/They/It
-- Subordinate-clause starts (If/When/Although): ~{t_open_sub:.0f}% — include some
-- Adverb starts (Perhaps/Still/Often): ~{t_open_adv:.0f}% — include at least one
-- Include exactly 1 colon in the piece to introduce an elaboration — not zero, not three
-- Use hedging words (if/would/could/might/perhaps) naturally throughout
-- Use intensifiers (very/really/quite/rather/so/certainly) — they add conversational energy
-- Use negation (not/don't/doesn't/won't/can't/never) naturally — don't avoid it
-- Omit articles (the/a/an) where the sentence reads naturally without them
-- CRITICAL: ~{t_pct_single:.0f}% of paragraphs must be single standalone sentences. In a piece with 15+ paragraphs, at least 5 should be just one sentence followed by a blank line.
+{hints_block}
 
-MANDATORY SELF-EDITING PASS — do this BEFORE outputting your final text:
-1. Count your paragraphs. Take every 3rd paragraph and make it a single standalone sentence (one sentence, blank line). You MUST have at least 5 single-sentence paragraphs.
-2. Find sentences starting with I/You/They/It/He/She/We — if more than 4, rewrite 2 of them to start differently (use "When...", "If...", "Perhaps...", "And...")
-3. You MUST have exactly 1 colon (:) somewhere — if zero, add one ("The reason is simple: X")
-4. Count sentences ≤10 words — no more than 8 out of 30. Merge short sentences into longer ones if needed.
-5. Count sentences >25 words — you need at least 4. Expand some by adding subordinate clauses ("which means...", "even though...", "because...")
-6. Add modal verbs (would/could/should/might/can/will) naturally — aim for 1-2 per paragraph
+SELF-EDITING PASS — do this BEFORE outputting your final text:
+{edit_steps}
 
 <voice_skill>
 {skill_content}
