@@ -70,101 +70,61 @@ def validate(
     generated_texts = []
     topics = _TEST_TOPICS[:n_samples]
 
-    # Build data-driven structural hints from target metrics
-    t_pct_short = target_metrics.get("sent_pct_short", 0)
-    t_pct_long = target_metrics.get("sent_pct_long", 0)
-    t_pct_single = target_metrics.get("para_pct_single_sent", 0)
-    t_avg_sents = target_metrics.get("para_avg_sentences", 0)
+    # Build targeted hints from metrics
     t_open_art = target_metrics.get("open_article_pct", 0)
     t_open_pron = target_metrics.get("open_pronoun_pct", 0)
-    t_open_sub = target_metrics.get("open_subordinate_pct", 0)
-    t_open_adv = target_metrics.get("open_adverb_pct", 0)
-    t_colons = target_metrics.get("punct_colons_per_100w", 0)
+    t_open_conj = target_metrics.get("open_conjunction_pct", 0)
+    t_avg_sents = target_metrics.get("para_avg_sentences", 0)
+    t_pct_single = target_metrics.get("para_pct_single_sent", 0)
     t_contraction = target_metrics.get("contraction_rate", 0)
-
-    hints = []
-    # Sentence length
-    short_max = max(4, round(30 * t_pct_short / 100))
-    long_min = max(2, round(30 * t_pct_long / 100))
-    hints.append(f"- Only ~{t_pct_short:.0f}% of sentences should be ≤10 words (at most {short_max} out of 30)")
-    hints.append(f"- About ~{t_pct_long:.0f}% should be >25 words (at least {long_min} out of 30) — deliberately write long, clause-heavy sentences")
-    # Paragraph structure
-    hints.append(f"- Average {t_avg_sents:.1f} sentences per paragraph")
-    if t_avg_sents >= 3.5 and t_pct_single > 20:
-        # Bimodal pattern
-        standalone_n = max(3, round(15 * t_pct_single / 100))
-        hints.append(f"- BIMODAL pattern: mix substantial paragraphs (4-7 sentences) with single standalone sentences (~{t_pct_single:.0f}% standalone)")
-        hints.append(f"- Multi-sentence paragraphs should have {t_avg_sents:.0f}+ sentences. Do NOT make every paragraph 2-3 sentences.")
-        hints.append(f"- Interleave at least {standalone_n} single-sentence paragraphs per 15 paragraphs")
-    elif t_avg_sents < 3.5:
-        para_max = max(4, round(t_avg_sents + 1.5))
-        hints.append(f"- Split any paragraph with {para_max}+ sentences")
-        if t_pct_single > 20:
-            standalone_n = max(3, round(15 * t_pct_single / 100))
-            hints.append(f"- CRITICAL: ~{t_pct_single:.0f}% of paragraphs must be single standalone sentences (at least {standalone_n} in a 15-paragraph piece)")
-        elif t_pct_single > 5:
-            hints.append(f"- About {t_pct_single:.0f}% of paragraphs should be single standalone sentences — use occasionally for emphasis")
-    else:
-        hints.append(f"- Write substantial paragraphs of ~{t_avg_sents:.0f} sentences — do NOT over-split")
-        if t_pct_single > 5:
-            hints.append(f"- About {t_pct_single:.0f}% of paragraphs should be single standalone sentences — use occasionally for emphasis")
-    # Openers — always cap pronoun starts (LLM consistently overshoots)
+    t_pct_short = target_metrics.get("sent_pct_short", 0)
+    t_pct_long = target_metrics.get("sent_pct_long", 0)
+    t_negation = target_metrics.get("fw_negation", 0)
+    t_art_max = max(2, round(30 * t_open_art / 100))
     t_pron_max = max(3, round(30 * t_open_pron / 100))
-    hints.append(f"- Pronoun-start sentences (I/You/They/It): HARD CAP ~{t_open_pron:.0f}% (at most {t_pron_max} out of 30). Count yours and rewrite excess.")
-    if t_open_art < 15:
-        hints.append(f"- Article-start sentences (The/A/An): cap at ~{t_open_art:.0f}% — avoid overusing \"The\"")
-    if t_open_sub >= 5:
-        hints.append(f"- Subordinate-clause starts (If/When/Although): target ~{t_open_sub:.0f}%")
-    if t_open_adv >= 2:
-        t_adv_max = max(2, round(30 * t_open_adv / 100) + 1)
-        hints.append(f"- Adverb starts (Perhaps/Still/Often): target ~{t_open_adv:.0f}% — include 1-{t_adv_max} but do NOT overuse")
-    # Punctuation
-    if t_colons > 0.1:
-        hints.append("- Include at least 1 colon (:) to introduce an elaboration")
-    t_semicolons = target_metrics.get("punct_semicolons_per_sent", 0)
-    if t_semicolons >= 0.03:
-        hints.append("- Include at least 1 semicolon (;) to join related clauses")
-    t_quotes = target_metrics.get("punct_quotes_per_100w", 0)
-    if t_quotes < 1.0:
-        hints.append(f"- Few quotation marks (~{t_quotes:.1f}/100w) — do NOT invent quoted speech; paraphrase instead")
-    # Contractions
-    if t_contraction >= 1.5:
-        hints.append(f"- Use contractions (don't, can't, it's) — this author writes conversationally (~{t_contraction:.1f} per 100 words)")
-    elif t_contraction < 1.0:
-        hints.append(f"- AVOID contractions — this author writes formally (~{t_contraction:.1f}/100w). Use \"do not\", \"cannot\", \"it is\"")
-    hints_block = "\n".join(hints)
+    t_short_max = max(4, round(30 * t_pct_short / 100))
+    t_long_min = max(2, round(30 * t_pct_long / 100))
 
-    # Build self-editing steps conditionally
-    edits = []
-    if t_avg_sents < 3.5:
-        edits.append(f"Split any paragraph with {max(4, round(t_avg_sents + 1.5))}+ sentences")
-    if t_pct_single > 20:
-        edits.append(f"Count single-sentence paragraphs — if fewer than 1 in 3, isolate more sentences as standalone paragraphs")
-    edits.append(f"Count sentences starting with I/You/They/It/He/She/We — if more than {t_pron_max}, rewrite some to start with other words")
-    edits.append("Ensure varied sentence openers — no more than 2 consecutive sentences starting with the same word")
-    if t_pct_long >= 10:
-        edits.append(f"Check that at least {long_min} sentences are >25 words")
-    if t_colons > 0.1:
-        edits.append("Verify you have at least 1 colon")
-    if t_semicolons >= 0.03:
-        edits.append("Verify you have at least 1 semicolon")
-    if t_contraction < 1.0:
-        edits.append("Scan for contractions (don't, can't, it's, won't) and expand them to formal forms")
-    edit_steps = "\n".join(f"{i+1}. {e}" for i, e in enumerate(edits))
+    # Build dynamic critical rules based on what this author needs
+    def _build_critical_rules():
+        rules = []
+        # Pronoun cap — always problematic
+        rules.append(f"- PRONOUN OPENERS: At most {t_pron_max}/30 sentences may start with I/You/They/It/He/She/We (target: {t_open_pron:.0f}%). After drafting, COUNT them. If over {t_pron_max}, rewrite the excess by starting with a noun, conjunction, preposition, or subordinate clause instead.")
+        # Article cap — always problematic
+        rules.append(f"- ARTICLE OPENERS: At most {t_art_max}/30 sentences may start with The/A/An (target: {t_open_art:.0f}%). Replace \"The X\" with \"And X\", \"But X\", \"When X\", or just \"X\".")
+        # Contractions
+        if t_contraction < 1.0:
+            rules.append(f"- CONTRACTIONS: ZERO contractions. Write \"do not\" not \"don't\", \"cannot\" not \"can't\", \"it is\" not \"it's\".")
+        # Paragraph structure
+        if t_avg_sents >= 3.5:
+            rules.append(f"- PARAGRAPHS: Write LONG paragraphs (5-7 sentences) mixed with standalone single sentences. Do NOT write 2-3 sentence paragraphs — that is WRONG for this voice.")
+        elif t_pct_single > 20:
+            rules.append(f"- STANDALONE SENTENCES: At least {max(3, round(20 * t_pct_single / 100))}/20 paragraphs must be a single standalone sentence. After drafting, count them.")
+        # Sentence length
+        if t_pct_short < 30:
+            rules.append(f"- SENTENCE LENGTH: At most {t_short_max}/30 sentences should be ≤10 words. At least {t_long_min}/30 must be >25 words (long, clause-heavy). The backbone is MEDIUM sentences (11-25 words).")
+        # Conjunction minimum
+        if t_open_conj >= 5:
+            conj_min = max(2, round(30 * t_open_conj / 100))
+            rules.append(f"- CONJUNCTION OPENERS: At least {conj_min}/30 sentences must start with And/But/So/Yet — this is signature. Do not exceed {conj_min + 2}.")
+        # Negation cap
+        if t_negation < 1.5:
+            rules.append(f"- NEGATION: Use \"not/no/never/don't\" sparingly — target ~{t_negation:.1f} per 100 words. Do not overuse negative constructions.")
+        return "\n".join(rules)
+
+    critical_rules = _build_critical_rules()
 
     for i, topic in enumerate(topics, 1):
         print(f"    Generating test passage {i}/{len(topics)}...")
         prompt = f"""Follow the voice and style directives below EXACTLY when writing.
 
-PAY SPECIAL ATTENTION to the "Structural Rules (NON-NEGOTIABLE)" section.
-The sentence length distribution, paragraph structure, and sentence opener
-targets are measured from the author's real text — match them precisely.
+Read the ENTIRE voice skill document carefully, especially:
+1. The "Structural Rules (NON-NEGOTIABLE)" section — these are measured targets
+2. The "Self-Check" section at the bottom — use it to verify your output
+3. The calibration examples — match their feel
 
-KEY STRUCTURAL TARGETS (memorize these before writing):
-{hints_block}
-
-SELF-EDITING PASS — do this BEFORE outputting your final text:
-{edit_steps}
+CRITICAL RULES — LLMs consistently violate these. After drafting, go back and FIX violations:
+{critical_rules}
 
 <voice_skill>
 {skill_content}
@@ -172,7 +132,9 @@ SELF-EDITING PASS — do this BEFORE outputting your final text:
 
 {topic}
 
-Write 400-600 words. Write ONLY the text. No preamble, no title, no meta-commentary."""
+Write 400-600 words. Write ONLY the text. No preamble, no title, no meta-commentary.
+
+IMPORTANT: After writing your draft, review it against the Self-Check section in the voice skill and the critical rules above. Fix any violations before outputting."""
 
         response = call_claude(prompt, model)
         text = response.strip()

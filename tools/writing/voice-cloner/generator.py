@@ -218,10 +218,11 @@ def _build_skill_body(
     lines.append(f"**Paragraph structure** — average {avg_sents:.1f} sentences per paragraph.")
     if avg_sents >= 3.5 and pct_single > 20:
         # Bimodal author (like Orwell): mix of dense paragraphs and standalone sentences
-        lines.append(f"- This author has a BIMODAL pattern: some paragraphs are substantial ({avg_sents:.0f}+ sentences), but ~{pct_single:.0f}% are single standalone sentences. Alternate between long and short paragraphs.")
-        lines.append(f"- Multi-sentence paragraphs should have 4-7 sentences. Do NOT make every paragraph 2-3 sentences — that loses the voice.")
+        lines.append(f"- This author has a BIMODAL pattern: some paragraphs are substantial ({avg_sents:.0f}+ sentences), but ~{pct_single:.0f}% are single standalone sentences.")
+        lines.append(f"- IMPORTANT: When writing a multi-sentence paragraph, make it LONG — 5, 6, even 7 sentences. A paragraph of 2-3 sentences is WRONG for this voice. Either commit to a full paragraph or make it a standalone single sentence.")
         standalone_count = max(3, round(20 * pct_single / 100))
         lines.append(f"- Interleave at least {standalone_count} single-sentence paragraphs per 20 paragraphs for rhythm and emphasis.")
+        lines.append(f"- Example: 6-sentence para → standalone sentence → 5-sentence para → standalone sentence → 7-sentence para → standalone sentence")
     elif avg_sents < 3.5:
         # Short-paragraph author (like Graham): push for splitting
         para_split_max = max(4, round(avg_sents + 1.5))
@@ -242,7 +243,8 @@ def _build_skill_body(
     lines.append(f"**Punctuation density** — Target {commas:.1f} commas per sentence. Medium and long sentences need commas for subordinate clauses, appositives, and lists.")
     lines.append("")
     if colons > 0.1:
-        lines.append(f"**Colons** — MANDATORY: Include exactly 1 colon in every piece to introduce an elaboration. Pattern: \"The reason is simple: X\". You MUST have at least one colon — check before finishing.")
+        colon_count = max(1, round(colons * 5))  # approximate count per 500 words
+        lines.append(f"**Colons** — Include ~{colon_count} colon(s) per 500 words to introduce elaborations. Pattern: \"The reason was simple: X\".")
         lines.append("")
     lines.append("**Sentence openers** — Vary how sentences begin:")
     lines.append(f"- ~{open_conj:.0f}% conjunction-start (And/But/So/Yet)")
@@ -254,10 +256,15 @@ def _build_skill_body(
     # Pronoun cap — always active, scaled to target
     pron_max_in_30 = max(3, round(30 * open_pron / 100))
     lines.append(f"- HARD CAP on pronoun-start: No more than ~{open_pron:.0f}% (at most {pron_max_in_30} out of 30 sentences) may start with I/You/They/It/He/She/We. Count yours and rewrite excess ones.")
-    # Article cap
-    if open_art < 15:
-        lines.append(f"- HARD CAP on article-start: No more than ~{open_art:.0f}% of sentences may start with The/A/An.")
-        lines.append(f"- Replacement templates: Instead of \"The X is Y\", try: \"When X happens…\" / \"If you look at X…\" / \"Perhaps X…\" / \"Still, X…\"")
+    # Article cap — always active (LLM consistently overshoots)
+    art_max_in_30 = max(2, round(30 * open_art / 100))
+    lines.append(f"- HARD CAP on article-start: No more than ~{open_art:.0f}% (at most {art_max_in_30} out of 30 sentences) may start with The/A/An. The LLM tends to overuse \"The\" — actively count and rewrite.")
+    lines.append(f"- Replacement templates: Instead of \"The X is Y\", try: \"It was X\", \"And X\", \"But X\", \"When X happens…\", \"What mattered was X\"")
+    # Conjunction minimum — if target is significant
+    if open_conj >= 5:
+        conj_min_in_30 = max(2, round(30 * open_conj / 100))
+        conj_max_in_30 = conj_min_in_30 + 2
+        lines.append(f"- REQUIRED conjunction-start: {conj_min_in_30}-{conj_max_in_30} out of 30 sentences must start with And/But/So/Yet/Or. This is a signature of this voice — do not omit it, but do not overuse it either.")
     # Subordinate — minimum if target warrants it
     if open_sub >= 5:
         lines.append(f"- Required: At least 1 in 12 sentences must start with If/When/While/Although/Because.")
@@ -269,6 +276,10 @@ def _build_skill_body(
     if hedges >= 1.0:
         lines.append(f"**Hedging language** — Use \"if\", \"would\", \"could\", \"might\", \"perhaps\" roughly every 60-70 words (~{hedges:.1f} per 100 words). These reflect genuine intellectual uncertainty, not weakness.")
         lines.append("")
+    relatives = metrics.get("fw_relatives", 0)
+    if relatives < 2.0:
+        lines.append(f"**Relative words** — Use \"which\", \"that\", \"who\", \"whom\", \"whose\" sparingly — target ~{relatives:.1f} per 100 words. Prefer shorter constructions over relative clauses where possible.")
+        lines.append("")
     intensifiers = metrics.get("fw_intensifiers", 0)
     negation = metrics.get("fw_negation", 0)
     contraction = metrics.get("contraction_rate", 0)
@@ -276,7 +287,7 @@ def _build_skill_body(
         lines.append(f"**Intensifiers** — Use words like \"very\", \"really\", \"quite\", \"rather\", \"so\", \"certainly\" at a rate of ~{intensifiers:.1f} per 100 words. These add emphasis and conversational energy.")
         lines.append("")
     if negation >= 0.8:
-        lines.append(f"**Negation** — Use negation words (not, don't, doesn't, won't, can't, never, no) at a rate of ~{negation:.1f} per 100 words. Negation is natural in argumentative/explanatory writing — don't avoid it.")
+        lines.append(f"**Negation** — Use negation words (not, don't, doesn't, won't, can't, never, no) at a rate of ~{negation:.1f} per 100 words. HARD CAP: no more than {max(3, round(negation * 5))} negation words per 500-word piece. Rewrite excess negative constructions as positive ones (\"it lacks\" → \"it has little\", \"you cannot\" → \"it requires\").")
         lines.append("")
     if contraction >= 1.5:
         lines.append(f"**Contractions** — Use contractions (don't, can't, won't, it's, that's) at a rate of ~{contraction:.1f} per 100 words. This author writes conversationally — prefer \"don't\" over \"do not\".")
@@ -295,6 +306,26 @@ def _build_skill_body(
     if quotes < 1.0:
         lines.append(f"**Quotation marks** — This author uses few quotation marks (~{quotes:.1f} per 100 words). Do NOT invent quoted speech or dialogue unless essential. Paraphrase instead of quoting.")
         lines.append("")
+    # Compact self-check: exact counts for a 30-sentence, 500-word piece
+    lines.append("### Self-Check (for a ~30-sentence, ~500-word piece)")
+    lines.append("")
+    lines.append("Before finishing, count and verify:")
+    lines.append(f"- Sentences ≤10 words: **at most {max(4, round(30 * pct_short / 100))}**")
+    lines.append(f"- Sentences >25 words: **at least {max(2, round(30 * pct_long / 100))}**")
+    lines.append(f"- Sentences starting with The/A/An: **at most {max(2, round(30 * open_art / 100))}**")
+    lines.append(f"- Sentences starting with I/You/They/It: **at most {max(3, round(30 * open_pron / 100))}**")
+    if open_conj >= 5:
+        conj_min_sc = max(2, round(30 * open_conj / 100))
+        lines.append(f"- Sentences starting with And/But/So/Yet: **{conj_min_sc}-{conj_min_sc + 2}**")
+    if colons > 0.1:
+        lines.append(f"- Colons: **{max(1, round(colons * 5))}**")
+    if semicolons >= 0.03:
+        lines.append(f"- Semicolons: **at least 1**")
+    if contraction < 1.0:
+        lines.append(f"- Contractions: **0** (use formal forms)")
+    if negation < 1.5 and negation >= 0.8:
+        lines.append(f"- Negation words (not/no/never): **at most {max(3, round(negation * 5))}**")
+    lines.append("")
     lines.append("### Full Metrics")
     lines.append("")
     lines.append(_format_quant_table(metrics))
