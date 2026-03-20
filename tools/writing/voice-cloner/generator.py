@@ -215,21 +215,29 @@ def _build_skill_body(
     if pct_long >= 10:
         lines.append(f"- REQUIRED: ~{pct_long:.0f}% of sentences must be >25 words. In a 30-sentence piece, at least {max(2, round(30 * pct_long / 100))} must be long clause-heavy sentences with commas, subordinate clauses (\"which...\", \"even though...\", \"because...\").")
     lines.append("")
-    lines.append(f"**Paragraph structure** — HARD RULE: average {avg_sents:.1f} sentences per paragraph.")
-    if avg_sents < 3.5:
+    lines.append(f"**Paragraph structure** — average {avg_sents:.1f} sentences per paragraph.")
+    if avg_sents >= 3.5 and pct_single > 20:
+        # Bimodal author (like Orwell): mix of dense paragraphs and standalone sentences
+        lines.append(f"- This author has a BIMODAL pattern: some paragraphs are substantial ({avg_sents:.0f}+ sentences), but ~{pct_single:.0f}% are single standalone sentences. Alternate between long and short paragraphs.")
+        lines.append(f"- Multi-sentence paragraphs should have 4-7 sentences. Do NOT make every paragraph 2-3 sentences — that loses the voice.")
+        standalone_count = max(3, round(20 * pct_single / 100))
+        lines.append(f"- Interleave at least {standalone_count} single-sentence paragraphs per 20 paragraphs for rhythm and emphasis.")
+    elif avg_sents < 3.5:
         # Short-paragraph author (like Graham): push for splitting
         para_split_max = max(4, round(avg_sents + 1.5))
         lines.append(f"- After drafting, scan every paragraph. If any has {para_split_max}+ sentences, split it.")
+        if pct_single > 20:
+            standalone_count = max(3, round(20 * pct_single / 100))
+            lines.append(f"- MANDATORY: {pct_single:.0f}% of paragraphs must be a single standalone sentence. In a 20-paragraph piece, at least {standalone_count} should be standalone.")
+            lines.append(f"- Self-editing rule: take every 3rd paragraph and make it a single sentence.")
+            lines.append(f"- Example structure: 2-sentence para → standalone sentence → 3-sentence para → standalone sentence → 2-sentence para")
+        elif pct_single > 5:
+            lines.append(f"- About {pct_single:.0f}% of paragraphs should be a single standalone sentence — use them occasionally for emphasis.")
     else:
-        # Longer-paragraph author (like Orwell): allow dense paragraphs
-        lines.append(f"- This author writes substantial paragraphs. Do NOT over-split — aim for {avg_sents:.0f} sentences per paragraph on average. Paragraphs of 4-6 sentences are normal for this voice.")
-    if pct_single > 20:
-        standalone_count = max(3, round(20 * pct_single / 100))
-        lines.append(f"- MANDATORY: {pct_single:.0f}% of paragraphs must be a single standalone sentence (one sentence, then a blank line). In a 20-paragraph piece, at least {standalone_count} should be standalone single sentences. This is a distinctive signature of this voice.")
-        lines.append(f"- Self-editing rule: take every 3rd paragraph and make it a single sentence. If a paragraph has a good opening or closing sentence, pull it out as its own paragraph.")
-        lines.append(f"- Example structure: 2-sentence para → standalone sentence → 3-sentence para → standalone sentence → 2-sentence para")
-    elif pct_single > 5:
-        lines.append(f"- About {pct_single:.0f}% of paragraphs should be a single standalone sentence — use them occasionally for emphasis.")
+        # Longer-paragraph author without many standalone sentences
+        lines.append(f"- This author writes substantial paragraphs. Aim for {avg_sents:.0f} sentences per paragraph on average. Paragraphs of 4-6 sentences are normal for this voice.")
+        if pct_single > 5:
+            lines.append(f"- About {pct_single:.0f}% of paragraphs should be a single standalone sentence — use them occasionally for emphasis.")
     lines.append("")
     lines.append(f"**Punctuation density** — Target {commas:.1f} commas per sentence. Medium and long sentences need commas for subordinate clauses, appositives, and lists.")
     lines.append("")
@@ -243,15 +251,20 @@ def _build_skill_body(
     lines.append(f"- ~{open_sub:.0f}% subordinate-clause start (If/When/Although)")
     lines.append(f"- ~{open_adv:.0f}% adverb-start (Often/Usually/Sometimes)")
     lines.append("- Mix openers actively — avoid starting too many sentences with the same word.")
+    # Pronoun cap — always active, scaled to target
+    pron_max_in_30 = max(3, round(30 * open_pron / 100))
+    lines.append(f"- HARD CAP on pronoun-start: No more than ~{open_pron:.0f}% (at most {pron_max_in_30} out of 30 sentences) may start with I/You/They/It/He/She/We. Count yours and rewrite excess ones.")
+    # Article cap
     if open_art < 15:
-        lines.append(f"- HARD CAP on article-start: No more than ~{open_art:.0f}% of sentences may start with The/A/An. Count yours — if more than 1 in 10, rewrite some.")
+        lines.append(f"- HARD CAP on article-start: No more than ~{open_art:.0f}% of sentences may start with The/A/An.")
         lines.append(f"- Replacement templates: Instead of \"The X is Y\", try: \"When X happens…\" / \"If you look at X…\" / \"Perhaps X…\" / \"Still, X…\"")
-    if open_pron < 15:
-        lines.append(f"- HARD CAP on pronoun-start: No more than ~{open_pron:.0f}% of sentences may start with I/You/They/It/He/She/We.")
+    # Subordinate — minimum if target warrants it
     if open_sub >= 5:
         lines.append(f"- Required: At least 1 in 12 sentences must start with If/When/While/Although/Because.")
+    # Adverb — both minimum AND cap to prevent overshoot
     if open_adv >= 2:
-        lines.append(f"- Required: At least 1 in 30 sentences should start with an adverb (Perhaps/Still/Often/Sometimes/Clearly).")
+        adv_max_in_30 = max(2, round(30 * open_adv / 100) + 1)
+        lines.append(f"- Adverb openers (Perhaps/Still/Often/Sometimes/Clearly): target ~{open_adv:.0f}% — include 1-{adv_max_in_30} but no more. Do NOT overuse adverb starts.")
     lines.append("")
     if hedges >= 1.0:
         lines.append(f"**Hedging language** — Use \"if\", \"would\", \"could\", \"might\", \"perhaps\" roughly every 60-70 words (~{hedges:.1f} per 100 words). These reflect genuine intellectual uncertainty, not weakness.")
@@ -265,12 +278,23 @@ def _build_skill_body(
     if negation >= 0.8:
         lines.append(f"**Negation** — Use negation words (not, don't, doesn't, won't, can't, never, no) at a rate of ~{negation:.1f} per 100 words. Negation is natural in argumentative/explanatory writing — don't avoid it.")
         lines.append("")
-    if contraction >= 0.3:
+    if contraction >= 1.5:
         lines.append(f"**Contractions** — Use contractions (don't, can't, won't, it's, that's) at a rate of ~{contraction:.1f} per 100 words. This author writes conversationally — prefer \"don't\" over \"do not\".")
+        lines.append("")
+    elif contraction < 1.0:
+        lines.append(f"**Contractions** — This author rarely uses contractions (~{contraction:.1f} per 100 words). Prefer formal forms: \"do not\" over \"don't\", \"cannot\" over \"can't\", \"it is\" over \"it's\". Avoid contractions unless in quoted speech.")
         lines.append("")
     if articles < 6.0:
         lines.append(f"**Article density** — This author uses fewer articles (the/a/an) than typical (~{articles:.1f} per 100 words). Omit articles where the sentence still reads naturally: \"people\" not \"the people\", \"startups\" not \"the startups\".")
-    lines.append("")
+        lines.append("")
+    semicolons = metrics.get("punct_semicolons_per_sent", 0)
+    if semicolons >= 0.03:
+        lines.append(f"**Semicolons** — Use semicolons at a rate of ~{semicolons:.2f} per sentence. Include at least 1 semicolon in the piece to join related independent clauses. Pattern: \"X is true; Y follows from it.\"")
+        lines.append("")
+    quotes = metrics.get("punct_quotes_per_100w", 0)
+    if quotes < 1.0:
+        lines.append(f"**Quotation marks** — This author uses few quotation marks (~{quotes:.1f} per 100 words). Do NOT invent quoted speech or dialogue unless essential. Paraphrase instead of quoting.")
+        lines.append("")
     lines.append("### Full Metrics")
     lines.append("")
     lines.append(_format_quant_table(metrics))

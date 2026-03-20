@@ -90,31 +90,48 @@ def validate(
     hints.append(f"- About ~{t_pct_long:.0f}% should be >25 words (at least {long_min} out of 30) — deliberately write long, clause-heavy sentences")
     # Paragraph structure
     hints.append(f"- Average {t_avg_sents:.1f} sentences per paragraph")
-    if t_avg_sents < 3.5:
+    if t_avg_sents >= 3.5 and t_pct_single > 20:
+        # Bimodal pattern
+        standalone_n = max(3, round(15 * t_pct_single / 100))
+        hints.append(f"- BIMODAL pattern: mix substantial paragraphs (4-7 sentences) with single standalone sentences (~{t_pct_single:.0f}% standalone)")
+        hints.append(f"- Multi-sentence paragraphs should have {t_avg_sents:.0f}+ sentences. Do NOT make every paragraph 2-3 sentences.")
+        hints.append(f"- Interleave at least {standalone_n} single-sentence paragraphs per 15 paragraphs")
+    elif t_avg_sents < 3.5:
         para_max = max(4, round(t_avg_sents + 1.5))
         hints.append(f"- Split any paragraph with {para_max}+ sentences")
+        if t_pct_single > 20:
+            standalone_n = max(3, round(15 * t_pct_single / 100))
+            hints.append(f"- CRITICAL: ~{t_pct_single:.0f}% of paragraphs must be single standalone sentences (at least {standalone_n} in a 15-paragraph piece)")
+        elif t_pct_single > 5:
+            hints.append(f"- About {t_pct_single:.0f}% of paragraphs should be single standalone sentences — use occasionally for emphasis")
     else:
         hints.append(f"- Write substantial paragraphs of ~{t_avg_sents:.0f} sentences — do NOT over-split")
-    if t_pct_single > 20:
-        standalone_n = max(3, round(15 * t_pct_single / 100))
-        hints.append(f"- CRITICAL: ~{t_pct_single:.0f}% of paragraphs must be single standalone sentences (at least {standalone_n} in a 15-paragraph piece)")
-    elif t_pct_single > 5:
-        hints.append(f"- About {t_pct_single:.0f}% of paragraphs should be single standalone sentences — use occasionally for emphasis")
-    # Openers
+        if t_pct_single > 5:
+            hints.append(f"- About {t_pct_single:.0f}% of paragraphs should be single standalone sentences — use occasionally for emphasis")
+    # Openers — always cap pronoun starts (LLM consistently overshoots)
+    t_pron_max = max(3, round(30 * t_open_pron / 100))
+    hints.append(f"- Pronoun-start sentences (I/You/They/It): HARD CAP ~{t_open_pron:.0f}% (at most {t_pron_max} out of 30). Count yours and rewrite excess.")
     if t_open_art < 15:
         hints.append(f"- Article-start sentences (The/A/An): cap at ~{t_open_art:.0f}% — avoid overusing \"The\"")
-    if t_open_pron < 15:
-        hints.append(f"- Pronoun-start sentences: cap at ~{t_open_pron:.0f}%")
     if t_open_sub >= 5:
         hints.append(f"- Subordinate-clause starts (If/When/Although): target ~{t_open_sub:.0f}%")
     if t_open_adv >= 2:
-        hints.append(f"- Adverb starts (Perhaps/Still/Often): target ~{t_open_adv:.0f}%")
+        t_adv_max = max(2, round(30 * t_open_adv / 100) + 1)
+        hints.append(f"- Adverb starts (Perhaps/Still/Often): target ~{t_open_adv:.0f}% — include 1-{t_adv_max} but do NOT overuse")
     # Punctuation
     if t_colons > 0.1:
         hints.append("- Include at least 1 colon (:) to introduce an elaboration")
+    t_semicolons = target_metrics.get("punct_semicolons_per_sent", 0)
+    if t_semicolons >= 0.03:
+        hints.append("- Include at least 1 semicolon (;) to join related clauses")
+    t_quotes = target_metrics.get("punct_quotes_per_100w", 0)
+    if t_quotes < 1.0:
+        hints.append(f"- Few quotation marks (~{t_quotes:.1f}/100w) — do NOT invent quoted speech; paraphrase instead")
     # Contractions
-    if t_contraction >= 0.3:
+    if t_contraction >= 1.5:
         hints.append(f"- Use contractions (don't, can't, it's) — this author writes conversationally (~{t_contraction:.1f} per 100 words)")
+    elif t_contraction < 1.0:
+        hints.append(f"- AVOID contractions — this author writes formally (~{t_contraction:.1f}/100w). Use \"do not\", \"cannot\", \"it is\"")
     hints_block = "\n".join(hints)
 
     # Build self-editing steps conditionally
@@ -123,11 +140,16 @@ def validate(
         edits.append(f"Split any paragraph with {max(4, round(t_avg_sents + 1.5))}+ sentences")
     if t_pct_single > 20:
         edits.append(f"Count single-sentence paragraphs — if fewer than 1 in 3, isolate more sentences as standalone paragraphs")
+    edits.append(f"Count sentences starting with I/You/They/It/He/She/We — if more than {t_pron_max}, rewrite some to start with other words")
     edits.append("Ensure varied sentence openers — no more than 2 consecutive sentences starting with the same word")
     if t_pct_long >= 10:
         edits.append(f"Check that at least {long_min} sentences are >25 words")
     if t_colons > 0.1:
         edits.append("Verify you have at least 1 colon")
+    if t_semicolons >= 0.03:
+        edits.append("Verify you have at least 1 semicolon")
+    if t_contraction < 1.0:
+        edits.append("Scan for contractions (don't, can't, it's, won't) and expand them to formal forms")
     edit_steps = "\n".join(f"{i+1}. {e}" for i, e in enumerate(edits))
 
     for i, topic in enumerate(topics, 1):
