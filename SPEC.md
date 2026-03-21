@@ -12,6 +12,11 @@ A central repository of reusable Claude Code **agents**, **skills**, and **tools
 - **Per-item versioning**: Each item carries its own semantic version in its manifest. Versions track the external-facing contract.
 - **Standardized structure**: Every item follows a template with consistent layout and metadata.
 - **No paid API calls (STRICTLY ENFORCED)**: Tools must NEVER use the `anthropic` SDK, `openai` SDK, or any paid LLM API. NEVER install these as dependencies. The ONLY allowed way to access LLM capabilities is by calling `claude -p` as a subprocess, which bills against the user's Claude Max plan at no extra cost. This applies to all code in this repo — tools, tests, evaluation scripts, everything.
+- **Deterministic over LLM**: If a problem can be solved with deterministic code, never use an LLM. LLM calls are reserved for tasks that genuinely require language understanding. Validation, testing, and quality checks must be reproducible.
+- **Don't invent platform features**: Never assume Claude Code capabilities that don't exist (magic directories, auto-discovery, plugin registries). Build only on documented, verified features.
+- **Stop and escalate, don't thrash**: If an approach produces inconsistent or unreliable results, stop immediately and tell the user. Do not silently iterate on a broken approach. Two failed attempts = mandatory escalation.
+- **Build only what's asked for**: Don't add features, flags, or capabilities the user didn't request. Every addition must solve a stated problem.
+- **READMEs are user manuals**: Every README must answer "how do I use this end-to-end?" with a Quick Start section before any architecture details.
 
 ## Folder Structure
 

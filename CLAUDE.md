@@ -99,6 +99,40 @@ When modifying an existing item:
 - All functionality — including testing and evaluation — must go through the tool's own CLI interface.
 - If the tool doesn't support something, add it to the tool rather than working around it.
 
+### Stop and escalate when an approach isn't working
+
+- If you try something and it produces inconsistent, unreliable, or confusing results — STOP. Do not iterate on a broken approach.
+- Tell the user: what you tried, why it's not working, and what you think the alternative is. Let them decide.
+- Two failed attempts at the same approach = mandatory escalation. Do not silently try a third time.
+- Never hide problems hoping the next tweak will fix them.
+
+### Think before you code — is this the right approach?
+
+- Before writing any implementation, ask: "Can this be solved with deterministic code?" If yes, do NOT use an LLM.
+- LLM calls are non-deterministic. Never use them for validation, testing, or quality checks where reproducibility matters.
+- Before adding a feature, ask: "Did the user ask for this? Does this solve a real problem?" If the answer to both is no, don't build it.
+- Before assuming a platform capability exists (directories, APIs, conventions), verify it. If unsure, ask.
+
+### READMEs are user manuals
+
+- Every README must start with a Quick Start: minimal steps from zero to working result.
+- Write for a first-time user. Answer "how do I use this end-to-end?" before "how does it work internally?"
+- Include concrete commands with realistic paths, not just flag tables.
+- If the tool produces output, explain exactly how to use that output (where to put it, what to do with it).
+
+### Keep implementation and interface in sync
+
+- When replacing an implementation, remove ALL dead code in the same change: unused flags, imports, parameters, helpers.
+- Don't keep unused parameters "for compatibility" unless there's a verified external caller.
+- If you change a CLI interface, update the README in the same commit. Never let docs describe something the code doesn't do.
+
+### Be transparent about what you're doing and why
+
+- When starting a non-trivial task, state your approach briefly before coding.
+- When something fails or produces unexpected results, report it immediately — don't silently retry.
+- When you realize a past decision was wrong, say so explicitly. "I was wrong about X, here's why, here's the fix."
+- Never add complexity (prompt engineering, workarounds, special cases) without explaining why it's necessary.
+
 ## Conventions
 
 - Use **kebab-case** for item names and folder names
