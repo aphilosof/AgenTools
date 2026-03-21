@@ -74,6 +74,31 @@ When modifying an existing item:
 - MAJOR (`0.1.0` → `1.0.0`): Breaking changes to the interface
 - Update the Changelog section in the item's README
 
+## Rules (MANDATORY — read before writing any code)
+
+### No paid API calls — STRICTLY ENFORCED
+
+- **NEVER** import or use the `anthropic` SDK, OpenAI SDK, or any other paid LLM API in any tool, agent, or skill in this repo.
+- **NEVER** install `anthropic`, `openai`, or similar packages as dependencies.
+- **NEVER** make HTTP requests to `api.anthropic.com`, `api.openai.com`, or any paid API endpoint.
+- When a tool needs LLM capabilities, it MUST call `claude -p` as a subprocess. This uses the user's Claude Max plan at no extra token cost.
+- Example of the ONLY allowed pattern for LLM calls:
+  ```python
+  import subprocess
+  result = subprocess.run(
+      ["claude", "-p", "--tools", ""],
+      input=prompt,
+      capture_output=True, text=True,
+  )
+  response = result.stdout
+  ```
+- This rule applies to ALL code: tools, tests, evaluation scripts, helper scripts — everything.
+
+### Tools are self-contained
+
+- All functionality — including testing and evaluation — must go through the tool's own CLI interface.
+- If the tool doesn't support something, add it to the tool rather than working around it.
+
 ## Conventions
 
 - Use **kebab-case** for item names and folder names

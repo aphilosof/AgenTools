@@ -11,6 +11,7 @@ A central repository of reusable Claude Code **agents**, **skills**, and **tools
 - **Language-agnostic**: Items may target specific languages/frameworks, but the repo structure and tooling are language-neutral.
 - **Per-item versioning**: Each item carries its own semantic version in its manifest. Versions track the external-facing contract.
 - **Standardized structure**: Every item follows a template with consistent layout and metadata.
+- **No paid API calls (STRICTLY ENFORCED)**: Tools must NEVER use the `anthropic` SDK, `openai` SDK, or any paid LLM API. NEVER install these as dependencies. The ONLY allowed way to access LLM capabilities is by calling `claude -p` as a subprocess, which bills against the user's Claude Max plan at no extra cost. This applies to all code in this repo — tools, tests, evaluation scripts, everything.
 
 ## Folder Structure
 
