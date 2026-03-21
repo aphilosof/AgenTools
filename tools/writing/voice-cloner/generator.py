@@ -263,8 +263,8 @@ def _build_skill_body(
     # Conjunction minimum — if target is significant
     if open_conj >= 5:
         conj_min_in_30 = max(2, round(30 * open_conj / 100))
-        conj_max_in_30 = conj_min_in_30 + 2
-        lines.append(f"- REQUIRED conjunction-start: {conj_min_in_30}-{conj_max_in_30} out of 30 sentences must start with And/But/So/Yet/Or. This is a signature of this voice — do not omit it, but do not overuse it either.")
+        conj_max_in_30 = conj_min_in_30 + 1
+        lines.append(f"- REQUIRED conjunction-start: {conj_min_in_30}-{conj_max_in_30} out of 30 sentences must start with And/But/So/Yet/Or. This is a signature of this voice — do not omit it, but HARD CAP at {conj_max_in_30}. LLMs massively overuse \"And\" and \"But\" as sentence starters.")
     # Subordinate — minimum if target warrants it
     if open_sub >= 5:
         lines.append(f"- Required: At least 1 in 12 sentences must start with If/When/While/Although/Because.")
@@ -316,7 +316,7 @@ def _build_skill_body(
     lines.append(f"- Sentences starting with I/You/They/It: **at most {max(3, round(30 * open_pron / 100))}**")
     if open_conj >= 5:
         conj_min_sc = max(2, round(30 * open_conj / 100))
-        lines.append(f"- Sentences starting with And/But/So/Yet: **{conj_min_sc}-{conj_min_sc + 2}**")
+        lines.append(f"- Sentences starting with And/But/So/Yet: **{conj_min_sc}-{conj_min_sc + 1}** (HARD CAP)")
     if colons > 0.1:
         lines.append(f"- Colons: **{max(1, round(colons * 5))}**")
     if semicolons >= 0.03:
