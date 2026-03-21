@@ -1,0 +1,19 @@
+One of the most dangerous ideas in the startup world is that if you build something great, people will come. They won't. Not on their own, anyway.
+
+I've watched hundreds of startups over the years, and the pattern is consistent. The ones that succeed in the early days are the ones where the founders personally, almost physically, drag users through the door. The ones that fail are often the ones sitting quietly, waiting for the world to notice them.
+
+There's a romantic version of startup history where a brilliant product launches and spreads like wildfire. It makes for a good story. But it's almost never what actually happens. Even the companies that look like overnight successes — the ones journalists write about as if they simply appeared — had founders who were pushing relentlessly behind the scenes. They were sending cold emails. They were showing up at events. They were doing things that didn't scale, as I've said before, because that's what the earliest stage demands.
+
+Why do so many founders get this wrong? I think it comes from a misunderstanding of what product-market fit feels like from the inside. People imagine it as a sudden pull — users flooding in, servers crashing, phones ringing off the hook. And sometimes it does feel like that, eventually. But before that moment, there's almost always a period where the founders are pushing. Hard.
+
+The push phase is uncomfortable. It feels like selling, and most technical founders don't want to be salespeople. They want to be makers. But in the early days, the founder is the product's best salesperson, because nobody else understands it well enough to explain why it matters. Nobody else has the conviction to keep going when nine out of ten people say no.
+
+So what does pushing look like in practice? It depends on the startup, but the common thread is direct, personal engagement with potential users. Not a landing page with an email capture form. Not a tweet announcing your launch. Those are passive strategies disguised as action. Real pushing means finding the people who have the problem you solve and putting your solution in front of them, one by one if necessary.
+
+The founders of Airbnb went door to door in New York, photographing apartments and convincing skeptical hosts to list them. The founders of Stripe installed their software on other people's laptops during conversations. These weren't marketing stunts. They were acts of sheer will — founders refusing to let their startups die of neglect.
+
+There's a subtlety here, though. Pushing doesn't mean ignoring what users tell you. The best founders push to get users in the door, then listen intensely to what those users say once they're inside. The pushing gets you the data. The listening tells you what to build next. You need both.
+
+I suspect most startups that die in the first year don't die because the idea was bad. They die because the founders confused building with growing. They kept adding features when they should have been adding users. They optimized the product for imaginary customers instead of going out and finding real ones.
+
+The lesson is simple, even if it's hard to internalize. In the early days of a startup, growth is not something that happens to you. It's something you do. And if you're not doing it — if you're waiting for some magical moment when the world discovers you — you're probably waiting for something that will never come.

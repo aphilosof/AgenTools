@@ -1,0 +1,224 @@
+{
+  "stable_features_checked": 30,
+  "flagged_deviations": 5,
+  "passed": true,
+  "deviations": [
+    {
+      "feature": "fw_articles",
+      "target": 7.52,
+      "actual": 9.48,
+      "deviation_pct": 26.1,
+      "flagged": false
+    },
+    {
+      "feature": "fw_conjunctions",
+      "target": 5.79,
+      "actual": 4.04,
+      "deviation_pct": 30.2,
+      "flagged": false
+    },
+    {
+      "feature": "fw_demonstratives",
+      "target": 2.64,
+      "actual": 3.3,
+      "deviation_pct": 25.2,
+      "flagged": false
+    },
+    {
+      "feature": "fw_hedges",
+      "target": 0.88,
+      "actual": 0.82,
+      "deviation_pct": 6.4,
+      "flagged": false
+    },
+    {
+      "feature": "fw_intensifiers",
+      "target": 1.27,
+      "actual": 0.96,
+      "deviation_pct": 24.5,
+      "flagged": false
+    },
+    {
+      "feature": "fw_modals_aux",
+      "target": 5.13,
+      "actual": 6.68,
+      "deviation_pct": 30.2,
+      "flagged": false
+    },
+    {
+      "feature": "fw_negation",
+      "target": 0.87,
+      "actual": 1.17,
+      "deviation_pct": 34.0,
+      "flagged": false
+    },
+    {
+      "feature": "fw_prepositions",
+      "target": 11.64,
+      "actual": 10.33,
+      "deviation_pct": 11.3,
+      "flagged": false
+    },
+    {
+      "feature": "fw_relatives",
+      "target": 1.62,
+      "actual": 2.48,
+      "deviation_pct": 53.2,
+      "flagged": true
+    },
+    {
+      "feature": "open_conjunction_pct",
+      "target": 8.38,
+      "actual": 11.98,
+      "deviation_pct": 42.9,
+      "flagged": true
+    },
+    {
+      "feature": "open_pronoun_pct",
+      "target": 18.85,
+      "actual": 19.81,
+      "deviation_pct": 5.1,
+      "flagged": false
+    },
+    {
+      "feature": "open_subordinate_pct",
+      "target": 7.74,
+      "actual": 8.08,
+      "deviation_pct": 4.4,
+      "flagged": false
+    },
+    {
+      "feature": "para_avg_sentences",
+      "target": 2.84,
+      "actual": 2.52,
+      "deviation_pct": 11.1,
+      "flagged": false
+    },
+    {
+      "feature": "para_avg_words",
+      "target": 70.52,
+      "actual": 66.68,
+      "deviation_pct": 5.4,
+      "flagged": false
+    },
+    {
+      "feature": "para_pct_single_sent",
+      "target": 31.73,
+      "actual": 30.42,
+      "deviation_pct": 4.1,
+      "flagged": false
+    },
+    {
+      "feature": "polysyndeton_pct",
+      "target": 8.97,
+      "actual": 2.77,
+      "deviation_pct": 69.1,
+      "flagged": true
+    },
+    {
+      "feature": "punct_colons_per_100w",
+      "target": 0.3,
+      "actual": 0.3,
+      "deviation_pct": 1.4,
+      "flagged": false
+    },
+    {
+      "feature": "punct_commas_per_sent",
+      "target": 1.99,
+      "actual": 1.7,
+      "deviation_pct": 14.4,
+      "flagged": false
+    },
+    {
+      "feature": "punct_dashes_per_100w",
+      "target": 0.48,
+      "actual": 0.27,
+      "deviation_pct": 44.6,
+      "flagged": true
+    },
+    {
+      "feature": "punct_semicolons_per_sent",
+      "target": 0.06,
+      "actual": 0.14,
+      "deviation_pct": 141.9,
+      "flagged": true
+    },
+    {
+      "feature": "sent_avg_length",
+      "target": 28.34,
+      "actual": 27.24,
+      "deviation_pct": 3.9,
+      "flagged": false
+    },
+    {
+      "feature": "sent_length_stddev",
+      "target": 19.83,
+      "actual": 13.72,
+      "deviation_pct": 30.8,
+      "flagged": false
+    },
+    {
+      "feature": "sent_median_length",
+      "target": 24.9,
+      "actual": 27.3,
+      "deviation_pct": 9.6,
+      "flagged": false
+    },
+    {
+      "feature": "sent_pct_long",
+      "target": 47.21,
+      "actual": 52.75,
+      "deviation_pct": 11.7,
+      "flagged": false
+    },
+    {
+      "feature": "sent_pct_short",
+      "target": 16.67,
+      "actual": 13.64,
+      "deviation_pct": 18.2,
+      "flagged": false
+    },
+    {
+      "feature": "type_token_ratio",
+      "target": 0.74,
+      "actual": 0.77,
+      "deviation_pct": 4.1,
+      "flagged": false
+    },
+    {
+      "feature": "word_avg_length",
+      "target": 4.54,
+      "actual": 4.9,
+      "deviation_pct": 7.9,
+      "flagged": false
+    },
+    {
+      "feature": "word_pct_long",
+      "target": 13.71,
+      "actual": 17.63,
+      "deviation_pct": 28.6,
+      "flagged": false
+    },
+    {
+      "feature": "word_pct_monosyllable",
+      "target": 66.47,
+      "actual": 61.8,
+      "deviation_pct": 7.0,
+      "flagged": false
+    },
+    {
+      "feature": "word_pct_short",
+      "target": 59.29,
+      "actual": 54.14,
+      "deviation_pct": 8.7,
+      "flagged": false
+    }
+  ],
+  "generated_word_counts": [
+    600,
+    568,
+    609,
+    619,
+    609
+  ]
+}

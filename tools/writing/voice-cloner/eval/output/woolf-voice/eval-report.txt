@@ -1,0 +1,48 @@
+============================================================
+  VOICE CLONER EVAL — woolf
+============================================================
+  Samples: 5  |  Generated texts: 3
+────────────────────────────────────────────────────────────
+
+  Weighted distance from original (lower = better):
+    With SKILL.md:    1.6655
+    Without (base):   2.0274
+
+  Similarity to original (higher = better):
+    With SKILL.md:    0.1891  █████░░░░░░░░░░░░░░░░░░░░░░░░░
+    Without (base):   0.1317  ███░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+  Improvement: +0.1785  →  SKILL.md improved style match by 17.8%
+
+  Qualitative (LLM-as-judge, 0-10):
+    With SKILL.md:    7/10
+    Without (base):   2/10
+    Styled:   The styled texts capture Woolf's characteristic flowing consciousness, her use of semicolons to chain observations, the sudden plunges into interior reflection, and her habit of rendering social tension through oblique perception—particularly strong in styled_3's dinner scene with its Woolfian silences and the metaphor of silence as a guest. The simile patterns ('like a bird flung suddenly from a hedge'), the parenthetical qualifications, and the movement between exterior detail and interior meaning all echo Woolf's narrative texture, though they occasionally feel slightly too deliberate and lack her most radical syntactic experiments.
+    Baseline: The baseline texts read as competent contemporary literary fiction with a naturalistic, dialogue-heavy style that bears almost no resemblance to Woolf's prose—the short declarative sentences, colloquial rhythms, and externally-focused observation are closer to Raymond Carver or contemporary MFA realism than to Woolf's sinuous interiority and lyrical abstraction.
+============================================================
+
+Feature                               Wt     Orig   Styled     Base   S_dist   B_dist   Winner
+-----------------------------------------------------------------------------------------------
+avg_sentence_length                  3.0    18.34    14.65    13.02     3.69     5.32   STYLED
+avg_word_length                      3.0     4.17     4.49     4.46     0.32     0.29     BASE
+commas_per_sentence                  3.0     1.30     1.19     0.68     0.12     0.62   STYLED
+conjunction_start_ratio              3.0     5.70     3.75     0.85     1.95     4.85   STYLED
+fwg_articles                         1.5     6.60    10.11    10.48     3.52     3.88   STYLED
+fwg_conjunctions                     1.5     5.47     4.27     3.36     1.20     2.11   STYLED
+fwg_demonstratives                   1.0     1.78     1.86     1.47     0.08     0.31   STYLED
+fwg_hedges                           1.0     1.02     1.47     0.59     0.45     0.43     BASE
+fwg_intensifiers                     1.0     1.83     1.01     0.76     0.82     1.07   STYLED
+fwg_modals_aux                       1.0     4.53     5.79     4.28     1.26     0.24     BASE
+fwg_negation                         1.0     1.15     1.52     0.30     0.37     0.85   STYLED
+fwg_prepositions                     1.5     9.32     7.65     7.17     1.66     2.15   STYLED
+fwg_relatives                        1.0     1.63     1.23     1.29     0.40     0.34     BASE
+polysyndeton_ratio                   3.0     7.47     4.94     0.81     2.52     6.65   STYLED
+pronoun_start_ratio                  1.5    21.64    28.08    25.57     6.44     3.93     BASE
+punct_:                              1.0     0.00     0.22     0.00     0.22     0.00     BASE
+punct_;                              1.5     0.69     0.00     0.00     0.69     0.69      TIE
+punct_dash                           1.5     0.63     0.96     0.75     0.33     0.12     BASE
+semicolons_per_sentence              1.5     0.13     0.00     0.00     0.13     0.13      TIE
+sent_pct_short                       1.5    36.32    59.82    47.40    23.50    11.08     BASE
+sentence_length_stddev               3.0    13.54    14.43     8.52     0.89     5.02   STYLED
+word_pct_long                        1.0     8.91    10.46     8.05     1.54     0.86     BASE
+word_pct_short                       1.5    65.20    59.47    58.00     5.73     7.20   STYLED

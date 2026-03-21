@@ -1,0 +1,21 @@
+One of the most dangerous ideas in the startup world is that if you build something great, people will just show up. They won't. Not at first, and usually not for a long time.
+
+I think this belief persists because the stories we hear about successful startups are told backwards. We hear about the explosive growth phase — the part where it looks effortless. But we almost never hear about the months or years before that, when the founders were doing things that looked desperate and unscalable. Knocking on doors. Sending cold emails. Personally onboarding every single user.
+
+The reason is simple. In the early days of a startup, you have no distribution. You have no brand, no network effects, no word of mouth. You have a product and maybe a handful of people who know it exists. The gap between "exists" and "used" is enormous, and it doesn't close on its own.
+
+So what actually closes it? Founders pushing. And I mean pushing in the most literal, unglamorous sense — doing the manual work of finding users one at a time and convincing them to try something new.
+
+This is uncomfortable for a lot of technical founders. They'd rather be building. Writing code feels productive in a way that sending a hundred emails that mostly go unanswered does not. But in my experience, the founders who succeed early are the ones willing to do the thing that feels unproductive. They're willing to spend a week getting ten users instead of spending that week on a feature that would theoretically attract thousands.
+
+Why does the manual approach work so much better than waiting? Because early users don't just use your product — they teach you what it should become. Every conversation with an early user is a compressed version of market research. You learn what they actually care about, which is almost never what you assumed. And you can't get that from analytics dashboards when you have twelve users.
+
+There's a pattern here that goes beyond startups. In almost any creative endeavor, the early phase requires a different kind of effort than the later phase. Writers don't start with an audience. Musicians play to empty rooms. The work of the early phase is not the same as the work of the mature phase, and treating them as identical is a mistake.
+
+But this pattern isn't universal. Some products really do spread on their own from day one. It happens. It's just so rare that building your strategy around it is like planning your retirement around winning the lottery.
+
+The better model is to assume you'll need to push. Assume that every user in the first hundred will require direct effort to acquire. Then build your company so that each of those early users makes it slightly easier to get the next one. That's the real engine of early growth — not virality, not press, not some magical product-market fit moment, but a grinding accumulation of small wins that compound.
+
+I suspect the founders who internalize this have a huge advantage. Not because they're smarter or because their products are better, but because they're willing to do the work that looks, from the outside, like it shouldn't be necessary. They don't wait for permission from the market. They go get it.
+
+The myth of passive growth is seductive because it lets you avoid the hard, awkward, rejection-filled work of selling something before it sells itself. But that work is exactly what makes it eventually sell itself. You can't skip it. You can only do it now or never.
