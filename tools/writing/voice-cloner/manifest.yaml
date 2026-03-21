@@ -1,0 +1,39 @@
+name: voice-cloner
+type: tool
+version: "0.3.0"
+description: >
+  A self-contained CLI that analyzes writing samples and generates a Claude Code skill
+  capturing the author's unique voice. Uses `claude -p` under the hood (Max plan, no API key).
+  Reads .md, .txt, .docx, .pdf samples, computes ~50 deterministic metrics, and extracts
+  qualitative patterns across 6 dimensions. Code measures all numbers; LLM describes only
+  qualitative patterns — zero overlap, zero conflicts.
+
+tags:
+  - writing
+  - voice
+  - style
+  - tone
+  - skill-generation
+  - analysis
+  - stylometrics
+
+compatibility:
+  languages:
+    - python
+  frameworks: []
+  notes: "Requires Python 3.10+ and claude CLI (Max plan)."
+
+dependencies: []
+
+usage:
+  examples:
+    - description: "Full analysis with validation"
+      snippet: |
+        cd tools/writing/voice-cloner
+        python cli.py analyze ./samples/ -o ./output/ --name "author-voice"
+    - description: "Quick metrics only (no LLM, instant)"
+      snippet: |
+        python cli.py measure ./samples/
+    - description: "Standalone validation of existing SKILL.md"
+      snippet: |
+        python cli.py validate ./output/author-voice/SKILL.md ./samples/

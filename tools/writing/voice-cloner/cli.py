@@ -12,7 +12,6 @@ No API key needed.
 """
 
 import json
-import shutil
 import sys
 from pathlib import Path
 
@@ -46,9 +45,7 @@ def cli():
               help="Minimum number of samples required.")
 @click.option("--skip-validation", is_flag=True, default=False,
               help="Skip Phase 5 validation.")
-@click.option("--install", is_flag=True, default=False,
-              help="Copy generated skill to ~/.claude/skills/")
-def analyze(samples_dir, output, model, name, min_samples, skip_validation, install):
+def analyze(samples_dir, output, model, name, min_samples, skip_validation):
     """Analyze writing samples and generate a voice-cloning skill.
 
     SAMPLES_DIR is the path to a directory containing writing samples
@@ -165,14 +162,6 @@ def analyze(samples_dir, output, model, name, min_samples, skip_validation, inst
     else:
         print(f"\nPhase 5: Skipped (--skip-validation)")
 
-    # Optional: install to ~/.claude/skills/
-    if install:
-        install_dir = Path.home() / ".claude" / "skills" / name
-        install_dir.mkdir(parents=True, exist_ok=True)
-        dest = install_dir / "SKILL.md"
-        shutil.copy2(skill_path, dest)
-        print(f"\n  Installed to: {dest}")
-
     print(f"\nDone! Voice skill '{name}' generated from {len(samples)} samples.")
 
 
@@ -245,13 +234,10 @@ def measure(samples_dir, output, fmt):
 @cli.command(name="validate")
 @click.argument("skill_path", type=click.Path(exists=True, dir_okay=False))
 @click.argument("samples_dir", type=click.Path(exists=True, file_okay=False))
-@click.option("--model", default=None, help="Model to use.")
-@click.option("--n-samples", default=5, type=int,
-              help="Number of test passages to generate.")
-def validate_cmd(skill_path, samples_dir, model, n_samples):
-    """Validate a SKILL.md by generating test text and comparing metrics.
+def validate_cmd(skill_path, samples_dir):
+    """Validate a SKILL.md using leave-one-out cross-validation (no LLM, instant).
 
-    Standalone validation — run after generating a skill or after manual edits.
+    Run after generating a skill or after manual edits.
     """
     print(f"Loading samples from {samples_dir}...")
     sample_paths = collect_samples(samples_dir)
@@ -281,7 +267,7 @@ def validate_cmd(skill_path, samples_dir, model, n_samples):
     print(f"Validating {skill_path}...\n")
 
     report = validate(
-        skill_path, target_metrics, per_sample_metrics, model, n_samples,
+        skill_path, target_metrics, per_sample_metrics,
     )
 
     # Save report next to skill
