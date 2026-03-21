@@ -1,0 +1,35 @@
+name: pre-commit-review
+type: agent
+version: "0.1.0"
+description: >
+  Reviews staged git changes for common issues before committing. Runs
+  deterministic checks (unused Python imports, README structure, CLI flag
+  sync) and an optional LLM check for interface changes not reflected in
+  documentation. Exit code 0 = pass, 1 = fail.
+
+tags:
+  - quality
+  - pre-commit
+  - review
+  - linting
+  - python
+
+compatibility:
+  languages:
+    - python
+  frameworks: []
+  notes: "Checks Python files for unused imports. Flag sync works with click and argparse CLIs."
+
+dependencies: []
+
+usage:
+  examples:
+    - description: "Include in your CLAUDE.md"
+      snippet: |
+        @/path/to/AgenTools/agents/quality/pre-commit-review/README.md
+    - description: "Review staged changes"
+      snippet: |
+        python3 agents/quality/pre-commit-review/cli.py
+    - description: "Review all uncommitted changes"
+      snippet: |
+        python3 agents/quality/pre-commit-review/cli.py --all

@@ -1,6 +1,23 @@
-generated_at: '2026-03-21T07:49:43Z'
-total_items: 1
+generated_at: '2026-03-21T08:22:11Z'
+total_items: 2
 items:
+- name: pre-commit-review
+  type: agent
+  version: 0.1.0
+  path: agents/quality/pre-commit-review
+  description: Reviews staged git changes for common issues before committing. Runs
+    deterministic checks (unused Python imports, README structure, CLI flag sync)
+    and an optional LLM check for interface changes not reflected in documentation.
+    Exit code 0 = pass, 1 = fail.
+  tags:
+  - quality
+  - pre-commit
+  - review
+  - linting
+  - python
+  compatibility:
+    languages:
+    - python
 - name: voice-cloner
   type: tool
   version: 0.3.0
