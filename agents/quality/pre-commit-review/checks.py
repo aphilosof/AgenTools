@@ -6,7 +6,6 @@ Each check function returns a list of Issue dicts:
 
 import ast
 import re
-from pathlib import Path
 
 from llm import call_claude, extract_json
 
@@ -113,28 +112,51 @@ def check_readme_has_quickstart(readme_path: str, readme_content: str) -> list[d
 _FLAG_RE = re.compile(r"--[a-z][a-z0-9-]*")
 
 
+def _strip_example_blocks(text: str) -> str:
+    """Remove fenced code blocks with a language tag (bash, json, python, etc.).
+
+    These are example commands/output — flags in them aren't documentation.
+    Plain fenced blocks (no language tag) are kept, as they typically list CLI flags.
+    """
+    return re.sub(r"```\w+.*?```", "", text, flags=re.DOTALL)
+
+
 def _extract_readme_flags(readme: str) -> set[str]:
-    """Extract --flags mentioned in README."""
-    return set(_FLAG_RE.findall(readme))
+    """Extract --flags mentioned in README (excluding example code blocks)."""
+    prose = _strip_example_blocks(readme)
+    return set(_FLAG_RE.findall(prose))
 
 
 def _extract_code_flags(source: str) -> set[str]:
-    """Extract --flags defined in Python code (click.option / argparse)."""
+    """Extract --flags defined via click.option or argparse using AST."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return set()
+
     flags = set()
 
-    # click.option("--foo", "--bar", ...)
-    for m in re.finditer(r"@\w+\.option\(([^)]+)\)", source, re.DOTALL):
-        flags.update(_FLAG_RE.findall(m.group(1)))
+    for node in ast.walk(tree):
+        # click.option("--foo", ...) as decorator
+        if isinstance(node, ast.Call):
+            func = node.func
+            is_option = False
+            # @something.option(...)
+            if isinstance(func, ast.Attribute) and func.attr == "option":
+                is_option = True
+            # @click.option(...)
+            if isinstance(func, ast.Attribute) and func.attr == "option":
+                is_option = True
 
-    # add_argument("--foo", ...)
-    for m in re.finditer(r"add_argument\(([^)]+)\)", source, re.DOTALL):
-        flags.update(_FLAG_RE.findall(m.group(1)))
+            # parser.add_argument("--foo", ...)
+            if isinstance(func, ast.Attribute) and func.attr == "add_argument":
+                is_option = True
 
-    # Also catch bare click.option strings
-    for m in re.finditer(r'["\'](-{2}[a-z][a-z0-9-]*)["\']', source):
-        flag = m.group(1)
-        if _FLAG_RE.match(flag):
-            flags.add(flag)
+            if is_option:
+                for arg in node.args:
+                    if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                        if _FLAG_RE.match(arg.value):
+                            flags.add(arg.value)
 
     return flags
 

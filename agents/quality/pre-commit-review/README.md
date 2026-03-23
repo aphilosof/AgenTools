@@ -27,7 +27,7 @@ AST-based check on changed Python files. Finds imports that are never referenced
 Checks that README.md has a Quick Start, Usage, or Getting Started section.
 
 ### 3. CLI flag sync (`phantom-flag`, `missing-docs`)
-Cross-references `--flags` in README against click.option/argparse definitions in code:
+Cross-references CLI flags in README against click.option/argparse definitions in code:
 - **phantom-flag**: README documents a flag that doesn't exist in code
 - **missing-docs**: Code defines a flag not mentioned in README
 
@@ -46,7 +46,7 @@ When code changes but README wasn't updated, uses `claude -p` to check if interf
 
 ## Output
 
-```
+```text
 Pre-Commit Review (4 checks, 2 files)
 
   [unused-import]      cli.py:3 — Unused import: shutil
