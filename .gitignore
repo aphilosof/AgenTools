@@ -24,3 +24,6 @@ venv/
 dist/
 build/
 *.egg-info/
+
+# Local workspace (samples, results, output)
+tools/writing/voice-cloner/workspace/
