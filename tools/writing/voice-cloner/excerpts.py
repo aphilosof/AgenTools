@@ -15,6 +15,60 @@ import re
 from metrics import compute_metrics, _tokenize, _split_sentences
 
 
+# ---------------------------------------------------------------------------
+# Noise stripping — remove non-voice content from passages
+# ---------------------------------------------------------------------------
+
+# Patterns that are document scaffolding, not writing voice
+_NOISE_PATTERNS = [
+    # Email addresses
+    re.compile(r'\S+@\S+\.\S+'),
+    # URLs
+    re.compile(r'https?://\S+'),
+    # Phone numbers
+    re.compile(r'\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}'),
+    # Dates at line start (e.g. "February 6, 2026" or "December 16, 2025")
+    re.compile(r'^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4}\s*$', re.MULTILINE),
+    # Citation brackets like [1], [2, 3], [Smith et al., 2020]
+    re.compile(r'\[[\d,;\s]+\]'),
+    re.compile(r'\[[A-Z][a-z]+ et al\.?,?\s*\d{4}\]'),
+    # Parenthetical citations like (Friess et al., 2022, PLoS Climate)
+    re.compile(r'\([A-Z][a-z]+ et al\.?,?\s*\d{4}[^)]*\)'),
+    # LinkedIn / Github / Google Scholar links as text
+    re.compile(r'\b(?:LinkedIn|Github|Google Scholar)\b'),
+    # "RE:" subject lines
+    re.compile(r'^RE:.*$', re.MULTILINE),
+    # Salutation lines ("Dear X," or "Dear X Hiring Team,")
+    re.compile(r'^Dear\s+.{3,60},?\s*$', re.MULTILINE),
+    # Sign-off lines
+    re.compile(r'^(?:Sincerely|Regards|Best regards|Thank you for your consideration)[,.]?\s*$', re.MULTILINE),
+    # Author name/credential lines (Name, Ph.D. or Name, PhD on their own line)
+    re.compile(r'^[A-Z][a-z]+ [A-Z][a-z]+,?\s*(?:Ph\.?D\.?|M\.?S\.?|M\.?D\.?)\s*$', re.MULTILINE),
+    # Address lines (City, ST ZIP)
+    re.compile(r'^[A-Z][a-z]+(?:\s[A-Z][a-z]+)?,\s*[A-Z]{2}\s+\d{5}\s*$', re.MULTILINE),
+    # Page numbers on their own line
+    re.compile(r'^\d{1,3}\s*$', re.MULTILINE),
+    # Pipe-separated contact info lines
+    re.compile(r'^.*\|.*\|.*$', re.MULTILINE),
+]
+
+
+def _clean_passage(text: str) -> str:
+    """Strip non-voice noise from a passage (headers, emails, citations, etc.)."""
+    for pattern in _NOISE_PATTERNS:
+        text = pattern.sub('', text)
+    # Collapse multiple blank lines
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    # Strip leading/trailing whitespace per line
+    lines = [line.strip() for line in text.split('\n')]
+    # Remove empty lines at start/end
+    while lines and not lines[0]:
+        lines.pop(0)
+    while lines and not lines[-1]:
+        lines.pop()
+    return '\n'.join(lines)
+
+
 def _split_into_passages(
     text: str,
     source_id: str,
@@ -177,4 +231,10 @@ def select_excerpts(
                 selected[-1] = passage
                 break
 
-    return [p["text"] for p in selected]
+    # Clean noise from selected passages before returning
+    cleaned = []
+    for p in selected:
+        text = _clean_passage(p["text"])
+        if len(_tokenize(text)) >= 40:  # skip if cleaning gutted it
+            cleaned.append(text)
+    return cleaned

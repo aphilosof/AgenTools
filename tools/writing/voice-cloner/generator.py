@@ -209,17 +209,17 @@ def _build_skill_body(
     lines.append("")
     lines.append("These rules override everything else. If any qualitative guidance below conflicts, these numbers win.")
     lines.append("")
-    lines.append(f"**Sentence length distribution** — Most sentences (~{pct_medium:.0f}%) must be medium-length (11-25 words). Only ~{pct_short:.0f}% should be short (≤10 words). About ~{pct_long:.0f}% should be long (>25 words). DO NOT default to short punchy sentences — the backbone is medium-length.")
+    lines.append(f"**Sentence length distribution.** Most sentences (~{pct_medium:.0f}%) must be medium-length (11-25 words). Only ~{pct_short:.0f}% should be short (≤10 words). About ~{pct_long:.0f}% should be long (>25 words). DO NOT default to short punchy sentences.")
     if pct_short < 30:
         lines.append(f"- Self-check: at most 1 in 4 sentences should be ≤10 words. If you've written 3 short sentences in a row, the next MUST be 20+ words.")
     if pct_long >= 10:
         lines.append(f"- REQUIRED: ~{pct_long:.0f}% of sentences must be >25 words. In a 30-sentence piece, at least {max(2, round(30 * pct_long / 100))} must be long clause-heavy sentences with commas, subordinate clauses (\"which...\", \"even though...\", \"because...\").")
     lines.append("")
-    lines.append(f"**Paragraph structure** — average {avg_sents:.1f} sentences per paragraph.")
+    lines.append(f"**Paragraph structure.** Average {avg_sents:.1f} sentences per paragraph.")
     if avg_sents >= 3.5 and pct_single > 20:
         # Bimodal author (like Orwell): mix of dense paragraphs and standalone sentences
         lines.append(f"- This author has a BIMODAL pattern: some paragraphs are substantial ({avg_sents:.0f}+ sentences), but ~{pct_single:.0f}% are single standalone sentences.")
-        lines.append(f"- IMPORTANT: When writing a multi-sentence paragraph, make it LONG — 5, 6, even 7 sentences. A paragraph of 2-3 sentences is WRONG for this voice. Either commit to a full paragraph or make it a standalone single sentence.")
+        lines.append(f"- IMPORTANT: When writing a multi-sentence paragraph, make it LONG (5, 6, even 7 sentences). A paragraph of 2-3 sentences is WRONG for this voice. Either commit to a full paragraph or make it a standalone single sentence.")
         standalone_count = max(3, round(20 * pct_single / 100))
         lines.append(f"- Interleave at least {standalone_count} single-sentence paragraphs per 20 paragraphs for rhythm and emphasis.")
         lines.append(f"- Example: 6-sentence para → standalone sentence → 5-sentence para → standalone sentence → 7-sentence para → standalone sentence")
@@ -233,78 +233,79 @@ def _build_skill_body(
             lines.append(f"- Self-editing rule: take every 3rd paragraph and make it a single sentence.")
             lines.append(f"- Example structure: 2-sentence para → standalone sentence → 3-sentence para → standalone sentence → 2-sentence para")
         elif pct_single > 5:
-            lines.append(f"- About {pct_single:.0f}% of paragraphs should be a single standalone sentence — use them occasionally for emphasis.")
+            lines.append(f"- About {pct_single:.0f}% of paragraphs should be a single standalone sentence. Use them occasionally for emphasis.")
     else:
         # Longer-paragraph author without many standalone sentences
-        lines.append(f"- This author writes substantial paragraphs. Aim for {avg_sents:.0f} sentences per paragraph on average. Paragraphs of 4-6 sentences are normal for this voice.")
+        lo = max(3, round(avg_sents * 0.5))
+        hi = max(lo + 2, round(avg_sents * 1.2))
+        lines.append(f"- This author writes substantial paragraphs. Aim for {lo}-{hi} sentences per paragraph.")
         if pct_single > 5:
-            lines.append(f"- About {pct_single:.0f}% of paragraphs should be a single standalone sentence — use them occasionally for emphasis.")
+            lines.append(f"- About {pct_single:.0f}% of paragraphs should be a single standalone sentence. Use them occasionally for emphasis.")
     lines.append("")
-    lines.append(f"**Punctuation density** — Target {commas:.1f} commas per sentence. Medium and long sentences need commas for subordinate clauses, appositives, and lists.")
+    lines.append(f"**Punctuation density.** Target {commas:.1f} commas per sentence. Medium and long sentences need commas for subordinate clauses, appositives, and lists.")
     lines.append("")
     if colons > 0.1:
-        colon_count = max(1, round(colons * 5))  # approximate count per 500 words
-        lines.append(f"**Colons** — Include ~{colon_count} colon(s) per 500 words to introduce elaborations. Pattern: \"The reason was simple: X\".")
+        lines.append(f"**Colons.** Target ~{colons:.1f} per 100 words. Use colons to introduce elaborations or lists.")
         lines.append("")
-    lines.append("**Sentence openers** — Vary how sentences begin:")
+    lines.append("**Sentence openers.** Vary how sentences begin:")
     lines.append(f"- ~{open_conj:.0f}% conjunction-start (And/But/So/Yet)")
     lines.append(f"- ~{open_pron:.0f}% pronoun-start (I/You/They/It)")
     lines.append(f"- ~{open_art:.0f}% article-start (The/A/An)")
     lines.append(f"- ~{open_sub:.0f}% subordinate-clause start (If/When/Although)")
     lines.append(f"- ~{open_adv:.0f}% adverb-start (Often/Usually/Sometimes)")
-    lines.append("- Mix openers actively — avoid starting too many sentences with the same word.")
+    lines.append("- Mix openers actively. Avoid starting too many sentences with the same word.")
     # Pronoun cap — always active, scaled to target
     pron_max_in_30 = max(3, round(30 * open_pron / 100))
     lines.append(f"- HARD CAP on pronoun-start: No more than ~{open_pron:.0f}% (at most {pron_max_in_30} out of 30 sentences) may start with I/You/They/It/He/She/We. Count yours and rewrite excess ones.")
     # Article cap — always active (LLM consistently overshoots)
     art_max_in_30 = max(2, round(30 * open_art / 100))
-    lines.append(f"- HARD CAP on article-start: No more than ~{open_art:.0f}% (at most {art_max_in_30} out of 30 sentences) may start with The/A/An. The LLM tends to overuse \"The\" — actively count and rewrite.")
+    lines.append(f"- HARD CAP on article-start: No more than ~{open_art:.0f}% (at most {art_max_in_30} out of 30 sentences) may start with The/A/An. Actively count and rewrite.")
     lines.append(f"- Replacement templates: Instead of \"The X is Y\", try: \"It was X\", \"And X\", \"But X\", \"When X happens…\", \"What mattered was X\"")
     # Conjunction minimum — if target is significant
     if open_conj >= 5:
         conj_min_in_30 = max(2, round(30 * open_conj / 100))
         conj_max_in_30 = conj_min_in_30 + 1
-        lines.append(f"- REQUIRED conjunction-start: {conj_min_in_30}-{conj_max_in_30} out of 30 sentences must start with And/But/So/Yet/Or. This is a signature of this voice — do not omit it, but HARD CAP at {conj_max_in_30}. LLMs massively overuse \"And\" and \"But\" as sentence starters.")
+        lines.append(f"- REQUIRED conjunction-start: {conj_min_in_30}-{conj_max_in_30} out of 30 sentences must start with And/But/So/Yet/Or. This is a signature of this voice. Do not omit it, but HARD CAP at {conj_max_in_30}.")
     # Subordinate — minimum if target warrants it
     if open_sub >= 5:
         lines.append(f"- Required: At least 1 in 12 sentences must start with If/When/While/Although/Because.")
     # Adverb — both minimum AND cap to prevent overshoot
     if open_adv >= 2:
         adv_max_in_30 = max(2, round(30 * open_adv / 100) + 1)
-        lines.append(f"- Adverb openers (Perhaps/Still/Often/Sometimes/Clearly): target ~{open_adv:.0f}% — include 1-{adv_max_in_30} but no more. Do NOT overuse adverb starts.")
+        lines.append(f"- Adverb openers (Perhaps/Still/Often/Sometimes/Clearly): target ~{open_adv:.0f}%, include 1-{adv_max_in_30} but no more.")
     lines.append("")
     if hedges >= 1.0:
-        lines.append(f"**Hedging language** — Use \"if\", \"would\", \"could\", \"might\", \"perhaps\" roughly every 60-70 words (~{hedges:.1f} per 100 words). These reflect genuine intellectual uncertainty, not weakness.")
+        lines.append(f"**Hedging language.** Use \"if\", \"would\", \"could\", \"might\", \"perhaps\" at ~{hedges:.1f} per 100 words.")
         lines.append("")
     relatives = metrics.get("fw_relatives", 0)
     if relatives < 2.0:
-        lines.append(f"**Relative words** — Use \"which\", \"that\", \"who\", \"whom\", \"whose\" sparingly — target ~{relatives:.1f} per 100 words. Prefer shorter constructions over relative clauses where possible.")
+        lines.append(f"**Relative words.** Use \"which\", \"that\", \"who\", \"whom\", \"whose\" sparingly. Target ~{relatives:.1f} per 100 words.")
         lines.append("")
     intensifiers = metrics.get("fw_intensifiers", 0)
     negation = metrics.get("fw_negation", 0)
     contraction = metrics.get("contraction_rate", 0)
     if intensifiers >= 1.0:
-        lines.append(f"**Intensifiers** — Use words like \"very\", \"really\", \"quite\", \"rather\", \"so\", \"certainly\" at a rate of ~{intensifiers:.1f} per 100 words. These add emphasis and conversational energy.")
+        lines.append(f"**Intensifiers.** Use words like \"very\", \"really\", \"quite\", \"rather\", \"so\", \"certainly\" at ~{intensifiers:.1f} per 100 words.")
         lines.append("")
     if negation >= 0.8:
-        lines.append(f"**Negation** — Use negation words (not, don't, doesn't, won't, can't, never, no) at a rate of ~{negation:.1f} per 100 words. HARD CAP: no more than {max(3, round(negation * 5))} negation words per 500-word piece. Rewrite excess negative constructions as positive ones (\"it lacks\" → \"it has little\", \"you cannot\" → \"it requires\").")
+        lines.append(f"**Negation.** Use negation words (not, don't, doesn't, won't, can't, never, no) at ~{negation:.1f} per 100 words. HARD CAP: no more than {max(3, round(negation * 5))} per 500-word piece.")
         lines.append("")
     if contraction >= 1.5:
-        lines.append(f"**Contractions** — Use contractions (don't, can't, won't, it's, that's) at a rate of ~{contraction:.1f} per 100 words. This author writes conversationally — prefer \"don't\" over \"do not\".")
+        lines.append(f"**Contractions.** Use contractions (don't, can't, won't, it's, that's) at ~{contraction:.1f} per 100 words. Prefer \"don't\" over \"do not\".")
         lines.append("")
     elif contraction < 1.0:
-        lines.append(f"**Contractions** — This author rarely uses contractions (~{contraction:.1f} per 100 words). Prefer formal forms: \"do not\" over \"don't\", \"cannot\" over \"can't\", \"it is\" over \"it's\". Avoid contractions unless in quoted speech.")
+        lines.append(f"**Contractions.** This author rarely uses contractions (~{contraction:.1f} per 100 words). Prefer formal forms: \"do not\" over \"don't\", \"cannot\" over \"can't\".")
         lines.append("")
     if articles < 6.0:
-        lines.append(f"**Article density** — This author uses fewer articles (the/a/an) than typical (~{articles:.1f} per 100 words). Omit articles where the sentence still reads naturally: \"people\" not \"the people\", \"startups\" not \"the startups\".")
+        lines.append(f"**Article density.** This author uses fewer articles (the/a/an) than typical (~{articles:.1f} per 100 words). Omit articles where the sentence still reads naturally.")
         lines.append("")
     semicolons = metrics.get("punct_semicolons_per_sent", 0)
     if semicolons >= 0.03:
-        lines.append(f"**Semicolons** — Use semicolons at a rate of ~{semicolons:.2f} per sentence. Include at least 1 semicolon in the piece to join related independent clauses. Pattern: \"X is true; Y follows from it.\"")
+        lines.append(f"**Semicolons.** Use semicolons at ~{semicolons:.2f} per sentence to join related independent clauses.")
         lines.append("")
     quotes = metrics.get("punct_quotes_per_100w", 0)
     if quotes < 1.0:
-        lines.append(f"**Quotation marks** — This author uses few quotation marks (~{quotes:.1f} per 100 words). Do NOT invent quoted speech or dialogue unless essential. Paraphrase instead of quoting.")
+        lines.append(f"**Quotation marks.** This author uses few quotation marks (~{quotes:.1f} per 100 words). Do NOT invent quoted speech or dialogue unless essential.")
         lines.append("")
     # Compact self-check: exact counts for a 30-sentence, 500-word piece
     lines.append("### Self-Check (for a ~30-sentence, ~500-word piece)")
@@ -318,7 +319,7 @@ def _build_skill_body(
         conj_min_sc = max(2, round(30 * open_conj / 100))
         lines.append(f"- Sentences starting with And/But/So/Yet: **{conj_min_sc}-{conj_min_sc + 1}** (HARD CAP)")
     if colons > 0.1:
-        lines.append(f"- Colons: **{max(1, round(colons * 5))}**")
+        lines.append(f"- Colons: **~{colons:.1f} per 100 words**")
     if semicolons >= 0.03:
         lines.append(f"- Semicolons: **at least 1**")
     if contraction < 1.0:
@@ -422,7 +423,7 @@ def _build_skill_body(
         # Add a balancing revision rule based on actual metrics
         if pct_long > 5:
             revision.append(
-                f"When you find a run of short sentences, combine some into longer compound structures — about {pct_long:.0f}% of sentences should be >25 words."
+                f"When you find a run of short sentences, combine some into longer compound structures. About {pct_long:.0f}% of sentences should be >25 words."
             )
 
         lines.append("## Revision Guidance")
@@ -441,7 +442,7 @@ def _build_skill_body(
         lines.append("")
         lines.append("These are verbatim passages from the author's writing. Use them as")
         lines.append("reference for structural patterns (paragraph breaks, sentence length")
-        lines.append("variation, rhythm) as well as tone and feel — your output should")
+        lines.append("variation, rhythm) as well as tone and feel. Your output should")
         lines.append("read like these passages.")
         lines.append("")
         for i, excerpt in enumerate(excerpts, 1):
@@ -463,7 +464,7 @@ def _build_skill_body(
     lines.append(f"- [ ] Do ~{pct_single:.0f}% of paragraphs consist of a single sentence? If zero paragraphs are standalone, break some out.")
     lines.append(f"- [ ] Is average paragraph ~{avg_sents:.1f} sentences? If most are 4+ sentences, split them.")
     lines.append(f"- [ ] Commas present in most medium/long sentences (~{commas:.1f} per sentence)?")
-    lines.append("- [ ] Sentence length varies — mix of short, medium, and long?")
+    lines.append("- [ ] Sentence length varies? Mix of short, medium, and long?")
     lines.append(f"- [ ] Sentence openers varied? No more than ~{open_art:.0f}% starting with articles, ~{open_pron:.0f}% with pronouns.")
     if colons > 0.1:
         lines.append(f"- [ ] Colons used? Target ~{colons:.1f} per 100 words.")
@@ -522,7 +523,7 @@ generated_by: voice-cloner-v2
 
 # {name}
 
-> Write in the voice and style described below. Follow every rule precisely — the quantitative targets are measured from the author's actual text.
+> Write in the voice and style described below. Follow every rule precisely. The quantitative targets are measured from the author's actual text.
 
 {body}"""
 

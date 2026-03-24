@@ -1,6 +1,6 @@
 name: voice-cloner
 type: tool
-version: "0.3.0"
+version: "0.4.0"
 description: >
   A self-contained CLI that analyzes writing samples and generates a Claude Code skill
   capturing the author's unique voice. Uses `claude -p` under the hood (Max plan, no API key).
