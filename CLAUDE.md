@@ -1,3 +1,15 @@
+## Session Rules — MANDATORY
+
+1. After ANY implementation, test the actual end-to-end use case before reporting results. Never say "checks passed" — show the actual output and let me judge.
+
+2. When I say stop, your next message is 1-2 sentences with zero tool calls.
+
+3. Never run code that isn't in an approved plan. If something needs changing, update the plan first.
+
+4. Don't do things I didn't ask for. No files, no searches, no "let me also" — do what was asked, nothing more.
+
+5. When something doesn't work, say so immediately. Don't rationalize, don't scope-blame, don't silently retry.
+
 # AgenTools — Contributor Guide
 
 This is a central repository of reusable Claude Code **agents**, **skills**, and **tools**. Read SPEC.md for the full specification.
