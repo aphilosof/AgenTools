@@ -40,6 +40,19 @@ python voice_extractor.py --interactive --category "General"
 # Paste your text, then type END on a new line
 ```
 
+To provide multiple samples in interactive mode, separate them with a line containing only `---`:
+
+```
+[paste first sample here]
+---
+[paste second sample here]
+---
+[paste third sample here]
+END
+```
+
+Each section between `---` delimiters is treated as a separate writing sample.
+
 ### Options
 ```
 --category        Required. "Academic Writing", "Job Applications", "Professional Email", etc.

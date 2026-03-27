@@ -353,19 +353,30 @@ def compute_metrics(samples):
     }
 
     # ── Contraction detection ──
-    contraction_patterns = [
-        r"\b\w+'t\b",    # don't, can't, won't, isn't
+    # Unambiguous contraction patterns (not 's, which overlaps with possessives)
+    unambiguous_patterns = [
+        r"\b\w+n't\b",   # don't, can't, won't, isn't, aren't, doesn't, hasn't, wouldn't
         r"\b\w+'re\b",   # we're, they're, you're
-        r"\b\w+'ve\b",   # I've, we've, they've
-        r"\b\w+'ll\b",   # I'll, we'll, they'll
-        r"\b\w+'m\b",    # I'm
-        r"\b\w+'s\b",    # it's, that's, he's (also possessives)
-        r"\b\w+'d\b",    # I'd, we'd, they'd
+        r"\b\w+'ve\b",   # I've, we've, they've, could've, should've, would've
+        r"\b\w+'ll\b",   # I'll, we'll, they'll, he'll, she'll, it'll
+        r"\b[Ii]'m\b",   # I'm
+        r"\b\w+'d\b",    # I'd, we'd, they'd, he'd, she'd, it'd
     ]
+    # 's is ambiguous — only count known contraction forms, not possessives
+    known_s_contractions = {
+        "it's", "that's", "he's", "she's", "what's", "there's",
+        "here's", "where's", "who's", "how's", "let's",
+        "everything's", "everyone's", "something's", "nothing's",
+    }
     contractions_found = []
-    for pattern in contraction_patterns:
+    for pattern in unambiguous_patterns:
         matches = re.findall(pattern, all_text, re.IGNORECASE)
         contractions_found.extend(matches)
+    # Pass 2: 's — only count known contractions, skip possessives
+    s_matches = re.findall(r"\b\w+'s\b", all_text, re.IGNORECASE)
+    for match in s_matches:
+        if match.lower() in known_s_contractions:
+            contractions_found.append(match)
     metrics["contractions"] = {
         "total_count": len(contractions_found),
         "instances": dict(Counter(c.lower() for c in contractions_found).most_common()),
