@@ -17,12 +17,14 @@ Requirements:
 """
 
 import argparse
+import json
 import os
 import sys
 import subprocess
 import time
 import re
 import shutil
+from collections import Counter
 from pathlib import Path
 
 
@@ -123,100 +125,35 @@ CATEGORY_PROFILES = {
 }
 
 
-# ─── STAGE 1 PROMPT ─────────────────────────────────────────────────────────
+# ─── SYNTHESIS PROMPT (single Claude call) ──────────────────────────────────
 
-STAGE1_SYSTEM = """You are a forensic writing analyst performing QUANTITATIVE and QUALITATIVE stylometric analysis. Be exhaustive. Use ACTUAL COUNTS from the text — never estimate or approximate.
+SYNTHESIS_SYSTEM = """You are a writing style analyst and prompt engineer. You receive:
+1. AUTOMATED METRICS from Python — exact punctuation counts, word frequencies, verb frequencies, contraction lists, pronoun counts, hyphenated compounds, paragraph counts. These are DETERMINISTIC and CORRECT. Trust them.
+2. RAW WRITING SAMPLES — the author's actual text.
 
-## QUANTITATIVE METRICS (count everything)
+Your job has TWO parts:
 
-### Sentence Metrics
-- Count every sentence. List each sentence's word count.
-- Calculate: minimum, maximum, mean, median sentence length.
-- Distribution: what % are short (1-8 words), medium (9-20), long (21-35), very long (36+)?
-- Clause nesting: for the 5 longest sentences, count the levels of embedded clauses (e.g., a relative clause inside a participial phrase inside a main clause = 3 levels). Report the maximum and typical nesting depth. Note whether density comes from stacked information or from syntactic recursion.
-- Sentence openers breakdown: how many start with subject-first, adverbial/prepositional phrase, conjunction (And/But/So/Yet), participial phrase, question, imperative, transition word? Give counts AND percentages.
+## PART A: QUALITATIVE ANALYSIS (things Python cannot do)
+Using the raw samples, analyze:
+- Sentence boundaries, sentence count, average/median sentence length, length distribution
+- Sentence opener classification (subject-first, adverbial, conjunction, "This [noun]", etc.) with counts and percentages
+- Passive vs active voice instances with examples
+- Clause nesting depth (typical and maximum)
+- Tone and register (formality scale, authoritative vs tentative, emotional register)
+- Rhetorical patterns (argument structure, analogies/metaphors, how examples are introduced, transitions)
+- Whether the author editorializes (uses superlatives/evaluative adjectives) or lets specifics speak
+- Whether the author makes standalone philosophical declarations or always backs assertions with evidence
+- Register splitting (different vocabulary for different content types within the same document?)
+- Distinctive quirks that make this voice recognizable
 
-### Punctuation Inventory
-- Count EVERY instance of: commas, semicolons, colons, em dashes, hyphens, parentheses (pairs), ellipses, exclamation marks, question marks.
-- Calculate per-sentence averages for commas, em dashes, parentheses.
-- Oxford comma: present or absent?
-- Any comma splices?
+IMPORTANT: The automated metrics give you exact punctuation, word, verb, and pronoun counts. Do NOT recount these. Use them directly. Focus your effort on the qualitative dimensions listed above that require language understanding.
 
-### Paragraph Metrics
-- Count sentences per paragraph for EVERY paragraph.
-- Calculate: min, max, mean paragraph length (in sentences).
-- Single-sentence paragraphs: how many? Where positioned?
-- Paragraph opening patterns (assertion, question, transition, anecdote, data) with counts.
-- Paragraph closing patterns (summary, declaration, open question, transition) with counts.
+PARAGRAPH METRICS NOTE: If the automated metrics include a "paragraph_warning" field, do NOT use the automated paragraph_count or paragraph_word_counts. Instead, determine paragraph structure yourself from the raw writing samples. The automated paragraph detection failed due to formatting issues in the input (e.g., line-wrapped text without clear paragraph delimiters).
 
-### Vocabulary Profile
-- Count unique words vs total words (type-token ratio).
-- List the 15 most frequent content words (excluding articles/prepositions/conjunctions).
-- List any words or phrases that appear 3+ times.
-- Latinate vs Germanic word preference with examples FROM the text.
-- EVERY contraction found. Count contractions vs opportunities where contraction was avoided.
-- All jargon or domain-specific terms.
-- Hedging language instances ("perhaps," "somewhat," "might," "tends to," etc.).
-- Intensifier instances ("very," "extremely," "clearly," "absolutely," etc.).
+## PART B: SYNTHESIS
+Combine the automated metrics + your qualitative analysis + the raw samples to produce three outputs.
 
-#### Verb Register
-- List the 20 most frequent verbs in the text (excluding "is/are/was/were/be/been/being/have/has/had").
-- For each verb, note: the verb itself, count, and one example sentence where it appears.
-- Identify the author's PREFERRED verbs for common actions. For example: does the author write "use" or "leverage" or "employ"? "Show" or "demonstrate" or "reveal"? "Fix" or "address" or "resolve"? List each pair: [generic verb] → [author's actual verb] with count.
-- Flag any verbs that appear 0 times but might be expected for the domain (e.g., if a science writer never uses "facilitate" or "utilize," that is a signal).
-
-### Voice & Person
-- First person (I/we/my/our): total count, usage pattern.
-- Second person (you/your): total count, usage pattern.
-- Passive voice: count instances, LIST each one.
-- Active voice dominance: approximate %.
-
-## QUALITATIVE ANALYSIS
-
-### Tone & Register
-- Formality spectrum (1-10, with justification).
-- Authoritative vs tentative.
-- Emotional register: detached, measured, passionate, urgent, dry, warm?
-- Humor or irony: present? Type? Frequency?
-- Directness: gets to point immediately or builds up?
-
-### Rhetorical Patterns
-- Argument structure (claim-then-evidence, evidence-then-claim, narrative, hybrid?)
-- Analogies/metaphors — list EVERY instance.
-- How examples are introduced.
-- Repetition as device.
-- How qualification/nuance is handled.
-- Transitions between ideas (explicit connectors vs implicit logical flow).
-
-### Distinctive Quirks
-- Anything idiosyncratic or signature.
-- Patterns that would be LOST if a generic AI rewrote this.
-- What makes this voice recognizable?
-
-## EXEMPLAR SELECTION
-
-Select 4-6 passages (1-4 sentences each) most characteristic of this voice. For each:
-1. Quote EXACTLY as written.
-2. Teaching note: what makes it characteristic (specific words, punctuation, structure, rhythm).
-3. Style feature tags.
-
-Format each as:
-===EXEMPLAR_N===
-PASSAGE: "[exact quote]"
-TEACHING_NOTE: [annotation]
-TAGS: [tags]
-===END_EXEMPLAR_N===
-
-Be forensic. Every claim backed by actual counts."""
-
-
-# ─── STAGE 2 PROMPT ─────────────────────────────────────────────────────────
-
-STAGE2_SYSTEM = """You are a prompt engineer specializing in writing style replication. You receive a forensic analysis and original samples.
-
-Synthesize into THREE outputs:
-
-## OUTPUT 1: RULES + SELF-CHECK (===RULES_START=== / ===RULES_END===)
+### OUTPUT 1: RULES + SELF-CHECK (===RULES_START=== / ===RULES_END===)
 
 HARD, NUMBERED, VERIFIABLE rules. Not vague — specific and measurable.
 BAD: "Write conversationally" GOOD: "Average sentence length: 14-20 words. No sentence exceeds 35. Use em dashes for asides, never parentheses."
@@ -228,7 +165,15 @@ Group into: SENTENCE RULES, PUNCTUATION RULES, PARAGRAPH RULES, VOCABULARY RULES
 
 Then SELF-CHECK RUBRIC: numbered yes/no checklist Claude must verify before outputting.
 
-## OUTPUT 2: ANNOTATED EXAMPLES (===EXAMPLES_START=== / ===EXAMPLES_END===)
+The self-check rubric MUST include these three items regardless of category:
+
+1. A hard em-dash count check: "Does the entire document contain at most [N] em dashes? If more, rewrite using the author's primary packing construction."
+
+2. A vocabulary boundary check: "Does every word in the output appear in the author's samples, the verb register, or common English? Flag any word that sounds like jargon, theory language, or buzzwords not in the samples."
+
+3. A construction method check: "Are information-dense sentences built using the author's primary construction method (specified in the rules), not using em-dash insertions or other constructions the author avoids?"
+
+### OUTPUT 2: ANNOTATED EXAMPLES (===EXAMPLES_START=== / ===EXAMPLES_END===)
 
 Most critical component. Select 4-6 strongest passages from the ORIGINAL samples. For EACH:
 
@@ -239,7 +184,11 @@ Most critical component. Select 4-6 strongest passages from the ORIGINAL samples
 <generic_ai_version>[Same content rewritten as flat generic AI. Correct but lifeless. Shows what NOT to do.]</generic_ai_version>
 </example>
 
-## OUTPUT 3: SKILL.md (===SKILL_START=== / ===SKILL_END===)
+EXCEPTION PATTERN WARNING: When selecting annotated examples, check whether any example uses a construction that is RARE or EXCEPTIONAL for the author. If so, the annotation MUST explicitly warn that this pattern is the exception, not the norm. For example, if the author rarely uses em dashes but one selected passage happens to contain one, the annotation must say: "NOTE: The em dash in this passage is an exception — the author's primary method is [X]. When writing in this voice, use [X] instead. This example is included to show [the other patterns it demonstrates], not the em dash usage."
+
+Never let an example teach a rare pattern without flagging it as rare. Claude will replicate whatever the examples show — if an example uses an em dash without warning, Claude will use em dashes everywhere.
+
+### OUTPUT 3: SKILL.md (===SKILL_START=== / ===SKILL_END===)
 
 Complete self-contained SKILL.md:
 ---
@@ -265,11 +214,16 @@ The user message includes a CATEGORY section with specific analysis focus items 
 ### Punctuation rules must specify WHAT, not just HOW OFTEN
 When generating punctuation frequency rules, always specify WHAT content belongs inside the punctuation mark, not just how often to use it. For example, don't just say "use parentheses 1 per 4 sentences" — say "use parentheses for [specific purposes found in the samples, e.g., citations, abbreviations, company names] and NEVER for [things that belong in the main clause, e.g., taxonomic lists, substrate names, numerical ranges, pathway descriptions]." Examine the samples to determine exactly what the author puts inside parentheses, em dashes, colons, etc.
 
+### Em dash rules must be RESTRICTIVE by default
+When generating punctuation rules for em dashes, default to RESTRICTIVE. Most authors use em dashes rarely or never in the category being analyzed. If the forensic analysis shows fewer than 1 em dash per 300 words, generate the rule as: "Em dashes: ALMOST NEVER. Maximum 1 per entire document." If em dashes are more frequent, still specify that the author's PRIMARY information-packing method (comma-separated participial phrases, colon-then-list, parallel constructions, etc.) should be used INSTEAD of em dashes in most cases. Explicitly state what construction to use instead — do not just say "em dashes are rare," say "use [author's actual construction method] instead of em dashes."
+
+The anti-rule for em dashes must say: "If a draft contains more than [threshold], rewrite ALL em-dash sentences using the author's primary packing construction. This is non-negotiable."
+
 ### Vocabulary rules must include clarity constraints and a Claude-ism blacklist
 Every vocabulary rule must include a clarity constraint. Dense ≠ baroque. If the author's vocabulary is Latinate, the rule must also include a BLACKLIST of Claude-isms that sound similar but are NOT in the author's actual vocabulary. Scan the samples and ONLY include words the author ACTUALLY USES. Common Claude-isms to check against the samples (EXCLUDE unless found verbatim): "wherein," "thereof," "exquisitely," "renders," "obligate," "aforementioned," "pertaining to," "in the context of," "it is important to note that," "it should be noted," "underscores," "facilitates," "encompasses," "paradigm." If a word is not in the samples, it goes on the blacklist.
 
 ### Verb guidance must be evidence-based, not blacklist-style
-The word blacklist above is for FILLER WORDS and CLAUDE-ISMS — phrases Claude inserts that no human would write. Verb guidance is DIFFERENT. Do NOT blacklist common verbs like "use," "show," "include" — the author may use them sometimes. Instead, generate a VERB REGISTER table showing the author's PREFERRED verbs with occurrence counts from the analysis. Format: "Prefer '[author's verb]' (N occurrences) over '[generic verb]' when describing [context]." If the analysis shows the author uses BOTH "leverage" and "use," say so — do not pretend one is forbidden. The goal is frequency-weighted guidance, not absolute prohibition.
+The word blacklist above is for FILLER WORDS and CLAUDE-ISMS — phrases Claude inserts that no human would write. Verb guidance is DIFFERENT. Do NOT blacklist common verbs like "use," "show," "include" — the author may use them sometimes. Instead, generate a VERB REGISTER table showing the author's PREFERRED verbs with occurrence counts from the AUTOMATED METRICS. Format: "Prefer '[author's verb]' (N occurrences) over '[generic verb]' when describing [context]." If the metrics show the author uses BOTH "leverage" and "use," say so — do not pretend one is forbidden. The goal is frequency-weighted guidance, not absolute prohibition.
 
 ### Every positive rule needs a corresponding ANTI-RULE
 For every positive rule, consider what Claude is likely to do wrong when following it, and generate a corresponding ANTI-RULE (prefix with "ANTI-RULE:"). Examples:
@@ -280,17 +234,36 @@ For every positive rule, consider what Claude is likely to do wrong when followi
 ### Mandatory first-read clarity rule
 Always generate this rule regardless of the writing category: "MANDATORY: Every sentence must be parseable on first read. Complexity comes from the IDEAS packed into a sentence, not from syntactic nesting or vocabulary obscurity. If a reader needs to re-read a sentence to understand its grammatical structure, rewrite it. The test: cover everything after the main verb — can you identify the subject and verb instantly? If not, simplify the structure."
 
-### Information-dense sentence rules must specify CONSTRUCTION METHOD
+### Information-dense sentence rules must specify CONSTRUCTION METHOD with templates
 When generating rules about information-dense sentences (credential stacks, evidence packing, multi-part claims), specify the CONSTRUCTION METHOD the author uses, not just the frequency. Analyze HOW the author packs information: comma-separated participial phrases ("With X, combined with Y, I am...")? Em-dash insertions? "Both X and Y while Z" constructions? Colon-then-list? The construction method matters as much as the frequency. Generate an anti-rule specifying which packing constructions are NOT in the author's samples.
+
+Provide EXPLICIT CONSTRUCTION TEMPLATES with examples from the samples. Do not just say "the author uses information-dense sentences." Show the exact pattern:
+
+For credential stacking, specify: "Construction: With [credential 1], [credential 2], and [credential 3], I am [claim]." or "As a [identity] with [credential 1], [credential 2], and [credential 3], I am [claim]."
+
+For evidence bridging, specify: "Construction: My [experience] at [institution] [verb — provides/demonstrates/aligns with] [specific institutional need]."
+
+For parallel lists, specify: "Construction: [item 1], [item 2], and [item 3]" with Oxford comma.
+
+Provide both the template AND an actual example from the author's samples for each construction. Then specify what NOT to do — show the construction the author avoids (e.g., em-dash insertion) alongside the one they use (e.g., comma-separated participial phrases).
 
 ### Recurring sentence patterns must be scoped to PARAGRAPH TYPES
 When generating rules about recurring sentence patterns (credential stacks, topic sentences, evidence sentences), scope them to the PARAGRAPH TYPES where they actually appear. Not every paragraph serves the same function. If the author uses credential stacks in opening and qualification paragraphs but not in personal narrative or values paragraphs, say so. Never write a rule like "at least 1 credential stack per paragraph" if the pattern only applies to certain paragraph types.
 
-### Anti-editorializing rule
-Always generate an ANTI-EDITORIALIZING rule. Check the samples: does the author use superlative-adjacent phrases ("most important," "most extreme," "truly remarkable") or let specifics speak without evaluative overlay? If the author relies on naming things and giving numbers instead of evaluating them, generate: "Never evaluate — specify. Replace superlative phrases with concrete details. Instead of calling something extreme, name it. Instead of calling experience significant, quantify it."
+### Anti-editorializing rule with REPLACEMENT INSTRUCTIONS
+Always generate an ANTI-EDITORIALIZING rule. Check the samples: does the author use superlative-adjacent phrases ("most important," "most extreme," "truly remarkable") or let specifics speak without evaluative overlay? If the author relies on naming things and giving numbers instead of evaluating them, generate an anti-editorializing rule that includes REPLACEMENT INSTRUCTIONS, not just prohibitions. Do not just say "avoid superlatives." Say: "Replace every evaluative adjective with the specific fact it is trying to convey. Instead of 'extensive experience,' write 'seven years at Caltech.' Instead of 'outstanding teaching,' write 'two Excellence in Teaching Awards (2010, 2013), student evaluations at 9.5 out of 10.' Instead of 'significant impact,' write the specific impact with a number. If you cannot replace an evaluative adjective with a specific fact, cut the adjective entirely — do not keep it."
+
+Draw replacement examples from the ACTUAL SAMPLES — show what the author writes instead of evaluative language. The replacement instruction must make it impossible for Claude to fall back on vague evaluative adjectives.
 
 ### Genre cliché list
 Generate a GENRE CLICHÉ list separate from the Claude-ism blacklist. Check the samples against common clichés of the writing category. For job applications: "next generation," "hit the ground running," "passionate about," "unique opportunity," "proven track record," "leverage my skills," "uniquely positioned." For academic writing: "paradigm shift," "gap in the literature," "sheds light on," "paves the way." For grant proposals: "transformative," "cutting-edge," "novel approach," "interdisciplinary synergy." If the author avoids genre clichés and uses specific language instead, generate a rule enforcing that.
+
+### STRICT vocabulary boundary rule — ALWAYS generate this
+ALWAYS generate a STRICT VOCABULARY BOUNDARY rule, regardless of category. This rule states: "Do not introduce words or phrases the author does not use in the samples. If a word does not appear in the writing samples or the verb register, do not use it. When in doubt, use a simpler word the author demonstrably uses."
+
+In addition to the Claude-ism blacklist (words Claude defaults to) and the genre cliché blacklist (category-specific clichés), generate a JARGON BOUNDARY instruction: "Any word that sounds like educational theory jargon, DEI policy language, management consulting vocabulary, or academic buzzwords that is not in the author's samples must not appear in the output. Test: can you point to this exact word in the author's writing? If not, do not use it."
+
+Provide specific examples of the kind of jargon to avoid, drawn from the writing category. For job applications: "scientific identity," "scientific agency," "credentialing," "positionality," "intentionality," "praxis," "equity-minded," "productive struggle," "asset-based." For academic writing: "paradigm shift," "problematize," "unpack," "interrogate" (non-literal). For professional writing: "synergy," "thought leadership," "stakeholder engagement," "catalyze," "operationalize." For grant proposals: "capacity building," "theory of change," "impact framework," "scaling pathways." These are examples — the rule applies GENERALLY to any jargon not in the samples.
 
 ### Institutional language — distinguish adoption from buzzwords
 When generating rules about institutional language, distinguish two types: (a) INSTITUTIONAL VOCABULARY ADOPTION — using the target institution's specific program names, frameworks, and terminology. This is good and should be encouraged. (b) INSTITUTIONAL BUZZWORDS — generic policy language that appears everywhere ("broadening participation," "inclusive excellence," "transformative impact"). Check the samples: does the author use these generic terms or express the same ideas through concrete actions and stories? Generate rules accordingly.
@@ -298,7 +271,221 @@ When generating rules about institutional language, distinguish two types: (a) I
 ### Unsupported philosophical claims
 Check whether the author makes standalone philosophical declarations ("X and Y are inseparable," "education is fundamentally about Z"). If the author does NOT — if every assertion is backed by evidence in the same paragraph — generate: "Never make an unsupported philosophical claim. Every assertion needs specific evidence in the same paragraph: a number, a name, a concrete experience, or a citation. If you cannot immediately support a claim, rewrite it as a transition to evidence."
 
-CRITICAL: Every rule traces to actual analysis numbers. Every example is an EXACT QUOTE. Every generic_ai_version shows the contrast clearly."""
+## METRICS INTEGRATION
+When generating rules, express quantitative targets as RANGES not point values. The automated metrics give exact counts; convert them to ranges that absorb natural variation:
+- If automated metrics show 47 commas across 32 sentences (1.47/sentence), write the rule as "1.2-1.7 commas per sentence" not "1.47 commas per sentence"
+- If verb "align" appears 8 times, write "align (frequent — 8x in samples)" not "use align exactly 8 times"
+- Ranges should be tight enough to be useful but loose enough to handle natural variation
+
+When generating the Self-Check Rubric, frame checks against the ranges: "Is the comma rate between 1.2-1.7 per sentence?" not "Is the comma rate exactly 1.47?"
+
+NOTE about [...] markers: If the samples contain [...] markers, these indicate paragraphs were omitted during smart sampling. Do not analyze transitions across [...] gaps. All other analysis should proceed normally.
+
+CRITICAL: Every rule traces to actual metrics or qualitative analysis. Every example is an EXACT QUOTE. Every generic_ai_version shows the contrast clearly.
+
+Format outputs with these delimiters:
+===RULES_START=== / ===RULES_END===
+===EXAMPLES_START=== / ===EXAMPLES_END===
+===SKILL_START=== / ===SKILL_END===
+"""
+
+
+# ─── METRICS ─────────────────────────────────────────────────────────────────
+
+def compute_metrics(samples):
+    """Compute deterministic metrics Python can handle reliably.
+
+    Does NOT attempt: sentence boundaries, sentence openers,
+    passive voice, tone, rhetoric, clause nesting.
+    Those go to Claude.
+    """
+    all_text = " ".join(s["text"] for s in samples)
+    all_words = all_text.split()
+    total_words = len(all_words)
+
+    metrics = {}
+
+    # ── Word-level metrics ──
+    word_freq = Counter(w.lower().strip(".,;:!?()[]\"'—–-") for w in all_words)
+    word_freq = {k: v for k, v in word_freq.items() if len(k) > 1}
+
+    stop_words = {
+        "the", "of", "and", "in", "to", "is", "are", "was", "were", "be",
+        "been", "being", "have", "has", "had", "do", "does", "did", "will",
+        "would", "could", "should", "may", "might", "shall", "can", "a",
+        "an", "this", "that", "these", "those", "it", "its", "for", "with",
+        "on", "at", "by", "from", "as", "or", "but", "not", "no", "if",
+        "than", "into", "through", "about", "between", "after", "before",
+        "which", "who", "whom", "their", "there", "they", "them", "we",
+        "our", "my", "your", "his", "her", "he", "she", "also", "more",
+        "such", "each", "other", "how", "what", "when", "where", "while",
+        "both", "all", "any", "most", "some",
+    }
+    content_words = {k: v for k, v in word_freq.items() if k not in stop_words}
+    metrics["top_15_content_words"] = dict(Counter(content_words).most_common(15))
+
+    unique_words = len(set(w.lower().strip(".,;:!?()[]\"'—–-") for w in all_words if len(w) > 1))
+    metrics["type_token_ratio"] = round(unique_words / total_words, 3) if total_words > 0 else 0
+    metrics["total_words"] = total_words
+    metrics["unique_words"] = unique_words
+
+    # ── Repeated phrases (2-3 word ngrams appearing 3+ times) ──
+    bigrams = [" ".join(all_words[i:i+2]).lower().strip(".,;:!?()") for i in range(len(all_words)-1)]
+    trigrams = [" ".join(all_words[i:i+3]).lower().strip(".,;:!?()") for i in range(len(all_words)-2)]
+    bigram_freq = {k: v for k, v in Counter(bigrams).items() if v >= 3 and not all(w in stop_words for w in k.split())}
+    trigram_freq = {k: v for k, v in Counter(trigrams).items() if v >= 3 and not all(w in stop_words for w in k.split())}
+    metrics["repeated_bigrams"] = dict(Counter(bigram_freq).most_common(10))
+    metrics["repeated_trigrams"] = dict(Counter(trigram_freq).most_common(10))
+
+    # ── Punctuation counts (character-level — bulletproof) ──
+    metrics["punctuation"] = {
+        "commas": all_text.count(","),
+        "semicolons": all_text.count(";"),
+        "colons": all_text.count(":"),
+        "em_dashes": all_text.count("\u2014"),
+        "en_dashes": all_text.count("\u2013"),
+        "hyphens": all_text.count("-") - all_text.count("\u2014") - all_text.count("\u2013"),
+        "open_parens": all_text.count("("),
+        "close_parens": all_text.count(")"),
+        "exclamation_marks": all_text.count("!"),
+        "question_marks": all_text.count("?"),
+        "ellipses": all_text.count("...") + all_text.count("\u2026"),
+    }
+
+    # ── Contraction detection ──
+    contraction_patterns = [
+        r"\b\w+'t\b",    # don't, can't, won't, isn't
+        r"\b\w+'re\b",   # we're, they're, you're
+        r"\b\w+'ve\b",   # I've, we've, they've
+        r"\b\w+'ll\b",   # I'll, we'll, they'll
+        r"\b\w+'m\b",    # I'm
+        r"\b\w+'s\b",    # it's, that's, he's (also possessives)
+        r"\b\w+'d\b",    # I'd, we'd, they'd
+    ]
+    contractions_found = []
+    for pattern in contraction_patterns:
+        matches = re.findall(pattern, all_text, re.IGNORECASE)
+        contractions_found.extend(matches)
+    metrics["contractions"] = {
+        "total_count": len(contractions_found),
+        "instances": dict(Counter(c.lower() for c in contractions_found).most_common()),
+    }
+
+    # ── Hyphenated compound modifiers ──
+    compounds = re.findall(r'\b[a-zA-Z]+-[a-zA-Z]+\b', all_text)
+    compounds = [c for c in compounds if len(c) > 3]
+    metrics["hyphenated_compounds"] = dict(Counter(c.lower() for c in compounds).most_common(20))
+
+    # ── Person/pronoun counts ──
+    first_person_singular = len(re.findall(r'\bI\b', all_text))
+    first_person_singular += len(re.findall(r'\b[Mm]y\b', all_text))
+    first_person_plural = len(re.findall(r'\b[Ww]e\b', all_text))
+    first_person_plural += len(re.findall(r'\b[Oo]ur\b', all_text))
+    second_person = len(re.findall(r'\b[Yy]ou\b', all_text))
+    second_person += len(re.findall(r'\b[Yy]our\b', all_text))
+
+    metrics["person"] = {
+        "first_singular_I_my": first_person_singular,
+        "first_plural_we_our": first_person_plural,
+        "second_you_your": second_person,
+    }
+
+    # ── Verb extraction (frequency-based, not POS-tagged) ──
+    common_verbs = [
+        "align", "aligns", "aligned", "aligning",
+        "provide", "provides", "provided", "providing",
+        "demonstrate", "demonstrates", "demonstrated", "demonstrating",
+        "investigate", "investigates", "investigated", "investigating",
+        "develop", "develops", "developed", "developing",
+        "establish", "establishes", "established", "establishing",
+        "create", "creates", "created", "creating",
+        "build", "builds", "built", "building",
+        "apply", "applies", "applied", "applying",
+        "leverage", "leverages", "leveraged", "leveraging",
+        "address", "addresses", "addressed", "addressing",
+        "enable", "enables", "enabled", "enabling",
+        "require", "requires", "required", "requiring",
+        "support", "supports", "supported", "supporting",
+        "contribute", "contributes", "contributed", "contributing",
+        "integrate", "integrates", "integrated", "integrating",
+        "connect", "connects", "connected", "connecting",
+        "transform", "transforms", "transformed", "transforming",
+        "shape", "shapes", "shaped", "shaping",
+        "foster", "fosters", "fostered", "fostering",
+        "characterize", "characterizes", "characterized", "characterizing",
+        "use", "uses", "used", "using",
+        "show", "shows", "showed", "showing",
+        "include", "includes", "included", "including",
+        "work", "works", "worked", "working",
+        "lead", "leads", "led", "leading",
+        "serve", "serves", "served", "serving",
+        "teach", "teaches", "taught", "teaching",
+        "drive", "drives", "drove", "driving",
+        "remain", "remains", "remained", "remaining",
+        "identify", "identifies", "identified", "identifying",
+        "analyze", "analyzes", "analyzed", "analyzing",
+        "manage", "manages", "managed", "managing",
+        "predict", "predicts", "predicted", "predicting",
+        "validate", "validates", "validated", "validating",
+        "assess", "assesses", "assessed", "assessing",
+        "evaluate", "evaluates", "evaluated", "evaluating",
+        "secure", "secures", "secured", "securing",
+        "translate", "translates", "translated", "translating",
+        "understand", "understands", "understood", "understanding",
+        "design", "designs", "designed", "designing",
+    ]
+
+    verb_lemmas = {}
+    words_lower = [w.lower().strip(".,;:!?()[]\"'—–-") for w in all_words]
+    for i in range(0, len(common_verbs), 4):
+        lemma = common_verbs[i]
+        forms = common_verbs[i:i+4]
+        count = sum(words_lower.count(f) for f in forms)
+        if count > 0:
+            verb_lemmas[lemma] = count
+
+    metrics["verb_frequency"] = dict(sorted(verb_lemmas.items(), key=lambda x: -x[1])[:25])
+
+    # ── Paragraph detection ──
+    # After preprocessing, text should have double newlines between paragraphs
+    # (unwrap_lines() handles line-wrapped input). Just split on double newlines.
+    all_paragraphs = []
+    for s in samples:
+        text = s["text"]
+        paras = [p.strip() for p in re.split(r'\n\s*\n', text) if p.strip()]
+        all_paragraphs.extend(paras)
+
+    para_word_counts = [len(p.split()) for p in all_paragraphs]
+    metrics["paragraph_count"] = len(all_paragraphs)
+    metrics["paragraph_word_counts"] = para_word_counts
+
+    # Flag if paragraph detection likely failed
+    max_para_words = max(para_word_counts) if para_word_counts else 0
+    total_words = metrics["total_words"]
+    avg_para_words = total_words / max(len(all_paragraphs), 1)
+    if max_para_words > 300 or (avg_para_words > 150 and total_words > 500):
+        metrics["paragraph_warning"] = (
+            f"Largest paragraph is {max_para_words} words — paragraph breaks were not "
+            f"detected correctly in the input. Paragraph-level metrics are unreliable. "
+            f"Determine paragraph structure directly from the raw writing samples."
+        )
+
+    # ── Oxford comma detection ──
+    # Oxford: ", word, and" (comma before "and")
+    oxford_present = len(re.findall(r',\s+\w+,\s+and\s+', all_text))
+    # Non-oxford: ", word and" — the broader pattern also matches oxford cases,
+    # so subtract oxford hits to get genuine non-oxford instances
+    no_oxford = max(0, len(re.findall(r',\s+\w+\s+and\s+', all_text)) - oxford_present)
+    metrics["oxford_comma"] = {
+        "oxford_instances": oxford_present,
+        "non_oxford_instances": no_oxford,
+        "assessment": "consistently used" if oxford_present > 0 and no_oxford == 0
+                      else "consistently absent" if oxford_present == 0 and no_oxford > 0
+                      else "not enough lists to determine" if oxford_present == 0 and no_oxford == 0
+                      else "mixed"
+    }
+
+    return metrics
 
 
 # ─── HELPERS ─────────────────────────────────────────────────────────────────
@@ -340,6 +527,33 @@ def check_claude_cli():
         print("  Install Claude Code: https://docs.anthropic.com/en/docs/claude-code")
         print("  Or: npm install -g @anthropic-ai/claude-code")
         sys.exit(1)
+
+
+def unwrap_lines(text):
+    """Join line-wrapped text into continuous paragraphs.
+
+    Line-wrapped text (from PDFs, terminal paste, etc.) has single newlines
+    at ~80-100 char boundaries regardless of sentence structure. This joins
+    those wrapped lines back into continuous text, preserving only blank-line
+    paragraph breaks.
+
+    If the text already has double newlines, those are preserved as paragraph
+    boundaries and single newlines within each block are treated as line wraps.
+    """
+    # Split on blank lines (double+ newlines) to get paragraph blocks
+    blocks = re.split(r'\n\s*\n', text)
+    unwrapped_blocks = []
+    for block in blocks:
+        block = block.strip()
+        if not block:
+            continue
+        # Replace single newlines with spaces (they're just line wraps)
+        continuous = re.sub(r'\n', ' ', block)
+        # Clean up multiple spaces
+        continuous = re.sub(r'  +', ' ', continuous).strip()
+        if continuous:
+            unwrapped_blocks.append(continuous)
+    return '\n\n'.join(unwrapped_blocks)
 
 
 def preprocess_sample(text):
@@ -471,8 +685,10 @@ def preprocess_sample(text):
 
         processed.append(stripped)
 
-    # Clean up multiple blank lines
+    # Unwrap line-wrapped text into continuous paragraphs
     result = '\n'.join(processed)
+    result = unwrap_lines(result)
+    # Clean up excessive blank lines
     result = re.sub(r'\n{3,}', '\n\n', result)
     cleaned = result.strip()
 
@@ -667,7 +883,7 @@ def call_claude(prompt, stage_name):
         return output
 
     except subprocess.TimeoutExpired:
-        print(f"  TIMEOUT after 15 minutes. Try shorter samples or --single-stage.")
+        print(f"  TIMEOUT after 15 minutes. Try shorter samples.")
         sys.exit(1)
     except Exception as e:
         print(f"  ERROR: {e}")
@@ -700,11 +916,6 @@ Examples:
                              "E.g., 'Investor pitch narratives, persuasive but evidence-backed, we/our voice'")
     parser.add_argument("--output-dir", default="./voice-output",
                         help="Output directory (default: ./voice-output)")
-    parser.add_argument("--single-stage", action="store_true",
-                        help="Single API call instead of two stages. Faster but may be less thorough. "
-                             "Auto-enabled for inputs over 3000 words unless --two-stage is set.")
-    parser.add_argument("--two-stage", action="store_true",
-                        help="Force two-stage pipeline even on large inputs (may be slow)")
     parser.add_argument("--no-preprocess", action="store_true",
                         help="Skip text preprocessing (keep headers, sign-offs, references, LaTeX commands)")
 
@@ -729,16 +940,6 @@ Examples:
 
     # Build category context
     category_context = build_category_context(args.category, args.category_description)
-
-    # Auto-fallback to single-stage for large inputs
-    auto_single_stage = False
-    if not args.single_stage and not args.two_stage and total_words > 3000:
-        print(f"\n  NOTE: {total_words} words is a large input.")
-        print(f"  Auto-switching to single-stage mode to avoid timeout.")
-        print(f"  (Use --two-stage to force two-stage mode)\n")
-        auto_single_stage = True
-
-    use_single_stage = args.single_stage or auto_single_stage
 
     # Output dir
     out_dir = Path(args.output_dir)
@@ -770,59 +971,32 @@ Examples:
     print(f"  Saved: processed-input.txt ({len(input_dump)} chars)")
     print(f"    ^ This is exactly what the tool sends to Claude for analysis")
 
-    if use_single_stage:
-        prompt = f"""{STAGE1_SYSTEM}
+    # ── Compute deterministic metrics (instant) ──
+    print("\n── Computing metrics ──")
+    metrics = compute_metrics(samples)
+    metrics_summary = json.dumps(metrics, indent=2)
+    (out_dir / "metrics.json").write_text(metrics_summary, encoding="utf-8")
+    print(f"  Saved: metrics.json ({len(metrics_summary)} chars)")
+    print(f"    ^ Automated counts: punctuation, vocabulary, verbs, pronouns")
 
----
-
-After completing the analysis, ALSO produce these synthesis outputs:
-
-{STAGE2_SYSTEM}
+    # ── Single Claude call: qualitative analysis + synthesis ──
+    prompt = f"""{SYNTHESIS_SYSTEM}
 
 ---
 
 {category_context}
+
+## AUTOMATED METRICS (from Python — these are exact, trust them):
+{metrics_summary}
+
+## RAW WRITING SAMPLES (quote passages EXACTLY from these):
 SAMPLES: {len(samples)} | WORDS: ~{total_words}
 
 {samples_block}
 
-Perform forensic analysis with actual counts, then synthesize all three outputs."""
+Perform qualitative analysis on the samples, then synthesize automated metrics + your analysis + the samples into all three outputs (RULES with ranges, EXAMPLES with good/bad contrasts, SKILL.md). Every quantitative rule must use the automated metrics expressed as ranges. Every example must be an EXACT quote from the samples."""
 
-        result = call_claude(prompt, "COMBINED ANALYSIS + SYNTHESIS")
-        synthesis = result
-    else:
-        # Stage 1
-        s1_prompt = f"""{STAGE1_SYSTEM}
-
----
-
-{category_context}
-SAMPLES: {len(samples)} | WORDS: ~{total_words}
-
-{samples_block}
-
-Perform complete forensic analysis. Every metric must use actual counts."""
-
-        analysis = call_claude(s1_prompt, "STAGE 1: FORENSIC ANALYSIS")
-        (out_dir / "raw-analysis.txt").write_text(analysis, encoding="utf-8")
-        print(f"  Saved: raw-analysis.txt")
-
-        # Stage 2
-        s2_prompt = f"""{STAGE2_SYSTEM}
-
----
-
-{category_context}
-
-## FORENSIC ANALYSIS RESULTS:
-{analysis}
-
-## ORIGINAL WRITING SAMPLES (quote EXACTLY from these):
-{samples_block}
-
-Synthesize into all three outputs. Rules use real numbers. Examples are EXACT QUOTES with generic AI contrast."""
-
-        synthesis = call_claude(s2_prompt, "STAGE 2: SYNTHESIS")
+    synthesis = call_claude(prompt, "ANALYSIS + SYNTHESIS")
 
     # ── Save outputs ──
     print(f"\n── Saving outputs to {out_dir}/ ──")
