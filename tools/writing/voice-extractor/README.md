@@ -100,6 +100,48 @@ The output has three layers (research shows all three together >> any one alone)
 **Option D — Claude Project:**
 1. Create a Project, add `paste-ready-prompt.txt` as a knowledge file or paste into Project Instructions
 
+## Using the Generated Skill Files
+
+The `.skill.md` file is a self-contained Claude Code skill. Three ways to use it:
+
+### 1. Global skill (all projects)
+
+```bash
+mkdir -p ~/.claude/skills
+cp ./voice-output/job-applications-voice.skill.md ~/.claude/skills/
+```
+
+Claude Code will automatically load this skill in every project.
+
+### 2. Project-specific skill
+
+```bash
+mkdir -p .claude/skills
+cp ./voice-output/job-applications-voice.skill.md .claude/skills/
+```
+
+The skill only activates when working in that project directory.
+
+### 3. Manual trigger
+
+If the skill doesn't activate automatically, tell Claude Code directly:
+
+```
+Read .claude/skills/job-applications-voice.skill.md and follow it when writing.
+```
+
+### Multiple voice skills
+
+You can install skill files for different writing categories side by side:
+
+```bash
+cp cover-letter-output/job-applications-voice.skill.md ~/.claude/skills/
+cp proposal-output/grant-proposal-writing-voice.skill.md ~/.claude/skills/
+cp email-output/professional-email-voice.skill.md ~/.claude/skills/
+```
+
+Claude Code will pick the right one based on the task — a cover letter request uses the job applications skill, a grant draft uses the proposal skill.
+
 ## Tips
 
 - **500+ words** across all samples gives the best results. More is better.
