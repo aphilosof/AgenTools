@@ -155,6 +155,28 @@ Combine the automated metrics + your qualitative analysis + the raw samples to p
 
 ### OUTPUT 1: RULES + SELF-CHECK (===RULES_START=== / ===RULES_END===)
 
+Begin the rules with a "HOW TO APPLY THESE RULES" section BEFORE Rule 1. This section must instruct the reader to internalize the voice and write naturally, not to audit mechanically. Include this block verbatim (or adapt wording to fit the category while preserving the core instructions):
+
+```
+### HOW TO APPLY THESE RULES
+
+Internalize the voice, then write. Do not audit mechanically.
+
+These rules describe a writing voice. They are not a compliance checklist to run against existing text line by line. When applying this style guide:
+
+1. Read the rules and examples to absorb the voice.
+2. Write or rewrite the content in that voice — by feel, not by formula.
+3. Use the self-check AFTER writing to catch anything you missed.
+
+Do NOT: make tables of "violations," count words per sentence and report averages, narrate your compliance process, mechanically merge or split sentences to hit a word count target, or treat each rule as an independent constraint to satisfy. The rules work together to produce a voice. A sentence outside the target range is fine if it sounds right. A sentence inside the range is bad if it sounds strained. The numbers are guides, not laws.
+
+When revising an existing document: read it, absorb what it is trying to say, then rewrite each section in this voice. Do not perform surgery on individual sentences while narrating the procedure. The output should be a clean rewritten document, not a log of changes.
+
+If you find yourself making a spreadsheet of rule compliance metrics, you have misunderstood the assignment. Write naturally within the voice. Then check.
+```
+
+Then the hard rules follow:
+
 HARD, NUMBERED, VERIFIABLE rules. Not vague — specific and measurable.
 BAD: "Write conversationally" GOOD: "Average sentence length: 14-20 words. No sentence exceeds 35. Use em dashes for asides, never parentheses."
 BAD verb rule: "Use Latinate vocabulary: 'leverage' not 'use,' 'demonstrate' not 'show.'" GOOD verb rule: "Verb register (from samples): 'leverage' (4 occurrences) not 'use,' 'demonstrate' (3 occurrences) not 'show,' 'address' (5 occurrences) not 'fix.' Do NOT substitute verbs the author never uses — if a verb does not appear in the samples, do not recommend it."
@@ -197,6 +219,7 @@ description: [one line about what this does and when to use it]
 ---
 # Voice Style: [Category]
 ## How to Use This Skill
+### HOW TO APPLY THESE RULES [the meta-instruction block from OUTPUT 1 — include it here too, under "How to Use This Skill", before any rules]
 ## Mandatory Rules [all rules]
 ## Reference Examples [all examples with good/bad]
 ## Self-Check Protocol [complete checklist]
