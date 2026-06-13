@@ -1,0 +1,9 @@
+{
+  "name": "code-lab",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "node build/build.js",
+    "test": "node tests/run.js"
+  }
+}

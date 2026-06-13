@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="magazine">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code Lab</title>
+<!-- built {{BUILD_DATE}} -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.min.css">
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js"></script>
+<style>
+{{CSS}}
+</style>
+</head>
+<body>
+<div id="app">
+  <noscript>Code Lab needs JavaScript enabled.</noscript>
+</div>
+<script>
+window.CODELAB = { lessons: [], arena: [] };
+{{LESSONS}}
+{{ARENA}}
+{{JS}}
+</script>
+</body>
+</html>

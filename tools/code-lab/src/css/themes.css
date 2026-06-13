@@ -1,0 +1,84 @@
+/* Theme token sets per DESIGN.md. Components must reference these properties only. */
+
+[data-theme="magazine"] {
+  --bg: #F5EEDD;
+  --frame: transparent;
+  --panel: #FFFCF2;
+  --panel-header: #EFE6CE;
+  --border: #DCD2B8;
+  --border-w: 1px;
+  --radius: 6px;
+  --text: #2A2517;
+  --text-soft: #4A4334;
+  --muted: #7A6F52;
+  --lineno: #B0A37F;
+  --accent: #C8491F;
+  --accent-contrast: #F5EEDD;
+  --literal: #4E7A1B;
+  --success: #4E7A1B;
+  --error: #A32D2D;
+  --font-display: "Archivo", sans-serif;
+  --font-body: "Archivo", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+  --size-body: 15px;
+  --size-code: 14px;
+  --size-display: 25px;
+}
+
+[data-theme="c64"] {
+  --bg: #40318D;
+  --frame: #7869C4;
+  --panel: #332478;
+  --panel-header: #332478;
+  --border: #7869C4;
+  --border-w: 2px;
+  --radius: 0px;
+  --text: #FFFFFF;
+  --text-soft: #CFC9F2;
+  --muted: #A9A1E3;
+  --lineno: #7B6FD0;
+  --accent: #7BD7D0;
+  --accent-contrast: #1B1145;
+  --literal: #F0E97C;
+  --success: #94E089;
+  --error: #F09A8C;
+  --font-display: "Press Start 2P", monospace;
+  --font-body: "VT323", monospace;
+  --font-code: "VT323", monospace;
+  --size-body: 20px;
+  --size-code: 20px;
+  --size-display: 13px;
+}
+
+[data-theme="terminal"] {
+  --bg: #0B0F0B;
+  --frame: transparent;
+  --panel: transparent;
+  --panel-header: transparent;
+  --border: #24402A;
+  --border-w: 1px;
+  --radius: 0px;
+  --text: #DCFFE6;
+  --text-soft: #9FE8B6;
+  --muted: #4E7A58;
+  --lineno: #3A5C42;
+  --accent: #FFB454;
+  --accent-contrast: #3D2A05;
+  --literal: #FFB454;
+  --success: #5BE08A;
+  --error: #FF7B6B;
+  --font-display: "IBM Plex Mono", monospace;
+  --font-body: "IBM Plex Mono", monospace;
+  --font-code: "IBM Plex Mono", monospace;
+  --size-body: 14px;
+  --size-code: 14px;
+  --size-display: 13px;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--size-body);
+}
