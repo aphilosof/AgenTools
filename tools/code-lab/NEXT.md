@@ -1,6 +1,19 @@
 # NEXT
 
-State: Phase 1 in progress. Step 1 (test harness) done. Plan includes the adopted curriculum-review amendments (see PLAN.md Section 7 and REVIEW.md for rationale).
+State: Phase 1 in progress. Steps 1 (harness) and 2 (static lesson screen) done. Plan includes the adopted curriculum-review amendments (see PLAN.md Section 7 and REVIEW.md for rationale).
+
+Step 2 status (engine/storage/themes):
+- DONE: src/css/layout.css (shared layout + per-theme signature elements),
+  src/js/storage.js (versioned localStorage namespace `codelab.save.v1`, theme
+  get/set), src/js/engine.js (renders the DESIGN.md lesson-screen anatomy from a
+  built-in DEMO lesson; working, persisted theme switch across all 3 themes).
+- The demo lesson is layout scaffolding, NOT curriculum; engine.adaptLesson()
+  already prefers window.CODELAB.lessons[0] when real lessons exist.
+- NOT YET (later steps): CodeMirror, runtimes, real run/hint/solution behavior,
+  real Map/Codex/Arena views, enforced theme-unlock (terminal selectable for now).
+- Verified by a Node DOM-shim smoke test (renders across all themes, no runtime
+  error, persists theme) + bundle parse + npm test green. Visual/CSS confirmation
+  is the user opening dist/course.html; full Playwright pass is at the gate.
 
 Harness status (tests/run.js):
 - DONE: data loader (vm-eval of lessons/ + arena/ into window.CODELAB), schema
@@ -15,7 +28,7 @@ Harness status (tests/run.js):
 Next task: Phase 1 per PLAN.md Section 6.
 Suggested order inside Phase 1:
 1. [DONE] tests/run.js harness skeleton: schema validation, reading-level check, time budgets, invariants
-2. engine + storage + themes rendering a static lesson screen (all 3 themes)
+2. [DONE] engine + storage + themes rendering a static lesson screen (all 3 themes)
 3. runtime-js (worker + iframe), then runtime-python (Pyodide + bridges)
 4. stepper (sys.settrace line highlight + variable table)
 5. friendly error layer (translate-never-replace, fading by world / Real Tools status)
