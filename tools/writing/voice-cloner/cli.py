@@ -113,7 +113,7 @@ def analyze(samples_dir, output, model, name, min_samples, skip_validation):
     print(f"  Absent common words: {len(vocab_profile.get('absent_common_words', []))}")
 
     # Calibration excerpts
-    calibration_excerpts = select_excerpts(samples, corpus_metrics, n=5)
+    calibration_excerpts = select_excerpts(samples, corpus_metrics, n=3)
     print(f"  Selected {len(calibration_excerpts)} calibration excerpts")
 
     # ===================================================================

@@ -34,6 +34,11 @@ _NOISE_PATTERNS = [
     re.compile(r'\[[A-Z][a-z]+ et al\.?,?\s*\d{4}\]'),
     # Parenthetical citations like (Friess et al., 2022, PLoS Climate)
     re.compile(r'\([A-Z][a-z]+ et al\.?,?\s*\d{4}[^)]*\)'),
+    # Parenthetical single citations like (Smith, 2020) or (90) (91)
+    re.compile(r'\(\d{1,3}\)'),
+    re.compile(r'\([A-Z][a-z]+(?:\s+(?:&|and)\s+[A-Z][a-z]+)?,\s*\d{4}\)'),
+    # Inline citations like "Suttle & Chan, 1993" or "Wilson et al., 1993"
+    # (only when in parenthetical context — handled above)
     # LinkedIn / Github / Google Scholar links as text
     re.compile(r'\b(?:LinkedIn|Github|Google Scholar)\b'),
     # "RE:" subject lines
@@ -44,12 +49,29 @@ _NOISE_PATTERNS = [
     re.compile(r'^(?:Sincerely|Regards|Best regards|Thank you for your consideration)[,.]?\s*$', re.MULTILINE),
     # Author name/credential lines (Name, Ph.D. or Name, PhD on their own line)
     re.compile(r'^[A-Z][a-z]+ [A-Z][a-z]+,?\s*(?:Ph\.?D\.?|M\.?S\.?|M\.?D\.?)\s*$', re.MULTILINE),
+    # Author bylines like "G. Hevroni and A. Philosof" or "J. Smith"
+    re.compile(r'^[A-Z]\.\s+[A-Z][a-z]+(?:\s+and\s+[A-Z]\.\s+[A-Z][a-z]+)?\s*$', re.MULTILINE),
     # Address lines (City, ST ZIP)
     re.compile(r'^[A-Z][a-z]+(?:\s[A-Z][a-z]+)?,\s*[A-Z]{2}\s+\d{5}\s*$', re.MULTILINE),
     # Page numbers on their own line
     re.compile(r'^\d{1,3}\s*$', re.MULTILINE),
+    # Section numbers on their own line (e.g. "2.2" or "3.1.1")
+    re.compile(r'^\d+\.\d+(?:\.\d+)?\s*$', re.MULTILINE),
     # Pipe-separated contact info lines
     re.compile(r'^.*\|.*\|.*$', re.MULTILINE),
+    # Markdown headers (# Header, ## Header, ### Header)
+    re.compile(r'^#{1,6}\s+.*$', re.MULTILINE),
+    # Markdown horizontal rules (---, ***, ___)
+    re.compile(r'^[-*_]{3,}\s*$', re.MULTILINE),
+    # Figure/table captions ("Fig. 3 ...", "Figure 3:", "Table 1:")
+    re.compile(r'^(?:Fig\.?\s*\d|Figure\s+\d|Table\s+\d).*$', re.MULTILINE),
+    # Stray formatting artifacts from PDF extraction (e.g. "****", "(a)", "(b)")
+    re.compile(r'^\*{2,}\s*$', re.MULTILINE),
+    re.compile(r'^\([a-z]\)\s*$', re.MULTILINE),
+    # Application/form question prompts ("Question 3: Please provide...")
+    re.compile(r'^(?:Question|Q)\s*\d+[.:]\s+.*$', re.MULTILINE),
+    # Orphan citation labels on their own line ("Jia 2010", "Smith 2015")
+    re.compile(r'^[A-Z][a-z]+\s+\d{4}\s*$', re.MULTILINE),
 ]
 
 
@@ -59,14 +81,39 @@ def _clean_passage(text: str) -> str:
         text = pattern.sub('', text)
     # Collapse multiple blank lines
     text = re.sub(r'\n{3,}', '\n\n', text)
-    # Strip leading/trailing whitespace per line
-    lines = [line.strip() for line in text.split('\n')]
+    # Strip leading/trailing whitespace per line and drop short non-prose debris
+    cleaned_lines = []
+    for line in text.split('\n'):
+        line = line.strip()
+        if not line:
+            cleaned_lines.append('')
+            continue
+        # Drop lines that are just 1-2 words (debris from stripping patterns)
+        # unless they're blank-line separators
+        words_in_line = len(line.split())
+        if words_in_line <= 2 and not line.endswith('.'):
+            continue
+        cleaned_lines.append(line)
     # Remove empty lines at start/end
-    while lines and not lines[0]:
-        lines.pop(0)
-    while lines and not lines[-1]:
-        lines.pop()
-    return '\n'.join(lines)
+    while cleaned_lines and not cleaned_lines[0]:
+        cleaned_lines.pop(0)
+    while cleaned_lines and not cleaned_lines[-1]:
+        cleaned_lines.pop()
+    return '\n'.join(cleaned_lines)
+
+
+def _truncate_at_sentence(text: str, max_words: int) -> str:
+    """Truncate text at a sentence boundary to stay within max_words."""
+    sentences = _split_sentences(text)
+    result = []
+    word_count = 0
+    for sent in sentences:
+        sent_words = len(_tokenize(sent))
+        if word_count + sent_words > max_words and word_count > 0:
+            break
+        result.append(sent)
+        word_count += sent_words
+    return ' '.join(result)
 
 
 def _split_into_passages(
@@ -74,10 +121,12 @@ def _split_into_passages(
     source_id: str,
     target_words: int = 150,
     min_words: int = 80,
+    max_words: int = 200,
 ) -> list[dict]:
     """Split a text into ~target_words passages at paragraph boundaries.
 
     Returns list of {"text": str, "source": str, "word_count": int}.
+    Hard-caps passages at max_words by truncating at sentence boundaries.
     """
     paragraphs = re.split(r'\n\s*\n', text.strip())
     paragraphs = [p.strip() for p in paragraphs if p.strip()]
@@ -91,11 +140,16 @@ def _split_into_passages(
         if current_words + para_words > target_words * 1.3 and current_words >= min_words:
             # Emit current passage
             passage_text = "\n\n".join(current_paras)
-            passages.append({
-                "text": passage_text,
-                "source": source_id,
-                "word_count": current_words,
-            })
+            wc = len(_tokenize(passage_text))
+            if wc > max_words:
+                passage_text = _truncate_at_sentence(passage_text, max_words)
+                wc = len(_tokenize(passage_text))
+            if wc >= min_words:
+                passages.append({
+                    "text": passage_text,
+                    "source": source_id,
+                    "word_count": wc,
+                })
             current_paras = [para]
             current_words = para_words
         else:
@@ -105,11 +159,16 @@ def _split_into_passages(
     # Emit remaining
     if current_paras and current_words >= min_words:
         passage_text = "\n\n".join(current_paras)
-        passages.append({
-            "text": passage_text,
-            "source": source_id,
-            "word_count": current_words,
-        })
+        wc = len(_tokenize(passage_text))
+        if wc > max_words:
+            passage_text = _truncate_at_sentence(passage_text, max_words)
+            wc = len(_tokenize(passage_text))
+        if wc >= min_words:
+            passages.append({
+                "text": passage_text,
+                "source": source_id,
+                "word_count": wc,
+            })
 
     return passages
 
