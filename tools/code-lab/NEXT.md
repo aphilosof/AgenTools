@@ -58,6 +58,17 @@ localStorage). Multi-lesson nav (prev/next) reads window.CODELAB.lessons; 2 real
 sample lessons authored (sound hook + print), harness-validated on real content.
 NOTE: export/import save codes (PLAN: move file between machines) still TODO.
 
+SURFACES (in progress). Slice 1 DONE: view router + progressive disclosure + Sandbox.
+- engine has state.view + a TABS list with unlocked() rules; nav shows a tab only once
+  unlocked (Lessons always; Sandbox after >=1 solve). Tabs are clickable -> setView().
+- Sandbox is a pseudo-lesson (id "sandbox") so it reuses the editor/run/stepper machinery;
+  its view skips the prompt, lesson-nav, and check/hint/solution. Code persists under "sandbox".
+- Verified in node: disclosure (Lessons -> +Sandbox after a solve), Lessons<->Sandbox switch,
+  sandbox has editor+run but no check/prompt/lesson-nav. (Caught+fixed: editorHeader crashed on
+  the sandbox lesson — guarded missing challengeCode.)
+- SLICES REMAINING: 2) Knowledge Map, 3) Codex (skills/glossary/errors), 4) Arena + coach mode.
+  Add each view to TABS + unlocked() + a render branch as it's built.
+
 Next task: Phase 1 per PLAN.md Section 6.
 Suggested order inside Phase 1:
 1. [DONE] tests/run.js harness skeleton: schema validation, reading-level check, time budgets, invariants

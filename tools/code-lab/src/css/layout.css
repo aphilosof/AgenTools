@@ -76,9 +76,7 @@ body { margin: 0; }
 /* ----- app navigation ----- */
 .appnav { display: flex; gap: 16px; margin-bottom: 20px; font-family: var(--font-code); font-size: var(--size-code); }
 .appnav .tab { color: var(--text-soft); cursor: pointer; padding-bottom: 4px; border-bottom: 2px solid transparent; }
-.appnav .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-.appnav .tab.locked { color: var(--muted); cursor: default; opacity: 0.6; }
-.appnav .tab.locked::after { content: " 🔒"; font-size: 0.8em; }
+.appnav .tab.active { color: var(--accent); border-bottom-color: var(--accent); cursor: default; }
 
 /* ----- prompt block ----- */
 .prompt {

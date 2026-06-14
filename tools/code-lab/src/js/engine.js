@@ -44,8 +44,43 @@
   };
 
   // Live UI state. code survives theme re-renders so typing is never lost.
-  var state = { lesson: null, code: "", lessonIdx: 0, lessonCount: 1 };
+  // state.lesson holds the currently shown lesson-like object (a real lesson or
+  // the Sandbox pseudo-lesson); state.view is the active surface.
+  var state = { lesson: null, code: "", lessonIdx: 0, lessonCount: 1, view: "lessons" };
   var keydownHandler = null;
+
+  // Surfaces and their progressive-disclosure rules. A tab only appears once it
+  // is meaningful (PLAN §3). Map/Codex/Arena are added as those views are built.
+  var TABS = [
+    { view: "lessons", label: "Lessons" },
+    { view: "sandbox", label: "Sandbox" },
+  ];
+  function solvedCount() {
+    return lessonsList().filter(function (l) { return CL.storage.isSolved(l.id); }).length;
+  }
+  function unlocked(view) {
+    if (view === "lessons") return true;
+    if (view === "sandbox") return solvedCount() >= 1; // free play, once they can code
+    return false;
+  }
+  function sandboxLesson() {
+    return {
+      id: "sandbox",
+      world: 0,
+      lessonNo: 1,
+      total: 1,
+      title: "Sandbox",
+      filename: "sandbox.py",
+      lang: "py",
+      promptTitle: "",
+      promptText: [],
+      starterCode: "# Free play. Type any Python and press run.\n",
+      check: null,
+      hints: [],
+      solution: "",
+      isSandbox: true,
+    };
+  }
 
   function el(tag, cls, html) {
     var node = document.createElement(tag);
@@ -60,9 +95,10 @@
 
   // Theme-specific label flavor (DESIGN.md signature text per theme).
   function editorHeader(theme, lesson) {
-    if (theme === "magazine") return "listing " + lesson.challengeCode.toLowerCase() + " · " + lesson.filename;
+    var file = lesson.filename || "sandbox.py";
+    if (theme === "magazine") return lesson.challengeCode ? "listing " + lesson.challengeCode.toLowerCase() + " · " + file : file;
     if (theme === "terminal") return "editor";
-    return lesson.filename; // c64
+    return file; // c64
   }
   function outputHeader(theme) {
     return theme === "magazine" ? "printout" : "output";
@@ -123,39 +159,46 @@
       app.appendChild(bar);
     }
 
-    // top bar
+    // top bar — lesson views show position + prev/next; other views just a title
     var topbar = el("div", "topbar");
-    topbar.appendChild(el("div", "title", "World " + lesson.world + " · " + lesson.title));
-    var right = el("div", "right");
-    var lessonPrev = el("button", "navbtn", "‹");
-    lessonPrev.id = "lesson-prev";
-    var lessonNext = el("button", "navbtn", "›");
-    lessonNext.id = "lesson-next";
-    right.appendChild(lessonPrev);
-    var progress = el("span", "progress", renderProgress());
-    progress.id = "progress-cells";
-    right.appendChild(progress);
-    right.appendChild(el("span", "counter", lesson.lessonNo + " / " + lesson.total));
-    right.appendChild(lessonNext);
-    topbar.appendChild(right);
+    topbar.appendChild(el("div", "title", lesson.isSandbox ? "Sandbox" : "World " + lesson.world + " · " + lesson.title));
+    if (!lesson.isSandbox) {
+      var right = el("div", "right");
+      var lessonPrev = el("button", "navbtn", "‹");
+      lessonPrev.id = "lesson-prev";
+      var lessonNext = el("button", "navbtn", "›");
+      lessonNext.id = "lesson-next";
+      right.appendChild(lessonPrev);
+      var progress = el("span", "progress", renderProgress());
+      progress.id = "progress-cells";
+      right.appendChild(progress);
+      right.appendChild(el("span", "counter", lesson.lessonNo + " / " + lesson.total));
+      right.appendChild(lessonNext);
+      topbar.appendChild(right);
+    }
     container.appendChild(topbar);
 
-    // app navigation — progressive disclosure: only Lessons is live this early.
-    // The others are shown locked (not dead buttons): clearly disabled, not fake.
+    // app navigation — progressive disclosure: a tab appears only once unlocked.
     var nav = el("div", "appnav");
-    nav.appendChild(el("span", "tab active", "Lessons"));
-    ["Knowledge Map", "Codex", "Arena", "Sandbox"].forEach(function (name) {
-      nav.appendChild(el("span", "tab locked", name));
+    TABS.forEach(function (tab) {
+      if (!unlocked(tab.view)) return;
+      var t = el("span", "tab" + (state.view === tab.view ? " active" : ""), tab.label);
+      if (state.view !== tab.view) {
+        t.addEventListener("click", function () { setView(tab.view); });
+      }
+      nav.appendChild(t);
     });
     container.appendChild(nav);
 
-    // prompt block
-    var prompt = el("div", "prompt");
-    prompt.appendChild(el("h2", null, escapeHtml(lesson.promptTitle)));
-    lesson.promptText.forEach(function (p) {
-      prompt.appendChild(el("p", null, escapeHtml(p)));
-    });
-    container.appendChild(prompt);
+    // prompt block (lessons only)
+    if (lesson.promptText && lesson.promptText.length) {
+      var prompt = el("div", "prompt");
+      if (lesson.promptTitle) prompt.appendChild(el("h2", null, escapeHtml(lesson.promptTitle)));
+      lesson.promptText.forEach(function (p) {
+        prompt.appendChild(el("p", null, escapeHtml(p)));
+      });
+      container.appendChild(prompt);
+    }
 
     // editor panel — host element; the real editor mounts here after append
     var editorPanel = el("div", "panel");
@@ -598,9 +641,21 @@
   }
 
   function setLesson(idx) {
+    state.view = "lessons";
     state.lesson = loadLesson(idx);
     state.code = CL.storage.getCode(state.lesson.id) || state.lesson.starterCode;
     CL.storage.setLessonIdx(state.lessonIdx);
+    var theme = document.documentElement.getAttribute("data-theme") || CL.storage.getTheme();
+    render(theme, state.lesson);
+    wireRuntime(theme, state.lesson);
+  }
+
+  // Switch surfaces (Lessons / Sandbox / …). The Sandbox is a pseudo-lesson so
+  // it reuses the editor + run + stepper machinery.
+  function setView(view) {
+    state.view = unlocked(view) ? view : "lessons";
+    state.lesson = state.view === "sandbox" ? sandboxLesson() : loadLesson(state.lessonIdx);
+    state.code = CL.storage.getCode(state.lesson.id) || state.lesson.starterCode;
     var theme = document.documentElement.getAttribute("data-theme") || CL.storage.getTheme();
     render(theme, state.lesson);
     wireRuntime(theme, state.lesson);
@@ -612,7 +667,7 @@
     setTheme(CL.storage.getTheme());
   }
 
-  CL.engine = { render: render, setTheme: setTheme, setLesson: setLesson };
+  CL.engine = { render: render, setTheme: setTheme, setLesson: setLesson, setView: setView };
 
   // Script is concatenated at the end of <body>, so #app already exists.
   init();
