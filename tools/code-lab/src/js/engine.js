@@ -2,10 +2,12 @@
    (predict/modify/fix/complete/write), hint ladder, model-solution compare,
    checkpoint handling, theme switching and unlock logic. Owns the DOM.
 
-   Phase 1 step 2 scope: render the static lesson-screen anatomy (DESIGN.md
-   "Page anatomy") from a demo lesson across all three themes, with a working,
-   persisted theme switch. CodeMirror, the runtimes, and real run/hint/solution
-   behavior arrive in later steps; the buttons here are inert. */
+   Current scope: renders the DESIGN.md lesson-screen anatomy across all three
+   themes, with a real editor (CodeMirror, textarea fallback) wired to the
+   Pyodide worker runtime — type Python, Run, see real output; Stop kills a
+   runaway loop. Only controls that work are shown. The hint ladder, model
+   solution, checkers, sound/turtle/plot, the stepper, and JS arrive in later
+   steps. */
 
 (function () {
   "use strict";
@@ -14,26 +16,28 @@
   var THEMES = ["magazine", "c64", "terminal"];
 
   // A layout-demo lesson. NOT curriculum — Phase 2 authors real lessons into
-  // lessons/. This exists only to give the screen realistic content to render,
-  // including a paragraph long enough to judge c64 body-face readability.
+  // lessons/. Its starter is plain Python that runs today (no music bridge yet),
+  // so Run produces honest output. The prose is long enough to judge c64
+  // body-face readability.
   var DEMO = {
     world: 1,
     lessonNo: 1,
     total: 6,
-    title: "First Note",
-    code: "W1-1",
-    filename: "first_note.py",
-    promptTitle: "Play a note",
+    title: "Adding Numbers",
+    challengeCode: "W1-1",
+    filename: "adder.py",
+    lang: "py",
+    promptTitle: "Add up the numbers",
     promptText: [
-      "The play command makes a sound. The number is the note: bigger numbers sound higher, smaller numbers sound lower.",
-      "Run the code below and listen. Then change one number and run it again. Can you make the two notes swap, so the high one plays first?",
+      "Python can do math for you, much faster than by hand. The print command shows an answer on the screen.",
+      "Run the code below. It adds the numbers 1 to 5 and prints the total. Then change the 5 to a bigger number and run it again — watch the total grow.",
     ],
-    starter: ["play(60)", "sleep(0.5)", "play(67)"],
-    output: [
-      { state: "info", text: "running first_note.py" },
-      { state: "success", text: "played 2 notes — nice." },
-    ],
+    starterCode: "total = 0\nfor n in range(1, 6):\n    total = total + n\nprint(\"The total is\", total)\n",
   };
+
+  // Live UI state. code survives theme re-renders so typing is never lost.
+  var state = { lesson: null, code: "" };
+  var keydownHandler = null;
 
   function el(tag, cls, html) {
     var node = document.createElement(tag);
@@ -48,14 +52,12 @@
 
   // Theme-specific label flavor (DESIGN.md signature text per theme).
   function editorHeader(theme, lesson) {
-    if (theme === "magazine") return "listing " + lesson.code.toLowerCase() + " · " + lesson.filename;
+    if (theme === "magazine") return "listing " + lesson.challengeCode.toLowerCase() + " · " + lesson.filename;
     if (theme === "terminal") return "editor";
     return lesson.filename; // c64
   }
   function outputHeader(theme) {
-    if (theme === "magazine") return "printout";
-    if (theme === "terminal") return "output";
-    return "output"; // c64
+    return theme === "magazine" ? "printout" : "output";
   }
 
   function renderProgress(lesson) {
@@ -109,7 +111,8 @@
     topbar.appendChild(right);
     container.appendChild(topbar);
 
-    // app navigation — progressive disclosure: only Lessons is live this early
+    // app navigation — progressive disclosure: only Lessons is live this early.
+    // The others are shown locked (not dead buttons): clearly disabled, not fake.
     var nav = el("div", "appnav");
     nav.appendChild(el("span", "tab active", "Lessons"));
     ["Knowledge Map", "Codex", "Arena", "Sandbox"].forEach(function (name) {
@@ -125,49 +128,37 @@
     });
     container.appendChild(prompt);
 
-    // editor panel (static line-numbered listing)
+    // editor panel — host element; the real editor mounts here after append
     var editorPanel = el("div", "panel");
     editorPanel.appendChild(el("div", "panel-header", escapeHtml(editorHeader(theme, lesson))));
-    var editor = el("div", "editor");
-    lesson.starter.forEach(function (line, i) {
-      var row = el("div", "code-line");
-      row.appendChild(el("span", "lineno", String(i + 1)));
-      row.appendChild(el("span", "code-text", escapeHtml(line)));
-      editor.appendChild(row);
-    });
-    editorPanel.appendChild(editor);
+    var host = el("div");
+    host.id = "editor-host";
+    editorPanel.appendChild(host);
     container.appendChild(editorPanel);
 
-    // action row (inert this step)
+    // action row — only working controls
     var actions = el("div", "actions");
-    actions.appendChild(el("button", "btn primary", "run"));
-    actions.appendChild(el("button", "btn secondary", "hint"));
-    actions.appendChild(el("button", "btn ghost", "solution"));
+    var runBtn = el("button", "btn primary", "run");
+    runBtn.id = "btn-run";
+    var stopBtn = el("button", "btn secondary", "stop");
+    stopBtn.id = "btn-stop";
+    stopBtn.style.display = "none";
+    actions.appendChild(runBtn);
+    actions.appendChild(stopBtn);
     container.appendChild(actions);
 
-    // output panel
+    // output panel — filled by Run
     var outPanel = el("div", "panel");
     outPanel.appendChild(el("div", "panel-header", escapeHtml(outputHeader(theme))));
-    var output = el("div", "output");
-    if (theme === "terminal") output.appendChild(el("div", "out-line cmd", "$ python " + lesson.filename));
-    lesson.output.forEach(function (line) {
-      if (line.state === "success" && theme !== "c64") {
-        var wrap = el("div", "out-line success");
-        wrap.appendChild(el("span", "pass-badge", "PASS"));
-        wrap.appendChild(document.createTextNode("  " + line.text));
-        output.appendChild(wrap);
-      } else {
-        output.appendChild(el("div", "out-line " + line.state, escapeHtml(line.text)));
-      }
-    });
-    if (theme === "c64") output.appendChild(el("div", "out-line ready", "ready. █"));
-    outPanel.appendChild(output);
+    var outBox = el("div", "output");
+    outBox.id = "output-box";
+    outBox.appendChild(el("div", "out-line info", "press run to execute your code."));
+    outPanel.appendChild(outBox);
     container.appendChild(outPanel);
 
-    // terminal footer key hints
     if (theme === "terminal") {
       var keyhints = el("div", "keyhints");
-      keyhints.appendChild(el("span", null, "f5 run · f1 hint · f8 solution"));
+      keyhints.appendChild(el("span", null, "f5 run"));
       keyhints.appendChild(el("span", null, "██░░░░"));
       container.appendChild(keyhints);
     }
@@ -178,15 +169,87 @@
     THEMES.forEach(function (t) {
       var label = t === "terminal" ? "terminal (locked)" : t;
       var opt = el("button", "theme-opt" + (t === theme ? " active" : ""), label);
-      opt.addEventListener("click", function () {
-        setTheme(t);
-      });
+      opt.addEventListener("click", function () { setTheme(t); });
       themebar.appendChild(opt);
     });
     container.appendChild(themebar);
 
     frame.appendChild(container);
     app.appendChild(frame);
+  }
+
+  // Mount the code editor into #editor-host. CodeMirror when present (loaded
+  // from CDN); a themed textarea otherwise, so typing works even if the CDN is
+  // unreachable.
+  function mountEditor(lesson) {
+    var host = document.getElementById("editor-host");
+    if (window.CodeMirror) {
+      var cm = window.CodeMirror(host, {
+        value: state.code,
+        mode: lesson.lang === "js" ? "javascript" : "python",
+        lineNumbers: true,
+        indentUnit: 4,
+        viewportMargin: Infinity, // grow to fit content instead of a fixed box
+      });
+      cm.on("change", function () { state.code = cm.getValue(); });
+      return { getValue: function () { return cm.getValue(); }, focus: function () { cm.focus(); } };
+    }
+    var ta = document.createElement("textarea");
+    ta.className = "editor-fallback";
+    ta.value = state.code;
+    ta.spellcheck = false;
+    ta.addEventListener("input", function () { state.code = ta.value; });
+    host.appendChild(ta);
+    return { getValue: function () { return ta.value; }, focus: function () { ta.focus(); } };
+  }
+
+  function wireRuntime(theme, lesson) {
+    var editor = mountEditor(lesson);
+    var runBtn = document.getElementById("btn-run");
+    var stopBtn = document.getElementById("btn-stop");
+    var outBox = document.getElementById("output-box");
+    var py = CL.runtime && CL.runtime.python;
+
+    function out(text, cls) {
+      var d = el("div", "out-line" + (cls ? " " + cls : ""));
+      d.textContent = text;
+      outBox.appendChild(d);
+    }
+    function setRunning(on) {
+      runBtn.disabled = on;
+      stopBtn.style.display = on ? "" : "none";
+    }
+    function doRun() {
+      if (runBtn.disabled) return;
+      outBox.innerHTML = "";
+      if (!py) { out("runtime unavailable", "error"); return; }
+      setRunning(true);
+      if (py.getStatus() !== "ready") out("starting Python (the first run downloads it once)…", "info");
+      py.run(editor.getValue(), {
+        onStdout: function (s) { out(s.replace(/\n$/, "")); },
+        onStderr: function (s) { out(s.replace(/\n$/, ""), "error"); },
+      }).then(function (r) {
+        setRunning(false);
+        if (!r.ok && r.error !== "stopped") out(r.error || "error", "error");
+      });
+    }
+    function doStop() {
+      if (!py) return;
+      out("stopping…", "info");
+      setRunning(false);
+      py.stop().then(function () { out("stopped — Python is ready again.", "info"); });
+    }
+
+    runBtn.addEventListener("click", doRun);
+    stopBtn.addEventListener("click", doStop);
+
+    // F5 runs (matches the terminal key-hint). Re-wired each render, so drop the
+    // previous handler to avoid stacking.
+    if (keydownHandler) document.removeEventListener("keydown", keydownHandler);
+    keydownHandler = function (e) {
+      if (e.key === "F5") { e.preventDefault(); doRun(); }
+    };
+    document.addEventListener("keydown", keydownHandler);
   }
 
   function currentLesson() {
@@ -203,12 +266,12 @@
       lessonNo: 1,
       total: 6,
       title: l.title,
-      code: "W" + l.world + "-1",
+      challengeCode: "W" + l.world + "-1",
       filename: "lesson." + (l.lang === "js" ? "js" : "py"),
+      lang: l.lang === "js" ? "js" : "py",
       promptTitle: l.title,
       promptText: [l.explain],
-      starter: String(l.starter || "").split("\n").filter(function (s) { return s.length; }),
-      output: [{ state: "info", text: "ready" }],
+      starterCode: String(l.starter || ""),
     };
   }
 
@@ -216,12 +279,14 @@
     if (THEMES.indexOf(theme) === -1) theme = "magazine";
     document.documentElement.setAttribute("data-theme", theme);
     CL.storage.setTheme(theme);
-    render(theme, currentLesson());
+    render(theme, state.lesson);
+    wireRuntime(theme, state.lesson);
   }
 
   function init() {
-    var theme = CL.storage.getTheme();
-    setTheme(theme);
+    state.lesson = currentLesson();
+    state.code = state.lesson.starterCode;
+    setTheme(CL.storage.getTheme());
   }
 
   CL.engine = { render: render, setTheme: setTheme };

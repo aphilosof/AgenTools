@@ -43,7 +43,10 @@ Next task: Phase 1 per PLAN.md Section 6.
 Suggested order inside Phase 1:
 1. [DONE] tests/run.js harness skeleton: schema validation, reading-level check, time budgets, invariants
 2. [DONE] engine + storage + themes rendering a static lesson screen (all 3 themes)
-3. [SPIKE DONE; real modules next] runtime-js (worker + iframe), then runtime-python (Pyodide + bridges) — build on the proven Blob-worker + terminate-to-recover pattern
+3. [PYTHON DONE] runtime-python (Blob worker, run/stop/recover, stdout/stderr) wired
+   into engine with a real CodeMirror editor (textarea fallback) + run/stop; demo runs
+   real Python in-browser, verified in Arc. STILL TODO in step 3: runtime-js (worker +
+   iframe) and the music/turtle/plot bridges into Pyodide.
 4. stepper (sys.settrace line highlight + variable table)
 5. friendly error layer (translate-never-replace, fading by world / Real Tools status)
 6. music, turtle, plot engines with call recording; tolerant diagnostic checkers; Parsons support

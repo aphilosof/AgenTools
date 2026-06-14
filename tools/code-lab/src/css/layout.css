@@ -107,11 +107,43 @@ body { margin: 0; }
   border-bottom: var(--border-w) solid var(--border);
 }
 
-/* editor: line-numbered listing (static this step; CodeMirror replaces it later) */
-.editor { font-family: var(--font-code); font-size: var(--size-code); padding: 10px 0; overflow-x: auto; }
-.code-line { display: flex; line-height: 1.55; }
-.code-line .lineno { width: 38px; flex: none; text-align: right; padding-right: 14px; color: var(--lineno); user-select: none; }
-.code-line .code-text { white-space: pre; color: var(--text); }
+/* editor: CodeMirror, themed from tokens; textarea fallback if the CDN fails.
+   CodeMirror brings its own base CSS from the CDN; these rules retint it to the
+   active theme and let it grow to fit the code instead of a fixed-height box. */
+#editor-host { font-family: var(--font-code); font-size: var(--size-code); }
+.CodeMirror {
+  height: auto;
+  min-height: 84px;
+  background: var(--panel);
+  color: var(--text);
+  font-family: var(--font-code);
+  font-size: var(--size-code);
+  line-height: 1.55;
+}
+.CodeMirror-gutters { background: var(--panel-header); border-right: var(--border-w) solid var(--border); }
+.CodeMirror-linenumber { color: var(--lineno); }
+.CodeMirror-cursor { border-left: 1px solid var(--text); }
+.CodeMirror-selected,
+.CodeMirror-focused .CodeMirror-selected { background: var(--border); }
+/* Identifiers stay base-colored across all themes; only keyword/literal/comment
+   are tinted per theme below, so CodeMirror's defaults never clash on dark themes. */
+.cm-def, .cm-variable, .cm-variable-2, .cm-property, .cm-operator, .cm-punctuation { color: var(--text); }
+
+.editor-fallback {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 90px;
+  border: none;
+  padding: 10px 12px;
+  background: var(--panel);
+  color: var(--text);
+  font-family: var(--font-code);
+  font-size: var(--size-code);
+  line-height: 1.55;
+  resize: vertical;
+}
+.editor-fallback:focus { outline: none; }
 
 /* ----- action row ----- */
 .actions { display: flex; gap: 10px; margin-bottom: 16px; }
@@ -182,6 +214,9 @@ body { margin: 0; }
   border-bottom: 3px solid #000;
 }
 [data-theme="magazine"] .btn.ghost { border: 1px solid #C9BC9C; border-bottom: 3px solid #B3A37D; }
+[data-theme="magazine"] .cm-keyword, [data-theme="magazine"] .cm-builtin { color: #C8491F; }
+[data-theme="magazine"] .cm-string, [data-theme="magazine"] .cm-string-2, [data-theme="magazine"] .cm-number { color: #4E7A1B; }
+[data-theme="magazine"] .cm-comment { color: #9A8F6E; }
 
 /* ---- c64: thick frame, pixel headings, block buttons, lowercase ---- */
 [data-theme="c64"] { --frame-w: 24px; }
@@ -202,6 +237,9 @@ body { margin: 0; }
 [data-theme="c64"] .btn.ghost { background: transparent; color: var(--muted); border: 2px solid var(--border); }
 [data-theme="c64"] .topbar .title { font-size: var(--size-display); }
 [data-theme="c64"] .progress .cell { border-radius: 0; }
+[data-theme="c64"] .cm-keyword, [data-theme="c64"] .cm-builtin { color: #7BD7D0; }
+[data-theme="c64"] .cm-string, [data-theme="c64"] .cm-string-2, [data-theme="c64"] .cm-number { color: #F0E97C; }
+[data-theme="c64"] .cm-comment { color: #7B6FD0; }
 
 /* ---- terminal: bracketed commands, amber actions ---- */
 [data-theme="terminal"] .btn { background: transparent; border-radius: 0; }
@@ -211,3 +249,6 @@ body { margin: 0; }
 [data-theme="terminal"] .btn.secondary { color: var(--success); border: 1px solid #4E7A58; }
 [data-theme="terminal"] .btn.ghost { color: var(--muted); border: 1px solid var(--border); }
 [data-theme="terminal"] .pass-badge { background: var(--accent); color: var(--accent-contrast); border: none; }
+[data-theme="terminal"] .cm-keyword, [data-theme="terminal"] .cm-builtin { color: #5BE08A; }
+[data-theme="terminal"] .cm-string, [data-theme="terminal"] .cm-string-2, [data-theme="terminal"] .cm-number { color: #FFB454; }
+[data-theme="terminal"] .cm-comment { color: #3A5C42; }

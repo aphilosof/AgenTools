@@ -1,3 +1,118 @@
 /* runtime-python.js — Pyodide lifecycle: lazy load, stdout/stderr capture,
    execution timeouts, registering the music/turtle/plot bridge modules so
-   student code can `from music import play, sleep`. */
+   student code can `from music import play, sleep`.
+
+   Architecture (Stage 1A spike 1, proven in spike/runtime-spike.html): Pyodide
+   runs in a Web Worker spawned from a Blob URL — direct file:// workers are
+   blocked, but a Blob worker is allowed and importScripts pulls Pyodide from the
+   CDN. A runaway loop is killed by terminating the worker and re-initialising;
+   the page never freezes. SharedArrayBuffer interrupts are not usable on file://.
+
+   The music/turtle/plot bridges and the stepper (sys.settrace in the worker)
+   attach here in later steps. */
+
+(function () {
+  "use strict";
+  var CL = (window.CL = window.CL || {});
+
+  // Worker source as a line array (no escaping headaches); becomes a Blob.
+  var WORKER_SRC = [
+    "importScripts('https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js');",
+    "let pyodide = null;",
+    "async function init() {",
+    "  pyodide = await loadPyodide();",
+    "  pyodide.setStdout({ batched: function (s) { postMessage({ type: 'stdout', text: s }); } });",
+    "  pyodide.setStderr({ batched: function (s) { postMessage({ type: 'stderr', text: s }); } });",
+    "  postMessage({ type: 'ready' });",
+    "}",
+    "init().catch(function (e) { postMessage({ type: 'fatal', text: String(e) }); });",
+    "onmessage = async function (e) {",
+    "  if (e.data.type === 'run') {",
+    "    try { await pyodide.runPythonAsync(e.data.code); postMessage({ type: 'done' }); }",
+    "    catch (err) { postMessage({ type: 'error', text: String(err && err.message ? err.message : err) }); }",
+    "  }",
+    "};",
+  ].join("\n");
+
+  var worker = null;
+  var blobUrl = null;
+  var status = "idle"; // idle | loading | ready | running | error
+  var statusCbs = [];
+  var readyResolvers = [];
+  var activeRun = null; // { onStdout, onStderr, resolve }
+
+  function setStatus(s) {
+    status = s;
+    statusCbs.forEach(function (cb) { cb(s); });
+  }
+
+  function finishRun(result) {
+    var run = activeRun;
+    activeRun = null;
+    if (status === "running") setStatus("ready");
+    if (run && run.resolve) run.resolve(result);
+  }
+
+  function spawn() {
+    if (worker) worker.terminate();
+    if (blobUrl) URL.revokeObjectURL(blobUrl);
+    blobUrl = URL.createObjectURL(new Blob([WORKER_SRC], { type: "application/javascript" }));
+    worker = new Worker(blobUrl);
+    setStatus("loading");
+    worker.onmessage = function (e) {
+      var m = e.data;
+      if (m.type === "ready") {
+        setStatus("ready");
+        var rs = readyResolvers.splice(0);
+        rs.forEach(function (r) { r(); });
+      } else if (m.type === "stdout") {
+        if (activeRun && activeRun.onStdout) activeRun.onStdout(m.text);
+      } else if (m.type === "stderr") {
+        if (activeRun && activeRun.onStderr) activeRun.onStderr(m.text);
+      } else if (m.type === "done") {
+        finishRun({ ok: true });
+      } else if (m.type === "error") {
+        finishRun({ ok: false, error: m.text });
+      } else if (m.type === "fatal") {
+        setStatus("error");
+        finishRun({ ok: false, error: "Could not load Python: " + m.text });
+      }
+    };
+    worker.onerror = function (ev) {
+      setStatus("error");
+      finishRun({ ok: false, error: "Worker failed to start (blocked from file://?): " + (ev.message || "") });
+    };
+  }
+
+  function ensureReady() {
+    return new Promise(function (resolve) {
+      if (status === "ready") return resolve();
+      readyResolvers.push(resolve);
+      if (!worker) spawn();
+    });
+  }
+
+  CL.runtime = CL.runtime || {};
+  CL.runtime.python = {
+    ensureReady: ensureReady,
+    getStatus: function () { return status; },
+    onStatus: function (cb) { statusCbs.push(cb); cb(status); },
+    // Run student code. opts.onStdout/onStderr receive text chunks as they print.
+    run: function (code, opts) {
+      opts = opts || {};
+      return ensureReady().then(function () {
+        return new Promise(function (resolve) {
+          activeRun = { onStdout: opts.onStdout, onStderr: opts.onStderr, resolve: resolve };
+          setStatus("running");
+          worker.postMessage({ type: "run", code: code });
+        });
+      });
+    },
+    // Kill a runaway loop and bring Python back to ready.
+    stop: function () {
+      finishRun({ ok: false, error: "stopped" });
+      spawn();
+      return ensureReady();
+    },
+  };
+})();
