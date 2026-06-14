@@ -10,3 +10,4 @@ Phases 2-4. Seed entries:
 - indentation-scope: does not connect indentation to what is inside the loop/function/if.
 - string-vs-number: adds "5" + 5, or expects input() to return a number.
 - call-vs-reference: writes f instead of f(), or the reverse.
+- pitch-direction: believes a bigger note number sounds lower (or that order doesn't affect pitch). Hint angle: compare the numbers and which sounds higher.

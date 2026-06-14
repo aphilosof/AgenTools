@@ -64,6 +64,8 @@ body { margin: 0; }
 }
 .topbar .title { font-family: var(--font-display); font-size: var(--size-display); color: var(--text); }
 .topbar .right { display: flex; align-items: center; gap: 10px; color: var(--muted); font-family: var(--font-code); font-size: var(--size-code); }
+.navbtn { font-family: var(--font-code); font-size: 14px; line-height: 1; padding: 2px 9px; border: var(--border-w) solid var(--border); border-radius: var(--radius); background: var(--panel); color: var(--text); cursor: pointer; }
+.navbtn:disabled { opacity: 0.35; cursor: default; }
 
 /* progress as discrete cells, never a smooth bar */
 .progress { display: inline-flex; gap: 4px; }

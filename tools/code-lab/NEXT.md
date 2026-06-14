@@ -50,6 +50,14 @@ STILL TODO in the loop: check.type "tests" (needs a worker test-runner calling n
 functions) and "parsons" (needs the arrange UI); lesson-to-lesson navigation (engine
 currently shows one lesson — CODELAB.lessons[0] or the DEMO).
 
+PROGRESS PERSISTENCE (done): storage now keeps per-lesson edited code and a solved set
+(plus theme + lessonIdx) under codelab.save.v1. Engine restores code on load, marks a
+lesson solved on a passing check, and progress cells show solved lessons as done. Reload
+restores last lesson + code + completion (verified by a two-load Node test sharing
+localStorage). Multi-lesson nav (prev/next) reads window.CODELAB.lessons; 2 real World 0
+sample lessons authored (sound hook + print), harness-validated on real content.
+NOTE: export/import save codes (PLAN: move file between machines) still TODO.
+
 Next task: Phase 1 per PLAN.md Section 6.
 Suggested order inside Phase 1:
 1. [DONE] tests/run.js harness skeleton: schema validation, reading-level check, time budgets, invariants

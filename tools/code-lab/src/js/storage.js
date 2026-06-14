@@ -9,7 +9,8 @@
   var CL = (window.CL = window.CL || {});
 
   var KEY = "codelab.save.v1"; // bump the suffix on a breaking schema change
-  var DEFAULTS = { theme: "magazine" };
+  // code: { lessonId: lastEditedSource }, solved: { lessonId: true }
+  var DEFAULTS = { theme: "magazine", lessonIdx: 0, code: {}, solved: {} };
 
   function read() {
     try {
@@ -39,6 +40,29 @@
     },
     setTheme: function (theme) {
       state.theme = theme;
+      write(state);
+    },
+    getLessonIdx: function () {
+      return state.lessonIdx || 0;
+    },
+    setLessonIdx: function (idx) {
+      state.lessonIdx = idx;
+      write(state);
+    },
+    getCode: function (lessonId) {
+      return (state.code && state.code[lessonId]) || null;
+    },
+    setCode: function (lessonId, code) {
+      if (!state.code) state.code = {};
+      state.code[lessonId] = code;
+      write(state);
+    },
+    isSolved: function (lessonId) {
+      return !!(state.solved && state.solved[lessonId]);
+    },
+    markSolved: function (lessonId) {
+      if (!state.solved) state.solved = {};
+      state.solved[lessonId] = true;
       write(state);
     },
     // Escape hatch for later steps and debugging; returns a copy.

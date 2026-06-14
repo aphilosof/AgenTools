@@ -20,9 +20,10 @@
   // so Run produces honest output. The prose is long enough to judge c64
   // body-face readability.
   var DEMO = {
+    id: "demo",
     world: 1,
     lessonNo: 1,
-    total: 6,
+    total: 1,
     title: "First Sound",
     challengeCode: "W1-1",
     filename: "first_sound.py",
@@ -43,7 +44,7 @@
   };
 
   // Live UI state. code survives theme re-renders so typing is never lost.
-  var state = { lesson: null, code: "" };
+  var state = { lesson: null, code: "", lessonIdx: 0, lessonCount: 1 };
   var keydownHandler = null;
 
   function el(tag, cls, html) {
@@ -77,10 +78,13 @@
     return "off";
   }
 
-  function renderProgress(lesson) {
+  function renderProgress() {
+    var lessons = lessonsList();
+    var total = lessons.length || (state.lesson ? state.lesson.total : 1);
     var html = "";
-    for (var i = 1; i <= lesson.total; i++) {
-      var cls = i < lesson.lessonNo ? "cell done" : i === lesson.lessonNo ? "cell current" : "cell";
+    for (var i = 0; i < total; i++) {
+      var solved = lessons.length ? CL.storage.isSolved(lessons[i].id) : false;
+      var cls = solved ? "cell done" : i === state.lessonIdx ? "cell current" : "cell";
       html += '<span class="' + cls + '"></span>';
     }
     return html;
@@ -123,8 +127,16 @@
     var topbar = el("div", "topbar");
     topbar.appendChild(el("div", "title", "World " + lesson.world + " · " + lesson.title));
     var right = el("div", "right");
-    right.appendChild(el("span", "progress", renderProgress(lesson)));
+    var lessonPrev = el("button", "navbtn", "‹");
+    lessonPrev.id = "lesson-prev";
+    var lessonNext = el("button", "navbtn", "›");
+    lessonNext.id = "lesson-next";
+    right.appendChild(lessonPrev);
+    var progress = el("span", "progress", renderProgress());
+    progress.id = "progress-cells";
+    right.appendChild(progress);
     right.appendChild(el("span", "counter", lesson.lessonNo + " / " + lesson.total));
+    right.appendChild(lessonNext);
     topbar.appendChild(right);
     container.appendChild(topbar);
 
@@ -273,7 +285,7 @@
         indentUnit: 4,
         viewportMargin: Infinity, // grow to fit content instead of a fixed box
       });
-      cm.on("change", function () { state.code = cm.getValue(); });
+      cm.on("change", function () { state.code = cm.getValue(); CL.storage.setCode(state.lesson.id, state.code); });
       var lastLine = null;
       return {
         getValue: function () { return cm.getValue(); },
@@ -292,7 +304,7 @@
     ta.className = "editor-fallback";
     ta.value = state.code;
     ta.spellcheck = false;
-    ta.addEventListener("input", function () { state.code = ta.value; });
+    ta.addEventListener("input", function () { state.code = ta.value; CL.storage.setCode(state.lesson.id, state.code); });
     host.appendChild(ta);
     return { getValue: function () { return ta.value; }, focus: function () { ta.focus(); }, highlightLine: function () {} };
   }
@@ -496,7 +508,12 @@
         if (grade && lesson.check && CL.check) {
           var verdict = CL.check.run(lesson, { stdout: stdoutText, events: allEvents });
           showVerdict(verdict);
-          if (verdict.pass) revealSolution(); // model-solution compare on success
+          if (verdict.pass) {
+            if (lesson.id) CL.storage.markSolved(lesson.id);
+            var cells = document.getElementById("progress-cells");
+            if (cells) cells.innerHTML = renderProgress(); // reflect the new solve
+            revealSolution(); // model-solution compare on success
+          }
         }
         // Second feedback channel: style notes from World 5 onward.
         if (CL.style && lesson.world >= 5) {
@@ -510,6 +527,17 @@
       out("stopping…", "info");
       setRunning(false);
       py.stop().then(function () { out("stopped — Python is ready again.", "info"); });
+    }
+
+    var lessonPrev = document.getElementById("lesson-prev");
+    var lessonNext = document.getElementById("lesson-next");
+    if (lessonPrev) {
+      lessonPrev.disabled = state.lessonIdx === 0;
+      lessonPrev.addEventListener("click", function () { setLesson(state.lessonIdx - 1); });
+    }
+    if (lessonNext) {
+      lessonNext.disabled = state.lessonIdx >= state.lessonCount - 1;
+      lessonNext.addEventListener("click", function () { setLesson(state.lessonIdx + 1); });
     }
 
     runBtn.addEventListener("click", function () { execute(false); });
@@ -527,19 +555,27 @@
     document.addEventListener("keydown", keydownHandler);
   }
 
-  function currentLesson() {
-    // Render real curriculum once it exists; fall back to the layout demo.
-    var lessons = (window.CODELAB && window.CODELAB.lessons) || [];
-    return lessons.length ? adaptLesson(lessons[0]) : DEMO;
+  function lessonsList() {
+    return (window.CODELAB && window.CODELAB.lessons) || [];
+  }
+  // Load the lesson at idx (clamped); fall back to the layout demo if there is
+  // no authored curriculum yet. Updates the module's lesson index/count.
+  function loadLesson(idx) {
+    var lessons = lessonsList();
+    if (!lessons.length) { state.lessonIdx = 0; state.lessonCount = 1; return DEMO; }
+    state.lessonCount = lessons.length;
+    state.lessonIdx = Math.max(0, Math.min(lessons.length - 1, idx));
+    return adaptLesson(lessons[state.lessonIdx], state.lessonIdx, lessons.length);
   }
 
   // Map a schema lesson object onto the fields render() needs. Kept minimal;
-  // the full lesson flow (rungs, hints, checks) is a later step.
-  function adaptLesson(l) {
+  // the full rung handling (parsons, tests) is a later step.
+  function adaptLesson(l, idx, total) {
     return {
+      id: l.id,
       world: l.world,
-      lessonNo: 1,
-      total: 6,
+      lessonNo: idx + 1,
+      total: total,
       title: l.title,
       challengeCode: "W" + l.world + "-1",
       filename: "lesson." + (l.lang === "js" ? "js" : "py"),
@@ -561,13 +597,22 @@
     wireRuntime(theme, state.lesson);
   }
 
+  function setLesson(idx) {
+    state.lesson = loadLesson(idx);
+    state.code = CL.storage.getCode(state.lesson.id) || state.lesson.starterCode;
+    CL.storage.setLessonIdx(state.lessonIdx);
+    var theme = document.documentElement.getAttribute("data-theme") || CL.storage.getTheme();
+    render(theme, state.lesson);
+    wireRuntime(theme, state.lesson);
+  }
+
   function init() {
-    state.lesson = currentLesson();
-    state.code = state.lesson.starterCode;
+    state.lesson = loadLesson(CL.storage.getLessonIdx());
+    state.code = CL.storage.getCode(state.lesson.id) || state.lesson.starterCode;
     setTheme(CL.storage.getTheme());
   }
 
-  CL.engine = { render: render, setTheme: setTheme };
+  CL.engine = { render: render, setTheme: setTheme, setLesson: setLesson };
 
   // Script is concatenated at the end of <body>, so #app already exists.
   init();
