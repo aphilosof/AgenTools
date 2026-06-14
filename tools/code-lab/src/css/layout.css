@@ -201,6 +201,18 @@ body { margin: 0; }
 /* model solution panel */
 .model-code { margin: 0; padding: 12px; font-family: var(--font-code); font-size: var(--size-code); color: var(--text); white-space: pre; overflow-x: auto; }
 
+/* knowledge map */
+.map-body { padding: 12px; }
+.map-search { width: 100%; box-sizing: border-box; margin-bottom: 12px; padding: 7px 10px; border: var(--border-w) solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); font-family: var(--font-code); font-size: var(--size-code); }
+.map-search:focus { outline: none; border-color: var(--accent); }
+.map-world { font-family: var(--font-display); font-size: calc(var(--size-display) * 0.6); color: var(--muted); margin: 12px 0 6px; }
+.map-lesson { display: flex; align-items: baseline; gap: 10px; padding: 7px 10px; border: var(--border-w) solid var(--border); border-radius: var(--radius); margin-bottom: 6px; cursor: pointer; background: var(--panel); }
+.map-lesson.current { border-color: var(--accent); }
+.map-mark { color: var(--success); width: 1em; flex: none; }
+.map-title { color: var(--text); }
+.map-tags { color: var(--muted); font-family: var(--font-code); font-size: 12px; margin-left: auto; }
+.map-empty { color: var(--muted); padding: 8px 0; }
+
 /* pass badge (magazine stamps an outline; other themes restyle below) */
 .pass-badge {
   display: inline-block;

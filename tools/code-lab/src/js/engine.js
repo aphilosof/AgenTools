@@ -53,6 +53,7 @@
   // is meaningful (PLAN §3). Map/Codex/Arena are added as those views are built.
   var TABS = [
     { view: "lessons", label: "Lessons" },
+    { view: "map", label: "Knowledge Map" },
     { view: "sandbox", label: "Sandbox" },
   ];
   function solvedCount() {
@@ -60,8 +61,16 @@
   }
   function unlocked(view) {
     if (view === "lessons") return true;
+    if (view === "map") return solvedCount() >= 1; // the map is meaningful once there's progress
     if (view === "sandbox") return solvedCount() >= 1; // free play, once they can code
     return false;
+  }
+  function isEditorView() {
+    return state.view === "lessons" || state.view === "sandbox";
+  }
+  function renderAndWire(theme) {
+    render(theme, state.lesson);
+    if (isEditorView()) wireRuntime(theme, state.lesson);
   }
   function sandboxLesson() {
     return {
@@ -159,10 +168,11 @@
       app.appendChild(bar);
     }
 
-    // top bar — lesson views show position + prev/next; other views just a title
+    // top bar — the Lessons view shows position + prev/next; other views just a title
     var topbar = el("div", "topbar");
-    topbar.appendChild(el("div", "title", lesson.isSandbox ? "Sandbox" : "World " + lesson.world + " · " + lesson.title));
-    if (!lesson.isSandbox) {
+    var titleText = state.view === "map" ? "Knowledge Map" : lesson.isSandbox ? "Sandbox" : "World " + lesson.world + " · " + lesson.title;
+    topbar.appendChild(el("div", "title", titleText));
+    if (state.view === "lessons") {
       var right = el("div", "right");
       var lessonPrev = el("button", "navbtn", "‹");
       lessonPrev.id = "lesson-prev";
@@ -189,6 +199,16 @@
       nav.appendChild(t);
     });
     container.appendChild(nav);
+
+    // Body branches by surface. Editor views (lessons, sandbox) share the code
+    // layout below; other surfaces render their own body.
+    if (state.view === "map") {
+      if (CL.map) CL.map.render(container, mapData());
+      buildThemebar(container, theme);
+      frame.appendChild(container);
+      app.appendChild(frame);
+      return;
+    }
 
     // prompt block (lessons only)
     if (lesson.promptText && lesson.promptText.length) {
@@ -300,7 +320,13 @@
       container.appendChild(keyhints);
     }
 
-    // theme switcher
+    buildThemebar(container, theme);
+
+    frame.appendChild(container);
+    app.appendChild(frame);
+  }
+
+  function buildThemebar(container, theme) {
     var themebar = el("div", "themebar");
     themebar.appendChild(el("span", "label", "theme:"));
     THEMES.forEach(function (t) {
@@ -310,9 +336,15 @@
       themebar.appendChild(opt);
     });
     container.appendChild(themebar);
+  }
 
-    frame.appendChild(container);
-    app.appendChild(frame);
+  function mapData() {
+    return {
+      lessons: lessonsList(),
+      currentIdx: state.lessonIdx,
+      isSolved: function (id) { return CL.storage.isSolved(id); },
+      open: function (idx) { setLesson(idx); },
+    };
   }
 
   // Mount the code editor into #editor-host. CodeMirror when present (loaded
@@ -636,8 +668,7 @@
     if (THEMES.indexOf(theme) === -1) theme = "magazine";
     document.documentElement.setAttribute("data-theme", theme);
     CL.storage.setTheme(theme);
-    render(theme, state.lesson);
-    wireRuntime(theme, state.lesson);
+    renderAndWire(theme);
   }
 
   function setLesson(idx) {
@@ -645,20 +676,16 @@
     state.lesson = loadLesson(idx);
     state.code = CL.storage.getCode(state.lesson.id) || state.lesson.starterCode;
     CL.storage.setLessonIdx(state.lessonIdx);
-    var theme = document.documentElement.getAttribute("data-theme") || CL.storage.getTheme();
-    render(theme, state.lesson);
-    wireRuntime(theme, state.lesson);
+    renderAndWire(document.documentElement.getAttribute("data-theme") || CL.storage.getTheme());
   }
 
-  // Switch surfaces (Lessons / Sandbox / …). The Sandbox is a pseudo-lesson so
-  // it reuses the editor + run + stepper machinery.
+  // Switch surfaces (Lessons / Map / Sandbox / …). Sandbox is a pseudo-lesson so
+  // it reuses the editor + run + stepper machinery; Map renders its own body.
   function setView(view) {
     state.view = unlocked(view) ? view : "lessons";
     state.lesson = state.view === "sandbox" ? sandboxLesson() : loadLesson(state.lessonIdx);
     state.code = CL.storage.getCode(state.lesson.id) || state.lesson.starterCode;
-    var theme = document.documentElement.getAttribute("data-theme") || CL.storage.getTheme();
-    render(theme, state.lesson);
-    wireRuntime(theme, state.lesson);
+    renderAndWire(document.documentElement.getAttribute("data-theme") || CL.storage.getTheme());
   }
 
   function init() {

@@ -66,7 +66,12 @@ SURFACES (in progress). Slice 1 DONE: view router + progressive disclosure + San
 - Verified in node: disclosure (Lessons -> +Sandbox after a solve), Lessons<->Sandbox switch,
   sandbox has editor+run but no check/prompt/lesson-nav. (Caught+fixed: editorHeader crashed on
   the sandbox lesson — guarded missing challengeCode.)
-- SLICES REMAINING: 2) Knowledge Map, 3) Codex (skills/glossary/errors), 4) Arena + coach mode.
+Slice 2 DONE: Knowledge Map. map.js renders worlds->lessons with ✓/○ completion, concept
+tags, concept/title search, and click-to-open (jumps into the lesson). render() branches the
+body by view (editor views vs map) via an early-return + buildThemebar()/mapData() helpers;
+renderAndWire() only wires the runtime for editor views; topbar is view-aware. Map unlocks
+after >=1 solve. Verified in node (render, search filter, open-jumps, topbar).
+- SLICES REMAINING: 3) Codex (skills/glossary/errors tabs, earned-only), 4) Arena + coach mode.
   Add each view to TABS + unlocked() + a render branch as it's built.
 
 Next task: Phase 1 per PLAN.md Section 6.
