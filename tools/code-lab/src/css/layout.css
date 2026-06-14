@@ -189,6 +189,11 @@ body { margin: 0; }
 .err-ann-head { font-family: var(--font-code); font-size: 12px; color: var(--accent); margin-bottom: 4px; }
 .err-ann-body { color: var(--text); line-height: 1.5; }
 
+/* style channel — advisory second feedback channel, visually distinct from errors */
+.style-channel { margin-top: 8px; padding: 8px 12px; border-left: 3px solid var(--muted); background: var(--panel-header); }
+.style-head { font-family: var(--font-code); font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.style-item { color: var(--text-soft); line-height: 1.5; }
+
 /* pass badge (magazine stamps an outline; other themes restyle below) */
 .pass-badge {
   display: inline-block;

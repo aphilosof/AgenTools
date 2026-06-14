@@ -313,6 +313,18 @@
       }
     }
 
+    // Style channel — advisory notes after a pass; active from World 5 (PLAN §3).
+    function showStyle(findings) {
+      var box = el("div", "style-channel");
+      box.appendChild(el("div", "style-head", "✎ style notes (optional)"));
+      findings.forEach(function (f) {
+        var row = el("div", "style-item");
+        row.textContent = "line " + f.line + ": " + f.message;
+        box.appendChild(row);
+      });
+      outBox.appendChild(box);
+    }
+
     // ----- stepper (trace-then-scrub over recorded execution steps) -----
     function renderVars(obj) {
       stepVars.innerHTML = "";
@@ -406,6 +418,11 @@
         if (counts.plot) notes.push("📊 drew a chart");
         if (notes.length) notes.forEach(function (n) { out(n, "success"); });
         else if (!hadStdout) out("done.", "info");
+        // Second feedback channel: style notes from World 5 onward.
+        if (CL.style && lesson.world >= 5) {
+          var findings = CL.style.analyze(editor.getValue());
+          if (findings.length) showStyle(findings);
+        }
       });
     }
     function doStop() {

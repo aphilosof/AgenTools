@@ -67,7 +67,12 @@ Suggested order inside Phase 1:
    shared #stage canvas (revealed on demand). Verified: prelude runs in python3 recording
    correct event kinds; bar chart renders in Arc. NOTE: turtle+plot share one canvas (last
    draw wins) — fine for single-topic lessons. tolerant diagnostic checkers + Parsons: TODO.
-7. style checker (naming, magic numbers, repetition, function length)
+7. [DONE] style checker. style.js (the second feedback channel): naming, magic numbers,
+   repeated code, function length — analysed on stripped source (strings/comments removed),
+   tuned conservative (magic-number only fires on a literal repeated 3+ times, so one-off note
+   numbers/angles don't trip it). Wired into engine: advisory notes after a pass, active from
+   World 5 (dormant on the W1 demo). Verified by node unit tests (clean=silent; messy fires all
+   four rules; strings ignored). NOT YET: styleRequired blocking at W6+ checkpoints (lesson-flow).
 8. knowledge map, codex (skills + glossary + errors tabs), arena + coach mode, progressive disclosure
 9. 6 sample lessons (hook, Python-with-stepper, Parsons, turtle, JS, chart), all checks green
 Gate: build, full test pass, user tests dist/course.html with his son (including c64 body-face readability).

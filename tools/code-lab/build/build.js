@@ -16,6 +16,7 @@ const JS_ORDER = [
   "turtle.js",
   "plot.js",
   "errors.js",
+  "style.js",
   "codex.js",
   "map.js",
   "arena.js",
