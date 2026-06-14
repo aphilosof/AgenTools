@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<!-- Stage 1A spike 1 (CLAUDE.md): prove a double-clicked file:// page can run
+     real Python and recover from a student infinite loop without freezing.
+     Standalone and disposable; the production runtime modules are built from
+     whatever this proves. Open by double-clicking this file. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Code Lab — runtime spike</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 30px auto; padding: 0 16px; line-height: 1.5; }
+  h1 { font-size: 20px; }
+  .row { margin: 12px 0; }
+  button { font-size: 14px; padding: 8px 14px; margin-right: 8px; cursor: pointer; }
+  button:disabled { opacity: 0.5; cursor: default; }
+  #status { font-weight: 600; }
+  #clock { font-variant-numeric: tabular-nums; }
+  pre { background: #f4f4f4; border: 1px solid #ddd; padding: 10px; white-space: pre-wrap; min-height: 40px; }
+  .ok { color: #1a7f37; } .err { color: #b00; } .warn { color: #b25f00; }
+  ol { background: #fffbe6; border: 1px solid #f0e0a0; padding: 12px 12px 12px 30px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<h1>Code Lab — runtime spike</h1>
+
+<ol>
+  <li>Wait for status to say <b>ready</b> (first load fetches ~15&nbsp;MB Pyodide from CDN — needs internet once).</li>
+  <li>Click <b>Run Python</b> → you should see real Python output (version + a computed sum).</li>
+  <li>Click <b>Run infinite loop</b> → the <b>live clock keeps ticking</b> (the page is NOT frozen) even though Python is stuck.</li>
+  <li>Click <b>Stop &amp; recover</b> → the stuck loop is killed and the runtime comes back to <b>ready</b>.</li>
+  <li>Click <b>Run Python</b> again → it still works. That proves recovery.</li>
+</ol>
+
+<div class="row">Status: <span id="status">booting…</span></div>
+<div class="row">Live main-thread clock (must keep moving during the loop): <span id="clock">0.0s</span></div>
+
+<div class="row">
+  <button id="btn-run" disabled>Run Python</button>
+  <button id="btn-loop" disabled>Run infinite loop</button>
+  <button id="btn-stop" disabled>Stop &amp; recover</button>
+</div>
+
+<div class="row">Output:<pre id="out"></pre></div>
+
+<!-- Worker source kept as plain text (no escaping); turned into a Blob worker
+     below. Direct file:// workers are blocked by browsers, but a Blob worker
+     inherits the page and is allowed, and importScripts can pull Pyodide from
+     the CDN cross-origin. -->
+<script id="worker-src" type="text/worker">
+  importScripts("https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js");
+  let pyodide = null;
+
+  async function init() {
+    pyodide = await loadPyodide();
+    pyodide.setStdout({ batched: function (s) { postMessage({ type: "stdout", text: s }); } });
+    pyodide.setStderr({ batched: function (s) { postMessage({ type: "stderr", text: s }); } });
+    postMessage({ type: "ready" });
+  }
+  init().catch(function (e) { postMessage({ type: "fatal", text: String(e) }); });
+
+  onmessage = async function (e) {
+    if (e.data.type === "run") {
+      try {
+        await pyodide.runPythonAsync(e.data.code);
+        postMessage({ type: "done" });
+      } catch (err) {
+        postMessage({ type: "error", text: String(err && err.message ? err.message : err) });
+      }
+    }
+  };
+</script>
+
+<script>
+"use strict";
+const $ = function (id) { return document.getElementById(id); };
+const out = $("out");
+const statusEl = $("status");
+
+function setStatus(text, cls) {
+  statusEl.textContent = text;
+  statusEl.className = cls || "";
+}
+function log(text, cls) {
+  const span = document.createElement("span");
+  if (cls) span.className = cls;
+  span.textContent = text + "\n";
+  out.appendChild(span);
+}
+
+// Live main-thread clock — if this freezes during the loop, the spike failed.
+let t0 = performance.now();
+setInterval(function () { $("clock").textContent = ((performance.now() - t0) / 1000).toFixed(1) + "s"; }, 100);
+
+const workerSrc = $("worker-src").textContent;
+let worker = null;
+let blobUrl = null;
+
+function spawnWorker(onReady) {
+  if (worker) { worker.terminate(); }
+  if (blobUrl) { URL.revokeObjectURL(blobUrl); }
+  blobUrl = URL.createObjectURL(new Blob([workerSrc], { type: "application/javascript" }));
+  worker = new Worker(blobUrl);
+  worker.onmessage = function (e) {
+    const m = e.data;
+    if (m.type === "ready") { onReady && onReady(); }
+    else if (m.type === "stdout") { log(m.text); }
+    else if (m.type === "stderr") { log(m.text, "warn"); }
+    else if (m.type === "error") { log("Python error: " + m.text, "err"); setButtons(true); }
+    else if (m.type === "done") { setButtons(true); }
+    else if (m.type === "fatal") { setStatus("FAILED to load Pyodide: " + m.text, "err"); }
+  };
+  worker.onerror = function (e) {
+    setStatus("Worker error: " + (e.message || "see console") + " — workers may be blocked from file:// in this browser", "err");
+  };
+}
+
+function setButtons(ready) {
+  $("btn-run").disabled = !ready;
+  $("btn-loop").disabled = !ready;
+  $("btn-stop").disabled = ready;
+}
+
+function boot() {
+  setStatus("loading Pyodide (first time downloads ~15 MB)…", "warn");
+  setButtons(false);
+  spawnWorker(function () { setStatus("ready", "ok"); setButtons(true); });
+}
+
+$("btn-run").addEventListener("click", function () {
+  log("— run python —");
+  setButtons(false);
+  worker.postMessage({ type: "run", code:
+    "import sys\n" +
+    "print('Python', sys.version.split()[0], 'running in the browser')\n" +
+    "print('sum(range(1,11)) =', sum(range(1, 11)))\n"
+  });
+});
+
+$("btn-loop").addEventListener("click", function () {
+  log("— starting infinite loop (while True: pass) — watch the clock keep ticking —", "warn");
+  setButtons(false);
+  $("btn-stop").disabled = false;
+  worker.postMessage({ type: "run", code: "while True:\n    pass\n" });
+});
+
+$("btn-stop").addEventListener("click", function () {
+  log("terminating stuck worker and re-initialising…", "warn");
+  setStatus("recovering…", "warn");
+  setButtons(false);
+  boot(); // terminates the old worker and spins up a fresh Pyodide
+});
+
+boot();
+</script>
+</body>
+</html>
