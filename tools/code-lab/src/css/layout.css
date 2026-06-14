@@ -110,6 +110,18 @@ body { margin: 0; }
 /* stage: canvas for turtle/plot output */
 .stage-canvas { display: block; width: 100%; max-width: 480px; height: auto; }
 
+/* stepper: trace-then-scrub through recorded execution */
+.stepper-body { padding: 12px; }
+.stepper-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.step-pos { font-family: var(--font-code); font-size: 12px; color: var(--muted); }
+.step-line { font-family: var(--font-code); font-size: 12px; color: var(--text-soft); margin-bottom: 10px; }
+.var-table { border-collapse: collapse; font-family: var(--font-code); font-size: var(--size-code); width: 100%; max-width: 420px; }
+.var-table td { border: var(--border-w) solid var(--border); padding: 4px 10px; }
+.var-table .var-name { color: var(--accent); }
+.var-table .var-val { color: var(--text); }
+.var-table .var-empty { color: var(--muted); }
+.CodeMirror .cm-stepline { background: var(--panel-header); }
+
 /* editor: CodeMirror, themed from tokens; textarea fallback if the CDN fails.
    CodeMirror brings its own base CSS from the CDN; these rules retint it to the
    active theme and let it grow to fit the code instead of a fixed-height box. */

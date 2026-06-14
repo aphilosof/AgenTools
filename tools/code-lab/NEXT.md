@@ -47,7 +47,11 @@ Suggested order inside Phase 1:
    into engine with a real CodeMirror editor (textarea fallback) + run/stop; demo runs
    real Python in-browser, verified in Arc. STILL TODO in step 3: runtime-js (worker +
    iframe) and the music/turtle/plot bridges into Pyodide.
-4. stepper (sys.settrace line highlight + variable table)
+4. [DONE] stepper (sys.settrace in worker, trace-then-scrub): records (line, locals repr) per
+   executed line of '<student>' code, capped at 500, posts as 'steps'; engine shows a stepper
+   panel with back/step controls, CodeMirror line highlight, and a live variable table.
+   Verified: tracer runs in python3 (vars evolve correctly), stepped through in Arc.
+   Run model is whole-program/isolated (exec in fresh globals) — settled with user.
 5. friendly error layer (translate-never-replace, fading by world / Real Tools status)
 6. [MUSIC+TURTLE+PLOT DONE] music (Web Audio), turtle (canvas), plot (line+bar canvas) all
    built on one recorded-event stream in the worker (tuples in _events, first element is the

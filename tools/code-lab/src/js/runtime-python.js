@@ -65,6 +65,37 @@
     "  \"    _events.append(('bar', [str(_l) for _l in labels], [float(_v) for _v in values]))\",",
     "  'for _f in (set_tempo, sleep, play, sample, play_pattern, forward, backward, left, right, penup, pendown, pencolor, goto, home, plot, bar):',",
     "  '    setattr(builtins, _f.__name__, _f)',",
+    // Stepper: sys.settrace records (line, locals) at each executed line of the
+    // student's code (filename '<student>'), capped, for trace-then-scrub.
+    "  'import sys',",
+    "  '_steps = []',",
+    "  '_STEP_MAX = 500',",
+    "  'def _snapshot(frame):',",
+    "  '    loc = {}',",
+    "  '    for _k, _v in list(frame.f_locals.items()):',",
+    "  \"        if _k.startswith('__'):\",",
+    "  '            continue',",
+    "  '        try:',",
+    "  '            _r = repr(_v)',",
+    "  '        except Exception:',",
+    "  \"            _r = '<?>'\",",
+    "  '        if len(_r) > 200:',",
+    "  \"            _r = _r[:200] + '...'\",",
+    "  '        loc[_k] = _r',",
+    "  '    return (frame.f_lineno, loc)',",
+    "  'def _tracer(frame, event, arg):',",
+    "  \"    if frame.f_code.co_filename != '<student>':\",",
+    "  '        return _tracer',",
+    "  \"    if event == 'line' and len(_steps) < _STEP_MAX:\",",
+    "  '        _steps.append(_snapshot(frame))',",
+    "  '    return _tracer',",
+    "  'def _run_traced(src):',",
+    "  \"    code = compile(src, '<student>', 'exec')\",",
+    "  '    sys.settrace(_tracer)',",
+    "  '    try:',",
+    "  '        exec(code, {})',",
+    "  '    finally:',",
+    "  '        sys.settrace(None)',",
     "].join('\\n');",
     "async function init() {",
     "  pyodide = await loadPyodide();",
@@ -77,12 +108,13 @@
     "onmessage = async function (e) {",
     "  if (e.data.type === 'run') {",
     "    try {",
-    "      await pyodide.runPythonAsync(\"_events.clear(); _clock[0] = 0.0\");",
-    "      await pyodide.runPythonAsync(e.data.code);",
-    "      var proxy = pyodide.globals.get('_events');",
-    "      var ev = proxy.toJs();",
-    "      proxy.destroy();",
+    "      await pyodide.runPythonAsync('_events.clear(); _clock[0] = 0.0; _steps.clear()');",
+    "      pyodide.globals.set('_src', e.data.code);",
+    "      await pyodide.runPythonAsync('_run_traced(_src)');",
+    "      var evp = pyodide.globals.get('_events'); var ev = evp.toJs(); evp.destroy();",
+    "      var stp = pyodide.globals.get('_steps'); var st = stp.toJs({ dict_converter: Object.fromEntries }); stp.destroy();",
     "      postMessage({ type: 'events', events: ev });",
+    "      postMessage({ type: 'steps', steps: st });",
     "      postMessage({ type: 'done' });",
     "    } catch (err) { postMessage({ type: 'error', text: String(err && err.message ? err.message : err) }); }",
     "  }",
@@ -126,6 +158,8 @@
         if (activeRun && activeRun.onStderr) activeRun.onStderr(m.text);
       } else if (m.type === "events") {
         if (activeRun && activeRun.onEvents) activeRun.onEvents(m.events);
+      } else if (m.type === "steps") {
+        if (activeRun && activeRun.onSteps) activeRun.onSteps(m.steps);
       } else if (m.type === "done") {
         finishRun({ ok: true });
       } else if (m.type === "error") {
@@ -159,7 +193,7 @@
       opts = opts || {};
       return ensureReady().then(function () {
         return new Promise(function (resolve) {
-          activeRun = { onStdout: opts.onStdout, onStderr: opts.onStderr, onEvents: opts.onEvents, resolve: resolve };
+          activeRun = { onStdout: opts.onStdout, onStderr: opts.onStderr, onEvents: opts.onEvents, onSteps: opts.onSteps, resolve: resolve };
           setStatus("running");
           worker.postMessage({ type: "run", code: code });
         });

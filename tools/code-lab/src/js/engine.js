@@ -147,6 +147,32 @@
     actions.appendChild(stopBtn);
     container.appendChild(actions);
 
+    // stepper — the notional machine; hidden until a run records steps
+    var stepper = el("div", "panel");
+    stepper.id = "stepper";
+    stepper.style.display = "none";
+    stepper.appendChild(el("div", "panel-header", "stepper"));
+    var sbody = el("div", "stepper-body");
+    var controls = el("div", "stepper-controls");
+    var prev = el("button", "btn ghost", "◀ back");
+    prev.id = "step-prev";
+    var pos = el("span", "step-pos");
+    pos.id = "step-pos";
+    var next = el("button", "btn ghost", "step ▶");
+    next.id = "step-next";
+    controls.appendChild(prev);
+    controls.appendChild(pos);
+    controls.appendChild(next);
+    sbody.appendChild(controls);
+    var stepLine = el("div", "step-line");
+    stepLine.id = "step-line";
+    sbody.appendChild(stepLine);
+    var varTable = el("table", "var-table");
+    varTable.id = "step-vars";
+    sbody.appendChild(varTable);
+    stepper.appendChild(sbody);
+    container.appendChild(stepper);
+
     // stage — canvas for turtle/plot output; hidden until something draws
     var stage = el("div", "panel");
     stage.id = "stage";
@@ -205,7 +231,19 @@
         viewportMargin: Infinity, // grow to fit content instead of a fixed box
       });
       cm.on("change", function () { state.code = cm.getValue(); });
-      return { getValue: function () { return cm.getValue(); }, focus: function () { cm.focus(); } };
+      var lastLine = null;
+      return {
+        getValue: function () { return cm.getValue(); },
+        focus: function () { cm.focus(); },
+        highlightLine: function (n) {
+          if (lastLine != null) { cm.removeLineClass(lastLine, "background", "cm-stepline"); lastLine = null; }
+          if (n != null && n >= 0) {
+            cm.addLineClass(n, "background", "cm-stepline");
+            lastLine = n;
+            cm.scrollIntoView({ line: n, ch: 0 });
+          }
+        },
+      };
     }
     var ta = document.createElement("textarea");
     ta.className = "editor-fallback";
@@ -213,7 +251,7 @@
     ta.spellcheck = false;
     ta.addEventListener("input", function () { state.code = ta.value; });
     host.appendChild(ta);
-    return { getValue: function () { return ta.value; }, focus: function () { ta.focus(); } };
+    return { getValue: function () { return ta.value; }, focus: function () { ta.focus(); }, highlightLine: function () {} };
   }
 
   function wireRuntime(theme, lesson) {
@@ -223,13 +261,61 @@
     var outBox = document.getElementById("output-box");
     var stage = document.getElementById("stage");
     var canvas = document.getElementById("stage-canvas");
+    var stepperEl = document.getElementById("stepper");
+    var stepPrev = document.getElementById("step-prev");
+    var stepNext = document.getElementById("step-next");
+    var stepPos = document.getElementById("step-pos");
+    var stepLineEl = document.getElementById("step-line");
+    var stepVars = document.getElementById("step-vars");
     var py = CL.runtime && CL.runtime.python;
+
+    var steps = [];
+    var stepIdx = 0;
 
     function out(text, cls) {
       var d = el("div", "out-line" + (cls ? " " + cls : ""));
       d.textContent = text;
       outBox.appendChild(d);
     }
+
+    // ----- stepper (trace-then-scrub over recorded execution steps) -----
+    function renderVars(obj) {
+      stepVars.innerHTML = "";
+      var keys = Object.keys(obj || {});
+      if (!keys.length) {
+        var tr = el("tr");
+        var td = el("td", "var-empty", "(no variables yet)");
+        td.colSpan = 2;
+        tr.appendChild(td);
+        stepVars.appendChild(tr);
+        return;
+      }
+      keys.forEach(function (k) {
+        var row = el("tr");
+        row.appendChild(el("td", "var-name", escapeHtml(k)));
+        row.appendChild(el("td", "var-val", escapeHtml(obj[k])));
+        stepVars.appendChild(row);
+      });
+    }
+    function showStep(i) {
+      if (!steps.length) return;
+      stepIdx = Math.max(0, Math.min(steps.length - 1, i));
+      var s = steps[stepIdx]; // [lineNo, {vars}]
+      stepPos.textContent = "step " + (stepIdx + 1) + " / " + steps.length;
+      stepLineEl.textContent = "about to run line " + s[0];
+      renderVars(s[1]);
+      editor.highlightLine(s[0] - 1);
+      stepPrev.disabled = stepIdx === 0;
+      stepNext.disabled = stepIdx === steps.length - 1;
+    }
+    function initStepper(s) {
+      steps = s || [];
+      if (!steps.length) { stepperEl.style.display = "none"; return; }
+      stepperEl.style.display = "";
+      showStep(0);
+    }
+    stepPrev.addEventListener("click", function () { showStep(stepIdx - 1); });
+    stepNext.addEventListener("click", function () { showStep(stepIdx + 1); });
 
     // Route recorded events to the right renderer and tally what happened.
     function dispatchEvents(events, counts) {
@@ -257,6 +343,8 @@
       if (runBtn.disabled) return;
       outBox.innerHTML = "";
       if (stage) stage.style.display = "none";
+      stepperEl.style.display = "none";
+      editor.highlightLine(null);
       if (!py) { out("runtime unavailable", "error"); return; }
       // Unlock audio inside the click (a user gesture) so sound can play later.
       if (CL.music) CL.music.unlock();
@@ -264,12 +352,15 @@
       if (py.getStatus() !== "ready") out("starting Python (the first run downloads it once)…", "info");
       var hadStdout = false;
       var counts = { music: 0, turtle: 0, plot: 0 };
+      var capturedSteps = null;
       py.run(editor.getValue(), {
         onStdout: function (s) { hadStdout = true; out(s.replace(/\n$/, "")); },
         onStderr: function (s) { hadStdout = true; out(s.replace(/\n$/, ""), "error"); },
         onEvents: function (events) { dispatchEvents(events, counts); },
+        onSteps: function (s) { capturedSteps = s; },
       }).then(function (r) {
         setRunning(false);
+        initStepper(capturedSteps);
         if (!r.ok) {
           if (r.error !== "stopped") out(r.error || "error", "error");
           return;
