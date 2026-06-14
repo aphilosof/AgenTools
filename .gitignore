@@ -26,5 +26,9 @@ dist/
 build/
 *.egg-info/
 
+# code-lab/build/ is a hand-written build script, not generated output — keep it
+!tools/code-lab/build/
+!tools/code-lab/build/**
+
 # Local workspace (samples, results, output)
 tools/writing/voice-cloner/workspace/
