@@ -60,6 +60,16 @@
     return theme === "magazine" ? "printout" : "output";
   }
 
+  // Error-annotation fading (PLAN.md §3): full through World 4, on-demand
+  // World 5-7, off from Real Tools I onward, never in the Arena.
+  function annotationMode(lesson) {
+    if (lesson.isArena) return "off";
+    if (lesson.realToolsDone) return "off";
+    if (lesson.world <= 4) return "full";
+    if (lesson.world <= 7) return "ondemand";
+    return "off";
+  }
+
   function renderProgress(lesson) {
     var html = "";
     for (var i = 1; i <= lesson.total; i++) {
@@ -278,6 +288,31 @@
       outBox.appendChild(d);
     }
 
+    // Friendly error annotation beneath the raw traceback (translate, never replace).
+    function showAnnotation(ann) {
+      var box = el("div", "err-annotation");
+      var head = el("div", "err-ann-head");
+      head.textContent = "💡 " + (ann.title || "What this means") + (ann.line ? "  (line " + ann.line + ")" : "");
+      box.appendChild(head);
+      var body = el("div", "err-ann-body");
+      body.textContent = ann.plain;
+      box.appendChild(body);
+      outBox.appendChild(box);
+    }
+    function showErrorWithAnnotation(traceback) {
+      out(traceback, "error"); // raw traceback, untouched
+      var ann = CL.errors && CL.errors.translate(traceback);
+      if (!ann || !ann.plain) return;
+      var mode = annotationMode(lesson);
+      if (mode === "full") {
+        showAnnotation(ann);
+      } else if (mode === "ondemand") {
+        var btn = el("button", "btn ghost", "explain this error");
+        btn.addEventListener("click", function () { btn.remove(); showAnnotation(ann); });
+        outBox.appendChild(btn);
+      }
+    }
+
     // ----- stepper (trace-then-scrub over recorded execution steps) -----
     function renderVars(obj) {
       stepVars.innerHTML = "";
@@ -362,7 +397,7 @@
         setRunning(false);
         initStepper(capturedSteps);
         if (!r.ok) {
-          if (r.error !== "stopped") out(r.error || "error", "error");
+          if (r.error !== "stopped") showErrorWithAnnotation(r.error || "error");
           return;
         }
         var notes = [];

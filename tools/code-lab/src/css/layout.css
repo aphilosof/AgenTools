@@ -184,6 +184,11 @@ body { margin: 0; }
 .out-line.ready { color: var(--text-soft); }
 .out-line.cmd { color: var(--muted); }
 
+/* friendly error annotation — sits beneath the untouched raw traceback */
+.err-annotation { margin-top: 8px; padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--panel-header); }
+.err-ann-head { font-family: var(--font-code); font-size: 12px; color: var(--accent); margin-bottom: 4px; }
+.err-ann-body { color: var(--text); line-height: 1.5; }
+
 /* pass badge (magazine stamps an outline; other themes restyle below) */
 .pass-badge {
   display: inline-block;

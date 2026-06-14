@@ -52,7 +52,15 @@ Suggested order inside Phase 1:
    panel with back/step controls, CodeMirror line highlight, and a live variable table.
    Verified: tracer runs in python3 (vars evolve correctly), stepped through in Arc.
    Run model is whole-program/isolated (exec in fresh globals) — settled with user.
-5. friendly error layer (translate-never-replace, fading by world / Real Tools status)
+5. [DONE] friendly error layer. errors.js translates 13 common Python error classes to
+   plain-language notes (grade 5-6) keyed to the error class + line, each with a codex id.
+   The worker now formats a CLEAN traceback (only '<student>' frames via linecache + the
+   traceback module — no Pyodide/_run_traced internals), matching real `python file.py`.
+   engine shows the raw traceback untouched + the annotation, faded by world
+   (full <=4, on-demand 5-7, off after Real Tools, never in Arena via annotationMode()).
+   Verified: translate() unit-tested on 5 tracebacks (node), clean _err verified in python3,
+   confirmed in Arc. NOTE: Codex errors-tab registration is exposed (CL.errors.codexIds) but
+   the Codex UI is the step-8 build; harness inv9 still SKIP until lessons declare errorClasses.
 6. [MUSIC+TURTLE+PLOT DONE] music (Web Audio), turtle (canvas), plot (line+bar canvas) all
    built on one recorded-event stream in the worker (tuples in _events, first element is the
    kind); engine dispatches play/sample->music, t_*->turtle, plot/bar->plot, drawing on a
