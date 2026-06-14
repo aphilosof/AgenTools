@@ -147,6 +147,19 @@
     actions.appendChild(stopBtn);
     container.appendChild(actions);
 
+    // stage — canvas for turtle/plot output; hidden until something draws
+    var stage = el("div", "panel");
+    stage.id = "stage";
+    stage.style.display = "none";
+    stage.appendChild(el("div", "panel-header", "canvas"));
+    var canvas = document.createElement("canvas");
+    canvas.id = "stage-canvas";
+    canvas.className = "stage-canvas";
+    canvas.width = 480;
+    canvas.height = 320;
+    stage.appendChild(canvas);
+    container.appendChild(stage);
+
     // output panel — filled by Run
     var outPanel = el("div", "panel");
     outPanel.appendChild(el("div", "panel-header", escapeHtml(outputHeader(theme))));
@@ -208,12 +221,33 @@
     var runBtn = document.getElementById("btn-run");
     var stopBtn = document.getElementById("btn-stop");
     var outBox = document.getElementById("output-box");
+    var stage = document.getElementById("stage");
+    var canvas = document.getElementById("stage-canvas");
     var py = CL.runtime && CL.runtime.python;
 
     function out(text, cls) {
       var d = el("div", "out-line" + (cls ? " " + cls : ""));
       d.textContent = text;
       outBox.appendChild(d);
+    }
+
+    // Route recorded events to the right renderer and tally what happened.
+    function dispatchEvents(events, counts) {
+      if (!events || !events.length) return;
+      var music = [], turtle = [], plot = [];
+      events.forEach(function (e) {
+        var k = e[0];
+        if (k === "play" || k === "sample") music.push(e);
+        else if (k.indexOf("t_") === 0) turtle.push(e);
+        else if (k === "plot" || k === "bar") plot.push(e);
+      });
+      counts.music += music.length;
+      counts.turtle += turtle.length;
+      counts.plot += plot.length;
+      if (music.length && CL.music) CL.music.schedule(music);
+      if ((turtle.length || plot.length) && canvas) stage.style.display = "";
+      if (turtle.length && CL.turtle) CL.turtle.render(canvas, turtle);
+      if (plot.length && CL.plot) CL.plot.render(canvas, plot);
     }
     function setRunning(on) {
       runBtn.disabled = on;
@@ -222,29 +256,30 @@
     function doRun() {
       if (runBtn.disabled) return;
       outBox.innerHTML = "";
+      if (stage) stage.style.display = "none";
       if (!py) { out("runtime unavailable", "error"); return; }
       // Unlock audio inside the click (a user gesture) so sound can play later.
       if (CL.music) CL.music.unlock();
       setRunning(true);
       if (py.getStatus() !== "ready") out("starting Python (the first run downloads it once)…", "info");
       var hadStdout = false;
-      var soundCount = 0;
+      var counts = { music: 0, turtle: 0, plot: 0 };
       py.run(editor.getValue(), {
         onStdout: function (s) { hadStdout = true; out(s.replace(/\n$/, "")); },
         onStderr: function (s) { hadStdout = true; out(s.replace(/\n$/, ""), "error"); },
-        onEvents: function (events) {
-          soundCount = events ? events.length : 0;
-          if (CL.music) CL.music.schedule(events);
-        },
+        onEvents: function (events) { dispatchEvents(events, counts); },
       }).then(function (r) {
         setRunning(false);
         if (!r.ok) {
           if (r.error !== "stopped") out(r.error || "error", "error");
-        } else if (soundCount > 0) {
-          out("♪ played " + soundCount + " sound" + (soundCount > 1 ? "s" : ""), "success");
-        } else if (!hadStdout) {
-          out("done.", "info");
+          return;
         }
+        var notes = [];
+        if (counts.music) notes.push("♪ played " + counts.music + " sound" + (counts.music > 1 ? "s" : ""));
+        if (counts.turtle) notes.push("✏ drew with the turtle");
+        if (counts.plot) notes.push("📊 drew a chart");
+        if (notes.length) notes.forEach(function (n) { out(n, "success"); });
+        else if (!hadStdout) out("done.", "info");
       });
     }
     function doStop() {

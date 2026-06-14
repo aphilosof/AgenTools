@@ -107,6 +107,9 @@ body { margin: 0; }
   border-bottom: var(--border-w) solid var(--border);
 }
 
+/* stage: canvas for turtle/plot output */
+.stage-canvas { display: block; width: 100%; max-width: 480px; height: auto; }
+
 /* editor: CodeMirror, themed from tokens; textarea fallback if the CDN fails.
    CodeMirror brings its own base CSS from the CDN; these rules retint it to the
    active theme and let it grow to fit the code instead of a fixed-height box. */

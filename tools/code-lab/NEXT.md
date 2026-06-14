@@ -49,9 +49,12 @@ Suggested order inside Phase 1:
    iframe) and the music/turtle/plot bridges into Pyodide.
 4. stepper (sys.settrace line highlight + variable table)
 5. friendly error layer (translate-never-replace, fading by world / Real Tools status)
-6. [MUSIC DONE] music (Web Audio: play/sleep/sample/play_pattern/set_tempo, virtual-timeline,
-   events recorded in worker as tuples, scheduled on main thread, verified audible in Arc);
-   turtle + plot still TODO (same worker-event-bridge pattern); tolerant checkers + Parsons TODO
+6. [MUSIC+TURTLE+PLOT DONE] music (Web Audio), turtle (canvas), plot (line+bar canvas) all
+   built on one recorded-event stream in the worker (tuples in _events, first element is the
+   kind); engine dispatches play/sample->music, t_*->turtle, plot/bar->plot, drawing on a
+   shared #stage canvas (revealed on demand). Verified: prelude runs in python3 recording
+   correct event kinds; bar chart renders in Arc. NOTE: turtle+plot share one canvas (last
+   draw wins) — fine for single-topic lessons. tolerant diagnostic checkers + Parsons: TODO.
 7. style checker (naming, magic numbers, repetition, function length)
 8. knowledge map, codex (skills + glossary + errors tabs), arena + coach mode, progressive disclosure
 9. 6 sample lessons (hook, Python-with-stepper, Parsons, turtle, JS, chart), all checks green
