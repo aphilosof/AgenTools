@@ -23,16 +23,16 @@
     world: 1,
     lessonNo: 1,
     total: 6,
-    title: "Adding Numbers",
+    title: "First Sound",
     challengeCode: "W1-1",
-    filename: "adder.py",
+    filename: "first_sound.py",
     lang: "py",
-    promptTitle: "Add up the numbers",
+    promptTitle: "Make a sound",
     promptText: [
-      "Python can do math for you, much faster than by hand. The print command shows an answer on the screen.",
-      "Run the code below. It adds the numbers 1 to 5 and prints the total. Then change the 5 to a bigger number and run it again — watch the total grow.",
+      "This program plays three notes. The play command makes a sound, and the number is the note: bigger numbers sound higher. The sleep command waits in between.",
+      "Press run and listen. Then change one of the numbers and run it again to hear a different note. Make sure your sound is on.",
     ],
-    starterCode: "total = 0\nfor n in range(1, 6):\n    total = total + n\nprint(\"The total is\", total)\n",
+    starterCode: "play(60)\nsleep(0.5)\nplay(64)\nsleep(0.5)\nplay(67)\n",
   };
 
   // Live UI state. code survives theme re-renders so typing is never lost.
@@ -223,14 +223,28 @@
       if (runBtn.disabled) return;
       outBox.innerHTML = "";
       if (!py) { out("runtime unavailable", "error"); return; }
+      // Unlock audio inside the click (a user gesture) so sound can play later.
+      if (CL.music) CL.music.unlock();
       setRunning(true);
       if (py.getStatus() !== "ready") out("starting Python (the first run downloads it once)…", "info");
+      var hadStdout = false;
+      var soundCount = 0;
       py.run(editor.getValue(), {
-        onStdout: function (s) { out(s.replace(/\n$/, "")); },
-        onStderr: function (s) { out(s.replace(/\n$/, ""), "error"); },
+        onStdout: function (s) { hadStdout = true; out(s.replace(/\n$/, "")); },
+        onStderr: function (s) { hadStdout = true; out(s.replace(/\n$/, ""), "error"); },
+        onEvents: function (events) {
+          soundCount = events ? events.length : 0;
+          if (CL.music) CL.music.schedule(events);
+        },
       }).then(function (r) {
         setRunning(false);
-        if (!r.ok && r.error !== "stopped") out(r.error || "error", "error");
+        if (!r.ok) {
+          if (r.error !== "stopped") out(r.error || "error", "error");
+        } else if (soundCount > 0) {
+          out("♪ played " + soundCount + " sound" + (soundCount > 1 ? "s" : ""), "success");
+        } else if (!hadStdout) {
+          out("done.", "info");
+        }
       });
     }
     function doStop() {

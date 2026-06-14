@@ -16,20 +16,53 @@
   var CL = (window.CL = window.CL || {});
 
   // Worker source as a line array (no escaping headaches); becomes a Blob.
+  // The PRELUDE installs the Sonic Pi-style music bridge as builtins so student
+  // code can call play/sleep/etc. without imports. The functions record timed
+  // events on a virtual clock (lists/tuples, to avoid quote-nesting in dicts):
+  //   _clock = [t_seconds, tempo_bpm]
+  //   event  = ('play', note, durSeconds, atSeconds) | ('sample', name, atSeconds)
+  // After each run the event list is handed to the main thread for Web Audio.
   var WORKER_SRC = [
     "importScripts('https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js');",
     "let pyodide = null;",
+    "var PRELUDE = [",
+    "  'import builtins',",
+    "  '_events = []',",
+    "  '_clock = [0.0, 120.0]',",
+    "  'def set_tempo(bpm):',",
+    "  '    _clock[1] = float(bpm)',",
+    "  'def sleep(beats=1.0):',",
+    "  '    _clock[0] += float(beats) * (60.0 / _clock[1])',",
+    "  'def play(note, dur=0.4):',",
+    "  \"    _events.append(('play', float(note), float(dur), _clock[0]))\",",
+    "  'def sample(name):',",
+    "  \"    _events.append(('sample', str(name), _clock[0]))\",",
+    "  'def play_pattern(notes, gap=0.5):',",
+    "  '    for _n in notes:',",
+    "  '        play(_n)',",
+    "  '        sleep(gap)',",
+    "  'for _f in (set_tempo, sleep, play, sample, play_pattern):',",
+    "  '    setattr(builtins, _f.__name__, _f)',",
+    "].join('\\n');",
     "async function init() {",
     "  pyodide = await loadPyodide();",
     "  pyodide.setStdout({ batched: function (s) { postMessage({ type: 'stdout', text: s }); } });",
     "  pyodide.setStderr({ batched: function (s) { postMessage({ type: 'stderr', text: s }); } });",
+    "  await pyodide.runPythonAsync(PRELUDE);",
     "  postMessage({ type: 'ready' });",
     "}",
     "init().catch(function (e) { postMessage({ type: 'fatal', text: String(e) }); });",
     "onmessage = async function (e) {",
     "  if (e.data.type === 'run') {",
-    "    try { await pyodide.runPythonAsync(e.data.code); postMessage({ type: 'done' }); }",
-    "    catch (err) { postMessage({ type: 'error', text: String(err && err.message ? err.message : err) }); }",
+    "    try {",
+    "      await pyodide.runPythonAsync(\"_events.clear(); _clock[0] = 0.0\");",
+    "      await pyodide.runPythonAsync(e.data.code);",
+    "      var proxy = pyodide.globals.get('_events');",
+    "      var ev = proxy.toJs();",
+    "      proxy.destroy();",
+    "      postMessage({ type: 'events', events: ev });",
+    "      postMessage({ type: 'done' });",
+    "    } catch (err) { postMessage({ type: 'error', text: String(err && err.message ? err.message : err) }); }",
     "  }",
     "};",
   ].join("\n");
@@ -69,6 +102,8 @@
         if (activeRun && activeRun.onStdout) activeRun.onStdout(m.text);
       } else if (m.type === "stderr") {
         if (activeRun && activeRun.onStderr) activeRun.onStderr(m.text);
+      } else if (m.type === "events") {
+        if (activeRun && activeRun.onEvents) activeRun.onEvents(m.events);
       } else if (m.type === "done") {
         finishRun({ ok: true });
       } else if (m.type === "error") {
@@ -102,7 +137,7 @@
       opts = opts || {};
       return ensureReady().then(function () {
         return new Promise(function (resolve) {
-          activeRun = { onStdout: opts.onStdout, onStderr: opts.onStderr, resolve: resolve };
+          activeRun = { onStdout: opts.onStdout, onStderr: opts.onStderr, onEvents: opts.onEvents, resolve: resolve };
           setStatus("running");
           worker.postMessage({ type: "run", code: code });
         });

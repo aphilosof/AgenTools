@@ -49,7 +49,9 @@ Suggested order inside Phase 1:
    iframe) and the music/turtle/plot bridges into Pyodide.
 4. stepper (sys.settrace line highlight + variable table)
 5. friendly error layer (translate-never-replace, fading by world / Real Tools status)
-6. music, turtle, plot engines with call recording; tolerant diagnostic checkers; Parsons support
+6. [MUSIC DONE] music (Web Audio: play/sleep/sample/play_pattern/set_tempo, virtual-timeline,
+   events recorded in worker as tuples, scheduled on main thread, verified audible in Arc);
+   turtle + plot still TODO (same worker-event-bridge pattern); tolerant checkers + Parsons TODO
 7. style checker (naming, magic numbers, repetition, function length)
 8. knowledge map, codex (skills + glossary + errors tabs), arena + coach mode, progressive disclosure
 9. 6 sample lessons (hook, Python-with-stepper, Parsons, turtle, JS, chart), all checks green
