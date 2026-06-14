@@ -29,10 +29,17 @@
     lang: "py",
     promptTitle: "Make a sound",
     promptText: [
-      "This program plays three notes. The play command makes a sound, and the number is the note: bigger numbers sound higher. The sleep command waits in between.",
-      "Press run and listen. Then change one of the numbers and run it again to hear a different note. Make sure your sound is on.",
+      "The play command makes a sound, and the number is the note: bigger numbers sound higher. The sleep command waits in between.",
+      "The notes should go up: 60, then 64, then 67. One note is wrong. Press run to hear it, fix the wrong number, then press check. (Sound on!)",
     ],
-    starterCode: "play(60)\nsleep(0.5)\nplay(64)\nsleep(0.5)\nplay(67)\n",
+    starterCode: "play(60)\nsleep(0.5)\nplay(64)\nsleep(0.5)\nplay(62)\n",
+    check: { type: "calls", calls: [{ fn: "play", note: 60 }, { fn: "play", note: 64 }, { fn: "play", note: 67 }] },
+    hints: [
+      "Listen to the three notes. The last one should be the highest, but it sounds lower.",
+      "Bigger numbers are higher notes. 62 is lower than 64, so the third note dips down.",
+      "Change the last play(62) to play(67) so the notes rise: 60, 64, 67.",
+    ],
+    solution: "play(60)\nsleep(0.5)\nplay(64)\nsleep(0.5)\nplay(67)\n",
   };
 
   // Live UI state. code survives theme re-renders so typing is never lost.
@@ -146,16 +153,37 @@
     editorPanel.appendChild(host);
     container.appendChild(editorPanel);
 
-    // action row — only working controls
+    // action row — only working controls; check/hint/solution appear when the
+    // lesson actually has them (no dead buttons)
     var actions = el("div", "actions");
     var runBtn = el("button", "btn primary", "run");
     runBtn.id = "btn-run";
+    actions.appendChild(runBtn);
+    if (lesson.check) {
+      var checkBtn = el("button", "btn secondary", "check");
+      checkBtn.id = "btn-check";
+      actions.appendChild(checkBtn);
+    }
+    if (lesson.hints && lesson.hints.length) {
+      var hintBtn = el("button", "btn secondary", "hint");
+      hintBtn.id = "btn-hint";
+      actions.appendChild(hintBtn);
+    }
+    if (lesson.solution) {
+      var solBtn = el("button", "btn ghost", "solution");
+      solBtn.id = "btn-solution";
+      actions.appendChild(solBtn);
+    }
     var stopBtn = el("button", "btn secondary", "stop");
     stopBtn.id = "btn-stop";
     stopBtn.style.display = "none";
-    actions.appendChild(runBtn);
     actions.appendChild(stopBtn);
     container.appendChild(actions);
+
+    var hintHost = el("div");
+    hintHost.id = "hint-host";
+    hintHost.className = "hint-host";
+    container.appendChild(hintHost);
 
     // stepper — the notional machine; hidden until a run records steps
     var stepper = el("div", "panel");
@@ -204,6 +232,11 @@
     outBox.appendChild(el("div", "out-line info", "press run to execute your code."));
     outPanel.appendChild(outBox);
     container.appendChild(outPanel);
+
+    // model-solution appears here on a pass or via the solution button
+    var modelHost = el("div");
+    modelHost.id = "model-host";
+    container.appendChild(modelHost);
 
     if (theme === "terminal") {
       var keyhints = el("div", "keyhints");
@@ -277,10 +310,16 @@
     var stepPos = document.getElementById("step-pos");
     var stepLineEl = document.getElementById("step-line");
     var stepVars = document.getElementById("step-vars");
+    var checkBtn = document.getElementById("btn-check");
+    var hintBtn = document.getElementById("btn-hint");
+    var solBtn = document.getElementById("btn-solution");
+    var hintHost = document.getElementById("hint-host");
+    var modelHost = document.getElementById("model-host");
     var py = CL.runtime && CL.runtime.python;
 
     var steps = [];
     var stepIdx = 0;
+    var hintIdx = 0;
 
     function out(text, cls) {
       var d = el("div", "out-line" + (cls ? " " + cls : ""));
@@ -384,26 +423,62 @@
     }
     function setRunning(on) {
       runBtn.disabled = on;
+      if (checkBtn) checkBtn.disabled = on;
       stopBtn.style.display = on ? "" : "none";
     }
-    function doRun() {
+
+    // Verdict from the correctness checker (tolerant, always diagnostic).
+    function showVerdict(verdict) {
+      if (verdict.pass) {
+        var line = el("div", "out-line success");
+        line.appendChild(el("span", "pass-badge", "PASS"));
+        line.appendChild(document.createTextNode("  " + (verdict.diagnostics[0] || "Correct!")));
+        outBox.appendChild(line);
+        verdict.diagnostics.slice(1).forEach(function (d) { out(d, "info"); });
+      } else {
+        out("not yet — here’s what to look at:", "error");
+        verdict.diagnostics.forEach(function (d) { out("  " + d, "info"); });
+      }
+    }
+    function revealSolution() {
+      if (!modelHost || !lesson.solution || document.getElementById("model-sol")) return;
+      var box = el("div", "panel");
+      box.id = "model-sol";
+      box.appendChild(el("div", "panel-header", "model solution"));
+      var pre = el("pre", "model-code");
+      pre.textContent = lesson.solution;
+      box.appendChild(pre);
+      modelHost.appendChild(box);
+    }
+    function showNextHint() {
+      if (!hintHost || hintIdx >= lesson.hints.length) return;
+      var item = el("div", "hint-item");
+      item.textContent = "Hint " + (hintIdx + 1) + ": " + lesson.hints[hintIdx];
+      hintHost.appendChild(item);
+      hintIdx++;
+      if (hintBtn && hintIdx >= lesson.hints.length) hintBtn.disabled = true;
+    }
+
+    // Run the program; when grade is true, also check the answer afterward.
+    function execute(grade) {
       if (runBtn.disabled) return;
       outBox.innerHTML = "";
       if (stage) stage.style.display = "none";
       stepperEl.style.display = "none";
       editor.highlightLine(null);
       if (!py) { out("runtime unavailable", "error"); return; }
-      // Unlock audio inside the click (a user gesture) so sound can play later.
-      if (CL.music) CL.music.unlock();
+      if (CL.music) CL.music.unlock(); // user gesture: allow sound later
       setRunning(true);
       if (py.getStatus() !== "ready") out("starting Python (the first run downloads it once)…", "info");
       var hadStdout = false;
+      var stdoutText = "";
+      var allEvents = [];
       var counts = { music: 0, turtle: 0, plot: 0 };
       var capturedSteps = null;
       py.run(editor.getValue(), {
-        onStdout: function (s) { hadStdout = true; out(s.replace(/\n$/, "")); },
+        onStdout: function (s) { hadStdout = true; stdoutText += s; out(s.replace(/\n$/, "")); },
         onStderr: function (s) { hadStdout = true; out(s.replace(/\n$/, ""), "error"); },
-        onEvents: function (events) { dispatchEvents(events, counts); },
+        onEvents: function (events) { allEvents = events || []; dispatchEvents(events, counts); },
         onSteps: function (s) { capturedSteps = s; },
       }).then(function (r) {
         setRunning(false);
@@ -418,6 +493,11 @@
         if (counts.plot) notes.push("📊 drew a chart");
         if (notes.length) notes.forEach(function (n) { out(n, "success"); });
         else if (!hadStdout) out("done.", "info");
+        if (grade && lesson.check && CL.check) {
+          var verdict = CL.check.run(lesson, { stdout: stdoutText, events: allEvents });
+          showVerdict(verdict);
+          if (verdict.pass) revealSolution(); // model-solution compare on success
+        }
         // Second feedback channel: style notes from World 5 onward.
         if (CL.style && lesson.world >= 5) {
           var findings = CL.style.analyze(editor.getValue());
@@ -432,14 +512,17 @@
       py.stop().then(function () { out("stopped — Python is ready again.", "info"); });
     }
 
-    runBtn.addEventListener("click", doRun);
+    runBtn.addEventListener("click", function () { execute(false); });
+    if (checkBtn) checkBtn.addEventListener("click", function () { execute(true); });
+    if (hintBtn) hintBtn.addEventListener("click", showNextHint);
+    if (solBtn) solBtn.addEventListener("click", revealSolution);
     stopBtn.addEventListener("click", doStop);
 
     // F5 runs (matches the terminal key-hint). Re-wired each render, so drop the
     // previous handler to avoid stacking.
     if (keydownHandler) document.removeEventListener("keydown", keydownHandler);
     keydownHandler = function (e) {
-      if (e.key === "F5") { e.preventDefault(); doRun(); }
+      if (e.key === "F5") { e.preventDefault(); execute(false); }
     };
     document.addEventListener("keydown", keydownHandler);
   }
@@ -464,6 +547,9 @@
       promptTitle: l.title,
       promptText: [l.explain],
       starterCode: String(l.starter || ""),
+      check: l.check || null,
+      hints: l.hints || [],
+      solution: l.solution || "",
     };
   }
 

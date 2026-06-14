@@ -39,6 +39,17 @@ Harness status (tests/run.js):
   style checker; inv9 (errorClasses translated) needs the friendly-error layer.
   These slot into the CHECKS list in tests/run.js when their modules land.
 
+LESSON LOOP (done this session): checker.js does tolerant correctness checks — type
+"output" (whitespace-normalized line compare, first-difference diagnostic) and "calls"
+(recorded music/turtle/plot sequence, which-step diagnostic), never a bare fail. engine
+adds run vs check, a verdict display, the hint ladder (reveal one at a time), and
+model-solution reveal (auto on pass = the compare step, or via the solution button).
+Buttons only appear when the lesson has them. Verified: 7 checker unit tests in node,
+full loop driven in Arc (fail diagnostic -> hint -> fix -> PASS -> solution).
+STILL TODO in the loop: check.type "tests" (needs a worker test-runner calling named
+functions) and "parsons" (needs the arrange UI); lesson-to-lesson navigation (engine
+currently shows one lesson — CODELAB.lessons[0] or the DEMO).
+
 Next task: Phase 1 per PLAN.md Section 6.
 Suggested order inside Phase 1:
 1. [DONE] tests/run.js harness skeleton: schema validation, reading-level check, time budgets, invariants
