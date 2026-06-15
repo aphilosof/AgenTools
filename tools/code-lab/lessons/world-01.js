@@ -75,23 +75,25 @@ window.CODELAB.lessons.push({
   concepts: ["variables", "print"],
   misconceptions: ["assignment-vs-equality"],
   warmup: [],
-  timeBudgetMin: 18,
+  timeBudgetMin: 20,
   explain:
-    "A variable is a name that remembers a value for you, like a labelled box you can open later. You create one with a single equals sign: the name goes on the left, and the value you want to store goes on the right. From then on, writing the name gives you back the value. The single equals sign means 'put this value into this name' — it is an instruction, not a question about whether two things are equal. Once a value is stored, you can print it or use it in maths.",
-  example: "score = 10\nbonus = 5\nprint(score + bonus)\n",
+    "Programs have to keep track of information while they run. A variable is how a program remembers a piece of information and gives it a name. Think of it as a label tied to a value: the value is the real data, such as the number 10, and the name is how you reach that data later without typing it again.\n\n" +
+    "You make a variable with an assignment statement, written with one equals sign: score = 10. This does not mean \"score equals 10\" the way it would in maths. It is an instruction. Python runs it right to left: first it works out the value on the right, then it points the name on the left at that value. Because it is an instruction, not a fact, you can change a variable later. Writing score = 20 just points the same name at a new value.\n\n" +
+    "Once a name holds a value, writing the name gives the value back. So you can print it or do maths with it. Together, a program's variables are its state: the names that exist now and the values they hold. The stepper lets you watch that state change one line at a time. That is the clearest way to see what your code really does.",
+  example: "score = 10\nprint(score)\nscore = score + 5\nprint(score)\n",
   exampleNote:
-    "Run this. score holds 10 and bonus holds 5, so the program prints their total. Try changing the stored numbers.",
-  task: "Create a variable called score that holds the value 10, then print score on the next line.",
-  starter: "# store 10 in score, then print score\n",
+    "Run this and read it line by line. The line score = score + 5 takes the old value (10), adds 5, and stores 15 back under the same name. Use the stepper to watch score change.",
+  task: "Create a variable called score holding 10. On the next line, add 5 to it and store the result back in score. Then print score — it should show 15.",
+  starter: "# 1) store 10 in score\n# 2) add 5 to score and store it back\n# 3) print score\n",
   starterExpectation: "runs-clean",
-  check: { type: "output", expected: "10" },
+  check: { type: "output", expected: "15" },
   hints: [
-    "First store the value: score = 10.",
-    "The equals sign puts the value 10 into the name score.",
-    "Write score = 10 on one line, then print(score) on the next.",
+    "Start by storing the first value: score = 10.",
+    "To add 5, put the new value on the right and the same name on the left: score = score + 5.",
+    "Write score = 10, then score = score + 5, then print(score).",
   ],
-  solution: "score = 10\nprint(score)\n",
-  codex: { topic: "variables", pattern: "name = value", note: "Stores a value under a name so you can use it again later." },
+  solution: "score = 10\nscore = score + 5\nprint(score)\n",
+  codex: { topic: "variables", pattern: "name = value", note: "Assignment stores the value on the right under the name on the left. You can reassign it later." },
   styleRequired: false,
 });
 

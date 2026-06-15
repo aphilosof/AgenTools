@@ -696,7 +696,7 @@
       filename: "lesson." + (l.lang === "js" ? "js" : "py"),
       lang: l.lang === "js" ? "js" : "py",
       promptTitle: l.title,
-      promptText: [l.explain],
+      promptText: String(l.explain || "").split(/\n\n+/), // blank line = new paragraph
       task: l.task || "",
       example: l.example || "",
       exampleNote: l.exampleNote || "",
