@@ -7,6 +7,10 @@ Code Lab (working title): a self-contained coding course for an 11-year-old, tea
 ## Authoritative documents
 
 - `PLAN.md`: curriculum, architecture decisions, pedagogy model, build phases. The spec.
+- `CURRICULUM.md`: the full lesson-by-lesson syllabus derived from PLAN §3/§4/§5.
+- `AUTHORING.md`: the non-negotiable rules for building lessons (research-first, complete
+  coverage, voice, paged & numbered sections, "Your turn" = prompt only). Read before
+  authoring any lesson. Reference lesson: `lessons/exemplar-w1-values-and-types.md`.
 - `DESIGN.md`: the three themes with full token sets, shared layout system, component inventory.
 - `lessons/schema.md`: the lesson and arena challenge data formats.
 
