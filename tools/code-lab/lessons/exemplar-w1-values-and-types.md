@@ -1,122 +1,99 @@
-# EXEMPLAR LESSON — the locked model (structure, level, voice)
+# EXEMPLAR LESSON — the locked model
 
-World 1 · Lesson 2 · **Values and Types**. This is the canonical target for
-every lesson:
+World 1 · Lesson 2 · **Values and Types**. Canonical target for every lesson.
 
-- **Paged.** A lesson is an ordered list of **pages**, shown one at a time, with
-  a counter ("4 / 13"), a back button, and a `Next →` that gates on exercise
-  pages (Next unlocks once the exercise passes). A guided path, not a scroll.
-- **Grade 8–9 writing.** Precise, full sentences, real vocabulary. (Reading
-  ceiling rises to ~9; still a ceiling, never a push toward simpler.)
-- **Click-to-expand terms.** Words marked `⟦like this⟧` open a rigorous
-  definition with a "More:" path and land in the Codex glossary (shown indented).
-- **Specific.** Every claim says *why*; every "this breaks" names a *concrete
-  case*.
-- **Voice: warm mentor.** Talks *to* him, not down to him — direct, a little
-  personality, anticipates the confusion and gets ahead of it.
+- **Paged**: an ordered list of pages, shown one at a time, with a counter
+  ("4 / 13"), a back button, and a `Next →` that gates on exercise pages.
+- **Voice**: modelled on *Think Python* (Downey) / *How to Think Like a Computer
+  Scientist* — the tradition PLAN.md names. Flowing complete sentences, precise
+  definitions, concrete examples woven in, the small "why" that makes a term
+  stick. Not chatty, not robotic, not choppy. Grade ~7–9.
+- **Precise**: a concept and its Python type are named separately (an *integer*
+  is a whole number; its Python type is `int`). Every claim is checked against
+  real Python behaviour.
+- **Click-to-expand terms** marked `⟦like this⟧`, defined indented, feeding the
+  Codex glossary.
 
-Page types: `concept` · `example` · `exercise` · `error-demo` · `mistakes` ·
-`recap`. ~10–14 pages per lesson.
+Page types: concept · example · exercise · error-demo · mistakes · recap.
 
 ---
 
-### Page 1 / 13 — concept · Why you're about to care about this
-Almost every confusing bug you'll hit in your first month comes down to one
-thing: you thought a value was one kind of thing, and Python thought it was
-another. A calculation crashes for no obvious reason. Two numbers stick together
-instead of adding up. It feels random — but it isn't, and after this lesson
-you'll see it coming a mile off. The secret is that Python sorts every piece of
-data into a **⟦type⟧**, and the type quietly decides what you're allowed to do
-with it. Let's make that sharp.
+### Page 1 / 13 — concept · What a value is
+A **⟦value⟧** is one of the basic things a program works with — a number, a
+letter, a word. You have already made several without thinking about it: when you
+wrote `print("Hello!")`, the text `"Hello!"` was a value, and so are `7` and
+`3.14`. Almost everything a program does is some action performed on values:
+showing them, comparing them, combining them, doing arithmetic with them.
 
-> ⟦type⟧ — **type**: the category a value belongs to (integer, decimal, text,
-> and so on). A value's type fixes which operations are legal on it and how each
-> one behaves. *More: in Python, types are themselves objects you can inspect
-> with `type()`.*
+> ⟦value⟧ — **value**: a single piece of data that a program works with, such as
+> `7` or `"hello"`. *More: in Python every value is an object, which is why even a
+> plain number carries a type and its own behaviour.*
 
 `[ Next → ]`
 
-### Page 2 / 13 — concept · Start with the word "value"
-Before "type" means anything, you need "value." A **⟦value⟧** is just a single
-piece of data — one thing your program is holding onto. The number `7` is a
-value. So is `3.14`, and so is the text `"hello"`. You've already made plenty:
-when you wrote `print("Hello, world!")`, that text was a value, and `print`
-simply showed it to you. Pretty much everything you'll ever write is some
-operation done *to* values — comparing them, joining them, storing them, doing
-maths on them. Get comfortable with the word, because the rest of the lesson is
-about the rules values have to follow.
+### Page 2 / 13 — concept · Values come in types
+Values belong to different **⟦types⟧**, where a type is simply the category a
+value falls into. Three of them will come up constantly, and it is worth being
+careful about the difference between the everyday name and the name Python uses:
 
-> ⟦value⟧ — **value**: a single piece of data that lives in the computer's
-> memory while your program runs. *More: in Python every value is an object,
-> which is why even a plain `7` carries a type and built-in behaviour.*
+- A whole number, like `7` or `-20`, is an **integer**. Python's name for that
+  type is **`int`**.
+- A number with a fractional part, like `3.14`, is a **floating-point number**.
+  Its type is called **`float`**.
+- Text, like `"Hello!"`, is a **string** — a row of characters strung together.
+  Its type is called **`str`**, and it is always written inside quotation marks.
 
-`[ Next → ]`
+So `7` *is* an integer, and `int` is the name of the type it belongs to. Keeping
+the idea and the type-name straight will save you confusion later.
 
-### Page 3 / 13 — concept · Every value carries a type
-Here's the key idea: every value has a type, and you can't ignore it, because
-the type controls what the value can do. Three of them will show up constantly:
-
-- **⟦int⟧** — a whole number, like `7` or `-20`.
-- **⟦float⟧** — a number with a decimal point, like `3.14`.
-- **⟦str⟧** — text, like `"hello"`, always wrapped in quotation marks.
-
-Hold onto that list. On the next couple of pages you'll see the same symbol do
-two completely different jobs depending only on the types beside it — which is
-exactly why you can't predict what your code does until you know the types it's
-working with.
-
-> ⟦int⟧ — **int** (integer): a whole number — positive, negative, or zero. *More:
-> Python ints have no size limit and stay exact however large they get.*
->
-> ⟦float⟧ — **float**: a number that can hold a fractional part, like `3.14`.
-> *More: floats trade exactness for range, so `0.1 + 0.2` isn't quite `0.3`.*
->
-> ⟦str⟧ — **str** (string): an ordered run of characters — text — between quotes.
-> *More: the quotes aren't part of the value; they just mark where it starts and
-> ends.*
+> ⟦type⟧ — **type**: the category a value belongs to, such as integer, float, or
+> string. A value's type determines what you can do with it. *More: Python's
+> type names — `int`, `float`, `str` — are themselves things you can use, for
+> example to convert one type into another.*
 
 `[ Next → ]`
 
-### Page 4 / 13 — example · Just ask Python
-You don't have to memorise types — Python will tell you. `type()` reports the
-type of any value. Run this and read what comes back.
+### Page 3 / 13 — example · Ask Python the type
+You do not have to memorise which value is which type — Python will tell you.
+The `type()` function reports the type of any value. Run this and read the
+replies.
 
 ```python
 print(type(7))
 print(type(3.14))
-print(type("hello"))
+print(type("Hello!"))
 ```
 
-You'll get `<class 'int'>`, `<class 'float'>`, `<class 'str'>` — the word after
-`class` is the type. Now add one more line, `print(type("7"))`, and look
-closely: the answer is `str`, not `int`. Those quotation marks changed
-everything, and the next page is about why that's a bigger deal than it looks.
+Python answers `<class 'int'>`, `<class 'float'>`, and `<class 'str'>`. The word
+after `class` is the type's name; "class" here just means *category*. Now add one
+more line, `print(type("7"))`, and look carefully: the answer is `str`, not
+`int`. The quotation marks alone changed the type, and the next page is about why
+that matters more than it looks.
 
 `[ Next → ]`
 
-### Page 5 / 13 — concept · `7` and `"7"` are not the same value
-This is the one I really want you to get, because it catches almost everyone.
-`7` and `"7"` look like twins, but they're different values with different types.
-`7` is an **int** — an actual number. `"7"` is a **str** — the character "7"
-treated as text, just because of the quotes. Why does that matter so much? Because
-the `+` symbol does *two different jobs* depending on the types it sits between:
+### Page 4 / 13 — concept · Why `7` and `"7"` are different
+`7` and `"7"` look the same, but they are not. `7` is the number seven, an `int`.
+`"7"` is a string one character long that happens to be the digit seven, and the
+quotation marks are what make it text instead of a number. The difference is not
+fussiness — it changes what an operator actually does, because some operators are
+defined differently for different types:
 
-- Between two **ints**, `+` **adds**: `7 + 7` gives `14`.
-- Between two **strs**, `+` **⟦concatenates⟧** — glues them together: `"7" + "7"`
-  gives `"77"`.
+- Between two numbers, `+` **adds**: `7 + 7` is `14`.
+- Between two strings, `+` **joins** them end to end — an operation called
+  **⟦concatenation⟧**: `"7" + "7"` is `"77"`.
 
-Same symbol, totally different result, and Python isn't guessing what you meant —
-it's reading the types and doing exactly what they say.
+The symbol is identical; the types of the values on each side decide what it
+means.
 
-> ⟦concatenate⟧ — **concatenation**: joining two strings end to end into one.
-> `"foot" + "ball"` is `"football"`. *More: Python adds no space for you — if you
-> want one, put it inside the quotes yourself.*
+> ⟦concatenation⟧ — **concatenation**: joining two strings into one, end to end.
+> `"foot" + "ball"` is `"football"`. *More: Python adds no space between them — if
+> you want one, include it inside the quotation marks yourself.*
 
 `[ Next → ]`
 
-### Page 6 / 13 — exercise (predict) · Catch the two jobs
-Before you run it, work out what each line prints — then run it and see if you
-were right.
+### Page 5 / 13 — exercise (predict) · One symbol, two jobs
+Before running it, work out what each line will print, then run it to check.
 
 ```python
 print(3 + 4)
@@ -124,67 +101,70 @@ print("3" + "4")
 ```
 
 **Your turn:** make the program print `7` on the first line and `34` on the
-second, exactly like above. *(graded: output is `7` then `34`)*
+second, exactly as above. *(graded: output is `7` then `34`)*
 
 `[ Next unlocks when it passes ]`
 
-### Page 7 / 13 — error-demo · What happens when you mix them
-So what if you put a number and a string together with `+`? Let's find out on
-purpose — and reading the crash is half the lesson.
+### Page 6 / 13 — error-demo · When the types don't match
+What happens if the two sides of `+` have different types? Try it on purpose —
+reading the failure is part of learning the language.
 
 ```python
 print(7 + "7")
 ```
 
-Python stops cold and shows you this:
+Python stops and reports:
 
 ```
 TypeError: unsupported operand type(s) for +: 'int' and 'str'
 ```
 
-Read it like a sentence: `+` isn't supported between an `int` and a `str`,
-because Python genuinely can't tell whether you want `14` (add) or `"77"`
-(glue). Instead of guessing and quietly doing the wrong thing, it throws a
-**⟦TypeError⟧** and stops. Annoying in the moment — but it just saved you from a
-bug you'd never have noticed.
+Read it as a sentence: `+` is not supported between an `int` and a `str`, because
+Python cannot tell whether you mean to add (`14`) or to concatenate (`"77"`).
+Rather than guess and quietly do the wrong thing, it raises a **⟦TypeError⟧** and
+stops.
 
-> ⟦TypeError⟧ — **TypeError**: the error Python raises when an operation meets a
-> value of the wrong type. *More: the message names the operator and both types,
-> which usually points you straight at the fix — convert one of them.*
-
-`[ Next → ]`
-
-### Page 8 / 13 — concept · Where this actually bites you
-That error probably feels theoretical right now, so let me show you the real
-place it'll get you. The moment your program starts using values it *didn't*
-write itself — above all, answers from `input()` — types matter for real.
-`input()` always hands you a **str**, even when the person types digits. So
-picture this: you ask "How old are you?", store the answer, then write
-`age * 365` to get their age in days. You're expecting a number times 365 — but
-`age` is text, so Python raises a `TypeError` and the program dies before it can
-answer. That exact mix-up is behind a huge share of first-week crashes, and
-you're about to learn the one-line fix.
+> ⟦TypeError⟧ — **TypeError**: the error Python reports when an operation is given
+> a value of the wrong type. *More: the message names the operator and both
+> types, which usually points straight at the fix.*
 
 `[ Next → ]`
 
-### Page 9 / 13 — concept · Converting from one type to another
-When a value is the wrong type for the job, you **convert** it. Each converter
-is named after the type it produces:
+### Page 7 / 13 — concept · Where this catches you: `input()`
+This stops being abstract the moment you ask the user a question. The `input()`
+function always returns the answer as a **string**, even when the person types
+digits. So suppose you read someone's age and then try to add to it:
 
-- `int(x)` — make a whole number: `int("7")` is `7`.
-- `float(x)` — make a decimal number: `float("3.5")` is `3.5`.
-- `str(x)` — make text: `str(7)` is `"7"`.
+```python
+answer = input("Your age? ")
+print(answer + 1)
+```
 
-So the age-in-days crash from the last page disappears the moment you convert
-first: `age = int(input(...))`, and now `age * 365` works because `age` is a
-real int. Conversion runs the other way too: to build a message like
-`"Score: " + str(5)`, you turn the number into text first, because you already
-know you can't glue a str and an int together.
+This raises a `TypeError`, because `answer` is a string and `1` is a number, and
+`+` will not mix them. (It would not help to multiply instead: `answer * 1`
+actually *works*, but it does string-repetition, not arithmetic — a wrong answer
+rather than an error, which is worse.) Either way, the lesson is the same: before
+you can do maths with something the user typed, you must turn it into a number.
 
 `[ Next → ]`
 
-### Page 10 / 13 — example · Watch the type flip
-Run this, then step through it and watch `age` change type on line 2.
+### Page 8 / 13 — concept · Converting between types
+To turn a value into a different type, use the type's name as a function. Each
+one builds a **new** value of that type from whatever you give it:
+
+- `int("7")` produces the number `7`. (`int(3.9)` produces `3`; it drops the
+  fractional part rather than rounding.)
+- `float("3.5")` produces the number `3.5`.
+- `str(7)` produces the text `"7"`.
+
+The original value is never changed — conversion hands you back a new one. This
+is why `int(input(...))` is the usual way to read in a number: `input()` gives
+you a string, and `int()` turns it into something you can calculate with.
+
+`[ Next → ]`
+
+### Page 9 / 13 — example · Watch the type change
+Run this, then use the stepper to watch `age` change type at line 2.
 
 ```python
 age_text = "11"
@@ -192,39 +172,50 @@ age = int(age_text)
 print(age + 1)
 ```
 
-It prints `12`, because by line 3 `age` is a real number. Now change `int` to
-`str` on line 2 and run it again — `age + 1` blows up, because you're back to
-gluing text onto a number. Breaking it on purpose is the fastest way to make the
-rule stick.
+It prints `12`, because by the third line `age` is a real number. Now change
+`int` to `str` on the second line and run it again: `age + 1` fails, because you
+are back to a string and a number. Breaking it on purpose is the quickest way to
+make the rule stick.
 
 `[ Next → ]`
 
-### Page 11 / 13 — exercise (write) · Convert, then compute
-You're handed the text `"20"`. Turn it into a number, add `5`, and print the
+### Page 10 / 13 — exercise (write) · Convert, then calculate
+You are given the text `"20"`. Turn it into a number, add `5`, and print the
 result.
 
 **Your turn:** write a program that prints `25`. *(graded: output is `25`)*
 
 `[ Next unlocks when it passes ]`
 
-### Page 12 / 13 — mistakes · The traps, named
-- **Quoting a number you mean to do maths with.** `"5" + "5"` is `"55"`, not
-  `10`. Drop the quotes when you want the number.
-- **Forgetting `input()` gives you a str.** Convert with `int()` before any
-  arithmetic, or you'll meet that `TypeError` again.
-- **Gluing a str and an int.** `"Score: " + 5` fails; write `"Score: " + str(5)`.
+### Page 11 / 13 — mistakes · The traps for this idea
+- **Quoting a number you mean to calculate with.** `"5" + "5"` is `"55"`, not
+  `10`; the quotes make it text.
+- **Forgetting that `input()` returns a string.** Convert with `int()` before
+  doing arithmetic, or you will meet that `TypeError`.
+- **Joining a string and a number.** `"Score: " + 5` fails; write
+  `"Score: " + str(5)`.
 
 `[ Next → ]`
 
-### Page 13 / 13 — recap · What to walk away with
+### Page 12 / 13 — recap · What to carry forward
 - A **value** is a piece of data; every value has a **type**.
-- **int** = whole numbers, **float** = decimals, **str** = text in quotes.
-- `"7"` (str) isn't `7` (int): `+` **adds** ints but **glues** strs.
-- Convert with `int()`, `float()`, `str()`; check with `type()`.
-- `input()` always gives you a str — convert before doing maths.
+- An *integer* (`int`) is a whole number, a *float* is a decimal number, a
+  *string* (`str`) is text in quotes.
+- `"7"` (a string) is not `7` (an integer): `+` **adds** numbers but
+  **concatenates** strings.
+- Convert with `int()`, `float()`, `str()`; check a type with `type()`.
+- `input()` always returns a string — convert before you calculate.
 
 > **Added to your Codex:** `type(x)`, `int(x)`, `float(x)`, `str(x)`, and the
-> glossary terms *value, type, int, float, str, concatenation, TypeError*.
+> glossary terms *value, type, integer/int, float, string/str, concatenation,
+> TypeError*.
 
-**End-of-lesson challenge:** take the text `"7"`, turn it into a number, multiply
-it by `6`, and print the result (`42`). *(graded: output is `42`)*
+`[ Next → ]`
+
+### Page 13 / 13 — exercise (write) · End-of-lesson challenge
+Take the text `"7"`, turn it into a number, multiply it by `6`, and print the
+result.
+
+**Your turn:** write a program that prints `42`. *(graded: output is `42`)*
+
+`[ Finish lesson ]`
