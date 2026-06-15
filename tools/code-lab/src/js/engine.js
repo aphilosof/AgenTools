@@ -220,6 +220,35 @@
       container.appendChild(prompt);
     }
 
+    // worked example — a runnable, editable demonstration to try before the
+    // challenge (PLAN §3: "run a working example and tinker with it")
+    if (lesson.example) {
+      var exPanel = el("div", "panel");
+      exPanel.appendChild(el("div", "panel-header", "example — run it and tinker"));
+      if (lesson.exampleNote) {
+        var note = el("div", "example-note");
+        note.textContent = lesson.exampleNote;
+        exPanel.appendChild(note);
+      }
+      var exHost = el("div");
+      exHost.id = "example-host";
+      exPanel.appendChild(exHost);
+      var exActions = el("div", "actions example-actions");
+      var runExBtn = el("button", "btn secondary", "run example");
+      runExBtn.id = "btn-run-example";
+      exActions.appendChild(runExBtn);
+      exPanel.appendChild(exActions);
+      container.appendChild(exPanel);
+    }
+
+    // the challenge instruction (what to actually do), distinct from the teaching
+    if (lesson.task) {
+      var taskBox = el("div", "challenge-task");
+      taskBox.appendChild(el("span", "challenge-label", "Your turn: "));
+      taskBox.appendChild(document.createTextNode(lesson.task));
+      container.appendChild(taskBox);
+    }
+
     // editor panel — host element; the real editor mounts here after append
     var editorPanel = el("div", "panel");
     editorPanel.appendChild(el("div", "panel-header", escapeHtml(editorHeader(theme, lesson))));
@@ -347,20 +376,19 @@
     };
   }
 
-  // Mount the code editor into #editor-host. CodeMirror when present (loaded
-  // from CDN); a themed textarea otherwise, so typing works even if the CDN is
-  // unreachable.
-  function mountEditor(lesson) {
-    var host = document.getElementById("editor-host");
+  // Mount a code editor into host: CodeMirror when present (from CDN), a themed
+  // textarea otherwise. Used for both the challenge editor and the worked-example
+  // editor; onChange is called with the new value on every edit (may be null).
+  function mountEditor(host, code, lang, onChange) {
     if (window.CodeMirror) {
       var cm = window.CodeMirror(host, {
-        value: state.code,
-        mode: lesson.lang === "js" ? "javascript" : "python",
+        value: code,
+        mode: lang === "js" ? "javascript" : "python",
         lineNumbers: true,
         indentUnit: 4,
         viewportMargin: Infinity, // grow to fit content instead of a fixed box
       });
-      cm.on("change", function () { state.code = cm.getValue(); CL.storage.setCode(state.lesson.id, state.code); });
+      if (onChange) cm.on("change", function () { onChange(cm.getValue()); });
       var lastLine = null;
       return {
         getValue: function () { return cm.getValue(); },
@@ -377,15 +405,20 @@
     }
     var ta = document.createElement("textarea");
     ta.className = "editor-fallback";
-    ta.value = state.code;
+    ta.value = code;
     ta.spellcheck = false;
-    ta.addEventListener("input", function () { state.code = ta.value; CL.storage.setCode(state.lesson.id, state.code); });
+    if (onChange) ta.addEventListener("input", function () { onChange(ta.value); });
     host.appendChild(ta);
     return { getValue: function () { return ta.value; }, focus: function () { ta.focus(); }, highlightLine: function () {} };
   }
 
   function wireRuntime(theme, lesson) {
-    var editor = mountEditor(lesson);
+    var editor = mountEditor(document.getElementById("editor-host"), state.code, lesson.lang, function (v) {
+      state.code = v;
+      CL.storage.setCode(state.lesson.id, v);
+    });
+    var exHost = document.getElementById("example-host");
+    var exEditor = exHost ? mountEditor(exHost, lesson.example || "", lesson.lang, null) : null;
     var runBtn = document.getElementById("btn-run");
     var stopBtn = document.getElementById("btn-stop");
     var outBox = document.getElementById("output-box");
@@ -546,9 +579,13 @@
       if (hintBtn && hintIdx >= lesson.hints.length) hintBtn.disabled = true;
     }
 
-    // Run the program; when grade is true, also check the answer afterward.
-    function execute(grade) {
+    // Run a program. source!=null means "run the worked example" (no grading,
+    // no stepper highlight, which would target the challenge editor). When grade
+    // is true, the challenge is checked afterward.
+    function execute(grade, source) {
       if (runBtn.disabled) return;
+      var isExample = source != null;
+      var code = isExample ? source : editor.getValue();
       outBox.innerHTML = "";
       if (stage) stage.style.display = "none";
       stepperEl.style.display = "none";
@@ -562,14 +599,14 @@
       var allEvents = [];
       var counts = { music: 0, turtle: 0, plot: 0 };
       var capturedSteps = null;
-      py.run(editor.getValue(), {
+      py.run(code, {
         onStdout: function (s) { hadStdout = true; stdoutText += s; out(s.replace(/\n$/, "")); },
         onStderr: function (s) { hadStdout = true; out(s.replace(/\n$/, ""), "error"); },
         onEvents: function (events) { allEvents = events || []; dispatchEvents(events, counts); },
         onSteps: function (s) { capturedSteps = s; },
       }).then(function (r) {
         setRunning(false);
-        initStepper(capturedSteps);
+        if (!isExample) initStepper(capturedSteps); // stepper tracks the challenge editor
         if (!r.ok) {
           if (r.error !== "stopped") showErrorWithAnnotation(r.error || "error");
           return;
@@ -580,7 +617,7 @@
         if (counts.plot) notes.push("📊 drew a chart");
         if (notes.length) notes.forEach(function (n) { out(n, "success"); });
         else if (!hadStdout) out("done.", "info");
-        if (grade && lesson.check && CL.check) {
+        if (!isExample && grade && lesson.check && CL.check) {
           var verdict = CL.check.run(lesson, { stdout: stdoutText, events: allEvents });
           showVerdict(verdict);
           if (verdict.pass) {
@@ -591,7 +628,7 @@
           }
         }
         // Second feedback channel: style notes from World 5 onward.
-        if (CL.style && lesson.world >= 5) {
+        if (!isExample && CL.style && lesson.world >= 5) {
           var findings = CL.style.analyze(editor.getValue());
           if (findings.length) showStyle(findings);
         }
@@ -614,6 +651,9 @@
       lessonNext.disabled = state.lessonIdx >= state.lessonCount - 1;
       lessonNext.addEventListener("click", function () { setLesson(state.lessonIdx + 1); });
     }
+
+    var runExBtn = document.getElementById("btn-run-example");
+    if (runExBtn && exEditor) runExBtn.addEventListener("click", function () { execute(false, exEditor.getValue()); });
 
     runBtn.addEventListener("click", function () { execute(false); });
     if (checkBtn) checkBtn.addEventListener("click", function () { execute(true); });
@@ -657,6 +697,9 @@
       lang: l.lang === "js" ? "js" : "py",
       promptTitle: l.title,
       promptText: [l.explain],
+      task: l.task || "",
+      example: l.example || "",
+      exampleNote: l.exampleNote || "",
       starterCode: String(l.starter || ""),
       check: l.check || null,
       hints: l.hints || [],

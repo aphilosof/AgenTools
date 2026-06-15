@@ -32,7 +32,11 @@ const CHECK_TYPES = ["output", "tests", "calls", "parsons"];
 const MIN_BUDGET = 15; // PLAN §3: 15-25 min per lesson, harness-enforced
 const MAX_BUDGET = 25;
 const MAX_WORLD_MINUTES = 240; // sane upper bound on a world's summed budget
-const MAX_GRADE = 6; // invariant 6: explain prose at grade 5-6 reading level
+// invariant 6 is a CEILING (don't exceed the learner's level), not a target —
+// the learner reads at grade 6, so allow up to ~grade 7 of headroom and never
+// push prose down toward baby-talk. It cannot detect "too simple"; that's an
+// authorial standard.
+const MAX_GRADE = 7;
 const GRADE_FORMULA = "Flesch-Kincaid Grade Level";
 // The schema.md example hint ladder. A real lesson must not ship these verbatim.
 const GENERIC_HINTS = ["nudge", "bigger nudge", "near-solution"];

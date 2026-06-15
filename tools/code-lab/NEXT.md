@@ -84,6 +84,18 @@ CONTENT-VERIFICATION HARNESS (done): inv1/inv5/inv9 are now LIVE (were stubbed).
   machine-verified by `npm test`; no hand-testing lessons.
 - Needs local python3 (present). If absent, inv1/inv5 SKIP with a reason.
 
+LESSON TEMPLATE ENRICHED (per review: lessons were too thin / no examples; learner is grade 6).
+- Lessons now have: explain (teaching, fuller — grade-6 prose, not baby-talk), example +
+  exampleNote (a runnable, editable worked example with a "run example" button — PLAN §3
+  "run a working example and tinker"), and task (the challenge instruction, shown as
+  "Your turn:" above the editor). adaptLesson maps these; mountEditor generalized to host
+  both the challenge and example editors; execute(grade, source) runs the example without
+  grading/stepper-highlight.
+- Reading-level ceiling raised 6 -> 7 (MAX_GRADE): it's a CEILING at the learner's level, not
+  a target; never push prose down to baby-talk. (Can't detect "too simple" — authorial standard.)
+- World 1 rewritten in this format (5 lessons), all harness-green.
+- TODO: apply the richer format to World 0 (w0l1/w0l2 still thin); continue worlds.
+
 NOW BUILDING: real curriculum content (Phase 2). Each lesson conforms to schema.md and must
 pass npm test. Parsons-based World 0 puzzle lessons need the Parsons rung (not built yet);
 code-based lessons (py, output/calls checks) work today.

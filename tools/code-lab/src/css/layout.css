@@ -194,6 +194,12 @@ body { margin: 0; }
 .style-head { font-family: var(--font-code); font-size: 12px; color: var(--muted); margin-bottom: 4px; }
 .style-item { color: var(--text-soft); line-height: 1.5; }
 
+/* worked example */
+.example-note { padding: 8px 12px 0; color: var(--text-soft); line-height: 1.5; }
+.example-actions { margin-top: 0; padding: 10px 12px; }
+.challenge-task { margin: 4px 0 10px; line-height: 1.5; color: var(--text); }
+.challenge-label { color: var(--accent); font-weight: 600; }
+
 /* hint ladder */
 .hint-host { margin-bottom: 14px; }
 .hint-item { padding: 8px 12px; margin-bottom: 6px; border-left: 3px solid var(--accent); background: var(--panel); color: var(--text-soft); line-height: 1.5; }
