@@ -307,25 +307,119 @@ function checkMisconceptions({ lessons }, knownIds) {
   return failures.length ? fail(failures) : pass();
 }
 
+/* ===================== execution-based checks ===================== */
+
+const { spawnSync } = require("child_process");
+const RUNNER = path.join(__dirname, "mocks", "runner.py");
+const EXECUTABLE_CHECKS = ["output", "calls"]; // tests/parsons aren't executed yet
+
+// Load a browser module (checker.js / style.js / errors.js) in a window shim and
+// return its window.CL so the harness reuses the exact in-app logic.
+function loadBrowserCL(relPath) {
+  const code = fs.readFileSync(path.join(ROOT, relPath), "utf8");
+  const sandbox = { window: { CL: {} }, console, getComputedStyle: () => ({ getPropertyValue: () => "" }) };
+  vm.createContext(sandbox);
+  vm.runInContext(code, sandbox, { filename: relPath });
+  return sandbox.window.CL;
+}
+
+// runSolution(src) -> { stdout, events, error }, or null if python3 is absent.
+function makeRunner() {
+  const probe = spawnSync("python3", ["--version"], { encoding: "utf8" });
+  if (probe.error) return null;
+  return function (src) {
+    const res = spawnSync("python3", [RUNNER], { input: src || "", encoding: "utf8" });
+    if (res.error) throw new Error("python3 runner failed: " + res.error.message);
+    try {
+      return JSON.parse(res.stdout);
+    } catch (e) {
+      throw new Error("runner output was not JSON: " + (res.stdout || res.stderr || "").slice(0, 200));
+    }
+  };
+}
+
+// Invariant 1: every solution passes its own check (and the style checker when styleRequired).
+function checkSolutions(content, deps) {
+  if (!deps.run) return skip("python3 unavailable to execute solutions");
+  const failures = [];
+  const items = content.lessons.concat(content.arena);
+  for (const it of items) {
+    const where = it.id || it.code;
+    if (!it.solution || !it.check || EXECUTABLE_CHECKS.indexOf(it.check.type) === -1) continue;
+    let r;
+    try { r = deps.run(it.solution); } catch (e) { failures.push(`${where}: ${e.message}`); continue; }
+    if (r.error) { failures.push(`${where}: solution raised — ${r.error}`); continue; }
+    const verdict = deps.checker.run(it, { stdout: r.stdout, events: r.events });
+    if (!verdict.pass) failures.push(`${where}: solution does not pass its own check — ${verdict.diagnostics[0]}`);
+    if (it.styleRequired && deps.style) {
+      const findings = deps.style.analyze(it.solution);
+      if (findings.length) failures.push(`${where}: styleRequired, but solution has a style issue — ${findings[0].message}`);
+    }
+  }
+  return failures.length ? fail(failures) : pass();
+}
+
+// Invariant 5: starter behaviour matches starterExpectation when executed.
+function checkStarters(content, deps) {
+  if (!deps.run) return skip("python3 unavailable to execute starters");
+  const failures = [];
+  for (const l of content.lessons) {
+    const exp = l.starterExpectation;
+    if (!exp) continue;
+    let r;
+    try { r = deps.run(l.starter || ""); } catch (e) { failures.push(`${l.id}: ${e.message}`); continue; }
+    if (exp === "runs-clean") {
+      if (r.error) failures.push(`${l.id}: starter expected runs-clean but raised — ${r.error}`);
+    } else if (exp.indexOf("raises:") === 0) {
+      const t = exp.slice("raises:".length);
+      if (!r.error) failures.push(`${l.id}: starter expected to raise ${t} but ran clean`);
+      else if (r.error.indexOf(t) !== 0) failures.push(`${l.id}: starter expected ${t} but raised — ${r.error}`);
+    }
+  }
+  return failures.length ? fail(failures) : pass();
+}
+
+// Invariant 9: every errorClasses id is translatable by the friendly error layer.
+function checkErrorClasses(content, deps) {
+  if (!deps.errorTypes) return skip("error layer not loaded");
+  const known = new Set(deps.errorTypes);
+  const failures = [];
+  for (const l of content.lessons) {
+    for (const id of l.errorClasses || []) {
+      if (!known.has(id)) failures.push(`${l.id}: errorClass "${id}" has no translation in the error layer`);
+    }
+  }
+  return failures.length ? fail(failures) : pass();
+}
+
 /* ===================== check registry ===================== */
 
-function buildChecks(content, knownIds) {
+function buildChecks(content, knownIds, deps) {
   return [
     { name: "schema validation", run: () => checkSchema(content) },
+    { name: "inv1: solution passes its own check + style", run: () => checkSolutions(content, deps) },
     { name: "inv2: unique ids & codes", run: () => checkUniqueIds(content) },
     { name: "inv3: requires introduced by a lesson", run: () => checkRequiresIntroduced(content) },
     { name: "inv4: codex entry present", run: () => checkCodexPresent(content) },
+    { name: "inv5: starter matches starterExpectation", run: () => checkStarters(content, deps) },
     { name: `inv6: reading level (${GRADE_FORMULA} <= ${MAX_GRADE})`, run: () => checkReadingLevel(content) },
     { name: "inv7: time budgets", run: () => checkTimeBudgets(content) },
     { name: "inv8: misconceptions registered & hinted", run: () => checkMisconceptions(content, knownIds) },
-    { name: "inv1: solution passes check + style", run: () => skip("pending runtimes + mocks + checkers + style checker") },
-    { name: "inv5: starter matches starterExpectation", run: () => skip("pending runtimes + mocks") },
-    { name: "inv9: errorClasses have translations", run: () => skip("pending friendly-error layer") },
+    { name: "inv9: errorClasses have translations", run: () => checkErrorClasses(content, deps) },
   ];
 }
 
+function loadDeps() {
+  let checker = null, style = null, errorTypes = null;
+  try { checker = loadBrowserCL("src/js/checker.js").check; } catch (e) {}
+  try { style = loadBrowserCL("src/js/style.js").style; } catch (e) {}
+  try { errorTypes = Object.keys(loadBrowserCL("src/js/errors.js").errors.registry); } catch (e) {}
+  return { checker: checker, style: style, errorTypes: errorTypes, run: checker ? makeRunner() : null };
+}
+
 function runChecks(content, knownIds) {
-  return buildChecks(content, knownIds).map((c) => ({ name: c.name, ...c.run() }));
+  const deps = loadDeps();
+  return buildChecks(content, knownIds, deps).map((c) => ({ name: c.name, ...c.run() }));
 }
 
 /* ===================== reporting ===================== */
@@ -348,9 +442,9 @@ function report(results, { lessons, arena }) {
   }
   console.log("");
   if (failed > 0) {
-    console.log(`${failed} check(s) failed, ${skipped} skipped (pending Phase 1 modules).`);
+    console.log(`${failed} check(s) failed${skipped ? `, ${skipped} skipped` : ""}.`);
   } else {
-    console.log(`All active checks passed. ${skipped} skipped (pending Phase 1 modules).`);
+    console.log(`All checks passed${skipped ? ` (${skipped} skipped)` : ""}.`);
   }
   return failed === 0;
 }

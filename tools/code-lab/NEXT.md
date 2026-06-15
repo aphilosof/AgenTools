@@ -74,6 +74,20 @@ after >=1 solve. Verified in node (render, search filter, open-jumps, topbar).
 - SLICES REMAINING: 3) Codex (skills/glossary/errors tabs, earned-only), 4) Arena + coach mode.
   Add each view to TABS + unlocked() + a render branch as it's built.
 
+CONTENT-VERIFICATION HARNESS (done): inv1/inv5/inv9 are now LIVE (were stubbed).
+- tests/mocks/runner.py runs a program through local python3 with the music/turtle/plot
+  bridge mocked (same event tuples as the worker), returning {stdout, events, error}.
+- The harness loads checker.js/style.js/errors.js (window shim) and: inv1 runs each
+  solution, requires it to pass its own check (+ style when styleRequired); inv5 runs each
+  starter and checks it matches starterExpectation; inv9 checks errorClasses are translatable.
+- Proven to CATCH a broken solution (tampered w0l2 -> harness failed). So authored content is
+  machine-verified by `npm test`; no hand-testing lessons.
+- Needs local python3 (present). If absent, inv1/inv5 SKIP with a reason.
+
+NOW BUILDING: real curriculum content (Phase 2). Each lesson conforms to schema.md and must
+pass npm test. Parsons-based World 0 puzzle lessons need the Parsons rung (not built yet);
+code-based lessons (py, output/calls checks) work today.
+
 Next task: Phase 1 per PLAN.md Section 6.
 Suggested order inside Phase 1:
 1. [DONE] tests/run.js harness skeleton: schema validation, reading-level check, time budgets, invariants
