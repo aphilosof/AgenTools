@@ -68,9 +68,17 @@
   function isEditorView() {
     return state.view === "lessons" || state.view === "sandbox";
   }
+  // A paged lesson (new format) takes over the Lessons view when present.
+  function pagedLesson() {
+    var p = (window.CODELAB && window.CODELAB.pagedLessons) || [];
+    return p.length ? p[0] : null;
+  }
+  function usingPlayer() {
+    return state.view === "lessons" && !!CL.player && !!pagedLesson();
+  }
   function renderAndWire(theme) {
     render(theme, state.lesson);
-    if (isEditorView()) wireRuntime(theme, state.lesson);
+    if (isEditorView() && !usingPlayer()) wireRuntime(theme, state.lesson);
   }
   function sandboxLesson() {
     return {
@@ -168,6 +176,16 @@
       app.appendChild(bar);
     }
 
+    // paged lesson player (new format) takes over the Lessons view when present
+    if (state.view === "lessons" && usingPlayer()) {
+      buildNav(container);
+      CL.player.render(container, pagedLesson());
+      buildThemebar(container, theme);
+      frame.appendChild(container);
+      app.appendChild(frame);
+      return;
+    }
+
     // top bar — the Lessons view shows position + prev/next; other views just a title
     var topbar = el("div", "topbar");
     var titleText = state.view === "map" ? "Knowledge Map" : lesson.isSandbox ? "Sandbox" : "World " + lesson.world + " · " + lesson.title;
@@ -188,17 +206,7 @@
     }
     container.appendChild(topbar);
 
-    // app navigation — progressive disclosure: a tab appears only once unlocked.
-    var nav = el("div", "appnav");
-    TABS.forEach(function (tab) {
-      if (!unlocked(tab.view)) return;
-      var t = el("span", "tab" + (state.view === tab.view ? " active" : ""), tab.label);
-      if (state.view !== tab.view) {
-        t.addEventListener("click", function () { setView(tab.view); });
-      }
-      nav.appendChild(t);
-    });
-    container.appendChild(nav);
+    buildNav(container);
 
     // Body branches by surface. Editor views (lessons, sandbox) share the code
     // layout below; other surfaces render their own body.
@@ -353,6 +361,18 @@
 
     frame.appendChild(container);
     app.appendChild(frame);
+  }
+
+  // app navigation — progressive disclosure: a tab appears only once unlocked.
+  function buildNav(container) {
+    var nav = el("div", "appnav");
+    TABS.forEach(function (tab) {
+      if (!unlocked(tab.view)) return;
+      var t = el("span", "tab" + (state.view === tab.view ? " active" : ""), tab.label);
+      if (state.view !== tab.view) t.addEventListener("click", function () { setView(tab.view); });
+      nav.appendChild(t);
+    });
+    container.appendChild(nav);
   }
 
   function buildThemebar(container, theme) {

@@ -21,6 +21,7 @@ const JS_ORDER = [
   "codex.js",
   "map.js",
   "arena.js",
+  "player.js",
   "engine.js",
 ];
 
