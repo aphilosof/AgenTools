@@ -1,9 +1,9 @@
 /* World 1 — Python: First Words.
-   print, numbers, variables, strings, and the first sounds. Code-based lessons
-   verified by the harness (each solution is executed and must pass its check).
-   Format per lessons/schema.md: explain teaches the concept, example is a
-   runnable demo to tinker with, task states the challenge. Written for a
-   grade-6 reader — full sentences and real vocabulary, not baby-talk. */
+   print, numbers, variables, strings, the first turtle drawing, and the first
+   sounds (PLAN §4). Each lesson teaches the idea, not just the syntax, in the
+   "How to Think Like a Computer Scientist" tradition: a multi-paragraph
+   explanation at grade 6-7, a runnable worked example to tinker with, then an
+   explicit challenge. Every solution is executed and graded by the harness. */
 
 window.CODELAB.lessons.push({
   id: "w1l1",
@@ -17,10 +17,11 @@ window.CODELAB.lessons.push({
   warmup: [],
   timeBudgetMin: 15,
   explain:
-    "A program does nothing on screen until you ask it to. The print command is how you tell Python to display something. Whatever you put between its brackets gets shown. Text has to sit inside quotation marks so Python treats it as words to display, not as commands to obey. The quotation marks themselves never appear in the output — they only mark where your text starts and ends. You can print a single word, a full sentence, or several lines by using print more than once.",
+    "A program does nothing you can see until you tell it to. print is the command for that: it takes whatever you put between its brackets and displays it on the screen. The thing inside the brackets is called the argument — it is what print works on.\n\n" +
+    "Words have to sit inside quotation marks, like \"hello\". The quotes tell Python this is text to show, not a command to run. They are never displayed themselves; they only mark where the text starts and ends. Each print writes its own line, so using print several times stacks the lines up in order.",
   example: 'print("Hello, world!")\nprint("I am learning to code.")\n',
   exampleNote:
-    "Run this to see two lines appear. Then change the words, or add a third print line of your own, and run it again.",
+    "Run this to see two lines appear. Change the words, or add a third print line of your own, then run it again.",
   task: "Make the program print these two lines, exactly:\nReady to code\nLet's go",
   starter: "# print the two lines from the task\n",
   starterExpectation: "runs-clean",
@@ -31,7 +32,7 @@ window.CODELAB.lessons.push({
     "Write print(\"Ready to code\") on the first line and print(\"Let's go\") on the second.",
   ],
   solution: 'print("Ready to code")\nprint("Let\'s go")\n',
-  codex: { topic: "printing", pattern: 'print("text")', note: "Displays text on the screen. Use it once per line." },
+  codex: { topic: "printing", pattern: 'print("text")', note: "Displays its argument on the screen. One print writes one line." },
   styleRequired: false,
 });
 
@@ -47,11 +48,12 @@ window.CODELAB.lessons.push({
   warmup: [],
   timeBudgetMin: 18,
   explain:
-    "Python can do maths far faster than you can by hand. It uses + to add and - to subtract. Multiply is a star (*) and divide is a slash (/), because keyboards have no × or ÷ key. Write numbers on their own, with no quotation marks. Quotes would turn a number into text, and you cannot do maths on text. To see a result, put the calculation inside print. Python then prints the answer, not the sum you typed.",
+    "A computer is, at heart, a very fast calculator. Python does maths with + to add and - to subtract. Multiply is a star (*) and divide is a slash (/), because a keyboard has no × or ÷ key.\n\n" +
+    "Numbers are written on their own, with no quotation marks. That matters: \"7\" with quotes is text, and Python will not do maths on text. The number 7 without quotes is a value it can add and multiply. To see the result of a calculation, put it inside print. Python works out the answer first, then prints the answer — not the sum you typed.",
   example: "print(10 + 5)\nprint(10 * 5)\nprint(10 / 5)\n",
   exampleNote:
-    "Run this and watch Python work out each line. Try swapping the numbers or the symbols to see what happens.",
-  task: "Print the answer to 7 times 6. Let Python do the multiplying — don't just print the number 42.",
+    "Run this and watch Python work out each line. Swap the numbers or the symbols and see what changes.",
+  task: "Print the answer to 7 times 6. Let Python do the multiplying — don't just print the number 42 yourself.",
   starter: "# print the result of 7 times 6\n",
   starterExpectation: "runs-clean",
   check: { type: "output", expected: "42" },
@@ -61,7 +63,7 @@ window.CODELAB.lessons.push({
     "Write print(7 * 6) and run it.",
   ],
   solution: "print(7 * 6)\n",
-  codex: { topic: "math", pattern: "a + b   a * b   a / b", note: "+ - * / do arithmetic. Wrap it in print to see the result." },
+  codex: { topic: "math", pattern: "a + b   a * b   a / b", note: "+ - * / do arithmetic on numbers. Wrap it in print to see the result." },
   styleRequired: false,
 });
 
@@ -100,6 +102,37 @@ window.CODELAB.lessons.push({
 window.CODELAB.lessons.push({
   id: "w1l4",
   world: 1,
+  title: "How Old Are You in Days?",
+  lang: "py",
+  strand: "numbers",
+  rung: 6,
+  concepts: ["variables", "math", "print"],
+  misconceptions: [],
+  warmup: [],
+  timeBudgetMin: 22,
+  explain:
+    "Now you can put variables and maths together to build something useful: a small calculator. The idea is simple. Store the starting facts in well-named variables. Then work out the answer from those names. If a fact changes, you change it in just one place.\n\n" +
+    "A year is about 365 days. So your age in days is your age in years times 365. Give the age its own variable, and the program is easy to read and to change. Swap the age, run it again, and the answer updates. This is the heart of programming: describe the calculation once, then let the computer redo it for any numbers.",
+  example: "years = 8\ndays = years * 365\nprint(days)\n",
+  exampleNote:
+    "Run this to see how many days an 8-year-old has lived. Change years to your own age and run it again.",
+  task: "Store the age 11 in a variable called years. Work out the age in days (years times 365), store it in days, and print days. It should show 4015.",
+  starter: "# 1) years = 11\n# 2) days = years * 365\n# 3) print days\n",
+  starterExpectation: "runs-clean",
+  check: { type: "output", expected: "4015" },
+  hints: [
+    "Store the age first: years = 11.",
+    "Multiply the variable by 365 and store it: days = years * 365.",
+    "Then print(days). Together: years = 11, days = years * 365, print(days).",
+  ],
+  solution: "years = 11\ndays = years * 365\nprint(days)\n",
+  codex: { topic: "variables", pattern: "result = input1 * input2", note: "Store facts in named variables, then compute the answer from the names." },
+  styleRequired: false,
+});
+
+window.CODELAB.lessons.push({
+  id: "w1l5",
+  world: 1,
   title: "Joining Words Together",
   lang: "py",
   strand: "words",
@@ -109,10 +142,11 @@ window.CODELAB.lessons.push({
   warmup: [],
   timeBudgetMin: 18,
   explain:
-    "The plus sign does more than add numbers. When it sits between two pieces of text, it joins them into one longer piece — programmers call this 'joining' or concatenation. \"Sky\" + \"walker\" becomes \"Skywalker\", with no space added unless you include one yourself inside the quotation marks. Each piece of text keeps its own quotes; the plus sign goes between them, outside the quotes. This is how programs build names, messages, and sentences out of smaller parts.",
+    "The plus sign does two different jobs, depending on what sits beside it. Between numbers it adds. Between two pieces of text it joins them into one longer piece — programmers call this concatenation.\n\n" +
+    '"Sky" + "walker" becomes "Skywalker". Notice no space appears in the middle: Python joins the text exactly as written, so if you want a gap you have to include it yourself, as a space inside quotation marks. Each piece keeps its own quotes, and the plus sits between them, outside the quotes. Joining text is how programs build names, messages, and sentences out of smaller parts.',
   example: 'first = "Ada"\nlast = "Lovelace"\nprint(first + " " + last)\n',
   exampleNote:
-    "Run this to see a full name built from two variables and a space. Try removing the \" \" in the middle and see what changes.",
+    "Run this to see a full name built from two variables and a space. Remove the \" \" in the middle and see what changes.",
   task: 'Join the two words "Sky" and "walker" into one and print the result. It should read Skywalker, with no space.',
   starter: "# join Sky and walker, then print the result\n",
   starterExpectation: "runs-clean",
@@ -123,12 +157,51 @@ window.CODELAB.lessons.push({
     'Write print("Sky" + "walker").',
   ],
   solution: 'print("Sky" + "walker")\n',
-  codex: { topic: "strings", pattern: '"a" + "b"', note: "Joins two pieces of text into one. Add a space yourself if you want one." },
+  codex: { topic: "strings", pattern: '"a" + "b"', note: "Between text, + joins (concatenates). Add a space yourself if you want one." },
   styleRequired: false,
 });
 
 window.CODELAB.lessons.push({
-  id: "w1l5",
+  id: "w1l6",
+  world: 1,
+  title: "Your First Drawing",
+  lang: "py",
+  strand: "core",
+  rung: 6,
+  concepts: ["turtle"],
+  misconceptions: [],
+  warmup: [],
+  timeBudgetMin: 22,
+  explain:
+    "You can command a turtle — a little drawing robot — to move around the screen, leaving a line behind it. Two commands do most of the work: forward(n) moves it n steps in the direction it faces, and right(a) turns it a degrees on the spot without moving.\n\n" +
+    "To draw a shape you give the turtle a sequence of moves and turns, in order. A square is four equal sides with a quarter turn between them. A quarter turn is 90 degrees, because a full turn all the way around is 360, and 360 divided by 4 is 90. Right now you write each move out by hand. Soon you will learn a way to repeat moves automatically.",
+  example: "forward(100)\nright(90)\nforward(100)\n",
+  exampleNote:
+    "Run this to draw a corner — one side, a quarter turn, another side. Try changing 90 to 120 and see how the angle changes.",
+  task: "Draw a full square: four sides of 100 steps, with a right turn of 90 degrees after each side.",
+  starter: "# forward and right turn, four times, to make a square\n",
+  starterExpectation: "runs-clean",
+  check: {
+    type: "calls",
+    calls: [
+      { fn: "forward", val: 100 }, { fn: "right", val: 90 },
+      { fn: "forward", val: 100 }, { fn: "right", val: 90 },
+      { fn: "forward", val: 100 }, { fn: "right", val: 90 },
+      { fn: "forward", val: 100 }, { fn: "right", val: 90 },
+    ],
+  },
+  hints: [
+    "One side then one turn is: forward(100) then right(90).",
+    "A square has four sides, so you need that pair four times.",
+    "Write forward(100) and right(90), then repeat those two lines until you have four of each.",
+  ],
+  solution: "forward(100)\nright(90)\nforward(100)\nright(90)\nforward(100)\nright(90)\nforward(100)\nright(90)\n",
+  codex: { topic: "turtle", pattern: "forward(n); right(a)", note: "forward moves and draws; right turns in place. Sequence them to make shapes." },
+  styleRequired: false,
+});
+
+window.CODELAB.lessons.push({
+  id: "w1l7",
   world: 1,
   title: "Writing a Tune",
   lang: "py",
@@ -139,11 +212,12 @@ window.CODELAB.lessons.push({
   warmup: [],
   timeBudgetMin: 20,
   explain:
-    "Code can make music, not just text. The play command plays a note, and the number you give it chooses the pitch: higher numbers are higher notes, lower numbers are lower notes. The sleep command pauses for a number of beats, so notes do not all sound at once. If you call play several times with a sleep between each, you build a short tune that plays in order, exactly like reading music from left to right.",
+    "Code can make music, not just text. play sounds a note, and the number you give it chooses the pitch: higher numbers are higher notes, lower numbers are lower. The numbers come from the way pianos are laid out, where each step up is the next key along.\n\n" +
+    "If you only called play several times, the notes would all sound at once, like a chord. sleep fixes that: it pauses for a number of beats before the next note. So a tune is really a list of notes with waits between them, played in order from top to bottom — exactly like reading music from left to right.",
   example: "play(60)\nsleep(0.5)\nplay(62)\nsleep(0.5)\nplay(64)\n",
   exampleNote:
     "Run this to hear three notes climb. Change the numbers to change the tune — try making it go down instead of up.",
-  task: "Write a tune from scratch that plays three rising notes — 60, then 64, then 67 — with a short sleep between each.",
+  task: "Write a tune that plays three rising notes — 60, then 64, then 67 — with a short sleep between each.",
   starter: "# play 60, 64, 67 with a sleep between each\n",
   starterExpectation: "runs-clean",
   check: {
@@ -156,6 +230,6 @@ window.CODELAB.lessons.push({
     "Write play(60), sleep(0.5), play(64), sleep(0.5), play(67) on separate lines.",
   ],
   solution: "play(60)\nsleep(0.5)\nplay(64)\nsleep(0.5)\nplay(67)\n",
-  codex: { topic: "sound", pattern: "play(note); sleep(beats)", note: "play sounds a note; sleep waits so notes play in order." },
+  codex: { topic: "sound", pattern: "play(note); sleep(beats)", note: "play sounds a note; sleep waits so notes play in order, not at once." },
   styleRequired: false,
 });

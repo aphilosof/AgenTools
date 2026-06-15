@@ -96,9 +96,20 @@ LESSON TEMPLATE ENRICHED (per review: lessons were too thin / no examples; learn
 - World 1 rewritten in this format (5 lessons), all harness-green.
 - TODO: apply the richer format to World 0 (w0l1/w0l2 still thin); continue worlds.
 
-NOW BUILDING: real curriculum content (Phase 2). Each lesson conforms to schema.md and must
-pass npm test. Parsons-based World 0 puzzle lessons need the Parsons rung (not built yet);
-code-based lessons (py, output/calls checks) work today.
+CONTENT PROGRESS (Phase 2):
+- World 1 COMPLETE (7 lessons, HTTLACS depth, all harness-green): print, calculator(math),
+  variables, age-in-days project, joining words(strings), first turtle drawing, writing a tune.
+- World 0: w0l1/w0l2 still in the thinner pre-template format (hook is intentionally light, but
+  should be moved to the example+task template). World 0 puzzle lessons need Parsons.
+- ENGINE GAPS deferring some plan-specified lesson TYPES: input() (Pyodide-worker stdin),
+  predict-the-variable-table rung (rung 1 interaction), Parsons (rung 2). Build these when their
+  worlds need them.
+- CADENCE (CLAUDE.md): author a whole world, commit, present at the world-level review gate; do
+  NOT start the next world without approval. Do not hand-hold per lesson — the harness is the
+  quality gate; the depth bar is the variables lesson (w1l3).
+
+NEXT WORLD: World 2 — Decisions and Loops (if/elif/else, comparison, while, for, range; first
+"fix the broken code" lessons; turtle spirals; four-on-the-floor kick loop). Pending approval.
 
 Next task: Phase 1 per PLAN.md Section 6.
 Suggested order inside Phase 1:
