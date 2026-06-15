@@ -62,6 +62,8 @@
         indentUnit: 4,
         viewportMargin: Infinity,
       });
+      // CodeMirror renders blank if created off-DOM; refresh once it's laid out.
+      setTimeout(function () { try { cm.refresh(); } catch (e) {} }, 0);
       return { get: function () { return cm.getValue(); } };
     }
     var ta = document.createElement("textarea");
@@ -115,8 +117,9 @@
     // turtle/plot drawing would target a canvas; lessons that need it add one.
   }
 
-  function renderRunnable(page, lessonLang, withCheck, onPass) {
+  function renderRunnable(card, page, lessonLang, withCheck, onPass) {
     var wrap = el("div", "player-runnable");
+    card.appendChild(wrap); // attach to the live DOM BEFORE mounting the editor
     var host = el("div");
     wrap.appendChild(host);
     var actions = el("div", "actions");
@@ -206,29 +209,25 @@
         if (hi >= page.hints.length) hintBtn.disabled = true;
       });
     }
-    return wrap;
   }
 
   function renderPage(lesson, pageHost, updateNav) {
     pageHost.innerHTML = "";
     var page = lesson.pages[state.idx];
     var card = el("div", "lesson-page");
+    pageHost.appendChild(card); // attach FIRST so editors mount on the live DOM
 
     if (page.title) card.appendChild(el("h2", "page-title", esc(page.title)));
 
     if (page.type === "concept" || page.type === "recap") {
       card.appendChild(el("div", "prose", md(page.md)));
-    } else if (page.type === "example") {
+    } else if (page.type === "example" || page.type === "errordemo") {
       if (page.md) card.appendChild(el("div", "prose", md(page.md)));
-      card.appendChild(renderRunnable(page, lesson.lang, false, null));
-    } else if (page.type === "errordemo") {
-      if (page.md) card.appendChild(el("div", "prose", md(page.md)));
-      card.appendChild(renderRunnable(page, lesson.lang, false, null));
+      renderRunnable(card, page, lesson.lang, false, null);
     } else if (page.type === "exercise") {
       if (page.prompt) card.appendChild(el("div", "prose challenge-task", md(page.prompt)));
-      card.appendChild(renderRunnable(page, lesson.lang, true, updateNav));
+      renderRunnable(card, page, lesson.lang, true, updateNav);
     }
-    pageHost.appendChild(card);
   }
 
   function canAdvance(lesson) {
