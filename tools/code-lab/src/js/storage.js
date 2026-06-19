@@ -8,7 +8,7 @@
   "use strict";
   var CL = (window.CL = window.CL || {});
 
-  var KEY = "codelab.save.v1"; // bump the suffix on a breaking schema change
+  var KEY = "codelab.save.v2"; // bump the suffix on a breaking schema change
   // code: { lessonId: lastEditedSource }, solved: { lessonId: true }
   var DEFAULTS = { theme: "magazine", lessonIdx: 0, code: {}, solved: {} };
 

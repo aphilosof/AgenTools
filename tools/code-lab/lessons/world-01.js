@@ -18,13 +18,20 @@ window.CODELAB.lessons.push({
   warmup: [],
   timeBudgetMin: 15,
   explain:
-    "A program does nothing you can see until you tell it to. print is the command for that: it takes whatever you put between its brackets and displays it on the screen. The thing inside the brackets is called the argument — it is what print works on.\n\n" +
-    "Text has to sit inside quotation marks, like \"hello\". The quotes tell Python this is text to show, not a command to run. They are never displayed themselves; they only mark where the text starts and ends. Each print writes its own line, so using print several times stacks the lines up in order.",
+    "A program does nothing you can see until you tell it to. `print` is the command for that: it takes whatever you put between its brackets and displays it on the screen. The thing inside the brackets is called the [[argument]] — it is what print works on.\n\n" +
+    "Text has to sit inside quotation marks, like `\"hello\"` — that makes it a [[string]]. The quotes tell Python this is text to show, not a command to run. They are never displayed themselves; they only mark where the text starts and ends. Each print writes its own line, so using print several times stacks the lines up in order.",
+  glossary: {
+    argument: "The value you put inside a function's brackets — what the function works on. In print(\"hi\"), the argument is \"hi\".",
+    string: "Text — a row of characters inside quotes. Its Python type is str.",
+  },
+  moreInfo: [
+    { label: "Single or double quotes?", body: "Python accepts both 'hi' and \"hi\" — they work the same. Use one kind so you can include the other inside: \"it's fine\" or 'she said \"hi\"'." },
+  ],
   example: 'print("Hello, world!")\nprint("I am learning to code.")\n',
   exampleNote:
-    "Run this to see two lines appear. Change the words, or add a third print line of your own, then run it again.",
+    "Run this to see two lines appear — each print writes its own line.",
   task: "Make the program print these two lines, exactly:\nReady to code\nLet's go",
-  starter: "# print the two lines from the task\n",
+  starter: "",
   starterExpectation: "runs-clean",
   check: { type: "output", expected: "Ready to code\nLet's go" },
   hints: [

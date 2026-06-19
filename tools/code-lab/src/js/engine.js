@@ -54,6 +54,7 @@
   var TABS = [
     { view: "lessons", label: "Lessons" },
     { view: "map", label: "Knowledge Map" },
+    { view: "codex", label: "Codex" },
     { view: "sandbox", label: "Sandbox" },
   ];
   function solvedCount() {
@@ -61,24 +62,17 @@
   }
   function unlocked(view) {
     if (view === "lessons") return true;
-    if (view === "map") return solvedCount() >= 1; // the map is meaningful once there's progress
-    if (view === "sandbox") return solvedCount() >= 1; // free play, once they can code
+    // Candidate D: surfaces shown so the cheat-sheet / knowledge-trove links are
+    // visible for assessment (real disclosure rules return in the integration).
+    if (view === "map" || view === "codex" || view === "sandbox") return true;
     return false;
   }
   function isEditorView() {
     return state.view === "lessons" || state.view === "sandbox";
   }
-  // A paged lesson (new format) takes over the Lessons view when present.
-  function pagedLesson() {
-    var p = (window.CODELAB && window.CODELAB.pagedLessons) || [];
-    return p.length ? p[0] : null;
-  }
-  function usingPlayer() {
-    return state.view === "lessons" && !!CL.player && !!pagedLesson();
-  }
   function renderAndWire(theme) {
     render(theme, state.lesson);
-    if (isEditorView() && !usingPlayer()) wireRuntime(theme, state.lesson);
+    if (isEditorView()) wireRuntime(theme, state.lesson);
   }
   function sandboxLesson() {
     return {
@@ -110,12 +104,27 @@
     return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
 
+  // Teaching prose: escape, then render `code`, **bold**, and [[term]] links.
+  // A term carries its definition as a hover popover (pure CSS, from glossary).
+  function inlineProse(s, glossary) {
+    return escapeHtml(s)
+      .replace(/`([^`]+)`/g, function (_, c) { return "<code>" + c + "</code>"; })
+      .replace(/\*\*([^*]+)\*\*/g, function (_, c) { return "<strong>" + c + "</strong>"; })
+      .replace(/\[\[([^\]]+)\]\]/g, function (_, t) {
+        var def = glossary && glossary[t] ? glossary[t] : "";
+        var pop = def ? '<span class="term-pop">' + escapeHtml(def) + "</span>" : "";
+        return '<span class="term-wrap"><a class="term">' + t + "</a>" + pop + "</span>";
+      });
+  }
+
   // Theme-specific label flavor (DESIGN.md signature text per theme).
   function editorHeader(theme, lesson) {
-    var file = lesson.filename || "sandbox.py";
-    if (theme === "magazine") return lesson.challengeCode ? "listing " + lesson.challengeCode.toLowerCase() + " · " + file : file;
+    // name the Your-turn code block by its exercise number + title
+    if (lesson.id !== "sandbox" && lesson.world != null && lesson.lessonNo && lesson.title) {
+      return "Exercise " + lesson.world + "." + lesson.lessonNo + " · " + lesson.title;
+    }
     if (theme === "terminal") return "editor";
-    return file; // c64
+    return lesson.filename || "sandbox.py"; // sandbox / fallback
   }
   function outputHeader(theme) {
     return theme === "magazine" ? "printout" : "output";
@@ -138,7 +147,7 @@
     for (var i = 0; i < total; i++) {
       var solved = lessons.length ? CL.storage.isSolved(lessons[i].id) : false;
       var cls = solved ? "cell done" : i === state.lessonIdx ? "cell current" : "cell";
-      html += '<span class="' + cls + '"></span>';
+      html += '<span class="' + cls + '" data-i="' + i + '" style="cursor:pointer"></span>';
     }
     return html;
   }
@@ -176,16 +185,6 @@
       app.appendChild(bar);
     }
 
-    // paged lesson player (new format) takes over the Lessons view when present
-    if (state.view === "lessons" && usingPlayer()) {
-      buildNav(container);
-      CL.player.render(container, pagedLesson());
-      buildThemebar(container, theme);
-      frame.appendChild(container);
-      app.appendChild(frame);
-      return;
-    }
-
     // top bar — the Lessons view shows position + prev/next; other views just a title
     var topbar = el("div", "topbar");
     var titleText = state.view === "map" ? "Knowledge Map" : lesson.isSandbox ? "Sandbox" : "World " + lesson.world + " · " + lesson.title;
@@ -206,7 +205,17 @@
     }
     container.appendChild(topbar);
 
-    buildNav(container);
+    // app navigation — progressive disclosure: a tab appears only once unlocked.
+    var nav = el("div", "appnav");
+    TABS.forEach(function (tab) {
+      if (!unlocked(tab.view)) return;
+      var t = el("span", "tab" + (state.view === tab.view ? " active" : ""), tab.label);
+      if (state.view !== tab.view) {
+        t.addEventListener("click", function () { setView(tab.view); });
+      }
+      nav.appendChild(t);
+    });
+    container.appendChild(nav);
 
     // Body branches by surface. Editor views (lessons, sandbox) share the code
     // layout below; other surfaces render their own body.
@@ -223,8 +232,17 @@
       var prompt = el("div", "prompt");
       if (lesson.promptTitle) prompt.appendChild(el("h2", null, escapeHtml(lesson.promptTitle)));
       lesson.promptText.forEach(function (p) {
-        prompt.appendChild(el("p", null, escapeHtml(p)));
+        prompt.appendChild(el("p", null, inlineProse(p, lesson.glossary)));
       });
+      if (lesson.moreInfo && lesson.moreInfo.length) {
+        lesson.moreInfo.forEach(function (mi) {
+          var box = el("div", "more-info");
+          var head = el("button", "more-toggle", "ⓘ " + mi.label);
+          var body = el("div", "more-body"); body.style.display = "none"; body.innerHTML = inlineProse(mi.body);
+          head.addEventListener("click", function () { body.style.display = body.style.display === "none" ? "block" : "none"; });
+          box.appendChild(head); box.appendChild(body); prompt.appendChild(box);
+        });
+      }
       container.appendChild(prompt);
     }
 
@@ -232,7 +250,7 @@
     // challenge (PLAN §3: "run a working example and tinker with it")
     if (lesson.example) {
       var exPanel = el("div", "panel");
-      exPanel.appendChild(el("div", "panel-header", "example — run it and tinker"));
+      exPanel.appendChild(el("div", "panel-header", "example — run it"));
       if (lesson.exampleNote) {
         var note = el("div", "example-note");
         note.textContent = lesson.exampleNote;
@@ -247,6 +265,15 @@
       exActions.appendChild(runExBtn);
       exPanel.appendChild(exActions);
       container.appendChild(exPanel);
+
+      // the example's own printout (separate from the Your-turn printout)
+      var exOut = el("div", "panel");
+      exOut.appendChild(el("div", "panel-header", "example " + escapeHtml(outputHeader(theme))));
+      var exOutBox = el("div", "output");
+      exOutBox.id = "example-output-box";
+      exOutBox.appendChild(el("div", "out-line info", "press run to see the output."));
+      exOut.appendChild(exOutBox);
+      container.appendChild(exOut);
     }
 
     // the challenge instruction (what to actually do), distinct from the teaching
@@ -297,6 +324,15 @@
     hintHost.className = "hint-host";
     container.appendChild(hintHost);
 
+    // output panel — filled by Run; sits right under the editor, above the stepper
+    var outPanel = el("div", "panel");
+    outPanel.appendChild(el("div", "panel-header", escapeHtml(outputHeader(theme))));
+    var outBox = el("div", "output");
+    outBox.id = "output-box";
+    outBox.appendChild(el("div", "out-line info", "press run to execute your code."));
+    outPanel.appendChild(outBox);
+    container.appendChild(outPanel);
+
     // stepper — the notional machine; hidden until a run records steps
     var stepper = el("div", "panel");
     stepper.id = "stepper";
@@ -336,19 +372,19 @@
     stage.appendChild(canvas);
     container.appendChild(stage);
 
-    // output panel — filled by Run
-    var outPanel = el("div", "panel");
-    outPanel.appendChild(el("div", "panel-header", escapeHtml(outputHeader(theme))));
-    var outBox = el("div", "output");
-    outBox.id = "output-box";
-    outBox.appendChild(el("div", "out-line info", "press run to execute your code."));
-    outPanel.appendChild(outBox);
-    container.appendChild(outPanel);
-
     // model-solution appears here on a pass or via the solution button
     var modelHost = el("div");
     modelHost.id = "model-host";
     container.appendChild(modelHost);
+
+    // bottom section nav — back / next through the lesson's subsections
+    var footnav = el("div", "lesson-footnav");
+    var fbPrev = el("button", "btn ghost", "‹ back");
+    fbPrev.id = "lesson-prev-b"; fbPrev.disabled = state.lessonIdx === 0;
+    var fbNext = el("button", "btn primary", "next section ›");
+    fbNext.id = "lesson-next-b"; fbNext.disabled = state.lessonIdx >= state.lessonCount - 1;
+    footnav.appendChild(fbPrev); footnav.appendChild(fbNext);
+    container.appendChild(footnav);
 
     if (theme === "terminal") {
       var keyhints = el("div", "keyhints");
@@ -361,18 +397,6 @@
 
     frame.appendChild(container);
     app.appendChild(frame);
-  }
-
-  // app navigation — progressive disclosure: a tab appears only once unlocked.
-  function buildNav(container) {
-    var nav = el("div", "appnav");
-    TABS.forEach(function (tab) {
-      if (!unlocked(tab.view)) return;
-      var t = el("span", "tab" + (state.view === tab.view ? " active" : ""), tab.label);
-      if (state.view !== tab.view) t.addEventListener("click", function () { setView(tab.view); });
-      nav.appendChild(t);
-    });
-    container.appendChild(nav);
   }
 
   function buildThemebar(container, theme) {
@@ -399,13 +423,15 @@
   // Mount a code editor into host: CodeMirror when present (from CDN), a themed
   // textarea otherwise. Used for both the challenge editor and the worked-example
   // editor; onChange is called with the new value on every edit (may be null).
-  function mountEditor(host, code, lang, onChange) {
+  function mountEditor(host, code, lang, onChange, readOnly, placeholder) {
     if (window.CodeMirror) {
       var cm = window.CodeMirror(host, {
         value: code,
         mode: lang === "js" ? "javascript" : "python",
         lineNumbers: true,
         indentUnit: 4,
+        readOnly: !!readOnly,
+        placeholder: placeholder || "",
         viewportMargin: Infinity, // grow to fit content instead of a fixed box
       });
       if (onChange) cm.on("change", function () { onChange(cm.getValue()); });
@@ -427,6 +453,8 @@
     ta.className = "editor-fallback";
     ta.value = code;
     ta.spellcheck = false;
+    ta.readOnly = !!readOnly;
+    if (placeholder) ta.placeholder = placeholder;
     if (onChange) ta.addEventListener("input", function () { onChange(ta.value); });
     host.appendChild(ta);
     return { getValue: function () { return ta.value; }, focus: function () { ta.focus(); }, highlightLine: function () {} };
@@ -436,9 +464,9 @@
     var editor = mountEditor(document.getElementById("editor-host"), state.code, lesson.lang, function (v) {
       state.code = v;
       CL.storage.setCode(state.lesson.id, v);
-    });
+    }, false, "type your code here…");
     var exHost = document.getElementById("example-host");
-    var exEditor = exHost ? mountEditor(exHost, lesson.example || "", lesson.lang, null) : null;
+    var exEditor = exHost ? mountEditor(exHost, lesson.example || "", lesson.lang, null, true) : null;
     var runBtn = document.getElementById("btn-run");
     var stopBtn = document.getElementById("btn-stop");
     var outBox = document.getElementById("output-box");
@@ -461,10 +489,11 @@
     var stepIdx = 0;
     var hintIdx = 0;
 
+    var currentOut = outBox; // the example run targets its own printout
     function out(text, cls) {
       var d = el("div", "out-line" + (cls ? " " + cls : ""));
       d.textContent = text;
-      outBox.appendChild(d);
+      currentOut.appendChild(d);
     }
 
     // Friendly error annotation beneath the raw traceback (translate, never replace).
@@ -606,7 +635,9 @@
       if (runBtn.disabled) return;
       var isExample = source != null;
       var code = isExample ? source : editor.getValue();
-      outBox.innerHTML = "";
+      var exOutBox = document.getElementById("example-output-box");
+      currentOut = isExample && exOutBox ? exOutBox : outBox;
+      currentOut.innerHTML = "";
       if (stage) stage.style.display = "none";
       stepperEl.style.display = "none";
       editor.highlightLine(null);
@@ -672,6 +703,18 @@
       lessonNext.addEventListener("click", function () { setLesson(state.lessonIdx + 1); });
     }
 
+    // clickable progress circles — jump straight to any subsection (lesson)
+    var cellsEl = document.getElementById("progress-cells");
+    if (cellsEl) cellsEl.addEventListener("click", function (e) {
+      var t = e.target.getAttribute && e.target.getAttribute("data-i");
+      if (t != null) setLesson(parseInt(t, 10));
+    });
+
+    var fbPrevEl = document.getElementById("lesson-prev-b");
+    if (fbPrevEl) fbPrevEl.addEventListener("click", function () { setLesson(state.lessonIdx - 1); });
+    var fbNextEl = document.getElementById("lesson-next-b");
+    if (fbNextEl) fbNextEl.addEventListener("click", function () { setLesson(state.lessonIdx + 1); });
+
     var runExBtn = document.getElementById("btn-run-example");
     if (runExBtn && exEditor) runExBtn.addEventListener("click", function () { execute(false, exEditor.getValue()); });
 
@@ -717,6 +760,8 @@
       lang: l.lang === "js" ? "js" : "py",
       promptTitle: l.title,
       promptText: String(l.explain || "").split(/\n\n+/), // blank line = new paragraph
+      glossary: l.glossary || null,
+      moreInfo: l.moreInfo || null,
       task: l.task || "",
       example: l.example || "",
       exampleNote: l.exampleNote || "",
