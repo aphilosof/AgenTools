@@ -47,11 +47,11 @@
      inherits the page and is allowed, and importScripts can pull Pyodide from
      the CDN cross-origin. -->
 <script id="worker-src" type="text/worker">
-  importScripts("https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js");
+  importScripts("https://cdn.jsdelivr.net/pyodide/v0.29.4/full/pyodide.js");
   let pyodide = null;
 
   async function init() {
-    pyodide = await loadPyodide();
+    pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.29.4/full/" });
     pyodide.setStdout({ batched: function (s) { postMessage({ type: "stdout", text: s }); } });
     pyodide.setStderr({ batched: function (s) { postMessage({ type: "stderr", text: s }); } });
     postMessage({ type: "ready" });

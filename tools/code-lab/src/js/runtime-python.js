@@ -23,7 +23,7 @@
   //   event  = ('play', note, durSeconds, atSeconds) | ('sample', name, atSeconds)
   // After each run the event list is handed to the main thread for Web Audio.
   var WORKER_SRC = [
-    "importScripts('https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js');",
+    "importScripts('https://cdn.jsdelivr.net/pyodide/v0.29.4/full/pyodide.js');",
     "let pyodide = null;",
     "var PRELUDE = [",
     "  'import builtins',",
@@ -105,7 +105,7 @@
     "  '        sys.settrace(None)',",
     "].join('\\n');",
     "async function init() {",
-    "  pyodide = await loadPyodide();",
+    "  pyodide = await loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.29.4/full/' });",
     "  pyodide.setStdout({ batched: function (s) { postMessage({ type: 'stdout', text: s }); } });",
     "  pyodide.setStderr({ batched: function (s) { postMessage({ type: 'stderr', text: s }); } });",
     "  await pyodide.runPythonAsync(PRELUDE);",
