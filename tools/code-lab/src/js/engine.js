@@ -187,7 +187,7 @@
 
     // top bar — the Lessons view shows position + prev/next; other views just a title
     var topbar = el("div", "topbar");
-    var titleText = state.view === "map" ? "Knowledge Map" : lesson.isSandbox ? "Sandbox" : "World " + lesson.world + " · " + lesson.title;
+    var titleText = state.view === "map" ? "Knowledge Map" : state.view === "codex" ? "Codex" : lesson.isSandbox ? "Sandbox" : "World " + lesson.world + " · " + lesson.title;
     topbar.appendChild(el("div", "title", titleText));
     if (state.view === "lessons") {
       var right = el("div", "right");
@@ -221,6 +221,14 @@
     // layout below; other surfaces render their own body.
     if (state.view === "map") {
       if (CL.map) CL.map.render(container, mapData());
+      buildThemebar(container, theme);
+      frame.appendChild(container);
+      app.appendChild(frame);
+      return;
+    }
+
+    if (state.view === "codex") {
+      if (CL.codex) CL.codex.render(container, codexData());
       buildThemebar(container, theme);
       frame.appendChild(container);
       app.appendChild(frame);
@@ -415,6 +423,14 @@
     return {
       lessons: lessonsList(),
       currentIdx: state.lessonIdx,
+      isSolved: function (id) { return CL.storage.isSolved(id); },
+      open: function (idx) { setLesson(idx); },
+    };
+  }
+
+  function codexData() {
+    return {
+      lessons: lessonsList(),
       isSolved: function (id) { return CL.storage.isSolved(id); },
       open: function (idx) { setLesson(idx); },
     };

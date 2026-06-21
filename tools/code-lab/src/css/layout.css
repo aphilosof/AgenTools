@@ -316,3 +316,18 @@ a.term { cursor: help; }
 .term-pop { display: none; position: absolute; left: 0; top: 1.7em; z-index: 30; width: max-content; max-width: 300px; padding: 8px 10px; background: var(--panel); border: var(--border-w) solid var(--border); border-radius: var(--radius); color: var(--text-soft); font-size: .85em; line-height: 1.4; white-space: normal; }
 .term-wrap:hover .term-pop { display: block; }
 .lesson-footnav { display: flex; justify-content: space-between; align-items: center; margin: 22px 0 6px; padding-top: 14px; border-top: var(--border-w) solid var(--border); }
+
+/* Codex — the earned cheat sheet (Skills / Glossary / Errors tabs) */
+.codex-body { padding: 12px; }
+.codex-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.codex-tab { font-family: var(--font-code); font-size: 13px; padding: 4px 12px; border: var(--border-w) solid var(--border); background: var(--panel); color: var(--text-soft); cursor: pointer; border-radius: var(--radius); }
+.codex-tab.active { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+.codex-topic { font-family: var(--font-display); font-size: calc(var(--size-display) * 0.6); color: var(--text); margin: 16px 0 6px; }
+.codex-entry { border-left: 3px solid var(--accent); background: var(--panel); padding: 8px 12px; margin: 8px 0; }
+.codex-pattern { font-family: var(--font-code); font-size: var(--size-code); color: var(--text); margin: 0 0 4px; white-space: pre-wrap; }
+.codex-note { color: var(--text-soft); line-height: 1.5; }
+.codex-link { display: inline-block; margin-top: 6px; font-family: var(--font-code); font-size: 12px; color: var(--accent); cursor: pointer; border-bottom: 1px dotted var(--accent); }
+.codex-term-row { display: flex; gap: 12px; padding: 7px 0; border-bottom: var(--border-w) solid var(--border); }
+.codex-term { font-family: var(--font-code); color: var(--accent); min-width: 150px; font-weight: 500; }
+.codex-def { color: var(--text-soft); line-height: 1.5; }
+.codex-empty { color: var(--muted); font-style: italic; padding: 10px 0; }
