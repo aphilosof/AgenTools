@@ -65,6 +65,12 @@
       state.solved[lessonId] = true;
       write(state);
     },
+    // Wipe saved progress + edited code (keeps the theme choice). For the
+    // "restart course" control and testing a fresh run.
+    reset: function () {
+      state = { theme: state.theme, lessonIdx: 0, code: {}, solved: {} };
+      write(state);
+    },
     // Escape hatch for later steps and debugging; returns a copy.
     snapshot: function () {
       return Object.assign({}, state);

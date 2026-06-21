@@ -331,3 +331,8 @@ a.term { cursor: help; }
 .codex-term { font-family: var(--font-code); color: var(--accent); min-width: 150px; font-weight: 500; }
 .codex-def { color: var(--text-soft); line-height: 1.5; }
 .codex-empty { color: var(--muted); font-style: italic; padding: 10px 0; }
+
+/* restart-course control (testing + a real reset) */
+.themebar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.restart-btn { margin-left: auto; font-family: var(--font-code); font-size: 12px; padding: 4px 10px; border: var(--border-w) solid var(--border); background: var(--panel); color: var(--muted); cursor: pointer; border-radius: var(--radius); }
+.restart-btn:hover { color: var(--error); border-color: var(--error); }

@@ -416,6 +416,15 @@
       opt.addEventListener("click", function () { setTheme(t); });
       themebar.appendChild(opt);
     });
+    var restart = el("button", "restart-btn", "restart course");
+    restart.title = "Clear all saved progress and edited code, and start over";
+    restart.addEventListener("click", function () {
+      if (window.confirm("Restart the course? This clears all saved progress and your typed code.")) {
+        CL.storage.reset();
+        window.location.reload();
+      }
+    });
+    themebar.appendChild(restart);
     container.appendChild(themebar);
   }
 
@@ -762,6 +771,18 @@
     return adaptLesson(lessons[state.lessonIdx], state.lessonIdx, lessons.length);
   }
 
+  // A starter that is only comments/whitespace is instruction text, not
+  // scaffolding — treat it as empty so the editor shows the "type your code
+  // here…" placeholder. Real code-to-fix/modify starters are kept as-is.
+  function effectiveStarter(s) {
+    var t = String(s || "");
+    var hasCode = t.split("\n").some(function (ln) {
+      var x = ln.trim();
+      return x.length && x.charAt(0) !== "#";
+    });
+    return hasCode ? t : "";
+  }
+
   // Map a schema lesson object onto the fields render() needs. Kept minimal;
   // the full rung handling (parsons, tests) is a later step.
   function adaptLesson(l, idx, total) {
@@ -781,7 +802,7 @@
       task: l.task || "",
       example: l.example || "",
       exampleNote: l.exampleNote || "",
-      starterCode: String(l.starter || ""),
+      starterCode: effectiveStarter(l.starter),
       check: l.check || null,
       hints: l.hints || [],
       solution: l.solution || "",
