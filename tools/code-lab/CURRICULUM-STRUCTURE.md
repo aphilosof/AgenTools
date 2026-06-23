@@ -119,6 +119,15 @@ checklist that guarantees nothing is dropped.
 
 ## E. RULES — apply everywhere
 
+- **Pedagogy leads; the spine is guidance, not walls.** The concept spine governs
+  where a concept is *formally taught and assessed*, NOT where it may first
+  *appear*. A concept may be shown working informally earlier when it builds a
+  proper foundation — e.g. `print("a" + " " + "b")` joins text in Ch.1 without
+  lecturing the `str` type; text-in-quotes is a string from lesson 1. Build
+  foundations first and introduce by need, not by rigid boundary. Every lesson
+  must be **rich enough for its time budget and a strong reader** — a thin,
+  boundary-policed lesson is a defect. Validate against pedagogy, not just
+  plan-adherence.
 - **Spiral weaving** — every lesson reuses prior concepts in its teaching,
   examples, and exercises; every warm-up recalls an earlier lesson.
 - **Monotonic difficulty** — examples ramp within a subsection → subsections ramp
