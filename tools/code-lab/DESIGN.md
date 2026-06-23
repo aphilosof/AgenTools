@@ -5,7 +5,7 @@ One shared layout and type system, three themes. A theme switch swaps tokens and
 ## Shared system
 
 **Page anatomy (lesson screen):**
-1. Top bar: world and lesson title (left), progress cells and lesson counter (right)
+1. Top bar: chapter and lesson title (left), progress cells and lesson counter (right)
 2. Prompt block: the challenge text
 3. Editor panel: header strip with filename, line-numbered CodeMirror editor
 4. Action row: primary (run), secondary (hint), ghost (sandbox / solution)
@@ -135,7 +135,7 @@ Green phosphor terminal with amber actions. Unlocks on completing Real Tools I; 
 | --size-display | 13px |
 
 **Signature elements:**
-- Status bar at top (bg #131D13): app name, world/lesson position, language indicator in --accent.
+- Status bar at top (bg #131D13): app name, chapter/lesson position, language indicator in --accent.
 - Panels are bordered boxes with a small header strip naming the panel (editor, output) in --muted 12px.
 - Buttons as bracketed commands: `[ run ]` with 1px --accent border and --accent text; secondary `[ hint ]` with #4E7A58 border and --success text; ghost with --border and --muted.
 - Output opens with a `$ run filename.py` line in --muted; pass state is a solid tag: bg --accent, text --accent-contrast.

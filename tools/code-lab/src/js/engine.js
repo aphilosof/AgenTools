@@ -21,7 +21,7 @@
   // body-face readability.
   var DEMO = {
     id: "demo",
-    world: 1,
+    chapter: 1,
     lessonNo: 1,
     total: 1,
     title: "First Sound",
@@ -77,7 +77,7 @@
   function sandboxLesson() {
     return {
       id: "sandbox",
-      world: 0,
+      chapter: 0,
       lessonNo: 1,
       total: 1,
       title: "Sandbox",
@@ -120,8 +120,8 @@
   // Theme-specific label flavor (DESIGN.md signature text per theme).
   function editorHeader(theme, lesson) {
     // name the Your-turn code block by its exercise number + title
-    if (lesson.id !== "sandbox" && lesson.world != null && lesson.lessonNo && lesson.title) {
-      return "Exercise " + lesson.world + "." + lesson.lessonNo + " · " + lesson.title;
+    if (lesson.id !== "sandbox" && lesson.chapter != null && lesson.lessonNo && lesson.title) {
+      return "Exercise " + lesson.chapter + "." + lesson.lessonNo + " · " + lesson.title;
     }
     if (theme === "terminal") return "editor";
     return lesson.filename || "sandbox.py"; // sandbox / fallback
@@ -130,13 +130,13 @@
     return theme === "magazine" ? "printout" : "output";
   }
 
-  // Error-annotation fading (PLAN.md §3): full through World 4, on-demand
-  // World 5-7, off from Real Tools I onward, never in the Arena.
+  // Error-annotation fading (PLAN.md §3): full through Chapter 4, on-demand
+  // Chapter 5-7, off from Real Tools I onward, never in the Arena.
   function annotationMode(lesson) {
     if (lesson.isArena) return "off";
     if (lesson.realToolsDone) return "off";
-    if (lesson.world <= 4) return "full";
-    if (lesson.world <= 7) return "ondemand";
+    if (lesson.chapter <= 4) return "full";
+    if (lesson.chapter <= 7) return "ondemand";
     return "off";
   }
 
@@ -150,6 +150,104 @@
       html += '<span class="' + cls + '" data-i="' + i + '" style="cursor:pointer"></span>';
     }
     return html;
+  }
+
+  // ---- Rich sections: several worked examples + several exercises per subsection
+  // (the locked Ch.1 lesson standard). Each block is self-contained — it owns its
+  // editor, buttons, and output — and reuses the SAME runtime (CL.runtime.python),
+  // checker (CL.check), and error layer (CL.errors) as the single-exercise path,
+  // rendered with the same component CSS. The single-exercise path is untouched;
+  // these run only for lessons that carry examples[]/exercises[] arrays.
+  function richRun(code, outBox, lesson) {
+    var py = CL.runtime && CL.runtime.python;
+    outBox.innerHTML = "";
+    function line(s, cls) { var d = el("div", "out-line" + (cls ? " " + cls : "")); d.textContent = s; outBox.appendChild(d); }
+    if (!py) { line("runtime unavailable", "error"); return Promise.resolve({ ok: false, stdout: "", events: [] }); }
+    if (CL.music) CL.music.unlock();
+    if (py.getStatus && py.getStatus() !== "ready") line("starting Python (the first run downloads it once)…", "info");
+    var stdout = "", events = [];
+    return py.run(code, {
+      onStdout: function (s) { stdout += s; line(s.replace(/\n$/, "")); },
+      onStderr: function (s) { line(s.replace(/\n$/, ""), "error"); },
+      onEvents: function (ev) { events = ev || []; if (CL.music) CL.music.schedule(events.filter(function (x) { return x[0] === "play" || x[0] === "sample"; })); },
+    }).then(function (r) {
+      if (!r.ok && r.error && r.error !== "stopped") {
+        line(r.error, "error");
+        var ann = CL.errors && CL.errors.translate(r.error);
+        if (ann && ann.plain && annotationMode(lesson) !== "off") {
+          var box = el("div", "err-annotation");
+          var head = el("div", "err-ann-head"); head.textContent = "💡 " + (ann.title || "What this means") + (ann.line ? "  (line " + ann.line + ")" : ""); box.appendChild(head);
+          var body = el("div", "err-ann-body"); body.textContent = ann.plain; box.appendChild(body);
+          outBox.appendChild(box);
+        }
+      } else if (r.ok && !stdout && (!events || !events.length)) { line("done.", "info"); }
+      return { ok: r.ok, stdout: stdout, events: events };
+    });
+  }
+
+  function buildExampleBlock(lesson, ex, theme) {
+    var holder = el("div");
+    var panel = el("div", "panel");
+    panel.appendChild(el("div", "panel-header", "example — run it"));
+    if (ex.note) { var note = el("div", "example-note"); note.textContent = ex.note; panel.appendChild(note); }
+    var host = el("div"); panel.appendChild(host);
+    var edv = mountEditor(host, ex.code || "", lesson.lang, null, true);
+    var actions = el("div", "actions example-actions");
+    var btn = el("button", "btn secondary", "run example"); actions.appendChild(btn); panel.appendChild(actions);
+    holder.appendChild(panel);
+    var outPanel = el("div", "panel"); outPanel.appendChild(el("div", "panel-header", "example " + outputHeader(theme)));
+    var outBox = el("div", "output"); outBox.appendChild(el("div", "out-line info", "press run to see the output.")); outPanel.appendChild(outBox);
+    holder.appendChild(outPanel);
+    btn.addEventListener("click", function () { btn.disabled = true; richRun(edv.getValue(), outBox, lesson).then(function () { btn.disabled = false; }); });
+    return holder;
+  }
+
+  function buildExerciseBlock(lesson, ex, idx, theme) {
+    var wrap = el("div", "exercise-block");
+    var predict = ex.rung === 1 || (ex.starter && ex.solution && String(ex.starter).trim() === String(ex.solution).trim());
+    var task = el("div", "challenge-task");
+    task.appendChild(el("span", "challenge-label", predict ? "Predict: " : "Your turn: "));
+    var ptext = el("span"); ptext.innerHTML = inlineProse(ex.prompt || "", lesson.glossary); task.appendChild(ptext);
+    wrap.appendChild(task);
+    var ep = el("div", "panel");
+    ep.appendChild(el("div", "panel-header", predict ? "read this — what will it print?" : "your code"));
+    var host = el("div"); ep.appendChild(host); wrap.appendChild(ep);
+    var key = lesson.id + ":ex" + idx;
+    var seed = predict ? (ex.starter || "") : (CL.storage.getCode(key) || effectiveStarter(ex.starter));
+    var edv = mountEditor(host, seed, lesson.lang, predict ? null : function (v) { CL.storage.setCode(key, v); }, predict, "type your code here…");
+    var actions = el("div", "actions");
+    var runB = el("button", "btn primary", predict ? "run to check your guess" : "run"); actions.appendChild(runB);
+    var checkB = (ex.check && !predict) ? el("button", "btn secondary", "check") : null; if (checkB) actions.appendChild(checkB);
+    var hintB = (ex.hints && ex.hints.length && !predict) ? el("button", "btn secondary", "hint") : null; if (hintB) actions.appendChild(hintB);
+    var solB = (ex.solution && !predict) ? el("button", "btn ghost", "solution") : null; if (solB) actions.appendChild(solB);
+    wrap.appendChild(actions);
+    var hintHost = el("div", "hint-host"); wrap.appendChild(hintHost);
+    var modelHost = el("div"); wrap.appendChild(modelHost);
+    var outPanel = el("div", "panel"); outPanel.appendChild(el("div", "panel-header", outputHeader(theme)));
+    var outBox = el("div", "output"); outBox.appendChild(el("div", "out-line info", "press run to execute your code.")); outPanel.appendChild(outBox); wrap.appendChild(outPanel);
+    var hintIdx = 0;
+    function showModel() { if (modelHost.firstChild || !ex.solution) return; var m = el("div", "panel"); m.appendChild(el("div", "panel-header", "model solution")); var pre = el("pre", "model-code"); pre.textContent = ex.solution; m.appendChild(pre); modelHost.appendChild(m); }
+    function go(grade) {
+      runB.disabled = true; if (checkB) checkB.disabled = true;
+      richRun(edv.getValue(), outBox, lesson).then(function (res) {
+        runB.disabled = false; if (checkB) checkB.disabled = false;
+        if (grade && res.ok && ex.check && CL.check) {
+          var verdict = CL.check.run({ check: { type: ex.check.type, expected: ex.check.value, calls: ex.check.value } }, { stdout: res.stdout, events: res.events });
+          if (verdict.pass) {
+            var ln = el("div", "out-line success"); ln.appendChild(el("span", "pass-badge", "PASS")); ln.appendChild(document.createTextNode("  " + (verdict.diagnostics[0] || "Correct!"))); outBox.appendChild(ln);
+            showModel(); if (lesson.id) CL.storage.markSolved(lesson.id);
+          } else {
+            var e1 = el("div", "out-line error"); e1.textContent = "not yet — here’s what to look at:"; outBox.appendChild(e1);
+            verdict.diagnostics.forEach(function (d) { var di = el("div", "out-line info"); di.textContent = "  " + d; outBox.appendChild(di); });
+          }
+        }
+      });
+    }
+    runB.addEventListener("click", function () { go(false); });
+    if (checkB) checkB.addEventListener("click", function () { go(true); });
+    if (hintB) hintB.addEventListener("click", function () { if (hintIdx >= ex.hints.length) return; var it = el("div", "hint-item"); it.textContent = "Hint " + (hintIdx + 1) + ": " + ex.hints[hintIdx]; hintHost.appendChild(it); hintIdx++; if (hintIdx >= ex.hints.length) hintB.disabled = true; });
+    if (solB) solB.addEventListener("click", showModel);
+    return wrap;
   }
 
   function render(theme, lesson) {
@@ -180,14 +278,14 @@
     if (theme === "terminal") {
       var bar = el("div");
       bar.id = "status-bar";
-      bar.appendChild(el("span", null, "code-lab · world " + lesson.world + " / lesson " + lesson.lessonNo));
+      bar.appendChild(el("span", null, "code-lab · chapter " + lesson.chapter + " / lesson " + lesson.lessonNo));
       bar.appendChild(el("span", "lang", "PYTHON"));
       app.appendChild(bar);
     }
 
     // top bar — the Lessons view shows position + prev/next; other views just a title
     var topbar = el("div", "topbar");
-    var titleText = state.view === "map" ? "Knowledge Map" : state.view === "codex" ? "Codex" : lesson.isSandbox ? "Sandbox" : "World " + lesson.world + " · " + lesson.title;
+    var titleText = state.view === "map" ? "Knowledge Map" : state.view === "codex" ? "Codex" : lesson.isSandbox ? "Sandbox" : "Chapter " + lesson.chapter + " · " + lesson.title;
     topbar.appendChild(el("div", "title", titleText));
     if (state.view === "lessons") {
       var right = el("div", "right");
@@ -252,6 +350,21 @@
         });
       }
       container.appendChild(prompt);
+    }
+
+    // Rich section (locked Ch.1 standard): several worked examples + several
+    // exercises per subsection, each a self-contained block. The single-exercise
+    // path below is skipped for these lessons.
+    if (state.view === "lessons" && (lesson.examples || lesson.exercises)) {
+      (lesson.examples || []).forEach(function (ex) { container.appendChild(buildExampleBlock(lesson, ex, theme)); });
+      (lesson.exercises || []).forEach(function (ex, i) { container.appendChild(buildExerciseBlock(lesson, ex, i, theme)); });
+      var rfoot = el("div", "lesson-footnav");
+      var rp = el("button", "btn ghost", "‹ back"); rp.id = "lesson-prev-b"; rp.disabled = state.lessonIdx === 0;
+      var rn = el("button", "btn primary", "next section ›"); rn.id = "lesson-next-b"; rn.disabled = state.lessonIdx >= state.lessonCount - 1;
+      rfoot.appendChild(rp); rfoot.appendChild(rn); container.appendChild(rfoot);
+      buildThemebar(container, theme);
+      frame.appendChild(container); app.appendChild(frame);
+      return;
     }
 
     // worked example — a runnable, editable demonstration to try before the
@@ -460,6 +573,9 @@
         viewportMargin: Infinity, // grow to fit content instead of a fixed box
       });
       if (onChange) cm.on("change", function () { onChange(cm.getValue()); });
+      // Refresh after the node is in the DOM (rich-section editors mount during
+      // render, before insertion) so the code shows instead of a blank box.
+      setTimeout(function () { try { cm.refresh(); } catch (e) {} }, 0);
       var lastLine = null;
       return {
         getValue: function () { return cm.getValue(); },
@@ -485,7 +601,24 @@
     return { getValue: function () { return ta.value; }, focus: function () { ta.focus(); }, highlightLine: function () {} };
   }
 
+  // Lesson/section navigation: top prev/next, clickable progress circles, and the
+  // bottom back/next-section buttons. Shared by the single-exercise and rich paths.
+  function wireNav() {
+    var lessonPrev = document.getElementById("lesson-prev");
+    var lessonNext = document.getElementById("lesson-next");
+    if (lessonPrev) { lessonPrev.disabled = state.lessonIdx === 0; lessonPrev.addEventListener("click", function () { setLesson(state.lessonIdx - 1); }); }
+    if (lessonNext) { lessonNext.disabled = state.lessonIdx >= state.lessonCount - 1; lessonNext.addEventListener("click", function () { setLesson(state.lessonIdx + 1); }); }
+    var cellsEl = document.getElementById("progress-cells");
+    if (cellsEl) cellsEl.addEventListener("click", function (e) { var t = e.target.getAttribute && e.target.getAttribute("data-i"); if (t != null) setLesson(parseInt(t, 10)); });
+    var fbPrevEl = document.getElementById("lesson-prev-b");
+    if (fbPrevEl) fbPrevEl.addEventListener("click", function () { setLesson(state.lessonIdx - 1); });
+    var fbNextEl = document.getElementById("lesson-next-b");
+    if (fbNextEl) fbNextEl.addEventListener("click", function () { setLesson(state.lessonIdx + 1); });
+  }
+
   function wireRuntime(theme, lesson) {
+    // Rich lessons self-wire their blocks in render(); only the nav needs wiring.
+    if (lesson.examples || lesson.exercises) { wireNav(); return; }
     var editor = mountEditor(document.getElementById("editor-host"), state.code, lesson.lang, function (v) {
       state.code = v;
       CL.storage.setCode(state.lesson.id, v);
@@ -546,7 +679,7 @@
       }
     }
 
-    // Style channel — advisory notes after a pass; active from World 5 (PLAN §3).
+    // Style channel — advisory notes after a pass; active from Chapter 5 (PLAN §3).
     function showStyle(findings) {
       var box = el("div", "style-channel");
       box.appendChild(el("div", "style-head", "✎ style notes (optional)"));
@@ -703,8 +836,8 @@
             revealSolution(); // model-solution compare on success
           }
         }
-        // Second feedback channel: style notes from World 5 onward.
-        if (!isExample && CL.style && lesson.world >= 5) {
+        // Second feedback channel: style notes from Chapter 5 onward.
+        if (!isExample && CL.style && lesson.chapter >= 5) {
           var findings = CL.style.analyze(editor.getValue());
           if (findings.length) showStyle(findings);
         }
@@ -717,28 +850,7 @@
       py.stop().then(function () { out("stopped — Python is ready again.", "info"); });
     }
 
-    var lessonPrev = document.getElementById("lesson-prev");
-    var lessonNext = document.getElementById("lesson-next");
-    if (lessonPrev) {
-      lessonPrev.disabled = state.lessonIdx === 0;
-      lessonPrev.addEventListener("click", function () { setLesson(state.lessonIdx - 1); });
-    }
-    if (lessonNext) {
-      lessonNext.disabled = state.lessonIdx >= state.lessonCount - 1;
-      lessonNext.addEventListener("click", function () { setLesson(state.lessonIdx + 1); });
-    }
-
-    // clickable progress circles — jump straight to any subsection (lesson)
-    var cellsEl = document.getElementById("progress-cells");
-    if (cellsEl) cellsEl.addEventListener("click", function (e) {
-      var t = e.target.getAttribute && e.target.getAttribute("data-i");
-      if (t != null) setLesson(parseInt(t, 10));
-    });
-
-    var fbPrevEl = document.getElementById("lesson-prev-b");
-    if (fbPrevEl) fbPrevEl.addEventListener("click", function () { setLesson(state.lessonIdx - 1); });
-    var fbNextEl = document.getElementById("lesson-next-b");
-    if (fbNextEl) fbNextEl.addEventListener("click", function () { setLesson(state.lessonIdx + 1); });
+    wireNav();
 
     var runExBtn = document.getElementById("btn-run-example");
     if (runExBtn && exEditor) runExBtn.addEventListener("click", function () { execute(false, exEditor.getValue()); });
@@ -788,11 +900,11 @@
   function adaptLesson(l, idx, total) {
     return {
       id: l.id,
-      world: l.world,
+      chapter: l.chapter,
       lessonNo: idx + 1,
       total: total,
       title: l.title,
-      challengeCode: "W" + l.world + "-1",
+      challengeCode: "C" + l.chapter + "-1",
       filename: "lesson." + (l.lang === "js" ? "js" : "py"),
       lang: l.lang === "js" ? "js" : "py",
       promptTitle: l.title,
@@ -802,6 +914,8 @@
       task: l.task || "",
       example: l.example || "",
       exampleNote: l.exampleNote || "",
+      examples: l.examples || null,
+      exercises: l.exercises || null,
       starterCode: effectiveStarter(l.starter),
       check: l.check || null,
       hints: l.hints || [],

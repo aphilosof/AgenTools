@@ -2,8 +2,8 @@
    Python traceback, produce a plain-language annotation (grade 5-6) keyed to the
    error class and the likely line, while the raw traceback is still shown intact.
 
-   The engine decides whether to display the annotation (full through World 4,
-   on-demand World 5-7, off from Real Tools I, never in the Arena). Each entry
+   The engine decides whether to display the annotation (full through Chapter 4,
+   on-demand Chapter 5-7, off from Real Tools I, never in the Arena). Each entry
    carries a codex id so the Codex errors tab can register what's been met. */
 
 (function () {

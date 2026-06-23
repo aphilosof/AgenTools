@@ -7,15 +7,15 @@ the lesson from this file alone. Author per AUTHORING.md; this is the template
 for all lesson plans.
 -->
 
-# Lesson Plan — World 1 · Lesson 1: Output and the `print` Command
+# Lesson Plan — Chapter 1 · Lesson 1: Output and the `print` Command
 
 ## 1. Metadata
 - **id:** `w1l1`
-- **world / lesson:** 1 / 1
+- **chapter / lesson:** 1 / 1
 - **title:** Output and the `print` Command
 - **strand:** words
 - **concepts (tags):** `print`, `output`, `strings`, `comments`
-- **prerequisites:** none (first Python-writing lesson; follows World 0)
+- **prerequisites:** none (first Python-writing lesson; follows Chapter 0)
 - **time budget:** 15–18 min
 - **rung focus:** predict (1), fix (4), write (6)
 - **error classes introduced:** `NameError`, `SyntaxError`
@@ -40,7 +40,7 @@ for all lesson plans.
 4. **Mixing quote styles** to include a quote character: `"It's fine"`,
    `'She said "hi"'`.
 5. **Comments** — `#` to end of line; Python ignores them; notes for humans.
-6. **Multiple arguments** — `print("Hello", "world")` → `Hello world`
+6. **Multiple arguments** — `print("Hello", "chapter")` → `Hello world`
    (Python inserts a space between them). The `sep=` parameter changes the
    separator.
 7. **Printing numbers and expression results** — `print(7)`, `print(2 + 3)` → `5`
@@ -51,7 +51,7 @@ for all lesson plans.
    *name* called Hello (errors-as-curriculum).
 
 **Deferred (named so it isn't lost):** f-strings and escape sequences like `\n`
-→ World 1 strings lesson; printing to files → much later.
+→ Chapter 1 strings lesson; printing to files → much later.
 
 ## 3. Lesson pages (content, in order)
 
@@ -61,7 +61,7 @@ for all lesson plans.
 > prompt. Voice = Think Python / HTTLACS, grade 7–9.
 
 ### Page 1 — Warm-up  `[concept]`
-In World 0 you ran real code and changed a number to change a sound — you were
+In Chapter 0 you ran real code and changed a number to change a sound — you were
 already telling a computer exactly what to do. Now you start writing that code
 yourself, and the first thing any program needs to do is *show* you something.
 This lesson is about output: getting words and numbers onto the screen.
@@ -100,7 +100,7 @@ print("This line runs.")   # you can also comment at the end of a line
 You can give `print` several arguments, separated by commas, and it shows them
 on one line with a space between each.
 ```python
-print("Hello", "world")
+print("Hello", "chapter")
 print("Score:", 100)
 ```
 **Notice:** the first line prints `Hello world` (Python adds the space), and the
@@ -227,7 +227,7 @@ current page and the learner's editor contents per page.
   from `hints`, one at a time). **Next unlocks only when Check passes.** On pass,
   reveal the `model solution` beneath (the compare step) and mark the page done.
 - `error-demo`: render the code with a **Run** button; the real traceback shows,
-  with the friendly annotation beneath it per the World-based fading schedule.
+  with the friendly annotation beneath it per the Chapter-based fading schedule.
 
 **Checking.** Use the existing tolerant checker (`check.type`): `output` compares
 whitespace-normalized stdout to `expected`; `calls` matches recorded

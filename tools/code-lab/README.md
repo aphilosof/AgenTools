@@ -21,7 +21,7 @@ Open Claude Code in this folder and say:
 | `src/template.html` | Page skeleton with CDN tags and build slots |
 | `src/css/` | Styles; `themes.css` carries all theme tokens (already populated) |
 | `src/js/` | One module per responsibility, concatenated by the build |
-| `lessons/` | One data file per world (`schema.md` defines the format) |
+| `lessons/` | One data file per chapter (`schema.md` defines the format) |
 | `arena/` | Challenge Arena bank |
 | `build/build.js` | Inlines everything into `dist/course.html` (functional) |
 | `tests/` | Checker harness (to be implemented in Phase 1) |
@@ -36,8 +36,8 @@ npm test        # runs the checker harness
 ## Build phases
 
 1. The shell: engines, themes, knowledge map, Codex, Arena with coach mode, 5 sample lessons. Gate: tested with the kid.
-2. Python worlds 0 through 7 plus Real Tools I, world by world.
-3. JavaScript and sound worlds 8 through 10.
-4. Projects, World 12, Real Tools II, polish.
+2. Python chapters 0 through 7 plus Real Tools I, chapter by chapter.
+3. JavaScript and sound chapters 8 through 10.
+4. Projects, Chapter 12, Real Tools II, polish.
 
 Never skip a review gate. Details in PLAN.md Section 6.

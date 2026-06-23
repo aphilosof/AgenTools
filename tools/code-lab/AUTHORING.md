@@ -82,7 +82,7 @@ Then:
   time. **Each section is one page, numbered** ("1. Warm-up", "2. …"). One idea
   per page. `Next` advances; exercise pages unlock `Next` only when the code
   passes.
-- **The full loop (PLAN §3):** warm-up retrieval (recall from earlier worlds) →
+- **The full loop (PLAN §3):** warm-up retrieval (recall from earlier chapters) →
   concept pages → runnable worked examples to tinker with → predict-the-output /
   predict-the-variable-table using the stepper → practice climbing the rung
   ladder across the five strands → recap → Codex entry. Checkpoint every 4–6
@@ -103,7 +103,7 @@ Then:
 - **Errors as curriculum:** provoke and read real errors on purpose; every error
   class met is registered for the Codex errors tab; annotation fades per §3.
 - **Two feedback channels:** tolerant diagnostic correctness checks; the style
-  channel from World 5. Concept tags + a Codex entry on every lesson.
+  channel from Chapter 5. Concept tags + a Codex entry on every lesson.
 
 ## The bar
 The reference lesson is `lessons/exemplar-w1-values-and-types.md`. New lessons

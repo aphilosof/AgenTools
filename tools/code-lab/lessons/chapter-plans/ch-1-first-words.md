@@ -258,7 +258,7 @@ Warm-up: Retrieval — what does `"go" * 3` give? (From 1.2 `*` operator on stri
 Subsections:
 - **Concatenation and repetition** — `+` joins two strings end-to-end; `str * int`
   repeats; both sides of `+` must be strings (`str(n)` first); `str * float` fails
-  (TypeError). Examples: `"Hello " + "world"` → `"Code" + "Lab"` →
+  (TypeError). Examples: `"Hello " + "chapter"` → `"Code" + "Lab"` →
   `"-" * 20` (divider line) → `"Ha" * 3`. Exercises: predict `"1" + "2"` vs
   `1 + 2`; fix `"Score: " + score` (where `score = 10`); build a banner by
   repeating `"*"`.
@@ -274,7 +274,7 @@ Subsections:
   words); `s.split(",")` splits on a delimiter; `sep.join(words)` assembles a list of
   strings into one string using `sep` as glue. Both return new values; neither changes
   the original string. Lists are introduced only as a return-value here — Ch.4 owns
-  them fully. Examples: `"hello world".split()` → `["hello", "world"]`;
+  them fully. Examples: `"hello chapter".split()` → `["hello", "chapter"]`;
   `" ".join(["Code", "Lab"])` → `"Code Lab"`. Exercises: split a sentence variable
   and print the result; join a short list of words with a dash.
 - **`.lower()`, `.upper()`, `.strip()`** — case conversion and whitespace trimming;
@@ -284,7 +284,7 @@ Subsections:
   newlines). These are the three everyday toolkit methods — used whenever user
   input needs to be normalised before comparison or display.
   Examples: `"Hi".lower()` → `"hi"`; `"hello".upper()` → `"HELLO"`;
-  `"  x ".strip()` → `"x"`; `"  hello world  ".strip()` → `"hello world"`.
+  `"  x ".strip()` → `"x"`; `"  hello chapter  ".strip()` → `"hello chapter"`.
   Exercises: predict `"Code Lab".lower()`; write a one-liner that strips spaces
   from a variable and converts it to uppercase; spot-the-error: student calls
   `.lower()` and prints the original variable expecting it to be changed (method

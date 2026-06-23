@@ -1,4 +1,4 @@
-/* map.js — knowledge map: worlds and lessons as a navigable map, completion
+/* map.js — knowledge map: chapters and lessons as a navigable map, completion
    states, stars from the arena, review mode for completed lessons (re-read
    and re-run without touching progress), concept-tag search.
 
@@ -40,18 +40,18 @@
 
       function draw(q) {
         list.innerHTML = "";
-        var worlds = {};
+        var chapters = {};
         lessons.forEach(function (l, i) {
-          (worlds[l.world] = worlds[l.world] || []).push({ lesson: l, idx: i });
+          (chapters[l.chapter] = chapters[l.chapter] || []).push({ lesson: l, idx: i });
         });
         var any = false;
-        Object.keys(worlds)
+        Object.keys(chapters)
           .sort(function (a, b) { return a - b; })
           .forEach(function (w) {
-            var items = worlds[w].filter(function (o) { return matches(o.lesson, q); });
+            var items = chapters[w].filter(function (o) { return matches(o.lesson, q); });
             if (!items.length) return;
             any = true;
-            list.appendChild(el("div", "map-world", "World " + w));
+            list.appendChild(el("div", "map-chapter", "Chapter " + w));
             items.forEach(function (o) {
               var solved = data.isSolved(o.lesson.id);
               var row = el("div", "map-lesson" + (o.idx === data.currentIdx ? " current" : ""));

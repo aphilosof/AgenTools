@@ -1,6 +1,6 @@
 /* style.js — the second feedback channel (separate from correctness). A small
    built-in linter for naming, magic numbers, repeated code, and function length.
-   Active from World 5; advisory (never blocks) until World 6+ checkpoints.
+   Active from Chapter 5; advisory (never blocks) until Chapter 6+ checkpoints.
 
    Deliberately conservative — like the correctness checker, it must feel fair,
    so each rule is tuned against false positives in this course's code (note

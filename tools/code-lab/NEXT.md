@@ -17,9 +17,9 @@ renderer or invent a new lesson screen — build to this.
   line-height is 1.65. Code-dense paragraphs read evenly because of this — keep it.
 
 ### The lesson data format (what the site renders)
-One **concept per section**, flat — same shape as `lessons/world-01.js` /
+One **concept per section**, flat — same shape as `lessons/chapter-01.js` /
 `lessons/c1.js`:
-`{ id, world, title, lang, strand, rung, concepts, misconceptions, warmup:[],
+`{ id, chapter, title, lang, strand, rung, concepts, misconceptions, warmup:[],
    timeBudgetMin, explain (with [[term]], code, **bold**), glossary, moreInfo:[{label,body}],
    example, exampleNote, task, starter, starterExpectation, check:{type,expected},
    hints:[], solution, codex:{topic,pattern,note}, styleRequired }`
@@ -34,8 +34,8 @@ turn" editor (run/check/hint/solution) -> output -> Back / Next section nav.
   one-per-section site shows) is `lessons/ch-1/c1l1.reviewed.js` (subsection
   format) plus the factory artifacts in `lessons/ch-1/`. Agents author in that
   rich format; it is then converted down to the flat section format for the site.
-- Parked (superseded, preserved): `lessons/_parked/world-00.js` (First Sound
-  intro), `lessons/_parked/world-01.js` (older Chapter 1).
+- Parked (superseded, preserved): `lessons/_parked/chapter-00.js` (First Sound
+  intro), `lessons/_parked/chapter-01.js` (older Chapter 1).
 
 ## Open decision before mass-building
 The working player shows **one example + one exercise per section**. The authored

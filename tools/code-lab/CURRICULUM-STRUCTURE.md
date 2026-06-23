@@ -10,7 +10,7 @@ spiral curriculum (Bruner), CSTA K-12 / Think Python / HTTLACS scope.
 
 ## Terms
 
-**Course → Chapter → Lesson → Subsection.** ("Chapter" replaces the old "World".)
+**Course → Chapter → Lesson → Subsection.** ("Chapter" replaces the old "Chapter".)
 
 - **Chapter** — a themed unit (Ch.0 … Ch.12 + Real-Tools interludes + epilogue).
 - **Lesson** — one topic, 15–25 minutes.

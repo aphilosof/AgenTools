@@ -2,7 +2,7 @@
 
 ## Overview
 
-Chapter 2 takes the learner from a world of sequential code (Ch.1) into a world
+Chapter 2 takes the learner from a chapter of sequential code (Ch.1) into a chapter
 of branching and repetition — the two structural ideas that make programs
 interesting. It is also the chapter where **debugging becomes a named, recurring
 skill rather than an incidental fix**: every lesson has at least one fix/spot

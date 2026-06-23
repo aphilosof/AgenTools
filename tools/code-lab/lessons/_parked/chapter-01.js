@@ -1,4 +1,4 @@
-/* World 1 — Python: First Words (PLAN §4).
+/* Chapter 1 — Python: First Words (PLAN §4).
    Sequence follows the "How to Think Like a Computer Scientist" tradition:
    print, then values and types, then variables, then expressions/maths, then
    strings, then the turtle and sound exercises. input() arrives once the
@@ -8,7 +8,7 @@
 
 window.CODELAB.lessons.push({
   id: "w1l1",
-  world: 1,
+  chapter: 1,
   title: "Telling the Computer to Speak",
   lang: "py",
   strand: "words",
@@ -46,7 +46,7 @@ window.CODELAB.lessons.push({
 
 window.CODELAB.lessons.push({
   id: "w1l2",
-  world: 1,
+  chapter: 1,
   title: "Values and Types",
   lang: "py",
   strand: "numbers",
@@ -78,7 +78,7 @@ window.CODELAB.lessons.push({
 
 window.CODELAB.lessons.push({
   id: "w1l3",
-  world: 1,
+  chapter: 1,
   title: "Storing Values in Variables",
   lang: "py",
   strand: "numbers",
@@ -110,7 +110,7 @@ window.CODELAB.lessons.push({
 
 window.CODELAB.lessons.push({
   id: "w1l4",
-  world: 1,
+  chapter: 1,
   title: "Python as a Calculator",
   lang: "py",
   strand: "numbers",
@@ -141,7 +141,7 @@ window.CODELAB.lessons.push({
 
 window.CODELAB.lessons.push({
   id: "w1l5",
-  world: 1,
+  chapter: 1,
   title: "How Old Are You in Days?",
   lang: "py",
   strand: "numbers",
@@ -172,7 +172,7 @@ window.CODELAB.lessons.push({
 
 window.CODELAB.lessons.push({
   id: "w1l6",
-  world: 1,
+  chapter: 1,
   title: "Joining Words Together",
   lang: "py",
   strand: "words",
@@ -203,7 +203,7 @@ window.CODELAB.lessons.push({
 
 window.CODELAB.lessons.push({
   id: "w1l7",
-  world: 1,
+  chapter: 1,
   title: "Your First Drawing",
   lang: "py",
   strand: "core",
@@ -242,7 +242,7 @@ window.CODELAB.lessons.push({
 
 window.CODELAB.lessons.push({
   id: "w1l8",
-  world: 1,
+  chapter: 1,
   title: "Writing a Tune",
   lang: "py",
   strand: "sound",

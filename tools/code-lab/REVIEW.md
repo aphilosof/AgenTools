@@ -26,9 +26,9 @@ Overall verdict up front: the design intent is well above typical commercial pla
 
 ### 2.1 There is no notional machine
 
-This is the most serious gap. Novices fail at programming primarily through wrong mental models of execution: what a variable is, what happens at each step of a loop, what calling a function does. The research consensus (du Boulay's classic work through Sorva's program-visualization studies) is that learners need a visible model of the machine early. The plan defers hand-tracing to World 5 and offers no step-through visualization at all.
+This is the most serious gap. Novices fail at programming primarily through wrong mental models of execution: what a variable is, what happens at each step of a loop, what calling a function does. The research consensus (du Boulay's classic work through Sorva's program-visualization studies) is that learners need a visible model of the machine early. The plan defers hand-tracing to Chapter 5 and offers no step-through visualization at all.
 
-For an 11-year-old, the absence is fatal to deep understanding. He will pattern-match his way through Worlds 1 to 4 and hit a wall the moment a problem requires reasoning about state. The fix is feasible in this architecture: Pyodide is real CPython, so `sys.settrace` supports a Python Tutor style stepper showing variables changing line by line. A step button and a live variable table belong in the Phase 1 shell, and tracing exercises (predict the variable table after line 4) belong from World 1, not World 5.
+For an 11-year-old, the absence is fatal to deep understanding. He will pattern-match his way through Chapters 1 to 4 and hit a wall the moment a problem requires reasoning about state. The fix is feasible in this architecture: Pyodide is real CPython, so `sys.settrace` supports a Python Tutor style stepper showing variables changing line by line. A step button and a live variable table belong in the Phase 1 shell, and tracing exercises (predict the variable table after line 4) belong from Chapter 1, not Chapter 5.
 
 ### 2.2 The checker will betray him, and the errors will be hostile
 
@@ -42,18 +42,18 @@ Static three-step hint ladders answer the question the author predicted, not the
 
 ### 2.4 The pace is calibrated for an adult
 
-Worlds 0 through 7 cover what a good university CS1 covers, then the plan adds a second language, event-driven programming, audio synthesis, SQL, and types. At 2 to 3 lessons per week that is presented as 6 to 9 months. Twenty years of curriculum experience says: double it, and design for the doubling. Specific pressure points:
+Chapters 0 through 7 cover what a good university CS1 covers, then the plan adds a second language, event-driven programming, audio synthesis, SQL, and types. At 2 to 3 lessons per week that is presented as 6 to 9 months. Twenty years of curriculum experience says: double it, and design for the doubling. Specific pressure points:
 
-- **World 8 is underestimated.** "Fast, because zero new concepts" is wrong. Language transfer research shows interference is real: `===`, braces and semicolons, `let` versus assignment, zero-indexing habits resurfacing. Budget 8 lessons, not 6, and keep the side-by-side format throughout.
-- **World 9 hides a paradigm shift.** Event-driven programming (callbacks, things happening later, code that does not run top to bottom) is conceptually harder than classes and the plan does not even name it. It needs explicit treatment, not absorption through a clicker game.
-- **SQL in World 7 is the weakest cost-benefit item in the plan.** A declarative query language is a second paradigm taught at roughly lesson 35. Recommend trimming to one taste-of-SQL lesson and doing the music library exercise with dictionaries and JSON save/load, with full SQL deferred to an optional post-Real-Tools module. Text extraction stays, it is high value.
+- **Chapter 8 is underestimated.** "Fast, because zero new concepts" is wrong. Language transfer research shows interference is real: `===`, braces and semicolons, `let` versus assignment, zero-indexing habits resurfacing. Budget 8 lessons, not 6, and keep the side-by-side format throughout.
+- **Chapter 9 hides a paradigm shift.** Event-driven programming (callbacks, things happening later, code that does not run top to bottom) is conceptually harder than classes and the plan does not even name it. It needs explicit treatment, not absorption through a clicker game.
+- **SQL in Chapter 7 is the weakest cost-benefit item in the plan.** A declarative query language is a second paradigm taught at roughly lesson 35. Recommend trimming to one taste-of-SQL lesson and doing the music library exercise with dictionaries and JSON save/load, with full SQL deferred to an optional post-Real-Tools module. Text extraction stays, it is high value.
 - **Timed boss challenges risk test anxiety at this age.** Make the timer a coach-mode option, default off.
 
-The deeper principle: design the course so that abandoning it at World 5 still leaves a real, completed-feeling education. Most learners of any age do not finish self-paced courses. The current plan back-loads too much payoff.
+The deeper principle: design the course so that abandoning it at Chapter 5 still leaves a real, completed-feeling education. Most learners of any age do not finish self-paced courses. The current plan back-loads too much payoff.
 
 ### 2.5 The first hour decides everything, and the plan spends it on puzzles
 
-World 0 is sound pedagogy (the CS Unplugged tradition) placed at the wrong moment. An excited 11-year-old who was promised music and gets five lessons of grid puzzles may not arrive at World 1. Lesson zero, the very first thing he does, should be running and modifying real code that makes sound within two minutes. Then earn the right to do the conceptual work of World 0, interleaved rather than front-loaded.
+Chapter 0 is sound pedagogy (the CS Unplugged tradition) placed at the wrong moment. An excited 11-year-old who was promised music and gets five lessons of grid puzzles may not arrive at Chapter 1. Lesson zero, the very first thing he does, should be running and modifying real code that makes sound within two minutes. Then earn the right to do the conceptual work of Chapter 0, interleaved rather than front-loaded.
 
 ---
 
@@ -64,7 +64,7 @@ The strand exercises are above average in variety and authenticity, with three r
 Two structural additions to exercises:
 
 - **Parsons problems** (reorder scrambled lines into a working program) belong between rungs 1 and 3. The evidence is strong that they teach structure with less frustration and less time than writing, and they are cheap to author and trivially auto-checked.
-- **Retrieval warm-ups.** Each lesson should open with one or two 30-second recall questions drawn from earlier worlds. The Codex supports recognition; the warm-ups supply retrieval practice, which is what actually fights forgetting over a 12-month arc.
+- **Retrieval warm-ups.** Each lesson should open with one or two 30-second recall questions drawn from earlier chapters. The Codex supports recognition; the warm-ups supply retrieval practice, which is what actually fights forgetting over a 12-month arc.
 
 On OOP scope: the plan is implicitly right and should be explicitly right. Attributes, methods, instances, nothing else. No inheritance anywhere in this course. Write that down so it survives content authoring.
 
@@ -82,9 +82,9 @@ First, what the plan trains: decomposition, core constructs, basic OOP, two lang
 
 Second, what independence additionally requires and the plan does not yet teach: reading documentation as a skill, a debugging protocol as a taught procedure (read the error, locate the line, form a hypothesis, test it), and the experience of building something with no rails at all. Three concrete additions close most of this gap:
 
-1. A documentation-reading lesson in World 7, using the course's own API docs as the object of study
-2. The debugging protocol taught explicitly in World 5 and required in every boss challenge thereafter
-3. An epilogue after World 12: one self-chosen project with only a rubric and the coach, no scaffolding, no checker
+1. A documentation-reading lesson in Chapter 7, using the course's own API docs as the object of study
+2. The debugging protocol taught explicitly in Chapter 5 and required in every boss challenge thereafter
+3. An epilogue after Chapter 12: one self-chosen project with only a rubric and the coach, no scaffolding, no checker
 
 The final qualification is not about the curriculum at all. At this age, completion is predicted less by content quality than by the human loop around it. The coach mode is the right instrument, but the plan should specify the cadence: a standing weekly 15-minute show-me-what-you-built ritual. Recommend adding a one-page coach guide to the repo. The course will succeed or fail in those weekly fifteen minutes.
 
@@ -97,19 +97,19 @@ The final qualification is not about the curriculum at all. At this age, complet
 2. Friendly error layer covering the most common novice error classes
 3. Tolerant checkers with diagnostic feedback, never a bare fail
 4. Parsons problems as a supported exercise type in the engine and schema
-5. Hook lesson: real sound within two minutes of first open; World 0 interleaved, not front-loaded
+5. Hook lesson: real sound within two minutes of first open; Chapter 0 interleaved, not front-loaded
 6. Per-lesson time budgets and a grade 5 to 6 reading-level check in the test harness
 
 **P1, fold into the plan now, build in Phases 2 and 3:**
 7. Retrieval warm-ups at lesson start
 8. Misconception-keyed hints; coach mode shows current code and error on stalled challenges
-9. Trim World 7 SQL to one lesson plus JSON persistence; defer full SQL to optional post-Real-Tools
-10. World 8 expanded to 8 lessons; World 9 names and teaches event-driven programming explicitly
+9. Trim Chapter 7 SQL to one lesson plus JSON persistence; defer full SQL to optional post-Real-Tools
+10. Chapter 8 expanded to 8 lessons; Chapter 9 names and teaches event-driven programming explicitly
 11. Boss timers default off, coach-configurable
 12. Progressive interface disclosure
 13. Debugging protocol and documentation-reading as explicit lessons
 14. Epilogue: the unscaffolded independent project
-15. Revised timeline communicated as 9 to 15 months, with the course designed to feel complete at World 5
+15. Revised timeline communicated as 9 to 15 months, with the course designed to feel complete at Chapter 5
 
 **P2, content-pass items:**
 16. Replace BankAccount and the contact extractor with child-resonant equivalents

@@ -1,6 +1,6 @@
 # Values and Types
 
-*World 1 · Lesson 2. Each numbered section below is one page; you move through
+*Chapter 1 · Lesson 2. Each numbered section below is one page; you move through
 them one at a time. A page with a task only lets you move on once your code
 passes.*
 

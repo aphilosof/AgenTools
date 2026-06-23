@@ -1,11 +1,11 @@
-/* World 0 — First Sound, Then Think Like a Computer.
+/* Chapter 0 — First Sound, Then Think Like a Computer.
    Phase 1 ships sample lessons here to prove the pipelines; the full world is
-   authored in Phase 2. Format per lessons/schema.md. World 0 lessons are
+   authored in Phase 2. Format per lessons/schema.md. Chapter 0 lessons are
    codex-exempt and the hook runs real code from the first minute. */
 
 window.CODELAB.lessons.push({
   id: "w0l1",
-  world: 0,
+  chapter: 0,
   title: "First Sound",
   lang: "py",
   strand: "sound",
@@ -33,7 +33,7 @@ window.CODELAB.lessons.push({
 
 window.CODELAB.lessons.push({
   id: "w0l2",
-  world: 0,
+  chapter: 0,
   title: "Say Hello",
   lang: "py",
   strand: "words",

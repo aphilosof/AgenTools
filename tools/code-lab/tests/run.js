@@ -31,7 +31,7 @@ const STRANDS = ["numbers", "words", "data", "plot", "sound", "core"];
 const CHECK_TYPES = ["output", "tests", "calls", "parsons"];
 const MIN_BUDGET = 15; // PLAN §3: 15-25 min per lesson, harness-enforced
 const MAX_BUDGET = 25;
-const MAX_WORLD_MINUTES = 240; // sane upper bound on a world's summed budget
+const MAX_CHAPTER_MINUTES = 240; // sane upper bound on a chapter's summed budget
 // invariant 6 is a CEILING (don't exceed the learner's level), not a target —
 // the learner reads at grade 6, so allow up to ~grade 7 of headroom and never
 // push prose down toward baby-talk. It cannot detect "too simple"; that's an
@@ -125,7 +125,7 @@ function isArray(v) {
   return Array.isArray(v);
 }
 function isExemptFromCodex(lesson) {
-  return lesson.world === 0 || lesson.kind === "checkpoint";
+  return lesson.chapter === 0 || lesson.kind === "checkpoint";
 }
 
 // A check returns { status: "pass"|"fail"|"skip", failures: string[], reason? }.
@@ -145,7 +145,7 @@ function validateLesson(l) {
   const errs = [];
   const where = `lesson ${l && l.id ? l.id : "(no id)"}`;
   if (!isNonEmptyString(l.id)) errs.push(`${where}: id must be a non-empty string`);
-  if (!Number.isInteger(l.world) || l.world < 0) errs.push(`${where}: world must be an integer >= 0`);
+  if (!Number.isInteger(l.chapter) || l.chapter < 0) errs.push(`${where}: chapter must be an integer >= 0`);
   if (!isNonEmptyString(l.title)) errs.push(`${where}: title required`);
   if (!LANGS.includes(l.lang)) errs.push(`${where}: lang must be one of ${LANGS.join("/")}`);
   if (!STRANDS.includes(l.strand)) errs.push(`${where}: strand must be one of ${STRANDS.join("/")}`);
@@ -165,7 +165,7 @@ function validateLesson(l) {
   if (!isExemptFromCodex(l)) {
     const c = l.codex;
     if (!c || !isNonEmptyString(c.topic) || !isNonEmptyString(c.pattern) || !isNonEmptyString(c.note))
-      errs.push(`${where}: codex must have topic, pattern, note (only World 0 and checkpoints are exempt)`);
+      errs.push(`${where}: codex must have topic, pattern, note (only Chapter 0 and checkpoints are exempt)`);
   }
   return errs;
 }
@@ -191,7 +191,7 @@ function validateArena(a) {
   const where = `arena ${a && a.code ? a.code : a && a.id ? a.id : "(no code)"}`;
   if (!isNonEmptyString(a.id)) errs.push(`${where}: id must be a non-empty string`);
   if (!isNonEmptyString(a.code)) errs.push(`${where}: code must be a non-empty string`);
-  if (!Number.isInteger(a.world) || a.world < 0) errs.push(`${where}: world must be an integer >= 0`);
+  if (!Number.isInteger(a.chapter) || a.chapter < 0) errs.push(`${where}: chapter must be an integer >= 0`);
   if (!isNonEmptyString(a.title)) errs.push(`${where}: title required`);
   if (!LANGS.includes(a.lang)) errs.push(`${where}: lang must be one of ${LANGS.join("/")}`);
   if (!STRANDS.includes(a.strand)) errs.push(`${where}: strand must be one of ${STRANDS.join("/")}`);
@@ -248,7 +248,7 @@ function checkRequiresIntroduced({ lessons, arena }) {
   return failures.length ? fail(failures) : pass();
 }
 
-// Invariant 4: every lesson has a non-empty codex entry (except World 0 / checkpoint).
+// Invariant 4: every lesson has a non-empty codex entry (except Chapter 0 / checkpoint).
 function checkCodexPresent({ lessons }) {
   const failures = [];
   for (const l of lessons) {
@@ -272,19 +272,19 @@ function checkReadingLevel({ lessons }) {
   return failures.length ? fail(failures) : pass();
 }
 
-// Invariant 7: each lesson budget is 15-25; each world's sum stays sane.
+// Invariant 7: each lesson budget is 15-25; each chapter's sum stays sane.
 function checkTimeBudgets({ lessons }) {
   const failures = [];
-  const perWorld = new Map();
+  const perChapter = new Map();
   for (const l of lessons) {
     if (typeof l.timeBudgetMin !== "number") continue;
     if (l.timeBudgetMin < MIN_BUDGET || l.timeBudgetMin > MAX_BUDGET)
       failures.push(`lesson ${l.id}: timeBudgetMin ${l.timeBudgetMin} outside ${MIN_BUDGET}-${MAX_BUDGET}`);
-    perWorld.set(l.world, (perWorld.get(l.world) || 0) + l.timeBudgetMin);
+    perChapter.set(l.chapter, (perChapter.get(l.chapter) || 0) + l.timeBudgetMin);
   }
-  for (const [world, sum] of perWorld) {
-    if (sum > MAX_WORLD_MINUTES)
-      failures.push(`world ${world}: budgets sum to ${sum} min > ${MAX_WORLD_MINUTES} (split the world)`);
+  for (const [chapter, sum] of perChapter) {
+    if (sum > MAX_CHAPTER_MINUTES)
+      failures.push(`chapter ${chapter}: budgets sum to ${sum} min > ${MAX_CHAPTER_MINUTES} (split the chapter)`);
   }
   return failures.length ? fail(failures) : pass();
 }
@@ -459,7 +459,7 @@ function report(results, { lessons, arena }) {
 function validFixtureLesson() {
   return {
     id: "w1l1",
-    world: 1,
+    chapter: 1,
     title: "First note",
     lang: "py",
     strand: "sound",
@@ -483,7 +483,7 @@ function validFixtureArena() {
   return {
     id: "a-w1-c1",
     code: "W1-C1",
-    world: 1,
+    chapter: 1,
     title: "Three notes",
     lang: "py",
     strand: "sound",

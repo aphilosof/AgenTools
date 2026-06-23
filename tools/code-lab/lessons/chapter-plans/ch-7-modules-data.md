@@ -2,7 +2,7 @@
 
 ## Overview
 
-Chapter 7 is the "unlock the world" chapter. Up to here the learner has written
+Chapter 7 is the "unlock the chapter" chapter. Up to here the learner has written
 self-contained programs; now they learn that most real Python code is built from
 pieces written by other people, loaded with `import`. The chapter's through-line
 is a single idea stated plainly in the hook: *you don't have to build everything

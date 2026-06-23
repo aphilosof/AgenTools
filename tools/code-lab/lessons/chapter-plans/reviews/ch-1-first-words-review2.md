@@ -93,7 +93,7 @@ None at BLOCKER or MAJOR level. Two MINOR observations, neither requiring a fix:
                                   # 'P' 'n' 'Pyt' 'hon' 'Py'
 "Python"[1:4]                     # 'yth'  (stop exclusive)
 "Python"[6]                       # IndexError: string index out of range
-"hello world".split()             # ['hello', 'world']
+"hello chapter".split()             # ['hello', 'chapter']
 "a,b,c".split(",")                # ['a', 'b', 'c']
 " ".join(["Code", "Lab"])         # 'Code Lab'
 type("a b".split())               # <class 'list'>

@@ -209,6 +209,9 @@ body { margin: 0; }
 .example-note { padding: 8px 12px 0; color: var(--text-soft); line-height: 1.5; }
 .example-actions { margin-top: 0; padding: 10px 12px; }
 .challenge-task { margin: 4px 0 10px; line-height: 1.5; color: var(--text); }
+/* rich sections: visual separation between stacked exercises */
+.exercise-block { margin-top: 24px; padding-top: 18px; border-top: var(--border-w) solid var(--border); }
+.exercise-block .challenge-task code { font-size: 0.82em; background: var(--panel-header); padding: 1px 4px; border-radius: 3px; }
 .challenge-label { color: var(--accent); font-weight: 600; }
 
 /* hint ladder */
@@ -222,7 +225,7 @@ body { margin: 0; }
 .map-body { padding: 12px; }
 .map-search { width: 100%; box-sizing: border-box; margin-bottom: 12px; padding: 7px 10px; border: var(--border-w) solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); font-family: var(--font-code); font-size: var(--size-code); }
 .map-search:focus { outline: none; border-color: var(--accent); }
-.map-world { font-family: var(--font-display); font-size: calc(var(--size-display) * 0.6); color: var(--muted); margin: 12px 0 6px; }
+.map-chapter { font-family: var(--font-display); font-size: calc(var(--size-display) * 0.6); color: var(--muted); margin: 12px 0 6px; }
 .map-lesson { display: flex; align-items: baseline; gap: 10px; padding: 7px 10px; border: var(--border-w) solid var(--border); border-radius: var(--radius); margin-bottom: 6px; cursor: pointer; background: var(--panel); }
 .map-lesson.current { border-color: var(--accent); }
 .map-mark { color: var(--success); width: 1em; flex: none; }

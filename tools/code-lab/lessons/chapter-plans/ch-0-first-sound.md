@@ -560,7 +560,7 @@ The following were consulted and cross-checked to ground this chapter plan.
    design → code → test) that decomposition supports:
    <http://openbookproject.net/thinkcs/python/english3e/way_of_the_program.html>
 
-7. **PLAN.md §3 and §4** (this repo) — rung ladder, lesson arc, World 0 scope,
+7. **PLAN.md §3 and §4** (this repo) — rung ladder, lesson arc, Chapter 0 scope,
    music-engine API (`play()`, `sleep()`), and the pre-syntax exception for Ch.0.
 
 8. **CURRICULUM-STRUCTURE.md** (this repo) — subsection template, chapter arc,
