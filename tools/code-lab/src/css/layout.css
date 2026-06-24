@@ -55,9 +55,14 @@ body { margin: 0; }
 
 /* ----- top bar ----- */
 .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg);
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  padding-top: 10px;
   padding-bottom: 12px;
   border-bottom: var(--border-w) solid var(--border);
   margin-bottom: 18px;
@@ -68,10 +73,11 @@ body { margin: 0; }
 .navbtn:disabled { opacity: 0.35; cursor: default; }
 
 /* progress as discrete cells, never a smooth bar */
-.progress { display: inline-flex; gap: 4px; }
-.progress .cell { width: 12px; height: 12px; border: var(--border-w) solid var(--border); border-radius: var(--radius); }
+.progress { display: inline-flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.progress .cell { width: 10px; height: 10px; border: var(--border-w) solid var(--border); border-radius: var(--radius); }
 .progress .cell.done { background: var(--accent); border-color: var(--accent); }
 .progress .cell.current { border-color: var(--accent); }
+.progress .progress-gap { width: 8px; }
 
 /* ----- app navigation ----- */
 .appnav { display: flex; gap: 16px; margin-bottom: 20px; font-family: var(--font-code); font-size: var(--size-code); }
@@ -90,16 +96,29 @@ body { margin: 0; }
 .prompt h2 { margin: 0 0 8px; font-family: var(--font-display); font-size: calc(var(--size-display) * 0.7); }
 .prompt p { margin: 0 0 10px; line-height: 1.65; color: var(--text-soft); }
 .prompt p:last-child { margin-bottom: 0; }
-/* inline code inside teaching prose: smaller monospace with a faint tint and a
-   touch of breathing room, so code-dense paragraphs read evenly instead of
-   erratically. Kept intact (no mid-token wrapping). */
-.prompt code, .example-note code, .challenge-task code, .hint-item code, .err-ann-body code {
+/* Inline code in prose: monospace + accent color, no background chip.
+   The chip style looks fine for one or two spans per sentence but becomes
+   unreadable in code-dense paragraphs. Color alone distinguishes code from prose
+   without creating visual clutter. */
+.prompt code, .example-intro code, .content-text code, .challenge-task code, .hint-item code, .err-ann-body code {
   font-family: var(--font-code);
-  font-size: 0.82em;
-  background: var(--panel-header);
-  padding: 1px 4px;
-  border-radius: 3px;
+  font-size: 0.88em;
+  color: var(--accent);
   white-space: nowrap;
+}
+
+/* interleaved content[] text blocks */
+.content-text {
+  margin: 0 0 12px;
+  line-height: 1.45;
+  color: var(--text);
+}
+/* separator line before prose that resumes after an example or exercise panel */
+.example-wrap + .content-text,
+.exercise-block + .content-text {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: var(--border-w) solid var(--border);
 }
 
 /* ----- panels (editor, output) ----- */
@@ -144,7 +163,7 @@ body { margin: 0; }
   color: var(--text);
   font-family: var(--font-code);
   font-size: var(--size-code);
-  line-height: 1.55;
+  line-height: 1.45;
 }
 .CodeMirror-gutters { background: var(--panel-header); border-right: var(--border-w) solid var(--border); }
 .CodeMirror-linenumber { color: var(--lineno); }
@@ -166,7 +185,7 @@ body { margin: 0; }
   color: var(--text);
   font-family: var(--font-code);
   font-size: var(--size-code);
-  line-height: 1.55;
+  line-height: 1.45;
   resize: vertical;
 }
 .editor-fallback:focus { outline: none; }
@@ -188,7 +207,7 @@ body { margin: 0; }
 
 /* ----- output panel ----- */
 .output { font-family: var(--font-code); font-size: var(--size-code); padding: 10px 12px; }
-.out-line { line-height: 1.55; white-space: pre-wrap; }
+.out-line { line-height: 1.45; white-space: pre-wrap; }
 .out-line.info { color: var(--muted); }
 .out-line.success { color: var(--success); }
 .out-line.error { color: var(--error); }
@@ -206,13 +225,74 @@ body { margin: 0; }
 .style-item { color: var(--text-soft); line-height: 1.5; }
 
 /* worked example */
-.example-note { padding: 8px 12px 0; color: var(--text-soft); line-height: 1.5; }
+.example-wrap { margin-bottom: 20px; }
+.example-intro {
+  margin: 0 0 8px;
+  line-height: 1.45;
+  color: var(--text-soft);
+}
 .example-actions { margin-top: 0; padding: 10px 12px; }
+
+/* predict exercise: input box for the student's guess */
+.predict-wrap {
+  padding: 10px 12px;
+  border-top: var(--border-w) solid var(--border);
+}
+.predict-label {
+  font-family: var(--font-code);
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.predict-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-code);
+  font-size: var(--size-code);
+  background: var(--bg);
+  color: var(--text);
+  border: var(--border-w) solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  resize: vertical;
+  line-height: 1.5;
+}
+.predict-input:focus { outline: none; border-color: var(--accent); }
 .challenge-task { margin: 4px 0 10px; line-height: 1.5; color: var(--text); }
 /* rich sections: visual separation between stacked exercises */
-.exercise-block { margin-top: 24px; padding-top: 18px; border-top: var(--border-w) solid var(--border); }
+.exercise-block { margin-top: 20px; padding-top: 12px; border-top: var(--border-w) solid var(--border); }
 .exercise-block .challenge-task code { font-size: 0.82em; background: var(--panel-header); padding: 1px 4px; border-radius: 3px; }
 .challenge-label { color: var(--accent); font-weight: 600; }
+
+/* section-type dividers: "Examples" / "Your turn" */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 28px 0 14px;
+  font-family: var(--font-code);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.section-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* color-coded panel variants */
+.example-panel { border-left: 3px solid var(--muted); }
+.exercise-panel { border-left: 3px solid var(--accent); }
+
+/* output rendered inside the same panel as its code — top border acts as divider */
+.inpanel-output {
+  border-top: var(--border-w) solid var(--border);
+  min-height: 36px;
+}
 
 /* hint ladder */
 .hint-host { margin-bottom: 14px; }

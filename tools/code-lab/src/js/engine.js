@@ -142,13 +142,25 @@
 
   function renderProgress() {
     var lessons = lessonsList();
-    var total = lessons.length || (state.lesson ? state.lesson.total : 1);
+    if (!lessons.length) return '<span class="cell current" data-i="0"></span>';
+    // Group sections by chapter; render one cluster of dots per chapter separated
+    // by a thin gap so the nav stays readable even with 70+ sections.
+    var byChapter = [];
+    lessons.forEach(function (l, i) {
+      var ch = l.chapter != null ? l.chapter : 0;
+      if (!byChapter[ch]) byChapter[ch] = [];
+      byChapter[ch].push({ idx: i, id: l.id });
+    });
     var html = "";
-    for (var i = 0; i < total; i++) {
-      var solved = lessons.length ? CL.storage.isSolved(lessons[i].id) : false;
-      var cls = solved ? "cell done" : i === state.lessonIdx ? "cell current" : "cell";
-      html += '<span class="' + cls + '" data-i="' + i + '" style="cursor:pointer"></span>';
-    }
+    byChapter.forEach(function (group) {
+      if (!group) return;
+      if (html) html += '<span class="progress-gap"></span>';
+      group.forEach(function (s) {
+        var solved = CL.storage.isSolved(s.id);
+        var cls = solved ? "cell done" : s.idx === state.lessonIdx ? "cell current" : "cell";
+        html += '<span class="' + cls + '" data-i="' + s.idx + '" style="cursor:pointer"></span>';
+      });
+    });
     return html;
   }
 
@@ -158,11 +170,12 @@
   // checker (CL.check), and error layer (CL.errors) as the single-exercise path,
   // rendered with the same component CSS. The single-exercise path is untouched;
   // these run only for lessons that carry examples[]/exercises[] arrays.
-  function richRun(code, outBox, lesson) {
-    var py = CL.runtime && CL.runtime.python;
+  function richRun(code, outBox, lesson, mockInput) {
+    var isJs = lesson && lesson.lang === "js";
+    var py = isJs ? (CL.runtime && CL.runtime.js) : (CL.runtime && CL.runtime.python);
     outBox.innerHTML = "";
     function line(s, cls) { var d = el("div", "out-line" + (cls ? " " + cls : "")); d.textContent = s; outBox.appendChild(d); }
-    if (!py) { line("runtime unavailable", "error"); return Promise.resolve({ ok: false, stdout: "", events: [] }); }
+    if (!py) { line(isJs ? "JavaScript runtime not yet available." : "Python runtime unavailable.", "error"); return Promise.resolve({ ok: false, stdout: "", events: [] }); }
     if (CL.music) CL.music.unlock();
     if (py.getStatus && py.getStatus() !== "ready") line("starting Python (the first run downloads it once)…", "info");
     var stdout = "", events = [];
@@ -170,6 +183,7 @@
       onStdout: function (s) { stdout += s; line(s.replace(/\n$/, "")); },
       onStderr: function (s) { line(s.replace(/\n$/, ""), "error"); },
       onEvents: function (ev) { events = ev || []; if (CL.music) CL.music.schedule(events.filter(function (x) { return x[0] === "play" || x[0] === "sample"; })); },
+      mockInput: mockInput || [],
     }).then(function (r) {
       if (!r.ok && r.error && r.error !== "stopped") {
         line(r.error, "error");
@@ -186,53 +200,147 @@
   }
 
   function buildExampleBlock(lesson, ex, theme) {
-    var holder = el("div");
-    var panel = el("div", "panel");
-    panel.appendChild(el("div", "panel-header", "example — run it"));
-    if (ex.note) { var note = el("div", "example-note"); note.textContent = ex.note; panel.appendChild(note); }
+    var wrap = el("div", "example-wrap");
+    if (ex.note) {
+      var note = el("p", "example-intro");
+      note.innerHTML = inlineProse(ex.note, lesson.glossary);
+      wrap.appendChild(note);
+    }
+    // lang:none sections have no runnable code — show code as a read-only listing only
+    if (lesson.lang === "none") {
+      if (ex.code) {
+        var pre = el("pre", "model-code"); pre.textContent = ex.code; wrap.appendChild(pre);
+      }
+      return wrap;
+    }
+    var panel = el("div", "panel example-panel");
+    panel.appendChild(el("div", "panel-header", "example"));
     var host = el("div"); panel.appendChild(host);
     var edv = mountEditor(host, ex.code || "", lesson.lang, null, true);
     var actions = el("div", "actions example-actions");
-    var btn = el("button", "btn secondary", "run example"); actions.appendChild(btn); panel.appendChild(actions);
-    holder.appendChild(panel);
-    var outPanel = el("div", "panel"); outPanel.appendChild(el("div", "panel-header", "example " + outputHeader(theme)));
-    var outBox = el("div", "output"); outBox.appendChild(el("div", "out-line info", "press run to see the output.")); outPanel.appendChild(outBox);
-    holder.appendChild(outPanel);
-    btn.addEventListener("click", function () { btn.disabled = true; richRun(edv.getValue(), outBox, lesson).then(function () { btn.disabled = false; }); });
-    return holder;
+    var btn = el("button", "btn secondary", "run"); actions.appendChild(btn);
+    panel.appendChild(actions);
+    var outBox = el("div", "output inpanel-output");
+    outBox.appendChild(el("div", "out-line info", "press run to see the output."));
+    panel.appendChild(outBox);
+    wrap.appendChild(panel);
+    btn.addEventListener("click", function () {
+      btn.disabled = true;
+      richRun(edv.getValue(), outBox, lesson).then(function () { btn.disabled = false; });
+    });
+    return wrap;
   }
 
-  function buildExerciseBlock(lesson, ex, idx, theme) {
+  function buildExerciseBlock(lesson, ex, idx) {
     var wrap = el("div", "exercise-block");
+    // lang:none: no code — just show prompt as a text instruction (pre-syntax puzzles)
+    if (lesson.lang === "none") {
+      var task = el("div", "challenge-task");
+      task.appendChild(el("span", "challenge-label", "Your turn: "));
+      var pt = el("span"); pt.innerHTML = inlineProse(ex.prompt || "", lesson.glossary); task.appendChild(pt);
+      wrap.appendChild(task);
+      return wrap;
+    }
+    // Rung 2: Parsons — drag-to-reorder scrambled lines
+    if (ex.rung === 2 && ex.check && ex.check.type === "parsons") {
+      var ptask = el("div", "challenge-task");
+      ptask.appendChild(el("span", "challenge-label", "Arrange: "));
+      var ppt = el("span"); ppt.innerHTML = inlineProse(ex.prompt || "", lesson.glossary); ptask.appendChild(ppt);
+      wrap.appendChild(ptask);
+      var lines = (ex.check.lines || []).concat(ex.check.distractors || []);
+      for (var si = lines.length - 1; si > 0; si--) {
+        var sj = Math.floor(Math.random() * (si + 1));
+        var tmp = lines[si]; lines[si] = lines[sj]; lines[sj] = tmp;
+      }
+      var plist = el("div", "parsons-list"); wrap.appendChild(plist);
+      lines.forEach(function (ln) {
+        var item = el("div", "parsons-item"); item.textContent = ln;
+        item.draggable = true;
+        item.addEventListener("dragstart", function (e) { e.dataTransfer.setData("text/plain", ln); plist.setAttribute("data-drag", ln); });
+        item.addEventListener("dragover", function (e) { e.preventDefault(); });
+        item.addEventListener("drop", function (e) {
+          e.preventDefault();
+          var from = plist.getAttribute("data-drag");
+          var items = Array.from(plist.children);
+          var fromEl = items.find(function (x) { return x.textContent === from; });
+          if (fromEl && fromEl !== item) plist.insertBefore(fromEl, item);
+        });
+        plist.appendChild(item);
+      });
+      var pact = el("div", "actions"); wrap.appendChild(pact);
+      var pchk = el("button", "btn primary", "check order"); pact.appendChild(pchk);
+      var pout = el("div", "output inpanel-output"); wrap.appendChild(pout);
+      pchk.addEventListener("click", function () {
+        var order = Array.from(plist.children).map(function (x) { return x.textContent; });
+        var correct = (ex.check.lines || []);
+        var pass = order.slice(0, correct.length).every(function (l, i) { return l === correct[i]; });
+        pout.innerHTML = "";
+        var msg = el("div", pass ? "out-line success" : "out-line error");
+        msg.textContent = pass ? "Correct order!" : "Not quite — keep rearranging.";
+        pout.appendChild(msg);
+        if (pass && lesson.id) CL.storage.markSolved(lesson.id);
+      });
+      return wrap;
+    }
+
     var predict = ex.rung === 1 || (ex.starter && ex.solution && String(ex.starter).trim() === String(ex.solution).trim());
+
+    // Prompt line
     var task = el("div", "challenge-task");
     task.appendChild(el("span", "challenge-label", predict ? "Predict: " : "Your turn: "));
     var ptext = el("span"); ptext.innerHTML = inlineProse(ex.prompt || "", lesson.glossary); task.appendChild(ptext);
     wrap.appendChild(task);
-    var ep = el("div", "panel");
+
+    // Code + actions + output all in one panel
+    var ep = el("div", "panel exercise-panel");
     ep.appendChild(el("div", "panel-header", predict ? "read this — what will it print?" : "your code"));
-    var host = el("div"); ep.appendChild(host); wrap.appendChild(ep);
+    var host = el("div"); ep.appendChild(host);
     var key = lesson.id + ":ex" + idx;
     var seed = predict ? (ex.starter || "") : (CL.storage.getCode(key) || effectiveStarter(ex.starter));
-    var edv = mountEditor(host, seed, lesson.lang, predict ? null : function (v) { CL.storage.setCode(key, v); }, predict, "type your code here…");
+    var edv = mountEditor(host, seed, lesson.lang, predict ? null : function (v) { CL.storage.setCode(key, v); }, predict, "# write your code here");
+
+    // For predict exercises: a box to write the guess before running
+    var predBox = null;
+    if (predict) {
+      var predWrap = el("div", "predict-wrap");
+      predWrap.appendChild(el("div", "predict-label", "What do you think it will print?"));
+      predBox = el("textarea", "predict-input");
+      predBox.placeholder = "Write your prediction here, then click Run to check.";
+      predBox.rows = 3;
+      predWrap.appendChild(predBox);
+      ep.appendChild(predWrap);
+    }
+
     var actions = el("div", "actions");
     var runB = el("button", "btn primary", predict ? "run to check your guess" : "run"); actions.appendChild(runB);
     var checkB = (ex.check && !predict) ? el("button", "btn secondary", "check") : null; if (checkB) actions.appendChild(checkB);
     var hintB = (ex.hints && ex.hints.length && !predict) ? el("button", "btn secondary", "hint") : null; if (hintB) actions.appendChild(hintB);
     var solB = (ex.solution && !predict) ? el("button", "btn ghost", "solution") : null; if (solB) actions.appendChild(solB);
-    wrap.appendChild(actions);
+    ep.appendChild(actions);
+
+    var outBox = el("div", "output inpanel-output");
+    outBox.appendChild(el("div", "out-line info", "press run to execute your code."));
+    ep.appendChild(outBox);
+    wrap.appendChild(ep);
+
+    // Hints and model solution sit below the panel
     var hintHost = el("div", "hint-host"); wrap.appendChild(hintHost);
     var modelHost = el("div"); wrap.appendChild(modelHost);
-    var outPanel = el("div", "panel"); outPanel.appendChild(el("div", "panel-header", outputHeader(theme)));
-    var outBox = el("div", "output"); outBox.appendChild(el("div", "out-line info", "press run to execute your code.")); outPanel.appendChild(outBox); wrap.appendChild(outPanel);
+
     var hintIdx = 0;
-    function showModel() { if (modelHost.firstChild || !ex.solution) return; var m = el("div", "panel"); m.appendChild(el("div", "panel-header", "model solution")); var pre = el("pre", "model-code"); pre.textContent = ex.solution; m.appendChild(pre); modelHost.appendChild(m); }
+    function showModel() {
+      if (modelHost.firstChild || !ex.solution) return;
+      var m = el("div", "panel"); m.appendChild(el("div", "panel-header", "model solution"));
+      var pre = el("pre", "model-code"); pre.textContent = ex.solution; m.appendChild(pre);
+      modelHost.appendChild(m);
+    }
     function go(grade) {
       runB.disabled = true; if (checkB) checkB.disabled = true;
-      richRun(edv.getValue(), outBox, lesson).then(function (res) {
+      richRun(edv.getValue(), outBox, lesson, ex.mockInput || []).then(function (res) {
         runB.disabled = false; if (checkB) checkB.disabled = false;
         if (grade && res.ok && ex.check && CL.check) {
-          var verdict = CL.check.run({ check: { type: ex.check.type, expected: ex.check.value, calls: ex.check.value } }, { stdout: res.stdout, events: res.events });
+          var normCheck = { type: ex.check.type, expected: ex.check.expected || ex.check.value };
+          var verdict = CL.check.run({ check: normCheck }, { stdout: res.stdout, events: res.events });
           if (verdict.pass) {
             var ln = el("div", "out-line success"); ln.appendChild(el("span", "pass-badge", "PASS")); ln.appendChild(document.createTextNode("  " + (verdict.diagnostics[0] || "Correct!"))); outBox.appendChild(ln);
             showModel(); if (lesson.id) CL.storage.markSolved(lesson.id);
@@ -245,7 +353,12 @@
     }
     runB.addEventListener("click", function () { go(false); });
     if (checkB) checkB.addEventListener("click", function () { go(true); });
-    if (hintB) hintB.addEventListener("click", function () { if (hintIdx >= ex.hints.length) return; var it = el("div", "hint-item"); it.textContent = "Hint " + (hintIdx + 1) + ": " + ex.hints[hintIdx]; hintHost.appendChild(it); hintIdx++; if (hintIdx >= ex.hints.length) hintB.disabled = true; });
+    if (hintB) hintB.addEventListener("click", function () {
+      if (hintIdx >= ex.hints.length) return;
+      var it = el("div", "hint-item"); it.textContent = "Hint " + (hintIdx + 1) + ": " + ex.hints[hintIdx];
+      hintHost.appendChild(it); hintIdx++;
+      if (hintIdx >= ex.hints.length) hintB.disabled = true;
+    });
     if (solB) solB.addEventListener("click", showModel);
     return wrap;
   }
@@ -352,12 +465,43 @@
       container.appendChild(prompt);
     }
 
-    // Rich section (locked Ch.1 standard): several worked examples + several
-    // exercises per subsection, each a self-contained block. The single-exercise
-    // path below is skipped for these lessons.
+    // Interleaved content[] format — text, example, and exercise blocks in the
+    // order the author wrote them. This is the standard for new lessons.
+    if (state.view === "lessons" && lesson.content) {
+      var exIdx = 0;
+      lesson.content.forEach(function (block) {
+        if (block.type === "text") {
+          (block.md || "").split(/\n\n+/).forEach(function (para) {
+            if (!para.trim()) return;
+            var p = el("p", "content-text");
+            p.innerHTML = inlineProse(para.trim(), lesson.glossary);
+            container.appendChild(p);
+          });
+        } else if (block.type === "example") {
+          container.appendChild(buildExampleBlock(lesson, block, theme));
+        } else if (block.type === "exercise") {
+          container.appendChild(buildExerciseBlock(lesson, block, exIdx++));
+        }
+      });
+      var cfoot = el("div", "lesson-footnav");
+      var cp = el("button", "btn ghost", "‹ back"); cp.id = "lesson-prev-b"; cp.disabled = state.lessonIdx === 0;
+      var cn = el("button", "btn primary", "next section ›"); cn.id = "lesson-next-b"; cn.disabled = state.lessonIdx >= state.lessonCount - 1;
+      cfoot.appendChild(cp); cfoot.appendChild(cn); container.appendChild(cfoot);
+      buildThemebar(container, theme);
+      frame.appendChild(container); app.appendChild(frame);
+      return;
+    }
+
+    // Legacy rich section: flat examples[] + exercises[] arrays.
     if (state.view === "lessons" && (lesson.examples || lesson.exercises)) {
-      (lesson.examples || []).forEach(function (ex) { container.appendChild(buildExampleBlock(lesson, ex, theme)); });
-      (lesson.exercises || []).forEach(function (ex, i) { container.appendChild(buildExerciseBlock(lesson, ex, i, theme)); });
+      if (lesson.examples && lesson.examples.length) {
+        container.appendChild(el("div", "section-label", "Examples"));
+        lesson.examples.forEach(function (ex) { container.appendChild(buildExampleBlock(lesson, ex, theme)); });
+      }
+      if (lesson.exercises && lesson.exercises.length) {
+        container.appendChild(el("div", "section-label", "Your turn"));
+        lesson.exercises.forEach(function (ex, i) { container.appendChild(buildExerciseBlock(lesson, ex, i)); });
+      }
       var rfoot = el("div", "lesson-footnav");
       var rp = el("button", "btn ghost", "‹ back"); rp.id = "lesson-prev-b"; rp.disabled = state.lessonIdx === 0;
       var rn = el("button", "btn primary", "next section ›"); rn.id = "lesson-next-b"; rn.disabled = state.lessonIdx >= state.lessonCount - 1;
@@ -617,8 +761,8 @@
   }
 
   function wireRuntime(theme, lesson) {
-    // Rich lessons self-wire their blocks in render(); only the nav needs wiring.
-    if (lesson.examples || lesson.exercises) { wireNav(); return; }
+    // content[] and rich-section lessons self-wire their blocks in render(); only nav needs wiring.
+    if (lesson.content || lesson.examples || lesson.exercises) { wireNav(); return; }
     var editor = mountEditor(document.getElementById("editor-host"), state.code, lesson.lang, function (v) {
       state.code = v;
       CL.storage.setCode(state.lesson.id, v);
@@ -906,9 +1050,10 @@
       title: l.title,
       challengeCode: "C" + l.chapter + "-1",
       filename: "lesson." + (l.lang === "js" ? "js" : "py"),
-      lang: l.lang === "js" ? "js" : "py",
+      lang: l.lang === "js" ? "js" : l.lang === "none" ? "none" : "py",
       promptTitle: l.title,
-      promptText: String(l.explain || "").split(/\n\n+/), // blank line = new paragraph
+      promptText: String(l.explain || "").split(/\n\n+/).filter(function(p) { return p.trim(); }),
+      content: l.content || null,
       glossary: l.glossary || null,
       moreInfo: l.moreInfo || null,
       task: l.task || "",

@@ -1,142 +1,169 @@
-# Lesson / chapter / arena data schema
+# Lesson data schema
 
-The data contract for all curriculum content, matching the locked structure in
-`CURRICULUM-STRUCTURE.md`. Content is plain-JS data files concatenated by the
-build into `window.CODELAB`:
-- `window.CODELAB.lessons`  — lesson objects (one chapter's lessons per file)
-- `window.CODELAB.chapters` — chapter objects (the Chapter Challenge + Quiz)
-- `window.CODELAB.arena`    — arena challenges (parallel track, later)
-
-Terminology: **Chapter → Lesson → Subsection** (see `CURRICULUM-STRUCTURE.md`).
-Reading level for prose is **grade 7–9** (a ceiling); code is stripped before scoring.
+All curriculum content lives in `lessons/`. Files are plain JS concatenated by
+the build into `window.CODELAB.lessons[]`. The engine navigates section by section.
 
 ---
 
-## Lesson object
+## Hierarchy
 
-```js
-{
-  id: "c1l2",                  // chapter+lesson, stable forever (saves reference it)
-  chapter: 1,                  // chapter number (0..12)
-  lessonNo: 2,                 // position within the chapter
-  title: "Values and Types",
-  lang: "py",                  // "py" | "js" | "ts" | "none" (Ch.0 pre-syntax)
-  strand: "numbers",           // "numbers"|"words"|"data"|"plot"|"sound"|"core"
-  concepts: ["types","int","str"],     // for the Knowledge Map search + spine coverage
-  recalls: ["c1l1"],           // lesson ids whose concepts this reuses (spiral)
-  timeBudgetMin: 20,           // 15-25 across the whole lesson
+**Chapter → Lesson → Section**
 
-  warmup: {                    // one retrieval beat (recall from an earlier lesson)
-    md: "Last lesson you used `print`. Quick question: does `print(\"5\")` show …?",
-  },
+| Level | Description | Example |
+|---|---|---|
+| Chapter | A major theme (5–8 lessons) | Chapter 1: Python First Words |
+| Lesson | A topic within the chapter (3–6 sections) | Lesson 1.1: Print and Output |
+| Section | **The atomic navigable unit** — one concept | c1s1: "Output and print" |
 
-  subsections: [ /* Subsection objects — 3..6, see below */ ],
-
-  recap: {
-    md: "- Every [[value]] has a [[type]] …",   // bullet summary, [[term]] links allowed
-    mistakes: ["Quoting a number you mean to calculate with …", "…"],
-  },
-
-  glossary: { value: "A single piece of data …", type: "The category …" },   // terms earned here
-  codex: [ { topic: "types", pattern: "int(x)  str(x)  type(x)", note: "…" } ],// Skills entries (array)
-  errorClasses: ["TypeError","ValueError"],     // classes provoked; feed the Codex Errors tab
-  styleRequired: false         // true at Ch.6+ checkpoints: style findings block completion
-}
-```
-
-## Subsection object  (one screen = one concept)
-
-```js
-{
-  title: "Types decide what an operator means",
-  concept: {
-    md: "`7` and `\"7\"` look identical … [[concatenation]] …",  // teaching prose
-    // md supports: `code`, **bold**, [[term]] (glossary hover), {{more:Label|Body}} (expandable)
-  },
-  examples: [ /* 2..3 Example objects, easy → harder */ ],
-  exercises: [ /* 2..3 Exercise objects, increasing difficulty */ ],
-}
-```
-(A subsection may omit `examples` or `exercises` only when the idea genuinely
-needs neither — e.g. a pure warm-up-like concept beat. Default is all three.)
-
-## Example object  (read-only, runnable; Predict → Run)
-
-```js
-{
-  note: "Predict each line before running.",        // 1-2 line framing
-  code: "print(2 + 3)\nprint(\"2\" + \"3\")\n",      // shown read-only, runnable
-  expect: { type: "output", value: "5\n23" }         // for QC to verify the example runs as claimed
-  // or expect: { type: "calls", value: [ … ] } for music/turtle/plot examples
-}
-```
-
-## Exercise object  (Modify → Make; the rung ladder)
-
-```js
-{
-  rung: 4,                     // 1 predict · 2 arrange · 3 modify · 4 fix · 5 complete · 6 write
-  scaffold: "stub",            // "boilerplate" (imports/headers given) | "stub" (TODO) | "blank"
-  debug: true,                 // true = spot-the-error / fix-the-code exercise
-  prompt: "This crashes with a TypeError. Make it print 10.",
-  starter: "print(7 + \"3\")\n",          // seeded per scaffold level; "" for blank/write
-  starterExpectation: "raises:TypeError", // "runs-clean" | "raises:<ErrorType>"
-  check: { /* Check object, see below */ },
-  hints: ["The error says + can't combine int and str.", "…", "…"],  // keyed to misconceptions
-  misconceptions: ["string-vs-number"],   // ids from tests/misconceptions.md
-  solution: "print(7 + 3)\n",             // MUST pass check (+ style when styleRequired)
-  errorClasses: ["TypeError"]             // classes this exercise can surface
-}
-```
-
-## Check object  (tolerant, always diagnostic — never a bare fail)
-
-```js
-{ type: "output", value: "10" }                          // whitespace-normalized stdout, diff on fail
-{ type: "calls",  value: [ /* recorded music/turtle/plot calls, grouped by scheduled timestamp;
-                              same-timestamp calls match order-insensitively, groups in time order */ ] }
-{ type: "tests",  value: [ { call: "is_prime(7)", expect: "True" }, … ] }  // hidden cases vs named fns
-{ type: "parsons", value: ["line 1","line 2", …], distractors: ["…"] }     // correct order; engine scrambles
-```
-
-## Chapter object  (the Chapter Challenge + Quiz)
-
-```js
-{
-  chapter: 1,
-  title: "Python: First Words",
-  challenge: [ /* 6..10 Exercise objects, ordered easy → hard, mixing the chapter's
-                  concepts + strands; scaffolding fades to "blank" */ ],
-  quiz: {
-    pass: 0.8,                 // fraction required to unlock the next chapter
-    questions: [
-      { type: "predict", prompt: "What does this print?", code: "…", answer: "…" },
-      { type: "write",   prompt: "Write one line that prints 25.", check: { type:"output", value:"25" } },
-    ]
-  }
-}
-```
-The Quiz **gates** the next chapter: it stays locked until `pass` is reached.
-
-## Arena challenge object (parallel track — later)
-Same shape as an Exercise, plus: `code` ("C1-3"), `requires` (concept tags to unlock),
-`par` ({minutes}), `boss` (bool), `custom` (bool). No rung, no error annotation,
-hints only if coach mode enables them.
+The engine navigates section by section. The Knowledge Map groups sections by lesson
+and chapter. IDs encode chapter and section: `c1s1` = Chapter 1, Section 1.
 
 ---
 
-## Invariants the harness enforces
+## Section object
 
-1. Every Example's `code` runs clean and produces its stated `expect`.
-2. Every Exercise/Challenge `solution` passes its own `check` (+ the style checker when `styleRequired`).
-3. Every Exercise `starter` matches its `starterExpectation` when executed.
-4. Every `id` is unique; every concept in a lesson's `recalls`/spine is introduced by an earlier lesson.
-5. Every lesson has ≥1 `codex` entry and a `recap` (except Ch.0).
-6. Prose (`warmup`, `concept.md`, `recap.md`) scores at **grade 7–9** (code stripped before scoring).
-7. `timeBudgetMin` ∈ [15,25]; a chapter's lessons sum to a sane total.
-8. Every id in `misconceptions` exists in `tests/misconceptions.md`; every exercise with `misconceptions` has non-generic hints.
-9. Every class in `errorClasses` has a translation in the friendly-error layer (`errors.js`).
-10. Difficulty ramps at the lesson level: exercise rungs do not decrease *within* a subsection, and a lesson's *final* subsection reaches a rung ≥ its first. A genuinely lighter middle subsection (e.g. comments) may dip — the lesson-level ramp is what's enforced, not strict non-decrease across every subsection.
-11. Every Quiz has `pass` and ≥1 auto-checkable question; every Chapter Challenge has 6–10 exercises.
+```js
+window.CODELAB.lessons.push({
+  id:           "c1s1",       // stable forever — saved progress references this
+  chapter:      1,            // integer ≥ 0
+  strand:       "core",       // "numbers"|"words"|"data"|"plot"|"sound"|"core"
+  lang:         "py",         // "py"|"js"|"ts"|"none"
+  timeBudgetMin: 15,          // harness enforces 5–90
+  title:        "Output and print",
 
-All checks run on the **shipping Python version (3.13.x)** to match the site.
+  glossary: {                 // terms that [[term]] links resolve to (hover popover)
+    argument: "A value placed inside a function's parentheses.",
+    string:   "A sequence of characters enclosed in quotation marks.",
+  },
+
+  content: [ /* ordered blocks — see below */ ],
+
+  codex: {                    // entry in the earned cheat sheet (Skills tab)
+    topic:   "printing",
+    pattern: "print(value)\nprint(a, b, c)",
+    note:    "Displays arguments on screen. Multiple arguments joined with one space.",
+  },
+});
+```
+
+---
+
+## content[] blocks
+
+The `content` array is walked top-to-bottom. Each block is one of three types.
+
+### Text block
+
+```js
+{ type: "text", md: "Prose with `code`, **bold**, and [[term]] links." }
+```
+
+One or more prose paragraphs. Blank lines inside `md` split into separate rendered
+paragraphs. Harness checks grade ≤ 9 (Flesch-Kincaid; code spans stripped).
+
+### Example block
+
+```js
+{
+  type: "example",
+  note: "1–2 sentence caption shown above the code panel.",  // optional
+  code: "print(\"Hello!\")\n",
+}
+```
+
+Read-only, runnable. Student clicks Run to see output. No check — examples
+demonstrate, exercises assess.
+
+### Exercise block
+
+```js
+{
+  type:    "exercise",
+  rung:    3,              // see rung ladder below
+  prompt:  "Instruction for the student.",
+  starter: "print(\"Code\" + \"Lab\")\n",  // "" for rung 6 (write from scratch)
+  check: {
+    type:     "output",   // "output"|"calls"|"tests"|"parsons"
+    expected: "Code Lab",
+  },
+  hints: [
+    "Nudge toward the idea.",
+    "Larger nudge.",
+    "Near-solution hint.",
+  ],
+  solution: "print(\"Code\", \"Lab\")\n",  // MUST pass check — harness verifies
+}
+```
+
+---
+
+## Rung ladder
+
+| Rung | Label | What the student does | Starter |
+|------|-------|-----------------------|---------|
+| 1 | Predict | Reads code, writes prediction before running | = solution (read-only) |
+| 2 | Arrange | Reorders scrambled lines (Parsons) | scrambled |
+| 3 | Modify | Changes values in working code | working code |
+| 4 | Fix | Repairs broken/crashing code | broken code |
+| 5 | Complete | Finishes a partial program | partial stub |
+| 6 | Write | Blank editor, from scratch | `""` |
+
+Rung 1: predict textarea appears; starter is read-only.  
+Rung 2: not yet in engine.  
+Rungs 3–4: starter contains real code to change.  
+Rung 6: `starter: ""` — placeholder shown instead.
+
+Early sections use rungs 1–4. Sections from Chapter 5 onward use 5–6.
+
+---
+
+## Check object
+
+```js
+{ type: "output",  expected: "10" }
+// Normalized stdout match. Whitespace-trimmed per line.
+
+{ type: "calls",   calls: [{ t: 0, fn: "play", args: [60] }] }
+// Music/turtle/plot events. Same-timestamp calls match order-insensitively.
+
+{ type: "tests",   tests: [{ call: "is_prime(7)", expect: "True" }] }
+// Hidden test cases run against a named function.
+
+{ type: "parsons", lines: ["line 1", "line 2"], distractors: ["decoy"] }
+// Engine scrambles correct lines + distractors; student reorders.
+```
+
+---
+
+## Inline prose markup
+
+Works in `md` (text blocks), `note` (example captions), and `prompt` (exercise instructions).
+
+| Syntax | Result |
+|--------|--------|
+| `` `code` `` | Inline code, accent color |
+| `**bold**` | Bold |
+| `[[term]]` | Hover popover from the section's `glossary` |
+
+---
+
+## Harness invariants (`npm test`)
+
+| # | Check |
+|---|-------|
+| 1 | Every exercise `solution` passes its own `check` |
+| 2 | Every `id` is unique |
+| 3 | Every `codex` has `topic`, `pattern`, `note` (chapter 0 exempt) |
+| 4 | All `{type:"text"}` prose ≤ grade 9 Flesch-Kincaid (code stripped) |
+| 5 | `timeBudgetMin` within 5–90 |
+
+---
+
+## Planned — not yet in engine
+
+- Rung 2 Parsons exercises
+- Lesson-level warmup recall beat (one question at lesson start)
+- Section recap summary
+- Quiz gate between chapters
+- Chapter challenge (6–10 exercises mixing the chapter's concepts)
+- Arena (parallel challenge track, unlocked later)

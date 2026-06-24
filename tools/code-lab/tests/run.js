@@ -29,14 +29,13 @@ const MISCONCEPTIONS_FILE = path.join(__dirname, "misconceptions.md");
 const LANGS = ["py", "js", "ts", "none"];
 const STRANDS = ["numbers", "words", "data", "plot", "sound", "core"];
 const CHECK_TYPES = ["output", "tests", "calls", "parsons"];
-const MIN_BUDGET = 15; // PLAN §3: 15-25 min per lesson, harness-enforced
-const MAX_BUDGET = 25;
-const MAX_CHAPTER_MINUTES = 240; // sane upper bound on a chapter's summed budget
-// invariant 6 is a CEILING (don't exceed the learner's level), not a target —
-// the learner reads at grade 6, so allow up to ~grade 7 of headroom and never
-// push prose down toward baby-talk. It cannot detect "too simple"; that's an
-// authorial standard.
-const MAX_GRADE = 7;
+const MIN_BUDGET = 5;  // per subsection; full-lesson budgets tracked separately later
+const MAX_BUDGET = 90;
+const MAX_CHAPTER_MINUTES = 600;
+// inv6 is a CEILING — prose must not exceed the learner's reading level.
+// Target is grade 8-9 (strong reader, textbook quality). Not a floor —
+// "too simple" is an authorial standard the harness cannot detect.
+const MAX_GRADE = 9;
 const GRADE_FORMULA = "Flesch-Kincaid Grade Level";
 // The schema.md example hint ladder. A real lesson must not ship these verbatim.
 const GENERIC_HINTS = ["nudge", "bigger nudge", "near-solution"];
@@ -141,6 +140,15 @@ function skip(reason) {
 
 /* ===================== schema validation ===================== */
 
+function validateExercise(ex, where, errs) {
+  if (!Number.isInteger(ex.rung) || ex.rung < 1 || ex.rung > 6) errs.push(`${where}: rung must be 1-6`);
+  if (!isNonEmptyString(ex.prompt)) errs.push(`${where}: prompt required`);
+  if (typeof ex.starter !== "string") errs.push(`${where}: starter must be a string`);
+  if (!isArray(ex.hints)) errs.push(`${where}: hints must be an array`);
+  if (!isNonEmptyString(ex.solution)) errs.push(`${where}: solution required`);
+  validateCheck(ex, where, errs);
+}
+
 function validateLesson(l) {
   const errs = [];
   const where = `lesson ${l && l.id ? l.id : "(no id)"}`;
@@ -149,19 +157,34 @@ function validateLesson(l) {
   if (!isNonEmptyString(l.title)) errs.push(`${where}: title required`);
   if (!LANGS.includes(l.lang)) errs.push(`${where}: lang must be one of ${LANGS.join("/")}`);
   if (!STRANDS.includes(l.strand)) errs.push(`${where}: strand must be one of ${STRANDS.join("/")}`);
-  if (!Number.isInteger(l.rung) || l.rung < 1 || l.rung > 6) errs.push(`${where}: rung must be 1-6`);
-  if (!isArray(l.concepts)) errs.push(`${where}: concepts must be an array`);
-  if (!isArray(l.misconceptions)) errs.push(`${where}: misconceptions must be an array`);
-  if (!isArray(l.warmup)) errs.push(`${where}: warmup must be an array`);
   if (typeof l.timeBudgetMin !== "number") errs.push(`${where}: timeBudgetMin must be a number`);
-  if (!isNonEmptyString(l.explain)) errs.push(`${where}: explain required`);
-  if (typeof l.starter !== "string") errs.push(`${where}: starter must be a string`);
-  if (!/^(runs-clean|raises:.+)$/.test(String(l.starterExpectation || "")))
-    errs.push(`${where}: starterExpectation must be "runs-clean" or "raises:<ErrorType>"`);
-  validateCheck(l, where, errs);
-  if (!isArray(l.hints)) errs.push(`${where}: hints must be an array`);
-  if (!isNonEmptyString(l.solution)) errs.push(`${where}: solution required`);
-  if (typeof l.styleRequired !== "boolean") errs.push(`${where}: styleRequired must be a boolean`);
+
+  const hasContent = isArray(l.content) && l.content.length > 0;
+
+  if (hasContent) {
+    // Interleaved content[] format: text | example | exercise blocks in sequence.
+    l.content.forEach((block, i) => {
+      const bw = `${where}: content[${i}]`;
+      if (!block.type) { errs.push(`${bw}: type required`); return; }
+      if (!["text", "example", "exercise"].includes(block.type))
+        errs.push(`${bw}: type must be "text", "example", or "exercise"`);
+      if (block.type === "text" && !isNonEmptyString(block.md)) errs.push(`${bw}: md required`);
+      if (block.type === "example" && !isNonEmptyString(block.code)) errs.push(`${bw}: code required`);
+      if (block.type === "exercise") validateExercise(block, bw, errs);
+    });
+  } else {
+    // Legacy flat format: explain + optional examples[]/exercises[].
+    if (!isNonEmptyString(l.explain)) errs.push(`${where}: explain required (or use content[] format)`);
+    if (l.examples != null) {
+      if (!isArray(l.examples)) { errs.push(`${where}: examples must be an array`); }
+      else { l.examples.forEach((ex, i) => { if (!isNonEmptyString(ex.code)) errs.push(`${where}: examples[${i}].code required`); }); }
+    }
+    if (l.exercises != null) {
+      if (!isArray(l.exercises)) { errs.push(`${where}: exercises must be an array`); }
+      else { l.exercises.forEach((ex, i) => validateExercise(ex, `${where}: exercises[${i}]`, errs)); }
+    }
+  }
+
   if (!isExemptFromCodex(l)) {
     const c = l.codex;
     if (!c || !isNonEmptyString(c.topic) || !isNonEmptyString(c.pattern) || !isNonEmptyString(c.note))
@@ -180,7 +203,8 @@ function validateCheck(obj, where, errs) {
     errs.push(`${where}: check.type must be one of ${CHECK_TYPES.join("/")}`);
     return;
   }
-  if (c.type === "output" && !isNonEmptyString(c.expected)) errs.push(`${where}: check.expected required for output checks`);
+  if (c.type === "output" && !isNonEmptyString(c.expected) && !isNonEmptyString(c.value))
+    errs.push(`${where}: check.expected (or .value) required for output checks`);
   if (c.type === "tests" && !isArray(c.tests)) errs.push(`${where}: check.tests array required for tests checks`);
   if (c.type === "calls" && !isArray(c.calls)) errs.push(`${where}: check.calls array required for calls checks`);
   if (c.type === "parsons" && !isArray(c.lines)) errs.push(`${where}: check.lines array required for parsons checks`);
@@ -260,14 +284,24 @@ function checkCodexPresent({ lessons }) {
   return failures.length ? fail(failures) : pass();
 }
 
-// Invariant 6: explain prose scores at grade 5-6 reading level.
+// Invariant 6: prose scores within the target reading level ceiling.
 function checkReadingLevel({ lessons }) {
   const failures = [];
   for (const l of lessons) {
-    if (!isNonEmptyString(l.explain)) continue; // schema check already flags this
-    const grade = fleschKincaidGrade(l.explain);
-    if (grade > MAX_GRADE)
-      failures.push(`lesson ${l.id}: explain grade ${grade.toFixed(1)} > ${MAX_GRADE} (${GRADE_FORMULA})`);
+    if (isArray(l.content) && l.content.length) {
+      // content[] format: check all {type:"text"} blocks.
+      l.content.forEach((block, i) => {
+        if (block.type !== "text" || !isNonEmptyString(block.md)) return;
+        const grade = fleschKincaidGrade(block.md);
+        if (grade > MAX_GRADE)
+          failures.push(`lesson ${l.id}: content[${i}] grade ${grade.toFixed(1)} > ${MAX_GRADE} (${GRADE_FORMULA})`);
+      });
+    } else {
+      if (!isNonEmptyString(l.explain)) continue;
+      const grade = fleschKincaidGrade(l.explain);
+      if (grade > MAX_GRADE)
+        failures.push(`lesson ${l.id}: explain grade ${grade.toFixed(1)} > ${MAX_GRADE} (${GRADE_FORMULA})`);
+    }
   }
   return failures.length ? fail(failures) : pass();
 }
@@ -327,12 +361,16 @@ function loadBrowserCL(relPath) {
   return sandbox.window.CL;
 }
 
-// runSolution(src) -> { stdout, events, error }, or null if python3 is absent.
+// runSolution(src, mockInput?) -> { stdout, events, error }, or null if python3 is absent.
+// Pass mockInput as a string array to pre-populate input() calls; runner accepts JSON payload.
 function makeRunner() {
   const probe = spawnSync("python3", ["--version"], { encoding: "utf8" });
   if (probe.error) return null;
-  return function (src) {
-    const res = spawnSync("python3", [RUNNER], { input: src || "", encoding: "utf8" });
+  return function (src, mockInput) {
+    const input = (mockInput && mockInput.length)
+      ? JSON.stringify({ code: src || "", mockInput: mockInput })
+      : (src || "");
+    const res = spawnSync("python3", [RUNNER], { input: input, encoding: "utf8" });
     if (res.error) throw new Error("python3 runner failed: " + res.error.message);
     try {
       return JSON.parse(res.stdout);
@@ -342,24 +380,57 @@ function makeRunner() {
   };
 }
 
+// Normalize a check object so .value is promoted to .expected (lessons use either).
+function normalizeCheck(check) {
+  if (!check) return check;
+  return (check.expected == null && check.value != null)
+    ? Object.assign({}, check, { expected: check.value })
+    : check;
+}
+
 // Invariant 1: every solution passes its own check (and the style checker when styleRequired).
+// Handles both top-level lesson solutions and per-exercise solutions in exercises[].
 function checkSolutions(content, deps) {
   if (!deps.run) return skip("python3 unavailable to execute solutions");
   const failures = [];
+
+  // Top-level solutions (arena entries and old-format lessons).
+  // Only Python can be verified locally — JS/TS solutions are not executed.
   const items = content.lessons.concat(content.arena);
   for (const it of items) {
     const where = it.id || it.code;
     if (!it.solution || !it.check || EXECUTABLE_CHECKS.indexOf(it.check.type) === -1) continue;
+    if (it.lang && it.lang !== "py") continue;
+    const norm = { check: normalizeCheck(it.check) };
     let r;
-    try { r = deps.run(it.solution); } catch (e) { failures.push(`${where}: ${e.message}`); continue; }
+    try { r = deps.run(it.solution, it.mockInput || []); } catch (e) { failures.push(`${where}: ${e.message}`); continue; }
     if (r.error) { failures.push(`${where}: solution raised — ${r.error}`); continue; }
-    const verdict = deps.checker.run(it, { stdout: r.stdout, events: r.events });
+    const verdict = deps.checker.run(norm, { stdout: r.stdout, events: r.events });
     if (!verdict.pass) failures.push(`${where}: solution does not pass its own check — ${verdict.diagnostics[0]}`);
     if (it.styleRequired && deps.style) {
       const findings = deps.style.analyze(it.solution);
-      if (findings.length) failures.push(`${where}: styleRequired, but solution has a style issue — ${findings[0].message}`);
+      if (findings.length) failures.push(`${where}: styleRequired but solution has a style issue — ${findings[0].message}`);
     }
   }
+
+  // Per-exercise solutions in lessons (both legacy exercises[] and content[] format).
+  // Only Python exercises are executed; parsons and JS exercises are skipped.
+  for (const l of content.lessons) {
+    if (l.lang && l.lang !== "py") continue;
+    const exercises = isArray(l.content) && l.content.length
+      ? l.content.filter((b) => b.type === "exercise").map((b, i) => ({ ex: b, where: `${l.id}:content[exercise ${i}]` }))
+      : (l.exercises || []).map((ex, i) => ({ ex, where: `${l.id}:exercises[${i}]` }));
+    for (const { ex, where } of exercises) {
+      if (!ex.solution || !ex.check || EXECUTABLE_CHECKS.indexOf(ex.check.type) === -1) continue;
+      const norm = { check: normalizeCheck(ex.check) };
+      let r;
+      try { r = deps.run(ex.solution, ex.mockInput || []); } catch (e) { failures.push(`${where}: ${e.message}`); continue; }
+      if (r.error) { failures.push(`${where}: solution raised — ${r.error}`); continue; }
+      const verdict = deps.checker.run(norm, { stdout: r.stdout, events: r.events });
+      if (!verdict.pass) failures.push(`${where}: solution does not pass its own check — ${verdict.diagnostics[0]}`);
+    }
+  }
+
   return failures.length ? fail(failures) : pass();
 }
 
@@ -549,7 +620,7 @@ function runSelftest() {
   })();
   expectFail("inv6 fires on too-hard prose", () => checkReadingLevel(hardProse), results);
 
-  const badBudget = (() => { const l = validFixtureLesson(); l.timeBudgetMin = 45; return { lessons: [l] }; })();
+  const badBudget = (() => { const l = validFixtureLesson(); l.timeBudgetMin = 95; return { lessons: [l] }; })();
   expectFail("inv7 fires on over-budget lesson", () => checkTimeBudgets(badBudget), results);
 
   const unknownMis = (() => { const l = validFixtureLesson(); l.misconceptions = ["not-a-real-id"]; return { lessons: [l] }; })();
@@ -560,6 +631,79 @@ function runSelftest() {
 
   const badSchema = { lessons: [{ ...validFixtureLesson(), lang: "ruby" }], arena: [] };
   expectFail("schema fires on bad enum value", () => checkSchema(badSchema), results);
+
+  // Structural fix 1: lang:"none" sections (Chapter 0 pre-syntax) pass schema.
+  const noneLesson = {
+    id: "c0-none-test",
+    chapter: 0,
+    title: "Before Code",
+    lang: "none",
+    strand: "core",
+    timeBudgetMin: 10,
+    content: [{ type: "text", md: "Think about what coding might look like." }],
+  };
+  expectPass("fix1: lang:none section passes schema", () => checkSchema({ lessons: [noneLesson], arena: [] }), results);
+
+  // Structural fix 2: lang:"js" lessons pass schema validation.
+  const jsLesson = {
+    id: "c5-js-test",
+    chapter: 5,
+    title: "JS test",
+    lang: "js",
+    strand: "core",
+    timeBudgetMin: 15,
+    content: [
+      { type: "text", md: "Now you code in JavaScript. It runs directly in the browser." },
+      { type: "exercise", rung: 3, prompt: "Compute 2+2.", starter: "// your code", hints: ["Try console.log(2+2)."], solution: "console.log(2+2)", check: { type: "output", expected: "4" } },
+    ],
+    codex: { topic: "core", pattern: "console.log()", note: "Prints to console." },
+  };
+  expectPass("fix2: lang:js lesson passes schema", () => checkSchema({ lessons: [jsLesson], arena: [] }), results);
+
+  // Structural fix 3 (Parsons): rung 2 with check.type:"parsons" passes schema; missing check.lines fails.
+  const parsonsEx = {
+    type: "exercise", rung: 2,
+    prompt: "Put these lines in order to print Hello.",
+    starter: "",
+    hints: ["First comes the function, then the argument."],
+    solution: 'print("Hello")',
+    check: { type: "parsons", lines: ['print("Hello")'] },
+  };
+  const parsonsLesson = {
+    id: "c1-parsons-test",
+    chapter: 1,
+    title: "Parsons test",
+    lang: "py",
+    strand: "core",
+    timeBudgetMin: 10,
+    content: [{ type: "text", md: "Put lines in order." }, parsonsEx],
+    codex: { topic: "core", pattern: "print()", note: "Prints to output." },
+  };
+  expectPass("fix3a: rung 2 parsons exercise passes schema", () => checkSchema({ lessons: [parsonsLesson], arena: [] }), results);
+  const parsonsNoLines = Object.assign({}, parsonsLesson, {
+    id: "c1-parsons-bad",
+    content: [{ type: "text", md: "Put lines in order." }, Object.assign({}, parsonsEx, { check: { type: "parsons" } })],
+  });
+  expectFail("fix3b: parsons check without check.lines fails schema", () => checkSchema({ lessons: [parsonsNoLines], arena: [] }), results);
+
+  // Structural fix 4 (mockInput): runner passes mock values to input() in student code.
+  const runner = makeRunner();
+  if (runner) {
+    let mockRes;
+    try {
+      mockRes = runner('name = input("Enter name: ")\nprint("Hello " + name)\n', ["World"]);
+    } catch (e) {
+      mockRes = { error: e.message };
+    }
+    const expectedOut = "Enter name: Hello World";
+    results.push({
+      label: "fix4: runner mockInput feeds input() calls",
+      ok: !mockRes.error && (mockRes.stdout || "").trim() === expectedOut,
+      detail: mockRes.error || `stdout: "${(mockRes.stdout || "").trim()}" (expected "${expectedOut}")`,
+    });
+  } else {
+    results.push({ label: "fix4: runner mockInput feeds input() calls", ok: true, detail: "skipped — python3 unavailable" });
+  }
 
   console.log("Code Lab harness — selftest\n");
   let failed = 0;

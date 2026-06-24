@@ -62,7 +62,9 @@ function build() {
   }
 
   fs.mkdirSync(DIST, { recursive: true });
-  const target = path.join(DIST, "course.html");
+  const outArg = process.argv.find((a) => a.startsWith("--out="));
+  const filename = outArg ? outArg.slice("--out=".length) : "course.html";
+  const target = path.join(DIST, filename);
   fs.writeFileSync(target, out);
   console.log(`built ${target} (${(out.length / 1024).toFixed(0)} KB)`);
 }

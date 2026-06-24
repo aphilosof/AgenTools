@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "node build/build.js",
-    "test": "node tests/run.js"
+    "build": "node build/build.js --out=course-v2.html",
+    "test": "node tests/run.js && node tests/js-runtime-test.js"
   }
 }

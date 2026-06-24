@@ -1,50 +1,91 @@
-# NEXT — where things stand
+# NEXT — current state and what to build next
 
-## LOCKED STANDARD (2026-06-22): Chapter 1, Lesson 1
+---
 
-Chapter 1 Lesson 1 "Output and print" renders correctly on the working site and
-is **the approved standard we build everything else on.** Do not replace the
-renderer or invent a new lesson screen — build to this.
+## What is built and working
 
-### The render standard
-- The **original lesson player** in `src/js/engine.js` renders every lesson.
-  There is no separate renderer. (An earlier new renderer, `lesson-v2.js`, was a
-  mistake and was removed.)
-- Fonts: Archivo / IBM Plex Mono via the Google Fonts `<link>` in
-  `src/template.html` (the working setup).
-- Readability fix that made it land: inline `code` in teaching prose is styled
-  in `src/css/layout.css` as a small tinted chip (0.82em), and `.prompt p`
-  line-height is 1.65. Code-dense paragraphs read evenly because of this — keep it.
+### Engine
+- Single-file build: `npm run build` → `dist/course.html` (or `--out=name.html` for versioned builds)
+- Lesson navigation: prev/next buttons, progress dots, click-to-jump — all wired
+- Content[] renderer: text → example → exercise blocks interleaved in author order
+- Exercises: run, check, hint ladder, model solution reveal
+- Predict exercises (rung 1): read-only starter + prediction textarea
+- Runtimes: Pyodide (Python in WebAssembly), JS fallback
+- Three themes: Magazine (light default), C64 (dark default), Terminal (locked)
+- Codex, Knowledge Map, Sandbox surfaces (basic, no content yet)
+- Persistent progress via localStorage
 
-### The lesson data format (what the site renders)
-One **concept per section**, flat — same shape as `lessons/chapter-01.js` /
-`lessons/c1.js`:
-`{ id, chapter, title, lang, strand, rung, concepts, misconceptions, warmup:[],
-   timeBudgetMin, explain (with [[term]], code, **bold**), glossary, moreInfo:[{label,body}],
-   example, exampleNote, task, starter, starterExpectation, check:{type,expected},
-   hints:[], solution, codex:{topic,pattern,note}, styleRequired }`
-The player shows: teaching card -> read-only worked example ("run it") -> "Your
-turn" editor (run/check/hint/solution) -> output -> Back / Next section nav.
+### Content
+Chapter 1, Lesson 1 — four sections authored and tested:
 
-### Lesson 1 itself
-- `lessons/c1.js` — 4 sections: print shows output | combining text | comments |
-  sep & end. Verified: renders cleanly; all 4 solutions print their expected
-  output on Python 3.13.
-- The **rich authored source** (more examples/exercises per concept than the
-  one-per-section site shows) is `lessons/ch-1/c1l1.reviewed.js` (subsection
-  format) plus the factory artifacts in `lessons/ch-1/`. Agents author in that
-  rich format; it is then converted down to the flat section format for the site.
-- Parked (superseded, preserved): `lessons/_parked/chapter-00.js` (First Sound
-  intro), `lessons/_parked/chapter-01.js` (older Chapter 1).
+| ID | Title | Rungs used |
+|----|-------|------------|
+| c1s1 | Output and print | 1, 3, 4, 6 |
+| c1s2 | Combining text | 3, 4, 6 |
+| c1s3 | Comments | 1, 3, 4 |
+| c1s4 | Shaping output: sep and end | 3, 5, 6 |
 
-## Open decision before mass-building
-The working player shows **one example + one exercise per section**. The authored
-lessons have several of each. Decide whether to (a) keep one-per-section, or
-(b) extend the player to show multiple — **before** building the rest, so the
-whole curriculum is consistent.
+All 10 harness checks pass. Working build: `dist/course-v2.html`.
 
-## Next step
-Point the lesson factory (`LESSON-FACTORY.md`) at the rest of Chapter 1, then
-Chapters 0 and 2+. For each lesson: agents author + review, convert to the flat
-section format, verify (renders + every solution passes on Python 3.13) **before**
-adding it. One lesson reaches a clean, verified state before the next starts.
+---
+
+## What to build next
+
+### Phase A — Finish Chapter 1 content (all remaining lessons)
+
+Author each lesson's sections in `lessons/c1.js` using the `content[]` format
+documented in `lessons/schema.md`. Run `npm test` after each lesson. Commit when
+the lesson's sections all pass.
+
+Per `CURRICULUM.md`, Chapter 1 has 7 lessons:
+
+| Lesson | Sections to author | Status |
+|--------|-------------------|--------|
+| 1.1 Print and Output | c1s1–c1s4 | ✅ done |
+| 1.2 Values and Types | `int`/`float`/`str`, `type()`, conversion | to do |
+| 1.3 Variables | assignment, reassignment, stepper | to do |
+| 1.4 Expressions & Math | operators, order, brackets | to do |
+| 1.5 Working with Strings | concat, type mixing → name mashup | to do |
+| 1.6 Input | `input()`, conversion → age calculator | to do |
+| 1.7 First Drawing & Sound | turtle square + 3-note motif | to do |
+
+Each lesson = 3–5 sections. Each section = 2–4 text blocks + 2–3 examples + 2–4 exercises.
+
+### Phase B — Chapter 0 (pre-syntax hook)
+Author Chapter 0 sections: First Sound, Algorithms Are Exact, Guide the Robot,
+Repeat and Decide, The Sandwich Bug. These come before Chapter 1 in the nav.
+
+### Phase C — Chapters 2–12 (curriculum build-out)
+Work chapter by chapter per CURRICULUM.md. One chapter per session.
+
+### Phase D — Engine features (build alongside content as needed)
+- Lesson-level warmup recall beat (one retrieval question at section 1 of each lesson)
+- Section recap summary block
+- Rung 2 Parsons exercise type
+- Chapter quiz gate
+- Chapter challenge exercises
+- Arena unlock
+- Exercise label variety ("Your turn" → varied framing based on rung)
+
+---
+
+## Authoring a new lesson — the process
+
+1. Read the lesson row in `CURRICULUM.md` for the concept, strand, and target rung.
+2. Plan 3–5 sections. Each section = one tight concept, one `id`, 15 min budget.
+3. Write sections in `lessons/c1.js` (or the relevant chapter file) using `content[]` blocks:
+   - Open with a `text` block that explains the concept clearly (grade ≤ 9, line-height tight)
+   - Alternate `example` blocks with short `text` blocks as the idea deepens
+   - Close with 2–4 `exercise` blocks climbing in rung difficulty
+4. Run `npm test`. Fix any failures before moving to the next section.
+5. Build with `node build/build.js --out=course-v2.html` and visually check in the browser.
+6. Commit when the lesson's sections are clean.
+
+---
+
+## Known deferred items
+
+- Exercise label framing: "Your turn:" repeated for successive exercises looks flat.
+  Will be addressed with rung-specific labels (Predict / Modify / Fix / Challenge / Write).
+- `dist/course.html` is the original untouched reference. `dist/course-v2.html` is the live build.
+- Terminal theme is locked (intentional — unlocks after Real Tools I).

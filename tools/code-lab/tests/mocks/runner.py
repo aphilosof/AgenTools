@@ -42,14 +42,30 @@ for _f in (set_tempo, sleep, play, sample, play_pattern,
            forward, backward, left, right, penup, pendown, pencolor, goto, home, plot, bar):
     setattr(builtins, _f.__name__, _f)
 
-src = sys.stdin.read()
+# Accept either a plain source string or {"code": "...", "mockInput": [...]}
+raw = sys.stdin.read()
+try:
+    payload = json.loads(raw)
+    src = payload.get('code', '')
+    mock_input_queue = list(payload.get('mockInput', []))
+except (json.JSONDecodeError, AttributeError):
+    src = raw
+    mock_input_queue = []
+
+# Mock input() so exercises using input() work without blocking on real stdin.
+def input(prompt=''):
+    if prompt:
+        print(prompt, end='', flush=True)
+    return str(mock_input_queue.pop(0)) if mock_input_queue else ''
+setattr(builtins, 'input', input)
+
 buf = io.StringIO()
 err = None
 real_stdout = sys.stdout
 try:
     sys.stdout = buf
     exec(compile(src, '<student>', 'exec'), {})
-except BaseException as e:  # report the error type+message like the browser does
+except BaseException as e:
     sys.stdout = real_stdout
     err = ''.join(traceback.format_exception_only(type(e), e)).strip()
 finally:

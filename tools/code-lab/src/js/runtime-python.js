@@ -65,6 +65,16 @@
     "  \"    _events.append(('bar', [str(_l) for _l in labels], [float(_v) for _v in values]))\",",
     "  'for _f in (set_tempo, sleep, play, sample, play_pattern, forward, backward, left, right, penup, pendown, pencolor, goto, home, plot, bar):',",
     "  '    setattr(builtins, _f.__name__, _f)',",
+    // Mock input(): consumes from a queue pre-loaded per run so student code using
+    // input() works in exercises without blocking the worker on real stdin.
+    "  '_input_queue = []',",
+    "  'def input(prompt=\"\"):',",
+    "  '    if prompt:',",
+    "  '        print(prompt, end=\"\", flush=True)',",
+    "  '    if _input_queue:',",
+    "  '        return str(_input_queue.pop(0))',",
+    "  '    return \"\"',",
+    "  'setattr(builtins, \"input\", input)',",
     // Stepper: sys.settrace records (line, locals) at each executed line of the
     // student's code (filename '<student>'), capped, for trace-then-scrub.
     "  'import sys',",
@@ -115,7 +125,8 @@
     "onmessage = async function (e) {",
     "  if (e.data.type === 'run') {",
     "    try {",
-    "      await pyodide.runPythonAsync('_events.clear(); _clock[0] = 0.0; _steps.clear(); _err[0] = None');",
+    "      await pyodide.runPythonAsync('_events.clear(); _clock[0] = 0.0; _steps.clear(); _err[0] = None; _input_queue.clear()');",
+    "      if (e.data.mockInput && e.data.mockInput.length) { pyodide.globals.set('_input_queue', e.data.mockInput); }",
     "      pyodide.globals.set('_src', e.data.code);",
     "      await pyodide.runPythonAsync('_run_traced(_src)');",
     "      var erp = pyodide.globals.get('_err'); var er = erp.toJs(); erp.destroy();",
@@ -207,7 +218,7 @@
         return new Promise(function (resolve) {
           activeRun = { onStdout: opts.onStdout, onStderr: opts.onStderr, onEvents: opts.onEvents, onSteps: opts.onSteps, resolve: resolve };
           setStatus("running");
-          worker.postMessage({ type: "run", code: code });
+          worker.postMessage({ type: "run", code: code, mockInput: opts.mockInput || [] });
         });
       });
     },
