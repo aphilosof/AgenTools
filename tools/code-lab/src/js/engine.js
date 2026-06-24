@@ -182,7 +182,16 @@
     return py.run(code, {
       onStdout: function (s) { stdout += s; line(s.replace(/\n$/, "")); },
       onStderr: function (s) { line(s.replace(/\n$/, ""), "error"); },
-      onEvents: function (ev) { events = ev || []; if (CL.music) CL.music.schedule(events.filter(function (x) { return x[0] === "play" || x[0] === "sample"; })); },
+      onEvents: function (ev) {
+        events = ev || [];
+        if (CL.music) CL.music.schedule(events.filter(function (x) { return x[0] === "play" || x[0] === "sample"; }));
+        var turtleEvs = events.filter(function (x) { return x[0] && String(x[0]).indexOf("t_") === 0; });
+        var plotEvs = events.filter(function (x) { return x[0] === "plot" || x[0] === "bar"; });
+        var stEl = document.getElementById("stage"), cvEl = document.getElementById("stage-canvas");
+        if ((turtleEvs.length || plotEvs.length) && stEl) stEl.style.display = "";
+        if (turtleEvs.length && CL.turtle && cvEl) CL.turtle.render(cvEl, turtleEvs);
+        if (plotEvs.length && CL.plot && cvEl) CL.plot.render(cvEl, plotEvs);
+      },
       mockInput: mockInput || [],
     }).then(function (r) {
       if (!r.ok && r.error && r.error !== "stopped") {
@@ -342,8 +351,7 @@
       richRun(edv.getValue(), outBox, lesson, ex.mockInput || []).then(function (res) {
         runB.disabled = false; if (checkB) checkB.disabled = false;
         if (grade && res.ok && ex.check && CL.check) {
-          var normCheck = { type: ex.check.type, expected: ex.check.expected || ex.check.value };
-          var verdict = CL.check.run({ check: normCheck }, { stdout: res.stdout, events: res.events });
+          var verdict = CL.check.run({ check: ex.check }, { stdout: res.stdout, events: res.events });
           if (verdict.pass) {
             var ln = el("div", "out-line success"); ln.appendChild(el("span", "pass-badge", "PASS")); ln.appendChild(document.createTextNode("  " + (verdict.diagnostics[0] || "Correct!"))); outBox.appendChild(ln);
             showModel(); if (lesson.id) CL.storage.markSolved(lesson.id);
