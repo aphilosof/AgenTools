@@ -109,7 +109,7 @@ demonstrate, exercises assess.
 | 6 | Write | Blank editor, from scratch | `""` |
 
 Rung 1: predict textarea appears; starter is read-only.  
-Rung 2: not yet in engine.  
+Rung 2: engine shows scrambled lines as draggable blocks; student reorders by drag-and-drop; check compares final order against `check.lines`.  
 Rungs 3–4: starter contains real code to change.  
 Rung 6: `starter: ""` — placeholder shown instead.
 
@@ -161,7 +161,6 @@ Works in `md` (text blocks), `note` (example captions), and `prompt` (exercise i
 
 ## Planned — not yet in engine
 
-- Rung 2 Parsons exercises
 - Lesson-level warmup recall beat (one question at lesson start)
 - Section recap summary
 - Quiz gate between chapters

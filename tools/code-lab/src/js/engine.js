@@ -258,8 +258,11 @@
         item.draggable = true;
         item.addEventListener("dragstart", function (e) { e.dataTransfer.setData("text/plain", ln); plist.setAttribute("data-drag", ln); });
         item.addEventListener("dragover", function (e) { e.preventDefault(); });
+        item.addEventListener("dragenter", function () { item.classList.add("over"); });
+        item.addEventListener("dragleave", function () { item.classList.remove("over"); });
         item.addEventListener("drop", function (e) {
           e.preventDefault();
+          item.classList.remove("over");
           var from = plist.getAttribute("data-drag");
           var items = Array.from(plist.children);
           var fromEl = items.find(function (x) { return x.textContent === from; });

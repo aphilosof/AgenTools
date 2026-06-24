@@ -201,3 +201,36 @@ The HTML file itself stays small (engine plus lesson content, under 1 MB) and op
 Phase 1 begins on your approval.
 
 **Pedagogy amendments (adopted from the curriculum review):** the stepper as the course's notional machine from Chapter 1. Errors as curriculum: translate-never-replace annotation with a fading scaffold and a Codex errors tab. Two feedback channels: tolerant diagnostic correctness checks and a style channel that hardens from Chapter 6 checkpoints. Parsons problems as rung 2 of a six-rung ladder. Retrieval warm-ups at lesson start. Misconception-keyed hints, with coach mode showing current code and error on stalled challenges. The hook lesson before Chapter 0 concepts, which are interleaved rather than front-loaded. SQL trimmed to one lesson with the full module deferred. Chapter 8 expanded and Chapter 9 teaching event-driven programming by name. Boss timers default off. Progressive interface disclosure. The debugging protocol and documentation reading as explicit lessons. The unscaffolded epilogue project as the graduation exam. A realistic 9 to 15 month arc designed to feel complete at Chapter 5. No inheritance anywhere. The weekly 15-minute coach ritual, documented in COACH.md.
+
+---
+
+## 7. Current Build Status
+
+Phase 1 engine is partially complete. Live build: `dist/course-v2.html` (`npm run build`).
+
+**Built and browser-verified:**
+- Single-file build pipeline
+- Lesson navigation (prev/next, progress dots, click-to-jump)
+- Content[] renderer (text / example / exercise blocks)
+- All 6 rungs: Predict (1), Parsons drag-to-reorder (2), Modify/Fix/Complete/Write (3–6)
+- Python runtime: Pyodide Web Worker, stepper, mockInput for input() exercises
+- JS runtime: Blob Worker, play/turtle/plot bridge, console.log→stdout, 8s timeout
+- Music: play/sleep/sample/play_pattern/set_tempo → Web Audio
+- Turtle: full command set → canvas
+- Plot: plot()/bar() → canvas, themed
+- Three themes: Magazine, C64, Terminal (locked)
+- Codex, Knowledge Map, Sandbox (surfaces only, no content)
+- localStorage progress save
+- Test harness: 42 assertions covering schema, solutions, reading level, JS bridge
+
+**Not yet built (Phase 1 remainder):**
+- Friendly error layer (annotation + fading schedule)
+- Style checker
+- Warmup retrieval beat at lesson start
+- Arena engine + coach mode
+- Chapter quiz gates
+- Progressive interface disclosure
+- Terminal theme unlock trigger
+
+**Content complete:**
+- Chapter 1, Lesson 1: sections c1s1–c1s4 (4 sections, all harness checks pass)

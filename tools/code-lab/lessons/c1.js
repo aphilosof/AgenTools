@@ -402,3 +402,24 @@ window.CODELAB.lessons.push({
   ],
   codex: { topic: "JS output", pattern: "console.log(value)", note: "Prints a value in JavaScript." },
 });
+
+/* TEMPORARY — Parsons drag UI test. Delete after verification. */
+window.CODELAB.lessons.push({
+  id: "parsons-test",
+  chapter: 1,
+  strand: "core",
+  lang: "py",
+  timeBudgetMin: 5,
+  title: "Parsons drag test",
+  content: [
+    { type: "text", md: "Put the lines in the right order to print Hello World." },
+    { type: "exercise",
+      rung: 2,
+      prompt: "Arrange these lines to print 'Hello' then 'World'.",
+      starter: "",
+      hints: ["print Hello first, then World."],
+      solution: "print(\"Hello\")\nprint(\"World\")\n",
+      check: { type: "parsons", lines: ["print(\"Hello\")", "print(\"World\")"] } },
+  ],
+  codex: { topic: "arrange", pattern: "print()", note: "Prints in order." },
+});

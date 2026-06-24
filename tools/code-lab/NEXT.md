@@ -5,12 +5,18 @@
 ## What is built and working
 
 ### Engine
-- Single-file build: `npm run build` → `dist/course.html` (or `--out=name.html` for versioned builds)
+- Single-file build: `npm run build` → `dist/course-v2.html`
 - Lesson navigation: prev/next buttons, progress dots, click-to-jump — all wired
 - Content[] renderer: text → example → exercise blocks interleaved in author order
 - Exercises: run, check, hint ladder, model solution reveal
-- Predict exercises (rung 1): read-only starter + prediction textarea
-- Runtimes: Pyodide (Python in WebAssembly), JS fallback
+- Rung 1 Predict: read-only starter + prediction textarea
+- Rung 2 Parsons: drag-to-reorder scrambled lines, accent highlight on drop target, order check
+- Rungs 3–6: standard editor (modify / fix / complete / write from scratch)
+- Python runtime: Pyodide in Web Worker, stepper (sys.settrace), mockInput for input() exercises
+- JS runtime: Blob Worker, full play/turtle/plot bridge, console.log→stdout, 8s timeout kill
+- Music: play/sleep/sample/play_pattern/set_tempo → Web Audio
+- Turtle: forward/backward/left/right/penup/pendown/pencolor/goto/home → canvas
+- Plot: plot()/bar() → canvas, themed
 - Three themes: Magazine (light default), C64 (dark default), Terminal (locked)
 - Codex, Knowledge Map, Sandbox surfaces (basic, no content yet)
 - Persistent progress via localStorage
@@ -61,7 +67,6 @@ Work chapter by chapter per CURRICULUM.md. One chapter per session.
 ### Phase D — Engine features (build alongside content as needed)
 - Lesson-level warmup recall beat (one retrieval question at section 1 of each lesson)
 - Section recap summary block
-- Rung 2 Parsons exercise type
 - Chapter quiz gate
 - Chapter challenge exercises
 - Arena unlock
@@ -78,7 +83,7 @@ Work chapter by chapter per CURRICULUM.md. One chapter per session.
    - Alternate `example` blocks with short `text` blocks as the idea deepens
    - Close with 2–4 `exercise` blocks climbing in rung difficulty
 4. Run `npm test`. Fix any failures before moving to the next section.
-5. Build with `node build/build.js --out=course-v2.html` and visually check in the browser.
+5. Build with `npm run build` and visually check in the browser (`dist/course-v2.html`).
 6. Commit when the lesson's sections are clean.
 
 ---
@@ -87,5 +92,5 @@ Work chapter by chapter per CURRICULUM.md. One chapter per session.
 
 - Exercise label framing: "Your turn:" repeated for successive exercises looks flat.
   Will be addressed with rung-specific labels (Predict / Modify / Fix / Challenge / Write).
-- `dist/course.html` is the original untouched reference. `dist/course-v2.html` is the live build.
+- `dist/course-v2.html` is the live build. `dist/course.html` is an old snapshot — ignore it.
 - Terminal theme is locked (intentional — unlocks after Real Tools I).
