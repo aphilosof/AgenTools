@@ -939,6 +939,10 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
+      md: "**Why not just use `if` to check first?** You could try to guard against bad input before calling `int()`. Python strings have a method called `.isdigit()` that returns `True` if every character is a digit. Looks like a solution — but `.isdigit()` returns `False` for `\"-5\"` (has a minus sign), `\"3.14\"` (has a dot), and `\" 7\"` (has a leading space). All three are valid integers or near-integers that `int()` actually handles fine. The pre-check rejects numbers you want to accept.\n\nYou also end up writing the work twice: check the string, then convert the string. `try`/`except` does it once — attempt the conversion, handle the failure. The rule of thumb: use `if` when you can test a condition cleanly and cheaply before doing the work. Use `try`/`except` when the only reliable way to know if something works is to try it.",
+    },
+    {
+      type: "text",
       md: "The `except` line names the specific **[[exception]]** class it handles. `except ValueError:` catches only `ValueError` — other exceptions still propagate and crash the program as usual. This is correct behaviour: you should only catch exceptions you know how to handle.\n\nYou can have multiple `except` blocks below one `try`, each handling a different class. Python checks them in order and runs the first one that matches.",
     },
     {
@@ -948,11 +952,15 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "You may see `except:` without a class name. This catches **everything** — including `KeyboardInterrupt` (Ctrl-C) and internal Python errors. Avoid it. A bare `except:` turns every bug into a silent, unhelpful message and makes your program very hard to debug. Always name the exception class you intend to handle.",
+      md: "**Python's philosophy: EAFP.** Python programmers call this style EAFP — 'Easier to Ask Forgiveness than Permission'. Instead of pre-checking every possible problem before doing something, you attempt the thing and handle failures in named `except` blocks. The alternative is called LBYL — 'Look Before You Leap' — which produces chains of `if` guards that are often harder to read and still miss edge cases.\n\nEAFP keeps the normal path clean. The `try` block reads like the code would if nothing went wrong. Error handling is separated into blocks that are clearly labelled with exactly what went wrong. Exceptions are **named objects** — `ValueError` and `ZeroDivisionError` are Python classes that carry information about what failed. Naming them in `except` is making a claim: 'I know exactly what can go wrong on these lines, and I know what to do about it.' That specificity is what makes exception handling good design, not just defensive coding.",
     },
     {
       type: "text",
-      md: "The most useful pattern `try`/`except` unlocks is **bulletproof input**: keep asking until the user enters something valid. Combine `while True:` with `break` from Lesson 2.4 and wrap the risky conversion in `try`.\n\nThis is the standard Python idiom for validated input. You will use it in almost every real program that reads from a user.",
+      md: "**Bare `except:` — why it is dangerous.** You may see `except:` written without a class name. This catches everything, including `KeyboardInterrupt` (what fires when someone presses Ctrl-C to stop the program), `SystemExit`, and `MemoryError`. More importantly, it catches bugs in your own code. If you have a typo that causes a `NameError`, a bare `except:` swallows it silently and runs your error-handling message instead — making the bug invisible. You spend an hour wondering why the wrong thing happens, not realising the program is hiding a crash from you.\n\nAlways name the class you intend to handle. Catching `ValueError` means: 'this line can fail with a bad value and I know what to print.' Everything else — including bugs you did not anticipate — still crashes loudly, which is correct.",
+    },
+    {
+      type: "text",
+      md: "**Bulletproof input: combining what you know.** The most practical pattern `try`/`except` unlocks is a loop that keeps asking until it gets a valid answer. You already know all the pieces: `while True:` from Lesson 2.4 loops forever, and `break` exits the loop early. Wrap the risky conversion in `try`, put `break` right after the line that can fail, and put the retry message in `except`.\n\nWhy does `break` go after `int(input())` and not after the whole `try` block? Because if `int()` raises a `ValueError`, Python immediately jumps to `except` — the `break` is never reached. The loop restarts. Only when `int()` succeeds does execution reach `break` and exit the loop. The structure uses the exception itself as the signal: success means break, failure means loop again.\n\nThis is the standard Python idiom for validated input. Almost every real program that reads from a person eventually needs it.",
     },
     {
       type: "example",
