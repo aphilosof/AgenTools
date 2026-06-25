@@ -213,6 +213,37 @@ from scratch by default. Chapter 0 is pre-syntax.
 
 **Worked examples:** square with `for _ in range(4)` (`_` named); spiral with `i * 5` (loop variable as parameter); kick pattern with if/`%`; nested 4-bar drum pattern
 
+### 2.8 — try and except
+
+**Concept inventory:**
+- `try`/`except` syntax: the try block runs; if it raises an exception Python jumps to the except block; if no exception the except block is skipped entirely
+- `ValueError`: raised when a function receives the right type but an invalid value — `int("hello")` receives a string (correct type for `int()`) but not a valid integer string
+- `ZeroDivisionError`: raised when dividing by zero
+- `except ExceptionType:` — catches only that specific class; other exceptions still propagate
+- Multiple except clauses — `except ValueError:` then `except ZeroDivisionError:` as separate blocks
+- Bare `except:` — catches everything including `KeyboardInterrupt` and system errors; named and explicitly discouraged: it hides real bugs behind a generic message
+- **Bulletproof input pattern**: `while True: / try: n = int(input()) / break / except ValueError: print("...")`  — the canonical way to validate user input; combines while True + break from L2.4 with try/except
+- `else` clause on try: runs when no exception was raised — Codex only, not a primary exercise
+- `finally` clause: runs regardless of exception — Codex only
+- Misconception: using try/except as a debugging substitute — catching the wrong exception class or catching bare `except:` hides real programming bugs
+
+**Exercises:** rung-1 Predict (static code, predict which block runs); rung-3 Modify (change error message); rung-4 Fix (wrong exception class specified — catches ZeroDivisionError when ValueError is needed); rung-5 Complete (bulletproof input stub — `while True / try / break / except ValueError / pass`); rung-6 Write (safe division: read two floats, catch both ValueError and ZeroDivisionError)
+
+**Error classes introduced:** ValueError (conversion failure), ZeroDivisionError
+
+---
+
+### 2.9 — Art and Music Capstone
+
+**Purpose:** Chapter 1 + Chapter 2 synthesis. No new syntax. All five strands, all rungs 4–6. Students use variables, expressions, type conversion, input, if/elif/else, while, for, break, try/except, turtle, and sound together.
+
+**Exercises:**
+- rung-4 Fix (turtle): broken 5-pointed star — wrong exterior angle (120° instead of 144°)
+- rung-5 Complete (turtle): multi-color spiral — `pencolor` changes on `i % 3` cycling red/blue/green with growing step `i * 10`
+- rung-6 Write (turtle + try): polygon generator — read number of sides via bulletproof input, draw a regular polygon with 100-unit sides and `360 / n` degree turns
+- rung-5 Complete (sound): arpeggio — `for rep in range(3)` playing C-E-G (60, 64, 67) with sleep(0.5)
+- rung-6 Write (sound): 8-beat groove — kick on every beat, snare on beats 2 and 6, using `sample()` + `if` + `%`
+
 **Sequencing notes (Chapter 2):**
 - `+=` introduced as the first subsection of L2.4 — before any while example uses it
 - Accumulator pattern named in L2.4, recalled and applied in L2.5
@@ -223,6 +254,8 @@ from scratch by default. Chapter 0 is pre-syntax.
 - Debugging lesson (L2.6) stays after both loop types — all 5 reviewers required this
 - Number-guessing game is the rung-6 Write at the end of L2.4, not the primary example
 - Collatz sequence is in the Chapter Challenge / Arena, not in lesson prose
+- `try`/`except` (L2.8) is positioned after all loop and branching lessons so students can combine it with while True + break (the bulletproof input pattern)
+- L2.9 is a no-new-syntax capstone — it must use only concepts from Ch.1 and Ch.2
 
 ## Chapter 3 — Functions (~6)
 *Goal: functions are machines you build once and reuse forever.*

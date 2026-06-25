@@ -910,3 +910,279 @@ window.CODELAB.lessons.push({
     note: "_ is the throwaway variable convention — use it when the loop variable is not needed in the body. The loop variable is a parameter: forward(i * 10) produces a different step each iteration. % 2 == 0 selects even beats; % 2 != 0 selects odd. Nested loops: inner loop completes all iterations before outer loop advances one step.",
   },
 });
+
+/* ── Lesson 2.8 ─────────────────────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c2s8",
+  chapter: 2,
+  strand: "core",
+  lang: "py",
+  timeBudgetMin: 18,
+  title: "try and except",
+  glossary: {
+    exception: "An error that occurs while a program is running. Python creates an exception object and looks for code that can handle it.",
+    "try block": "The code Python attempts to run. If an exception occurs inside, Python jumps to the matching except block.",
+    "except block": "Code that runs only when a specific exception occurs in the try block above it. If no exception occurs, the except block is skipped.",
+    "ValueError": "Raised when a function receives the right type but an invalid value — for example, int(\"hello\") receives a string but \"hello\" is not a valid integer.",
+    "ZeroDivisionError": "Raised when dividing by zero.",
+  },
+  content: [
+    {
+      type: "text",
+      md: "You have already seen `ValueError` at work: `int(\"hello\")` crashes with it. Until now, the only way to avoid that crash was to check the input before calling `int()`. Python gives you a second tool: `try`/`except`.\n\nThe idea is direct. Put the risky code inside a `try` block. If an **[[exception]]** occurs, Python jumps immediately to the matching `except` block and runs it instead. If no exception occurs, the `except` block is skipped entirely.",
+    },
+    {
+      type: "example",
+      note: "Run this. int('hello') raises a ValueError — Python jumps to the except block and prints the message. The line print(n) inside the try block never runs.",
+      code: "try:\n    n = int(\"hello\")\n    print(n)              # never reached\nexcept ValueError:\n    print(\"not a valid number\")\nprint(\"program continues\")  # always runs\n",
+    },
+    {
+      type: "text",
+      md: "The `except` line names the specific **[[exception]]** class it handles. `except ValueError:` catches only `ValueError` — other exceptions still propagate and crash the program as usual. This is correct behaviour: you should only catch exceptions you know how to handle.\n\nYou can have multiple `except` blocks below one `try`, each handling a different class. Python checks them in order and runs the first one that matches.",
+    },
+    {
+      type: "example",
+      note: "Two except blocks, two different errors. Change the inputs to see each branch fire.",
+      code: "try:\n    a = float(input())\n    b = float(input())\n    print(a / b)\nexcept ValueError:\n    print(\"Enter numbers only.\")\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero.\")\n",
+    },
+    {
+      type: "text",
+      md: "You may see `except:` without a class name. This catches **everything** — including `KeyboardInterrupt` (Ctrl-C) and internal Python errors. Avoid it. A bare `except:` turns every bug into a silent, unhelpful message and makes your program very hard to debug. Always name the exception class you intend to handle.",
+    },
+    {
+      type: "text",
+      md: "The most useful pattern `try`/`except` unlocks is **bulletproof input**: keep asking until the user enters something valid. Combine `while True:` with `break` from Lesson 2.4 and wrap the risky conversion in `try`.\n\nThis is the standard Python idiom for validated input. You will use it in almost every real program that reads from a user.",
+    },
+    {
+      type: "example",
+      note: "Keep asking until the user enters a valid integer. break exits the loop only when int() succeeds. Any non-integer restarts the loop.",
+      code: "while True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        print(\"That's not a number. Try again.\")\nprint(\"Got:\", n)\n",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "Before you run this, predict which block executes and what prints. Write your prediction, then run to check.",
+      starter: "try:\n    n = int(\"42\")\n    print(\"success:\", n)\nexcept ValueError:\n    print(\"not a number\")\n",
+      check: { type: "output", expected: "success: 42" },
+      hints: [
+        "int(\"42\") converts the string \"42\" to the integer 42. That is a valid conversion — no ValueError is raised.",
+        "When no exception occurs inside the try block, the except block is skipped entirely.",
+        "The try block runs to completion: n becomes 42 and print(\"success:\", n) runs. Output: success: 42.",
+      ],
+      solution: "try:\n    n = int(\"42\")\n    print(\"success:\", n)\nexcept ValueError:\n    print(\"not a number\")\n",
+    },
+    {
+      type: "exercise",
+      rung: 3,
+      prompt: "This catches a ValueError and prints 'oops'. Change the except message to 'Enter a whole number.' instead.",
+      starter: "try:\n    n = int(\"hello\")\n    print(n)\nexcept ValueError:\n    print(\"oops\")\n",
+      check: { type: "output", expected: "Enter a whole number." },
+      hints: [
+        "The message is inside the except block. It is a string argument to print.",
+        "Change only the string — keep the rest of the structure the same.",
+        "Replace print(\"oops\") with print(\"Enter a whole number.\")",
+      ],
+      solution: "try:\n    n = int(\"hello\")\n    print(n)\nexcept ValueError:\n    print(\"Enter a whole number.\")\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "This program should catch the error from int('hello') and print 'not a number'. But it specifies the wrong exception class, so the real ValueError escapes and crashes the program. Fix the except line so it catches the right error.",
+      starter: "try:\n    n = int(\"hello\")\n    print(n)\nexcept ZeroDivisionError:\n    print(\"not a number\")\n",
+      check: { type: "output", expected: "not a number" },
+      hints: [
+        "int(\"hello\") raises a ValueError — a conversion failure. The except line currently catches ZeroDivisionError, which is a different class.",
+        "The except line needs to name the class that int() actually raises when it gets invalid text.",
+        "Change except ZeroDivisionError: to except ValueError:",
+      ],
+      solution: "try:\n    n = int(\"hello\")\n    print(n)\nexcept ValueError:\n    print(\"not a number\")\n",
+    },
+    {
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete the bulletproof input loop. The while True and try/break structure are in place — add one print call inside the except block so the user knows to try again.",
+      starter: "while True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        pass  # tell the user to try again\nprint(\"Got:\", n)\n",
+      mockInput: ["abc", "5"],
+      check: { type: "output", expected: "That's not a number. Try again.\nGot: 5" },
+      hints: [
+        "Replace pass with a print call. When the user types 'abc', int() raises ValueError and the except block runs — your message should appear there.",
+        "The loop keeps going after the except block. On the next iteration, the user enters 5 — int('5') succeeds, break exits the loop.",
+        "Replace pass with: print(\"That's not a number. Try again.\")",
+      ],
+      solution: "while True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        print(\"That's not a number. Try again.\")\nprint(\"Got:\", n)\n",
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "Write a safe divider from scratch. Read two numbers with float(input()). Divide the first by the second and print the result. Handle two possible errors: if the user types a non-number, print 'Enter numbers only.'; if the second number is zero, print 'Cannot divide by zero.' With inputs 10 and 2, it should print 5.0.",
+      starter: "",
+      mockInput: ["10", "2"],
+      check: { type: "output", expected: "5.0" },
+      hints: [
+        "Wrap both float(input()) calls and the division inside a single try block. If any line in the try block raises an exception, Python jumps to the matching except.",
+        "Use two except blocks: except ValueError: and except ZeroDivisionError: — each with its own message.",
+        "try: a = float(input()); b = float(input()); print(a / b) — then two except blocks beneath.",
+      ],
+      solution: "try:\n    a = float(input())\n    b = float(input())\n    print(a / b)\nexcept ValueError:\n    print(\"Enter numbers only.\")\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero.\")\n",
+    },
+  ],
+  codex: {
+    topic: "try and except",
+    pattern: "try:\n    risky_code()\nexcept ValueError:\n    print(\"handle it\")\nexcept ZeroDivisionError:\n    print(\"zero\")\n\n# Bulletproof input:\nwhile True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        print(\"Try again.\")",
+    note: "try runs the risky code; except catches the named exception if it occurs. Always name the exception class — bare except: catches everything including bugs. ValueError: bad conversion (int('abc')). ZeroDivisionError: division by zero. Multiple except blocks catch different classes.",
+  },
+});
+
+/* ── Lesson 2.9 ─────────────────────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c2s9",
+  chapter: 2,
+  strand: "sound",
+  lang: "py",
+  timeBudgetMin: 25,
+  title: "Art and Music Capstone",
+  glossary: {
+    capstone: "A project that combines everything you have learned so far. No new syntax — only new combinations.",
+  },
+  content: [
+    {
+      type: "text",
+      md: "This lesson introduces no new syntax. Everything here — variables, loops, conditions, try/except, turtle commands, and sound commands — you already know. The goal is to combine them in ways that are bigger than any single lesson.\n\nThe exercises here use all five strands and every rung you have learned. Work through them in order: the Fix and Complete exercises warm up the patterns, and the Write exercises let you build something genuinely your own.",
+    },
+    {
+      type: "example",
+      note: "A spiral that changes colour every three steps. Three ideas from different lessons working together: the loop variable as a parameter, the % operator for cycling, and pencolor() from the turtle library.",
+      code: "for i in range(18):\n    if i % 3 == 0:\n        pencolor(\"red\")\n    elif i % 3 == 1:\n        pencolor(\"blue\")\n    else:\n        pencolor(\"green\")\n    forward(i * 8)\n    right(91)\n",
+    },
+    {
+      type: "example",
+      note: "A melody that repeats a three-note motif four times. The outer loop counts repetitions; the inner play/sleep lines lay down the notes. set_tempo() controls the speed.",
+      code: "set_tempo(110)\nfor rep in range(4):\n    play(60)\n    sleep(0.5)\n    play(64)\n    sleep(0.5)\n    play(67)\n    sleep(0.5)\n",
+    },
+    {
+      type: "example",
+      note: "A 16-beat groove: kick on every beat, snare on beats 3 and 11 (the backbeat in a bar of 16). Change the beat numbers to shift the snare position.",
+      code: "set_tempo(120)\nfor beat in range(16):\n    sample(\"kick\")\n    if beat == 3 or beat == 11:\n        sample(\"snare\")\n    sleep(0.25)\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "This is meant to draw a 5-pointed star, but the angle is wrong so it draws something else. A regular 5-pointed star needs an exterior angle of 144 degrees — not 120. Fix the turn angle.",
+      starter: "for _ in range(5):\n    forward(100)\n    right(120)\n",
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "forward", val: 100 }, { fn: "right", val: 144 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 144 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 144 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 144 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 144 },
+        ],
+      },
+      hints: [
+        "A regular polygon with n sides has an exterior angle of 360/n degrees. But a 5-pointed star is not a regular pentagon — each point turns 144 degrees, not 72.",
+        "The current angle 120 draws a triangle-like shape. A proper 5-pointed star goes forward, turns 144, forward, turns 144, and so on for all five points.",
+        "Change right(120) to right(144).",
+      ],
+      solution: "for _ in range(5):\n    forward(100)\n    right(144)\n",
+    },
+    {
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete this colour-changing spiral. The loop runs 6 steps. On each step, pick a colour based on i % 3 (0 → red, 1 → blue, 2 → green), then move forward by i * 10 and turn right 91 degrees. The three pencolor calls are missing — fill them in.",
+      starter: "for i in range(6):\n    if i % 3 == 0:\n        pass  # pencolor red\n    elif i % 3 == 1:\n        pass  # pencolor blue\n    else:\n        pass  # pencolor green\n    forward(i * 10)\n    right(91)\n",
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "color", val: "red" },   { fn: "forward", val: 0 },  { fn: "right", val: 91 },
+          { fn: "color", val: "blue" },  { fn: "forward", val: 10 }, { fn: "right", val: 91 },
+          { fn: "color", val: "green" }, { fn: "forward", val: 20 }, { fn: "right", val: 91 },
+          { fn: "color", val: "red" },   { fn: "forward", val: 30 }, { fn: "right", val: 91 },
+          { fn: "color", val: "blue" },  { fn: "forward", val: 40 }, { fn: "right", val: 91 },
+          { fn: "color", val: "green" }, { fn: "forward", val: 50 }, { fn: "right", val: 91 },
+        ],
+      },
+      hints: [
+        "Replace each pass with a pencolor() call. pencolor takes a colour name as a string.",
+        "The first pass is inside if i % 3 == 0: — that branch runs when i is 0 or 3. The colour there is red.",
+        "Three replacements: pencolor(\"red\"), pencolor(\"blue\"), pencolor(\"green\") — one per branch.",
+      ],
+      solution: "for i in range(6):\n    if i % 3 == 0:\n        pencolor(\"red\")\n    elif i % 3 == 1:\n        pencolor(\"blue\")\n    else:\n        pencolor(\"green\")\n    forward(i * 10)\n    right(91)\n",
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "Write a polygon generator. Use bulletproof input (while True / try / break / except ValueError) to read the number of sides. Then draw a regular polygon: each side is 100 units and each turn is 360 divided by the number of sides degrees. With input 5, it draws a pentagon.",
+      starter: "",
+      mockInput: ["5"],
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "forward", val: 100 }, { fn: "right", val: 72.0 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 72.0 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 72.0 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 72.0 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 72.0 },
+        ],
+      },
+      hints: [
+        "Use the bulletproof input pattern from Lesson 2.8: while True: / try: n = int(input()) / break / except ValueError: print(...)",
+        "Once you have n, use a for loop: for _ in range(n): then forward(100) and right(360 / n).",
+        "360 / 5 = 72.0 — division gives a float, which right() accepts. You do not need to convert it.",
+      ],
+      solution: "while True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        print(\"Enter a whole number.\")\nfor _ in range(n):\n    forward(100)\n    right(360 / n)\n",
+    },
+    {
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete this repeating arpeggio. The outer loop runs 3 times. Inside each repetition, play three notes — 60 (C), 64 (E), and 67 (G) — with a sleep(0.5) after each note. The loop header and set_tempo are given; add the six missing lines.",
+      starter: "set_tempo(100)\nfor rep in range(3):\n    pass  # play 60, sleep 0.5, play 64, sleep 0.5, play 67, sleep 0.5\n",
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "play", note: 60 }, { fn: "play", note: 64 }, { fn: "play", note: 67 },
+          { fn: "play", note: 60 }, { fn: "play", note: 64 }, { fn: "play", note: 67 },
+          { fn: "play", note: 60 }, { fn: "play", note: 64 }, { fn: "play", note: 67 },
+        ],
+      },
+      hints: [
+        "Replace pass with three play/sleep pairs. Each pair plays one note then waits.",
+        "play(60); sleep(0.5) plays middle C and waits. Then play(64); sleep(0.5) plays E. Then play(67); sleep(0.5) plays G.",
+        "Six lines inside the loop body: play(60), sleep(0.5), play(64), sleep(0.5), play(67), sleep(0.5).",
+      ],
+      solution: "set_tempo(100)\nfor rep in range(3):\n    play(60)\n    sleep(0.5)\n    play(64)\n    sleep(0.5)\n    play(67)\n    sleep(0.5)\n",
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "Write an 8-beat groove from scratch. On every beat play a kick with sample('kick'). On beats 2 and 6 also play a snare with sample('snare') — after the kick. Add sleep(0.5) after each beat's sounds. Use a for loop over range(8) and if with the or operator.",
+      starter: "",
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "sample", name: "kick" },
+          { fn: "sample", name: "kick" },
+          { fn: "sample", name: "kick" }, { fn: "sample", name: "snare" },
+          { fn: "sample", name: "kick" },
+          { fn: "sample", name: "kick" },
+          { fn: "sample", name: "kick" },
+          { fn: "sample", name: "kick" }, { fn: "sample", name: "snare" },
+          { fn: "sample", name: "kick" },
+        ],
+      },
+      hints: [
+        "Start with: for beat in range(8): then sample(\"kick\") inside. That gives the kick on every beat.",
+        "Add an if statement after the kick: if beat == 2 or beat == 6: sample(\"snare\")",
+        "Put sleep(0.5) after the if block — outside the if, so it runs on every beat regardless.",
+      ],
+      solution: "for beat in range(8):\n    sample(\"kick\")\n    if beat == 2 or beat == 6:\n        sample(\"snare\")\n    sleep(0.5)\n",
+    },
+  ],
+  codex: {
+    topic: "Chapter 2 capstone",
+    pattern: "# Colour spiral\nfor i in range(n):\n    pencolor(\"red\" if i%3==0 else \"blue\")\n    forward(i * step)\n    right(angle)\n\n# Drum groove\nfor beat in range(8):\n    sample(\"kick\")\n    if beat == 2 or beat == 6:\n        sample(\"snare\")\n    sleep(0.5)",
+    note: "All Chapter 2 patterns apply here: loop variable as a parameter, % for cycling, if/elif inside loops, try/except for input, nested loops for multi-bar patterns. pencolor() changes the drawing colour mid-spiral. set_tempo() controls beat speed.",
+  },
+});
