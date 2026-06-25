@@ -22,42 +22,64 @@
 - Persistent progress via localStorage
 
 ### Content
-Chapter 1, Lesson 1 — four sections authored and tested:
+Chapter 1 — all 7 lessons authored and tested:
 
 | ID | Title | Rungs used |
 |----|-------|------------|
 | c1s1 | Output and print | 1, 3, 4, 6 |
-| c1s2 | Combining text | 3, 4, 6 |
-| c1s3 | Comments | 1, 3, 4 |
-| c1s4 | Shaping output: sep and end | 3, 5, 6 |
+| c1s2 | Values and types | 1, 4, 6 |
+| c1s3 | Variables and assignment | 1, 3, 4, 6 |
+| c1s4 | Expressions and math | 1, 3, 4 |
+| c1s5 | Working with strings | 3, 4, 5, 6 |
+| c1s6 | Input | 3, 5, 6 |
+| c1s7 | First Drawing and Sound | 3, 3 |
 
-All 10 harness checks pass. Working build: `dist/course-v2.html`.
+All harness checks pass. Working build: `dist/course-v2.html`.
 
 ---
 
 ## What to build next
 
-### Phase A — Finish Chapter 1 content (all remaining lessons)
+### Phase A — Chapter 1 content ✅ COMPLETE
 
-Author each lesson's sections in `lessons/c1.js` using the `content[]` format
-documented in `lessons/schema.md`. Run `npm test` after each lesson. Commit when
-the lesson's sections all pass.
+All 7 lessons authored, all harness checks green.
 
-Per `CURRICULUM.md`, Chapter 1 has 7 lessons:
+| ID | Lesson | Status |
+|----|--------|--------|
+| c1s1 | Output and print | ✅ done |
+| c1s2 | Values and types | ✅ done |
+| c1s3 | Variables and assignment | ✅ done |
+| c1s4 | Expressions and math | ✅ done |
+| c1s5 | Working with strings | ✅ done |
+| c1s6 | Input | ✅ done |
+| c1s7 | First Drawing and Sound | ✅ done |
 
-| Lesson | Sections to author | Status |
-|--------|-------------------|--------|
-| 1.1 Print and Output | c1s1–c1s4 | ✅ done |
-| 1.2 Values and Types | `int`/`float`/`str`, `type()`, conversion | to do |
-| 1.3 Variables | assignment, reassignment, stepper | to do |
-| 1.4 Expressions & Math | operators, order, brackets | to do |
-| 1.5 Working with Strings | concat, type mixing → name mashup | to do |
-| 1.6 Input | `input()`, conversion → age calculator | to do |
-| 1.7 First Drawing & Sound | turtle square + 3-note motif | to do |
+**Important structural decisions made (from 5-reviewer curriculum audit):**
+- Comments folded into Lesson 1.3 as a half-page digression (not a standalone lesson)
+- sep/end deferred to Chapter 2 (before loops, it has no motivational context)
+- String methods (len, upper, lower, split, strip) added to Lesson 1.5
+- Lesson 1.7 is rung 3 Modify only (first encounter with two new APIs must not be rung 6)
+- MIDI numbers named in Lesson 1.7 (60 = middle C) — nine chapters of play(60) as magic numbers would be wrong
 
-Each lesson = 3–5 sections. Each section = 2–4 text blocks + 2–3 examples + 2–4 exercises.
+### Phase B — Chapter 2 (Decisions and Loops) ← NEXT
 
-### Phase B — Chapter 0 (pre-syntax hook)
+Chapter 2 structure is approved after a 5-reviewer ground-up curriculum audit. See CURRICULUM.md for the full concept inventory per lesson. Key additions vs the original draft:
+
+- `+=` introduced as first subsection of 2.4 (before any while example uses it)
+- Accumulator pattern named, Codexed, standalone exercises including "print inside vs outside loop" Fix (in 2.4; recalled in 2.5)
+- "Code after if/else always runs" is a named concept with worked counterexample in 2.2
+- `for` vs `while` decision rule is a named section in 2.5
+- Rung-1 Predict exercises at the open of 2.2, 2.4, and 2.5 (not just 2.1)
+- `print()` `sep=`/`end=` taught as a named subsection in 2.5 before the exercise that uses them
+- `= vs ==` is a rung-4 Fix exercise in 2.1 (provoked, not just warned about)
+- Debugging lesson (2.6) stays after both loop types — this is a hard constraint
+- Guessing game is rung-6 Write at end of 2.4, not the primary example
+- Collatz → Chapter Challenge / Arena only
+- L2.7 gains rung-4 Fix + rung-5 Complete before rung-6 Write (closes rung gap from Ch.1 L1.7)
+
+Author lessons in `lessons/c2.js`. Follow the same process as c1.js: research first per AUTHORING.md, cover every concept inventory item, `npm test` before reporting done.
+
+### Phase C — Chapter 0 (pre-syntax hook)
 Author Chapter 0 sections: First Sound, Algorithms Are Exact, Guide the Robot,
 Repeat and Decide, The Sandwich Bug. These come before Chapter 1 in the nav.
 
