@@ -187,10 +187,17 @@
         if (CL.music) CL.music.schedule(events.filter(function (x) { return x[0] === "play" || x[0] === "sample"; }));
         var turtleEvs = events.filter(function (x) { return x[0] && String(x[0]).indexOf("t_") === 0; });
         var plotEvs = events.filter(function (x) { return x[0] === "plot" || x[0] === "bar"; });
-        var stEl = document.getElementById("stage"), cvEl = document.getElementById("stage-canvas");
-        if ((turtleEvs.length || plotEvs.length) && stEl) stEl.style.display = "";
-        if (turtleEvs.length && CL.turtle && cvEl) CL.turtle.render(cvEl, turtleEvs);
-        if (plotEvs.length && CL.plot && cvEl) CL.plot.render(cvEl, plotEvs);
+        if (turtleEvs.length || plotEvs.length) {
+          var cvEl = outBox.querySelector("canvas.inline-canvas");
+          if (!cvEl) {
+            cvEl = document.createElement("canvas");
+            cvEl.className = "inline-canvas stage-canvas";
+            cvEl.width = 480; cvEl.height = 320;
+            outBox.appendChild(cvEl);
+          }
+          if (turtleEvs.length && CL.turtle) CL.turtle.render(cvEl, turtleEvs);
+          if (plotEvs.length && CL.plot) CL.plot.render(cvEl, plotEvs);
+        }
       },
       mockInput: mockInput || [],
     }).then(function (r) {
@@ -1107,6 +1114,7 @@
     state.lesson = loadLesson(CL.storage.getLessonIdx());
     state.code = CL.storage.getCode(state.lesson.id) || state.lesson.starterCode;
     setTheme(CL.storage.getTheme());
+    if (CL.runtime && CL.runtime.python) CL.runtime.python.ensureReady().catch(function () {});
   }
 
   CL.engine = { render: render, setTheme: setTheme, setLesson: setLesson, setView: setView };
