@@ -149,6 +149,8 @@
   var status = "idle"; // idle | loading | ready | running | error
   var statusCbs = [];
   var readyResolvers = [];
+  var readyRejectors = [];
+  var loadError = null;
   var activeRun = null; // { onStdout, onStderr, resolve }
 
   function setStatus(s) {
@@ -163,17 +165,34 @@
     if (run && run.resolve) run.resolve(result);
   }
 
+  function failLoad(msg) {
+    loadError = msg;
+    if (worker) { worker.terminate(); worker = null; }
+    if (blobUrl) { URL.revokeObjectURL(blobUrl); blobUrl = null; }
+    setStatus("error");
+    var rj = readyRejectors.splice(0);
+    readyResolvers.splice(0);
+    rj.forEach(function (fn) { fn(new Error(msg)); });
+  }
+
   function spawn() {
     if (worker) worker.terminate();
     if (blobUrl) URL.revokeObjectURL(blobUrl);
     blobUrl = URL.createObjectURL(new Blob([WORKER_SRC], { type: "application/javascript" }));
     worker = new Worker(blobUrl);
     setStatus("loading");
+    var initTimeout = setTimeout(function () {
+      if (status === "loading") {
+        failLoad("Python timed out loading (30 s). Your browser may be blocking network requests from local files — try opening in Chrome or Firefox, or use a local server.");
+      }
+    }, 30000);
     worker.onmessage = function (e) {
       var m = e.data;
       if (m.type === "ready") {
+        clearTimeout(initTimeout);
         setStatus("ready");
         var rs = readyResolvers.splice(0);
+        readyRejectors.splice(0);
         rs.forEach(function (r) { r(); });
       } else if (m.type === "stdout") {
         if (activeRun && activeRun.onStdout) activeRun.onStdout(m.text);
@@ -188,20 +207,22 @@
       } else if (m.type === "error") {
         finishRun({ ok: false, error: m.text });
       } else if (m.type === "fatal") {
-        setStatus("error");
-        finishRun({ ok: false, error: "Could not load Python: " + m.text });
+        clearTimeout(initTimeout);
+        failLoad("Could not load Python: " + m.text);
       }
     };
     worker.onerror = function (ev) {
-      setStatus("error");
-      finishRun({ ok: false, error: "Worker failed to start (blocked from file://?): " + (ev.message || "") });
+      clearTimeout(initTimeout);
+      failLoad("Python worker failed to start: " + (ev.message || "unknown error") + ". Try Chrome or Firefox.");
     };
   }
 
   function ensureReady() {
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
       if (status === "ready") return resolve();
+      if (status === "error") return reject(new Error(loadError || "Python failed to load"));
       readyResolvers.push(resolve);
+      readyRejectors.push(reject);
       if (!worker) spawn();
     });
   }
@@ -220,6 +241,8 @@
           setStatus("running");
           worker.postMessage({ type: "run", code: code, mockInput: opts.mockInput || [] });
         });
+      }).catch(function (e) {
+        return { ok: false, error: String(e.message || e) };
       });
     },
     // Kill a runaway loop and bring Python back to ready.
