@@ -1052,6 +1052,14 @@ window.CODELAB.lessons.push({
       md: "This lesson introduces no new syntax. Everything here — variables, loops, conditions, try/except, turtle commands, and sound commands — you already know. The goal is to combine them in ways that are bigger than any single lesson.\n\nThe exercises here use all five strands and every rung you have learned. Work through them in order: the Fix and Complete exercises warm up the patterns, and the Write exercises let you build something genuinely your own.",
     },
     {
+      type: "text",
+      md: "**Your note numbers.** You know the C major scale from Lesson 1.7: `60` (C) · `62` (D) · `64` (E) · `65` (F) · `67` (G) · `69` (A) · `71` (B) · `72` (high C). Add `12` to jump one octave up, subtract `12` to jump down. Deep low C is `48`; bright high C is `84`.\n\n**Minor scale** (darker, moodier sound) — swap in these numbers: `60` · `62` · `63` (Eb) · `65` · `67` · `68` (Ab) · `70` (Bb) · `72`. The flattened third at `63` is the note that makes it feel minor.\n\n**Pentatonic shortcut.** Five notes that sound good in almost any order: `60`, `62`, `64`, `67`, `69`. Loop through them, repeat them, scramble them — they are hard to make sound wrong. Most pop and blues melodies are built from these five.",
+    },
+    {
+      type: "text",
+      md: "**Drum names.** `sample(\"kick\")` is the deep bass drum hit. `sample(\"snare\")` is the cracking mid hit. `sample(\"hihat\")` is the short tick. Any other name you invent — `\"clap\"`, `\"tom\"`, `\"rim\"` — also produces a short percussive click, so feel free to experiment.\n\n**`set_tempo(bpm)` and `sleep()`.** `set_tempo(120)` sets 120 beats per minute. `sleep(1)` waits one beat; `sleep(0.5)` is a half-beat (eighth note); `sleep(0.25)` is a quarter-beat (sixteenth note). Slower tempo plus `sleep(1)` gives a ballad feel; fast tempo plus `sleep(0.25)` gives a driving groove.\n\n**Colour names.** `pencolor()` accepts any web colour name: `\"red\"`, `\"blue\"`, `\"green\"`, `\"yellow\"`, `\"orange\"`, `\"purple\"`, `\"pink\"`, `\"cyan\"`, `\"gold\"`, `\"coral\"`, `\"teal\"`, `\"lime\"`, `\"indigo\"`, `\"magenta\"`. Hex codes like `\"#ff6600\"` also work.\n\n**Polygon angles.** A regular polygon with `n` sides turns `360 / n` degrees each step: triangle `120`, square `90`, hexagon `60`, pentagon `72`. A five-pointed star is different — each point turns `144` degrees because you skip every other vertex.",
+    },
+    {
       type: "example",
       note: "A spiral that changes colour every three steps. Three ideas from different lessons working together: the loop variable as a parameter, the % operator for cycling, and pencolor() from the turtle library.",
       code: "for i in range(18):\n    if i % 3 == 0:\n        pencolor(\"red\")\n    elif i % 3 == 1:\n        pencolor(\"blue\")\n    else:\n        pencolor(\"green\")\n    forward(i * 8)\n    right(91)\n",
