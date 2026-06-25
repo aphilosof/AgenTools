@@ -104,6 +104,26 @@
     return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
 
+  function buildRefTable(block, glossary) {
+    var wrap = el("div", "ref-table-wrap");
+    if (block.title) { var ti = el("div", "ref-table-title"); ti.textContent = block.title; wrap.appendChild(ti); }
+    var tbl = document.createElement("table"); tbl.className = "ref-table";
+    if (block.head) {
+      var thead = document.createElement("thead");
+      var htr = document.createElement("tr");
+      block.head.forEach(function (h) { var th = document.createElement("th"); th.innerHTML = inlineProse(h, glossary); htr.appendChild(th); });
+      thead.appendChild(htr); tbl.appendChild(thead);
+    }
+    var tbody = document.createElement("tbody");
+    (block.rows || []).forEach(function (row) {
+      var tr = document.createElement("tr");
+      row.forEach(function (cell) { var td = document.createElement("td"); td.innerHTML = inlineProse(String(cell), glossary); tr.appendChild(td); });
+      tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody); wrap.appendChild(tbl);
+    return wrap;
+  }
+
   // Teaching prose: escape, then render `code`, **bold**, and [[term]] links.
   // A term carries its definition as a hover popover (pure CSS, from glossary).
   function inlineProse(s, glossary) {
@@ -495,6 +515,8 @@
             p.innerHTML = inlineProse(para.trim(), lesson.glossary);
             container.appendChild(p);
           });
+        } else if (block.type === "table") {
+          container.appendChild(buildRefTable(block, lesson.glossary));
         } else if (block.type === "example") {
           container.appendChild(buildExampleBlock(lesson, block, theme));
         } else if (block.type === "exercise") {

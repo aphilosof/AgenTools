@@ -166,9 +166,10 @@ function validateLesson(l) {
     l.content.forEach((block, i) => {
       const bw = `${where}: content[${i}]`;
       if (!block.type) { errs.push(`${bw}: type required`); return; }
-      if (!["text", "example", "exercise"].includes(block.type))
-        errs.push(`${bw}: type must be "text", "example", or "exercise"`);
+      if (!["text", "example", "exercise", "table"].includes(block.type))
+        errs.push(`${bw}: type must be "text", "example", "exercise", or "table"`);
       if (block.type === "text" && !isNonEmptyString(block.md)) errs.push(`${bw}: md required`);
+      if (block.type === "table" && !Array.isArray(block.rows)) errs.push(`${bw}: rows required`);
       if (block.type === "example" && !isNonEmptyString(block.code)) errs.push(`${bw}: code required`);
       if (block.type === "exercise") validateExercise(block, bw, errs);
     });

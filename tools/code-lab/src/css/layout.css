@@ -121,6 +121,19 @@ body { margin: 0; }
   border-top: var(--border-w) solid var(--border);
 }
 
+/* ----- inline reference tables ----- */
+.ref-table-wrap { margin: 0 0 16px; }
+.ref-table-wrap + .ref-table-wrap { margin-top: -4px; }
+.example-wrap + .ref-table-wrap,
+.exercise-block + .ref-table-wrap { margin-top: 24px; padding-top: 16px; border-top: var(--border-w) solid var(--border); }
+.ref-table-title { font-size: 0.75em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 5px; }
+.ref-table { border-collapse: collapse; width: 100%; font-size: 0.84em; border: var(--border-w) solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.ref-table th { background: var(--panel-header); color: var(--text); font-weight: 700; font-family: var(--font-code); font-size: 0.95em; padding: 5px 10px; text-align: left; border-bottom: var(--border-w) solid var(--border); }
+.ref-table td { padding: 4px 10px; border-bottom: var(--border-w) solid var(--border); color: var(--text); }
+.ref-table tr:last-child td { border-bottom: none; }
+.ref-table td code { font-family: var(--font-code); font-size: 1em; color: var(--accent); }
+.ref-table td:first-child { font-family: var(--font-code); color: var(--accent); font-weight: 600; }
+
 /* ----- panels (editor, output) ----- */
 .panel {
   border: var(--border-w) solid var(--border);

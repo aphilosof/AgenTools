@@ -1049,15 +1049,32 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "This lesson introduces no new syntax. Everything here — variables, loops, conditions, try/except, turtle commands, and sound commands — you already know. The goal is to combine them in ways that are bigger than any single lesson.\n\nThe exercises here use all five strands and every rung you have learned. Work through them in order: the Fix and Complete exercises warm up the patterns, and the Write exercises let you build something genuinely your own.",
+      md: "This lesson introduces no new syntax. Everything here — variables, loops, conditions, try/except, turtle commands, and sound commands — you already know. The goal is to combine them in ways that are bigger than any single lesson.\n\nThe exercises below are split into two groups: drawing first, then music. Each group starts with a worked example, then a reference card, then exercises.",
     },
     {
       type: "text",
-      md: "**Your note numbers.** You know the C major scale from Lesson 1.7: `60` (C) · `62` (D) · `64` (E) · `65` (F) · `67` (G) · `69` (A) · `71` (B) · `72` (high C). Add `12` to jump one octave up, subtract `12` to jump down. Deep low C is `48`; bright high C is `84`.\n\n**Minor scale** (darker, moodier sound) — swap in these numbers: `60` · `62` · `63` (Eb) · `65` · `67` · `68` (Ab) · `70` (Bb) · `72`. The flattened third at `63` is the note that makes it feel minor.\n\n**Pentatonic shortcut.** Five notes that sound good in almost any order: `60`, `62`, `64`, `67`, `69`. Loop through them, repeat them, scramble them — they are hard to make sound wrong. Most pop and blues melodies are built from these five.",
+      md: "**Drawing with the turtle.** Here is the complete toolkit for what follows. Keep this visible while you work through the drawing exercises.",
     },
     {
-      type: "text",
-      md: "**Drum names.** `sample(\"kick\")` is the deep bass drum hit. `sample(\"snare\")` is the cracking mid hit. `sample(\"hihat\")` is the short tick. Any other name you invent — `\"clap\"`, `\"tom\"`, `\"rim\"` — also produces a short percussive click, so feel free to experiment.\n\n**`set_tempo(bpm)` and `sleep()`.** `set_tempo(120)` sets 120 beats per minute. `sleep(1)` waits one beat; `sleep(0.5)` is a half-beat (eighth note); `sleep(0.25)` is a quarter-beat (sixteenth note). Slower tempo plus `sleep(1)` gives a ballad feel; fast tempo plus `sleep(0.25)` gives a driving groove.\n\n**Colour names.** `pencolor()` accepts any web colour name: `\"red\"`, `\"blue\"`, `\"green\"`, `\"yellow\"`, `\"orange\"`, `\"purple\"`, `\"pink\"`, `\"cyan\"`, `\"gold\"`, `\"coral\"`, `\"teal\"`, `\"lime\"`, `\"indigo\"`, `\"magenta\"`. Hex codes like `\"#ff6600\"` also work.\n\n**Polygon angles.** A regular polygon with `n` sides turns `360 / n` degrees each step: triangle `120`, square `90`, hexagon `60`, pentagon `72`. A five-pointed star is different — each point turns `144` degrees because you skip every other vertex.",
+      type: "table",
+      title: "Turtle colours — any of these work in pencolor()",
+      head: ["colour", "colour", "colour", "colour", "colour", "colour", "colour"],
+      rows: [
+        ["`\"red\"`", "`\"orange\"`", "`\"yellow\"`", "`\"green\"`", "`\"blue\"`", "`\"purple\"`", "`\"pink\"`"],
+        ["`\"cyan\"`", "`\"magenta\"`", "`\"gold\"`", "`\"coral\"`", "`\"teal\"`", "`\"lime\"`", "`\"indigo\"`"],
+      ],
+    },
+    {
+      type: "table",
+      title: "Polygon angles — regular shapes",
+      head: ["shape", "sides", "turn angle"],
+      rows: [
+        ["triangle", "3", "`120`°"],
+        ["square", "4", "`90`°"],
+        ["pentagon", "5", "`72`°"],
+        ["hexagon", "6", "`60`°"],
+        ["5-pointed star", "—", "`144`° (skips every other vertex)"],
+      ],
     },
     {
       type: "example",
@@ -1141,6 +1158,63 @@ window.CODELAB.lessons.push({
         "360 / 5 = 72.0 — division gives a float, which right() accepts. You do not need to convert it.",
       ],
       solution: "while True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        print(\"Enter a whole number.\")\nfor _ in range(n):\n    forward(100)\n    right(360 / n)\n",
+    },
+    {
+      type: "text",
+      md: "**Making music.** The next exercises are all about sound. Use the reference cards below while you build.",
+    },
+    {
+      type: "table",
+      title: "Note numbers — C major scale (middle octave)",
+      head: ["C", "D", "E", "F", "G", "A", "B", "high C"],
+      rows: [
+        ["`60`", "`62`", "`64`", "`65`", "`67`", "`69`", "`71`", "`72`"],
+      ],
+    },
+    {
+      type: "table",
+      title: "Going higher or lower — add or subtract 12 per octave",
+      head: ["low C", "middle C", "high C", "very high C"],
+      rows: [
+        ["`48`", "`60`", "`72`", "`84`"],
+      ],
+    },
+    {
+      type: "table",
+      title: "Minor scale — darker, moodier sound",
+      head: ["C", "D", "Eb", "F", "G", "Ab", "Bb", "C"],
+      rows: [
+        ["`60`", "`62`", "`63`", "`65`", "`67`", "`68`", "`70`", "`72`"],
+      ],
+    },
+    {
+      type: "table",
+      title: "Pentatonic — five notes that sound good in any order",
+      head: ["C", "D", "E", "G", "A"],
+      rows: [
+        ["`60`", "`62`", "`64`", "`67`", "`69`"],
+      ],
+    },
+    {
+      type: "table",
+      title: "Drum sounds — use with sample()",
+      head: ["name", "sound"],
+      rows: [
+        ["`\"kick\"`", "deep bass drum hit"],
+        ["`\"snare\"`", "cracking mid hit"],
+        ["`\"hihat\"`", "short high tick"],
+        ["`\"clap\"` / `\"tom\"` / any name", "short percussive click"],
+      ],
+    },
+    {
+      type: "table",
+      title: "sleep() values — how long to wait between notes or beats",
+      head: ["call", "feels like"],
+      rows: [
+        ["`sleep(1)`", "one full beat"],
+        ["`sleep(0.5)`", "half beat (eighth note)"],
+        ["`sleep(0.25)`", "quarter beat (sixteenth note — driving groove)"],
+      ],
     },
     {
       type: "exercise",
