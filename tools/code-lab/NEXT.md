@@ -61,25 +61,36 @@ All 7 lessons authored, all harness checks green.
 - Lesson 1.7 is rung 3 Modify only (first encounter with two new APIs must not be rung 6)
 - MIDI numbers named in Lesson 1.7 (60 = middle C) — nine chapters of play(60) as magic numbers would be wrong
 
-### Phase B — Chapter 2 (Decisions and Loops) ← NEXT
+### Phase B — Chapter 2 (Decisions and Loops) ✅ COMPLETE
 
-Chapter 2 structure is approved after a 5-reviewer ground-up curriculum audit. See CURRICULUM.md for the full concept inventory per lesson. Key additions vs the original draft:
+All 9 lessons authored, all 16 lesson harness checks green (commit `edd9aae`).
 
-- `+=` introduced as first subsection of 2.4 (before any while example uses it)
-- Accumulator pattern named, Codexed, standalone exercises including "print inside vs outside loop" Fix (in 2.4; recalled in 2.5)
-- "Code after if/else always runs" is a named concept with worked counterexample in 2.2
-- `for` vs `while` decision rule is a named section in 2.5
-- Rung-1 Predict exercises at the open of 2.2, 2.4, and 2.5 (not just 2.1)
-- `print()` `sep=`/`end=` taught as a named subsection in 2.5 before the exercise that uses them
-- `= vs ==` is a rung-4 Fix exercise in 2.1 (provoked, not just warned about)
-- Debugging lesson (2.6) stays after both loop types — this is a hard constraint
-- Guessing game is rung-6 Write at end of 2.4, not the primary example
-- Collatz → Chapter Challenge / Arena only
-- L2.7 gains rung-4 Fix + rung-5 Complete before rung-6 Write (closes rung gap from Ch.1 L1.7)
+| ID | Title | Rungs |
+|----|-------|-------|
+| c2s1 | True, False, and Comparison | 1, 2, 4 |
+| c2s2 | if and else | 1, 3, 4, 5 |
+| c2s3 | elif | 4, 5, 6 |
+| c2s4 | while Loops | 1, 3, 4, 5, 6 |
+| c2s5 | for and range | 1, 3, 4, 5, 6 |
+| c2s6 | Fix the Broken Code | 1, 4 |
+| c2s7 | Loops Make Art and Beats | 4, 5, 6 |
+| c2s8 | try and except | 1, 3, 4, 5, 6 |
+| c2s9 | Art and Music Capstone | 4, 5, 6 |
 
-Author lessons in `lessons/c2.js`. Follow the same process as c1.js: research first per AUTHORING.md, cover every concept inventory item, `npm test` before reporting done.
+**Gate checklist for browser testing:**
+- Open `dist/course-v2.html`, navigate to Chapter 2
+- 2.1: Parsons — drag lines into the in-range check; verify reorder feedback
+- 2.4: rung-6 Write — guessing game with secret=7; inputs 3,9,7 → "Too low / Too high / Correct!"
+- 2.5: rung-6 Write — prime checker; output should be 2 3 5 7 11 13 17 19
+- 2.7: rung-5 Complete — spiral; canvas should draw an expanding spiral
+- 2.8: rung-5 Complete — bulletproof input; inputs "abc","5" → "That's not a number. Try again. / Got: 5"
+- 2.9: rung-5 Complete — pencolor spiral; canvas should draw red/blue/green spiral
 
-### Phase C — Chapter 0 (pre-syntax hook)
+### Phase C — Chapter 3 (Functions) ← NEXT
+
+Work chapter by chapter per CURRICULUM.md. Requires explicit user approval to begin.
+
+### Phase D — Chapter 0 (pre-syntax hook)
 Author Chapter 0 sections: First Sound, Algorithms Are Exact, Guide the Robot,
 Repeat and Decide, The Sandwich Bug. These come before Chapter 1 in the nav.
 
