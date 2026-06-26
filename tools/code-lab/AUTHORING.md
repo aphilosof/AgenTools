@@ -5,7 +5,31 @@ improvised sequencing, dumbed-down or robotic prose, omitted concepts, and the
 user being asked to find the gaps. None of that again. PLAN.md §3/§4/§5 and
 REVIEW.md are the curriculum authority; this file is how every lesson is built.
 
-## Process — how a lesson gets made
+## Process — how a chapter and its lessons get made
+
+### Step 0 (MANDATORY): 5-reviewer curriculum audit before any prose
+
+Every chapter — without exception — begins with a ground-up curriculum audit
+before a single lesson is written. The audit must:
+
+1. Run 5 parallel agents, each playing a named curriculum expert (Downey,
+   Resnick, Severance, Guzdial, Ko). Each agent derives the chapter's concept
+   inventory **from first principles** — not from the existing plan — using the
+   authoritative sources below. They then compare their inventory against the
+   proposed plan and report: gaps (missing concepts), removals (unnecessary
+   topics), sequencing issues, and rung-ladder fit.
+2. A synthesis agent adjudicates across all five reports and produces a final
+   recommended lesson table with per-lesson concept inventories.
+3. That table is presented to the user for approval **before any prose is
+   written**. No exceptions. Writing prose before the structure is approved is
+   the failure mode that produced thin, incomplete content in earlier sessions.
+4. The approved lesson table is recorded in `CURRICULUM.md` and `NEXT.md`.
+
+The audit agents must start from scratch — they must not simply "review" the
+existing plan and shuffle it. They derive the chapter content independently and
+then surface what the plan gets wrong or misses.
+
+### Step 1: Author each lesson
 
 1. **Research first, every topic.** Before writing, do the research pass defined
    in "Research: scope and sources" below. Derive the **complete** concept set
@@ -14,20 +38,26 @@ REVIEW.md are the curriculum authority; this file is how every lesson is built.
 2. **Completeness is the author's job, not the user's.** The user is fluent in
    Python but is not a curriculum designer. Do NOT ask him what is missing or to
    validate coverage. Enumerate the full scope yourself from the research.
-3. **Verify every technical claim against real Python before writing it.** The
+3. **Apply the depth standard.** Every text block must meet the five-level
+   requirement in "Depth, context, and comparison" below: comparison with
+   alternatives, Python design rationale, named CS principles, anti-patterns with
+   failure modes, and mental models. Thin prose that only describes syntax is not
+   acceptable. The c2s8 (try/except) lesson is the reference for what "depth"
+   looks like.
+4. **Verify every technical claim against real Python before writing it.** The
    harness runs code; prose precision is on the author. Name a concept and its
    Python type separately (an *integer* is a whole number; its Python *type* is
    `int`). Cover the accurate full picture, not a convenient simplification
    (e.g. operators are type-dependent; mixing types has several behaviours;
    `str * int` is valid repetition).
-4. **Follow PLAN.md §4 order and §3 loop.** HTTLACS ordering for fundamentals
+5. **Follow PLAN.md §4 order and §3 loop.** HTTLACS ordering for fundamentals
    (values & types before variables/strings; `input()` after types).
-5. **Harness-gate.** Every lesson passes `npm test` — schema, reading level,
+6. **Harness-gate.** Every lesson passes `npm test` — schema, reading level,
    each solution executed and graded — before it is called done.
-6. **Show finished content, not scaffolding.** No private notation (`⟦⟧`, "Page
+7. **Show finished content, not scaffolding.** No private notation (`⟦⟧`, "Page
    4/13 — concept ·", block-model headers) in anything the user reads. Clean
    lessons only.
-7. **Stop and say so when stuck** — don't churn variations hoping one lands.
+8. **Stop and say so when stuck** — don't churn variations hoping one lands.
 
 ## Research: scope and sources (so nothing is lost)
 
