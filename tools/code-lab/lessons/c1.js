@@ -38,6 +38,10 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
+      md: "**Scripts vs the interactive prompt.** When you type Python at a command line (the REPL — Read Evaluate Print Loop), any expression you type shows its result automatically. Type `7 * 3` and you see `21` with no `print`. But in a script — a file you save and run — only `print()` produces visible output. Everything else runs silently. This is intentional: a script decides exactly what to show and what to keep internal. Most programs you will write are scripts, so `print()` is the deliberate voice of the program.",
+    },
+    {
+      type: "text",
       md: "You can give `print` more than one argument by separating them with commas. It places a single space between each one on its own. Arguments don't have to be text — numbers and math work too. When `print` sees a calculation, it works it out first and shows the answer, not the calculation itself.",
     },
     {
@@ -144,6 +148,10 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
+      md: "**Why types exist.** Inside the computer, every value is stored as a pattern of bits — ones and zeros. The number `65` and the letter `A` happen to share the same bit pattern in many encodings. The *type* is what tells Python how to interpret those bits: as a whole number, a decimal, characters to display, or a truth value. Without types, the computer could not tell whether `+` should add or join, or whether `65` means arithmetic or text. Types make interpretation unambiguous.",
+    },
+    {
+      type: "text",
       md: "The difference between `7` and `\"7\"` is real. `7` is the number seven. `\"7\"` is a one-character string that happens to look like a digit. The quotes alone changed the type, and the type changes what operators do.",
     },
     {
@@ -181,6 +189,10 @@ window.CODELAB.lessons.push({
       type: "example",
       note: "int + float adapts quietly, giving a float result. Run this and look at the decimal point in the output.",
       code: "print(7 + 3.14)\n",
+    },
+    {
+      type: "text",
+      md: "**Why floats are imprecise.** Try `0.1 + 0.2` in Python — you get `0.30000000000000004`. This happens in every language, not just Python. Computers store numbers in binary (base 2). The value `0.1` in binary is like `1/3` in decimal — it repeats forever with no exact end. The computer stores the closest value it can fit. This is not a Python bug; it is how all CPUs work. For money, Python's `decimal` module stores numbers without this error. For most work, the tiny gap does not matter.",
     },
     {
       type: "text",
@@ -246,6 +258,10 @@ window.CODELAB.lessons.push({
     {
       type: "text",
       md: "The instruction that creates this link is called **[[assignment]]**, written as `name = value`. Read `score = 100` as \"let score refer to 100\". Python evaluates the right side first, then links the name on the left to that result. The `=` sign is **not** asking whether two things are equal — it is an action: evaluate the right, then store the result under the name on the left.",
+    },
+    {
+      type: "text",
+      md: "**Python variables vs maths variables.** In maths, `x = 5` is a permanent fact — `x` is always `5`. In Python, `x = 5` means 'right now, `x` refers to 5' — and that can change at any time. Think of a Python variable as a sticky note attached to a value. Writing `x = 10` later removes the sticky note from `5` and attaches it to `10`. The old value is not changed; only the name's pointer changes.\n\nThe direction matters too. `score = 100` stores 100 under `score`. Writing `100 = score` is a `SyntaxError` — Python always reads the left side of `=` as a name to store into, never as a value to compare. In maths, `5 = x` is a valid statement; in Python, it crashes. A number on the left of `=` makes no sense as a storage destination.",
     },
     {
       type: "example",
@@ -351,6 +367,10 @@ window.CODELAB.lessons.push({
     {
       type: "text",
       md: "Python has the arithmetic operators you would expect, plus a few especially useful ones. `+` adds, `-` subtracts, `*` multiplies. `/` **always gives a float**: `7 / 2` is `3.5`, and even `6 / 2` is `3.0`, not `3`. `//` is **floor division** — divide and drop the remainder: `7 // 2` is `3`. `%` gives the **remainder**: `7 % 3` is `1` (seven divided by three leaves one over). `**` raises to a power: `2 ** 8` is `256`.",
+    },
+    {
+      type: "text",
+      md: "**Why `/` always gives a float in Python 3.** In Python 2, `7 / 2` gave `3` — the remainder was silently dropped. This caused a constant class of bugs where programmers expected a decimal and got a truncated integer with no error or warning. Python 3 fixed this by making `/` always produce a float (`3.5`), so the behaviour is predictable. Use `//` explicitly when you want the whole-number part. Explicit is better than implicit — one of Python's core design principles.\n\n**Why `%` is more useful than it looks.** The remainder operator has two uses that come up constantly. First: even and odd. `n % 2` is `0` for even numbers and `1` for odd ones — you will use this in Chapter 2 to make decisions. Second: cycling. If you want to pick colour number `i` from a set of 3 colours, `i % 3` gives `0`, `1`, `2`, `0`, `1`, `2`, ... no matter how large `i` gets. This is called **clock arithmetic** — the same maths your phone uses to display 12:00 instead of 24:00. You will use it extensively in loops, music patterns, and drawing.",
     },
     {
       type: "example",
@@ -463,6 +483,10 @@ window.CODELAB.lessons.push({
       md: "Strings also come with built-in tools called **[[method|methods]]**. A method is a function that belongs to a specific type. You call it by writing a dot after the value, then the method name and parentheses.\n\n`s.upper()` gives a copy with every letter capitalised; `s.lower()` gives all lowercase; `s.strip()` removes leading and trailing spaces; `s.split()` splits on spaces and returns a list of words. `len(s)` gives the number of characters — unlike the others, `len` is a standalone function, so you write `len(word)`, not `word.len()`.",
     },
     {
+      type: "text",
+      md: "**Strings are immutable — methods return copies.** Calling `word.upper()` does not change `word`. It creates and returns a brand-new string with every letter capitalised. The original is untouched. To keep the result, assign it: `loud = word.upper()`. This is not a quirk — it is a guarantee called **immutability**: once a string is created, its characters cannot change. The only way to 'change' a string is to build a new one from it. Most confusion about string methods comes from forgetting this and expecting `word` to change after calling a method on it.",
+    },
+    {
       type: "example",
       note: "Methods transform a string and give back a new one — the original is not changed.",
       code: "word = \"Python\"\nprint(word.upper())\nprint(word.lower())\nprint(len(word))\n",
@@ -571,6 +595,10 @@ window.CODELAB.lessons.push({
       md: "The most important thing to remember: `input()` **always** returns a string. If you ask someone their age and they type `11`, you get the string `\"11\"`, not the number `11`. If you then try `print(age + 1)`, Python stops with a `TypeError` — it cannot add a string and a number.\n\nThe fix is to convert: wrap `input()` in `int()`. Write `age = int(input(\"Your age? \"))`. Now `age` holds an integer, and `age + 1` works.",
     },
     {
+      type: "text",
+      md: "**Why `input()` always returns a string — the system boundary principle.** The function receives a stream of characters from the keyboard. It has no way to know whether you meant the digits `11` as the number eleven or as text you plan to join with other text. Deciding what characters *mean* is the program's job. This is a general principle: anything arriving from outside your program — the keyboard, a file, a network — arrives as raw text and must be interpreted deliberately. `int()` is your interpretation: 'these characters represent a whole number, convert them.' If they do not represent a valid number, Python raises a `ValueError`. You will handle that in Chapter 2.",
+    },
+    {
       type: "exercise",
       rung: 3,
       prompt: "This greets the user with Hello, Alex. — a full stop at the end. Change it so it prints Welcome, Alex! with an exclamation mark instead.",
@@ -642,6 +670,10 @@ window.CODELAB.lessons.push({
       md: "Python can draw with a **turtle** — a cursor that moves around a canvas, leaving a line behind it. `forward(n)` moves forward `n` units; `backward(n)` moves backward; `right(a)` turns right by `a` degrees without moving; `left(a)` turns left. The turtle starts at the centre of the canvas, pointing right.",
     },
     {
+      type: "text",
+      md: "**What is a function call?** `forward(100)` is a **function call**: `forward` names the action, and the parentheses trigger it. The value inside — `100` — is the *argument*, the input you pass in. Without the parentheses, `forward` is just a reference to the function — it does not run it. The parentheses are the on-switch. You have been using function calls since Lesson 1.1: `print(\"Hello\")` follows the same pattern. Name, parentheses, arguments inside. Reading `forward(100)` as 'call forward with 100 as the input' is the right mental model for every function call you will ever write.",
+    },
+    {
       type: "example",
       note: "A square: move forward, turn right 90 degrees, repeat four times. Each side is 100 units long.",
       code: "forward(100)\nright(90)\nforward(100)\nright(90)\nforward(100)\nright(90)\nforward(100)\nright(90)\n",
@@ -670,6 +702,10 @@ window.CODELAB.lessons.push({
         "forward(150), right(90) repeated four times.",
       ],
       solution: "forward(150)\nright(90)\nforward(150)\nright(90)\nforward(150)\nright(90)\nforward(150)\nright(90)\n",
+    },
+    {
+      type: "text",
+      md: "**Why a square turns 90 degrees four times.** A turtle that draws a closed shape returns to exactly where it started, facing exactly the same direction. To do that, its total turning must add up to 360 degrees — a full circle. For a square with 4 equal corners, each turn is 360 ÷ 4 = 90 degrees. For an equilateral triangle: 360 ÷ 3 = 120. For a regular hexagon: 360 ÷ 6 = 60. This formula works for any regular polygon — you will use it explicitly in Chapter 2.",
     },
     {
       type: "text",

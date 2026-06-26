@@ -27,6 +27,10 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
+      md: "**`==` is a question; `=` is a command.** `=` stores a value: `age = 11` means 'let age hold 11.' `==` asks a question: `age == 11` means 'does age currently hold 11?' The answer is `True` or `False`. Python deliberately uses two different symbols so you can never accidentally store when you meant to ask. Writing `if age = 11:` is a `SyntaxError` — Python refuses to let you confuse the two. The error message says 'cannot assign to literal' — it recognised you tried to store a value where a question was expected.\n\n**Why `True` and `False` are capitalised.** Python is case-sensitive: `true` is a `NameError` — Python looks for a variable named `true` and finds nothing. `True` is a built-in constant. The capitalisation is the standard across many languages that treat boolean values as proper named constants rather than keywords.",
+    },
+    {
+      type: "text",
       md: "Every condition in that program is a **[[comparison]]** — an expression that asks a question and answers it with **[[boolean|True or False]]**. `age >= 18` is not a filter you apply; it is a full expression with a value. That value is either `True` or `False`, and you can print it, store it in a variable, or combine it with other comparisons.\n\nPython has six comparison operators. `==` tests equality. `!=` tests inequality (not equal). `<` and `>` test whether one value is strictly less than or greater than another. `<=` and `>=` include equality as well: `age >= 18` is True when age is exactly 18, not only when it exceeds 18.",
     },
     {
@@ -73,6 +77,10 @@ window.CODELAB.lessons.push({
       type: "example",
       note: "With age=0, short-circuit stops at the first condition being False and never runs the division.",
       code: "age = 0\nif age > 0 and 100 / age > 2:\n    print(\"ratio is high\")\nelse:\n    print(\"age is zero — division was never attempted\")\n",
+    },
+    {
+      type: "text",
+      md: "**Why truthiness is designed this way.** Python's rule is consistent: values that represent 'empty' or 'nothing' are falsy — `0`, `\"\"`, `None`, and later `[]` (empty list). Everything else is truthy. This is a deliberate design choice that lets you write `if name:` instead of `if name != \"\"`, and `if count:` instead of `if count != 0`. It is not magic; it is a convention about what 'empty' means.\n\n**Short-circuit evaluation — not just a speed trick.** In `a and b`, if `a` is `False`, Python never evaluates `b`. In `a or b`, if `a` is `True`, Python never evaluates `b`. This prevents crashes: `if x != 0 and 10 / x > 2:` is safe because when `x` is `0`, the `and` short-circuits before the division executes. If Python always evaluated both sides, that division by zero would crash regardless of the first condition. Short-circuit evaluation is a real safety tool.",
     },
     {
       type: "text",
@@ -160,6 +168,10 @@ window.CODELAB.lessons.push({
       md: "A comparison produces True or False, but by itself it does nothing — it does not change what happens next. The `if` statement uses that value to choose between two paths, called **[[branch|branches]]**. It runs the first branch when the condition is true, and the second when it is false. **Exactly one branch runs per execution** — never both, never neither.",
     },
     {
+      type: "text",
+      md: "**Why Python uses indentation instead of braces.** Most languages use curly braces `{}` to mark blocks. Python uses indentation — the whitespace at the start of each line. This was a deliberate design decision: programmers indent their code for readability whether or not the language requires it. Making indentation mandatory means the visual structure of the code and the logical structure are always identical. In brace languages, it is possible to write code whose indentation lies — that looks like it does one thing but does another. Python makes that impossible. Four spaces per level is the Python standard.",
+    },
+    {
       type: "example",
       note: "The complete if/else structure. Run it, then change score to 55 and run again. Notice that each run follows exactly one path.",
       code: "score = 85\nif score >= 60:\n    print(\"Passed\")\nelse:\n    print(\"Try again\")\n",
@@ -185,6 +197,10 @@ window.CODELAB.lessons.push({
     {
       type: "text",
       md: "Here is a fact that trips many beginners: **code that comes after the if/else block always runs**, regardless of which branch fired.\n\nLook at the example below. The `print(\"done\")` line is at the same indent level as `if` — it is not inside either branch. After the if/else makes its choice and runs one branch, Python moves on to `print(\"done\")` every single time.",
+    },
+    {
+      type: "text",
+      md: "**One `if` vs `if/else` — when each fits.** Use `if/else` when exactly one of two alternatives should run. Use two separate `if` statements when the conditions are independent and both might be true. `if score >= 90: print('A')` followed by `if score >= 80: print('B')` checks both independently: a score of 95 triggers both prints. That is a bug — one student gets two grades. If the grades are mutually exclusive, use `elif` (next lesson). The test: 'can both conditions be true at the same time?' If yes, two ifs. If no, if/elif/else.",
     },
     {
       type: "example",
@@ -287,6 +303,10 @@ window.CODELAB.lessons.push({
       md: "The **order of your conditions matters**. Because Python stops at the first true branch, putting a broader condition before a narrower one will swallow results it should not.\n\nIn the broken example below, `score >= 50` appears before `score >= 90`. A score of 95 satisfies both — but Python fires the first matching condition and prints 'Average', never reaching the 'Excellent' branch.",
     },
     {
+      type: "text",
+      md: "**`elif` is 'else if' — the first match wins and Python stops.** Once a condition in an `elif` chain is `True`, Python runs that block and skips all remaining `elif` and `else` branches. This is different from two separate `if` statements, which always check their condition regardless of what came before. Order in an `elif` chain matters when conditions overlap: `if score >= 90:` before `elif score >= 80:` is correct because a score of 95 hits the first branch and stops. Reversing the order means every A student gets a B instead — the less-specific condition fires first.\n\n**'Flat is better than nested' — a Python principle.** The Zen of Python, a short document of guiding principles, includes: 'Flat is better than nested.' `elif` is the tool for keeping conditional logic flat. The alternative — writing `else:` and then an `if:` inside it — grows rightward with each level and becomes hard to read. `elif` chains stay at the same indentation. Flat code is easier to follow, easier to change, and easier to debug.",
+    },
+    {
       type: "example",
       note: "A score of 95 should print Excellent, but the elif order is wrong. Run it and see the broken output, then look at the fix.",
       code: "score = 95\n\n# Wrong order — too-early condition swallows high scores\nif score >= 50:\n    print(\"Average\")    # fires for 95, which is wrong\nelif score >= 90:\n    print(\"Excellent\")  # never reached\n\n# Correct: narrow conditions first\nif score >= 90:\n    print(\"Excellent\")\nelif score >= 50:\n    print(\"Average\")\n",
@@ -376,6 +396,10 @@ window.CODELAB.lessons.push({
     {
       type: "text",
       md: "Before the first while loop, one new shorthand. You have been writing `n = n + 1` to update a variable by adding 1. Python has a shorter form: `n += 1`. This is called **[[augmented assignment]]**. The `+=` operator adds the right side to the current value and stores the result — it means exactly the same thing as the long form.\n\nThe same pattern works for other operators: `n -= 1` subtracts, `n *= 2` doubles, `n //= 2` halves using floor division. You will use `n -= 1` and `n += 1` throughout this lesson.",
+    },
+    {
+      type: "text",
+      md: "**Loop invariants — a thinking tool before you write the loop.** An invariant is something that stays true at the start of every iteration. For a countdown from 10: 'at the start of each iteration, `count` holds the number about to be printed.' This gives you three things: what to initialise before the loop (`count = 10`), what to check as the stopping condition (`count >= 1`), and what to update inside (`count -= 1`). If you can state the invariant, you can write the loop. If you cannot, the loop is not yet clear in your head.\n\n**Off-by-one errors — the most common loop bug in all of programming.** `while count < 10` vs `while count <= 10` — which runs ten times when count starts at 1? The first: 1, 2, ..., 9 — nine times. The second: 1, 2, ..., 10 — ten times. Off-by-one errors happen at loop boundaries and are one of the most common bugs across every programming language. The fix: trace through the first iteration and the last iteration by hand. Check both ends before you trust the loop.",
     },
     {
       type: "example",
@@ -530,6 +554,10 @@ window.CODELAB.lessons.push({
       md: "The single most important thing about `range`: **the stop value is not included**. `range(5)` gives 0, 1, 2, 3, 4 — five numbers, but 5 itself is not in the sequence. Think of the stop as the fence post at the end: you walk up to it but do not step on it.\n\n`range` has three forms:\n- `range(stop)` — starts at 0, ends at stop−1\n- `range(start, stop)` — starts at start, ends at stop−1\n- `range(start, stop, step)` — starts at start, steps by step, ends before stop\n\nA negative step counts down: `range(5, 0, -1)` gives 5, 4, 3, 2, 1.",
     },
     {
+      type: "text",
+      md: "**Why `for` exists when `while` can do everything.** A `while` loop that counts can replicate any `for` loop: `i = 0` then `while i < n:` then `i += 1` inside. But `for i in range(n):` says the same thing in one line, and it is harder to get wrong — you cannot forget to increment `i`, and you cannot accidentally increment the wrong variable. More importantly, `for` communicates intent: 'iterate over exactly these values.' `while` communicates a condition: 'keep going as long as this is true.' When the count is known in advance, `for` is the right tool because it makes that structure explicit.\n\n**`range()` is lazy — it generates numbers on demand.** `print(range(5))` shows `range(0, 5)`, not a list of numbers. Python does not create all the values at once; it produces each one only when the loop asks for the next. `for i in range(1_000_000):` uses almost no memory — it never holds a million numbers simultaneously. This matters more as programs grow. You will see it again in Chapter 4 when you compare `range()` to actual lists.",
+    },
+    {
       type: "example",
       note: "The three forms of range. Notice that the stop value never appears in the output.",
       code: "for i in range(5):            # 0 1 2 3 4\n    print(i, end=\" \")\nprint()\n\nfor i in range(1, 6):         # 1 2 3 4 5\n    print(i, end=\" \")\nprint()\n\nfor i in range(5, 0, -1):     # 5 4 3 2 1\n    print(i, end=\" \")\nprint()\n",
@@ -669,6 +697,10 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
+      md: "**Debugging is a skill, not luck — follow a process.** Experienced programmers debug systematically. Step one: read the error message completely. It names the file, the line, and the type of error. That line is where Python stopped — which is often (but not always) close to the actual mistake. Step two: understand what Python expected versus what it found. A `TypeError` on `total + item` means one of those is not a number — check what each variable actually holds at that point. Step three: fix the root cause, not the symptom. Indenting a line differently might silence an `IndentationError` without fixing the underlying confusion about which block the line belongs to.\n\n**Print debugging — the oldest tool.** Add `print()` calls to see what variables hold mid-program. If a loop produces the wrong total, add `print(i, total)` inside it. See the actual values on each iteration. Most bugs become obvious when you compare what the computer actually computed against what you assumed it computed. Remove the print calls once the bug is fixed — they are diagnostic scaffolding, not permanent code.",
+    },
+    {
+      type: "text",
       md: "When you hit an error, follow these three steps before changing anything:\n\n1. **Read the error class and message.** The first word after the colon names the type: `SyntaxError`, `IndentationError`, `TypeError`, `NameError`. The message after it says what specifically went wrong.\n2. **Go to the indicated line — then look at the line before it.** Python reports where it *noticed* the problem, which is sometimes one line after where the mistake actually is. The classic case: `IndentationError` often points to the line after the mis-indented one.\n3. **Understand the cause before changing anything.** If you fix something without understanding it, you may introduce a new bug or hide the original one. Ask: 'Why did this specific thing fail here?'",
     },
     {
@@ -748,6 +780,10 @@ window.CODELAB.lessons.push({
     {
       type: "text",
       md: "In the last two lessons, loops counted numbers. Here they do something more interesting: they draw shapes and schedule music. The loop itself is unchanged — the only difference is what you call inside the body.\n\nThe key idea in this lesson: **the loop variable does not have to be a counter you print — it can be a parameter that changes what happens on each step**. When you write `forward(i * 10)`, the turtle moves a different distance on every iteration. That changing distance is what makes a spiral open outward instead of repeating the same step.",
+    },
+    {
+      type: "text",
+      md: "**The `_` convention — communicating throwaway variables.** In Python, `_` is a valid variable name, but by convention it means 'I do not need this value.' Writing `for _ in range(6):` tells any reader: 'this loop runs 6 times; the loop count itself is not used.' Without `_`, a reader would wonder where `i` gets used later. The underscore is the standard Python signal for a throwaway — you will see it in professional code constantly.\n\n**Using the loop variable as a parameter — the key to procedural art.** `forward(i * 10)` means the distance changes with every step: 0, 10, 20, 30, ... The loop variable `i` is not just a counter; it is a *scaling parameter* that drives the drawing. This is the core trick behind spirals, gradients, and patterns: let the iteration number control the size, angle, or colour. The same principle applies to music: `play(60 + i)` plays a rising sequence, one note per step.",
     },
     {
       type: "example",

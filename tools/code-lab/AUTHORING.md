@@ -105,6 +105,61 @@ Then:
 - **Two feedback channels:** tolerant diagnostic correctness checks; the style
   channel from Chapter 5. Concept tags + a Codex entry on every lesson.
 
+## Depth, context, and comparison — MANDATORY for every concept
+
+This is the standard that must hold for every text block in every lesson. Thin prose that only describes syntax is not acceptable. Every concept must be taught at three levels:
+
+### 1. The comparison
+Every non-trivial concept has at least one alternative approach. That alternative must be named, shown, and its failure mode demonstrated — not just mentioned.
+
+- **`try/except` vs `if` check?** Show `.isdigit()` failing on `-5` and `3.14`. Explain why the only reliable test is the attempt.
+- **`elif` vs nested `if/else`?** Show the indentation explosion of nesting. State the flat-is-better rule.
+- **`for` vs `while`?** State the decision rule: use `for` when count is known in advance; use `while` when the stopping condition depends on what happens at runtime.
+- **`+` vs comma in `print`?** Show what each does with types — `+` requires strings, comma accepts anything.
+
+If you are about to write a text block that explains a construct without comparing it to the obvious alternative, you have left out the most important sentence.
+
+### 2. The why — Python's design choices
+Python made deliberate decisions about syntax and behaviour. Students encounter them and wonder "why is it this way?" Those questions must be answered, not ignored.
+
+- **Why indentation, not braces?** Because Python's designers knew code is always indented for readability — making indentation mandatory means the visual and logical structure always agree.
+- **Why does `/` always give a float?** Python 2 did integer division silently; it caused constant bugs. Python 3 made the types explicit.
+- **Why `True` and `False` are capitalised?** Case-sensitivity; `true` would be just another variable name.
+- **Why does `input()` always return a string?** The program receives characters; interpreting them is the programmer's job, not Python's. This is a system boundary.
+- **Why float imprecision?** Binary fractions: the same way 1/3 is `0.333...` in decimal, 0.1 is a repeating fraction in base 2. Not a Python bug — a hardware fact.
+
+If you write "this is how Python works" without explaining why Python chose that design, you have left out the why.
+
+### 3. CS principles — name them
+When a lesson introduces a concept that connects to a named CS principle or best practice, name it explicitly:
+
+- **EAFP** (Easier to Ask Forgiveness than Permission) — `try/except` over pre-checking.
+- **Loop invariants** — state what is true at the start of every iteration before writing the loop.
+- **Off-by-one errors** — name this as one of the most common bugs in all of programming, explain both boundary cases.
+- **Immutability** — string methods return new strings; the original does not change.
+- **System boundaries** — data from outside the program (keyboard, files, network) is always raw text that must be interpreted deliberately.
+- **Flat is better than nested** — `elif` chains vs nesting. Named as a Python design principle.
+- **Accumulator pattern** — initialise before, update inside, read after. Named and Codexed.
+- **Short-circuit evaluation** — not just a speed trick; it prevents crashes (`x != 0 and 10/x > 2`).
+
+### 4. Anti-patterns — show failure, not just success
+For every construct that has a common misuse, show the wrong version and explain concretely what goes wrong:
+
+- Bare `except:` — show that it catches bugs silently.
+- Variables not initialised before a loop — show the `NameError` or stale value.
+- `=` where `==` is needed — show the `SyntaxError` and explain why Python refuses.
+- Forgetting to convert `input()` — show the `TypeError` and trace the type through.
+- `if/if` when `if/elif` was needed — show both conditions firing.
+
+### 5. Mental models, not just syntax rules
+For every construct, build the mental model alongside the syntax:
+
+- Variables: sticky notes attached to values, not boxes that contain values.
+- Assignment: right side evaluated first, then the name is redirected.
+- Loop: the variable table (stepper) changes on every iteration — tie prose to what the stepper shows.
+- Exception: Python creates an object, stops the current block, and searches for a matching handler.
+- Function call: the parentheses are the on-switch; the name without parentheses is just a reference.
+
 ## The bar
 The reference lesson is `lessons/exemplar-w1-values-and-types.md`. New lessons
 match its depth, structure, numbering, voice, and exercise style.
