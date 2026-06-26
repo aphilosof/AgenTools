@@ -86,7 +86,33 @@ All 9 lessons authored, all 16 lesson harness checks green (commit `edd9aae`).
 - 2.8: rung-5 Complete — bulletproof input; inputs "abc","5" → "That's not a number. Try again. / Got: 5"
 - 2.9: rung-5 Complete — pencolor spiral; canvas should draw red/blue/green spiral
 
-### Phase C — Chapter 3 (Functions) ← NEXT
+### Phase C — Chapter 3 (Functions) ✅ COMPLETE
+
+All 10 lessons authored (c3s0–c3s9). All harness checks pass.
+
+| ID | Title | Rungs |
+|----|-------|-------|
+| c3s0 | The Shortcut Machine | 1, 2, 3 |
+| c3s1 | Defining a Function | 1, 2, 4, 5 |
+| c3s2 | Parameters and Arguments | 1, 3, 4, 5 |
+| c3s3 | Return Values | 1, 3, 4, 5, 6 |
+| c3s4 | Scope | 1, 4, 5, 6 |
+| c3s5 | Default Arguments and Docstrings | 3, 5, 6 |
+| c3s6 | Functions That Draw | 1, 3, 4, 5, 6 |
+| c3s7 | def bassline() | 3, 5, 6 |
+| c3s8 | Functions in the Wild | 1, 2, 4, 5, 6 |
+| c3s9 | Art and Music: Ch1+Ch2+Ch3 | 4, 5, 6 |
+
+**Gate checklist (browser testing):**
+- 3.0 rung-3 Modify: change cheer() body → verify all 3 calls update
+- 3.3 rung-1 Predict: x = say_hi(); print(x) → "Hi!\nNone"
+- 3.4 rung-4 Fix: UnboundLocalError in reset() → fix by passing count as param
+- 3.6 rung-5 Complete: draw_house(80) → square + triangle on canvas
+- 3.7 rung-5 Complete: verse(60) + verse(65) → 8 notes play
+- 3.8 rung-6 Write: word_inspector("racecar") → "Vowels: 3 / Palindrome: True / RACECAR"
+- 3.9 rung-6 Write (drawing): draw_snowflake() → 6-branch snowflake on canvas
+
+### Phase D — Chapter 4 (Collections) ← NEXT
 
 Work chapter by chapter per CURRICULUM.md. Requires explicit user approval to begin.
 

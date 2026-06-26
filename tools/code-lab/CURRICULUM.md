@@ -257,17 +257,32 @@ from scratch by default. Chapter 0 is pre-syntax.
 - `try`/`except` (L2.8) is positioned after all loop and branching lessons so students can combine it with while True + break (the bulletproof input pattern)
 - L2.9 is a no-new-syntax capstone — it must use only concepts from Ch.1 and Ch.2
 
-## Chapter 3 — Functions (~6)
+## Chapter 3 — Functions (10 lessons) ✅ AUTHORED
 *Goal: functions are machines you build once and reuse forever.*
 
-| # | Lesson | Idea / objective | Strand | Rung |
-|---|---|---|---|---|
-| 3.1 | Defining a Function | `def`, calling, why functions exist | core | 5 Complete |
-| 3.2 | Parameters | Passing values in → *unit converters* | numbers | 6 Write |
-| 3.3 | Return Values | Getting a value back out → `is_prime(n)` | numbers | 6 Write |
-| 3.4 | Scope | Local vs outer names; what a call can and can't see | core | 4 Fix |
-| 3.5 | Functions That Draw | Turtle functions for reusable shapes | core | 6 Write |
-| 3.6 | def bassline() | Build a groove from function calls; *tip splitter* | sound | 6 Write |
+Approved structure from 5-reviewer curriculum audit. Lessons authored in commit on lesson-experience-d branch.
+
+| # | Title | Key concepts | Strand | Rungs | Time |
+|---|---|---|---|---|---|
+| 3.0 | The Shortcut Machine | DRY, def/call mental model | core | 1, 2, 3 | 15 min |
+| 3.1 | Defining a Function | def syntax, execution order, None return, IndentationError | core | 1, 2, 4, 5 | 20 min |
+| 3.2 | Parameters and Arguments | parameter vs argument, binding, multiple params, TypeError | numbers | 1, 3, 4, 5 | 20 min |
+| 3.3 | Return Values | print vs return, None, composition, early return, accumulator | numbers | 1, 3, 4, 5, 6 | 25 min |
+| 3.4 | Scope | LEGB (L+G only), frames, UnboundLocalError, global ruled out, fn→fn | words | 1, 4, 5, 6 | 22 min |
+| 3.5 | Default Arguments and Docstrings | default arg syntax, required-before-default rule, docstrings, help() | numbers | 3, 5, 6 | 20 min |
+| 3.6 | Functions That Draw | decomposition, draw_polygon, helper functions, NameError trap | plot | 1, 3, 4, 5, 6 | 22 min |
+| 3.7 | def bassline() | music functions, root parameter, beat→verse→song hierarchy | sound | 3, 5, 6 | 25 min |
+| 3.8 | Functions in the Wild | design-before-code, for char in text:, is_palindrome, fizzbuzz, digit_sum | words | 1, 2, 4, 5, 6 | 25 min |
+| 3.9 | Art and Music: Ch1+Ch2+Ch3 | integration capstone: parametric art, song structure, function composition | sound/plot | 4, 5, 6 | 25 min |
+
+**Gate checklist for browser testing:**
+- 3.0 rung-3 Modify: change cheer() body, verify all 3 calls update
+- 3.3 rung-1 Predict: x = say_hi() then print(x) → "Hi!\nNone"
+- 3.4 rung-4 Fix: UnboundLocalError in reset() → fix by passing count as parameter
+- 3.6 rung-5 Complete: draw_house() → square + triangle on canvas
+- 3.7 rung-5 Complete: verse(60) + verse(65) → 8 notes play
+- 3.8 rung-6 Write: word_inspector("racecar") → "Vowels: 3 / Palindrome: True / RACECAR"
+- 3.9 rung-6 Write (drawing): draw_snowflake() → 6-branch snowflake on canvas
 
 ## Chapter 4 — Collections (~6)
 *Goal: storing many values; lists and dictionaries.*
