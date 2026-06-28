@@ -106,6 +106,16 @@ Then:
   explicitly deferred to a named lesson. The harness should enforce this once
   scope records exist (build task).
 
+## Content block formatting rules (non-negotiable)
+
+The `md` field in a `text` block supports **only inline markdown**. The engine renders nothing else. Violating these rules produces raw literal characters in the output.
+
+- **Allowed:** `` `inline code` ``, `**bold**`, `[[term]]` glossary links.
+- **Never use `##` or any `#`-prefix heading** inside an `md` string. Use `**Bold lead sentence.**` instead — this is how c1.js and c2.js structure every section label.
+- **Never use ` ``` ` fenced code blocks** inside an `md` string. Any multi-line code example must be a separate `{ type: "example", note: "...", code: "..." }` block in the `content` array. Short 1–2 line illustrative snippets (not runnable) may stay as inline `` `code` `` within the prose.
+
+c1.js and c2.js are the canonical reference for correct formatting. When in doubt, look there.
+
 ## The lesson standard — what every lesson is
 
 - **Paged, numbered sections.** A lesson is a sequence of pages shown one at a

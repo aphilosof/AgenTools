@@ -20,11 +20,20 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "## The copy-paste trap\n\nImagine you want to print a cheer three times.\n\nHere is the copy-paste version:\n\n```\nprint(\"Go team!\")\nprint(\"Win this!\")\nprint(\"Go team!\")\nprint(\"Win this!\")\nprint(\"Go team!\")\nprint(\"Win this!\")\n```\n\nSix lines. It works — for now.\n\nBut what if the cheer changes? You edit line 1, then line 3, then line 5. Miss one and you have a bug. That is the **failure mode of copy-paste**: every change must happen in five places instead of one.\n\nThis is so common in programming that it has a name: the **[[DRY]]** principle — **Don't Repeat Yourself**. Copy-paste is the enemy of DRY. A [[function]] is the cure.",
+      md: "**The copy-paste trap.**\n\nImagine you want to print a cheer three times.",
+    },
+    {
+      type: "example",
+      note: "The copy-paste version — six lines that are almost identical.",
+      code: 'print("Go team!")\nprint("Win this!")\nprint("Go team!")\nprint("Win this!")\nprint("Go team!")\nprint("Win this!")',
     },
     {
       type: "text",
-      md: "## def creates a recipe — it does not cook the meal\n\nIn Chapter 2, every line of code ran the moment Python reached it. A [[definition]] changes that rule.\n\nThink of `def` like writing a recipe card. The card describes what to do. But writing the card does not make the food. You have to *use* the recipe to actually cook.\n\nWith a [[function]], Python reads the `def` block and sets it aside. Nothing prints. Nothing runs. The code just waits.\n\nThen, when you write the function name followed by `()`, that is the [[call]]. Python pulls out the recipe card and follows it from top to bottom. When the body is done, Python returns to where it left off.\n\nThis is the [[abstraction]] idea: you give a name to a whole block of steps. Instead of thinking about the steps, you just say the name.",
+      md: "Six lines. It works — for now.\n\nBut what if the cheer changes? You edit line 1, then line 3, then line 5. Miss one and you have a bug. That is the **failure mode of copy-paste**: every change must happen in five places instead of one.\n\nThis is so common in programming that it has a name: the **[[DRY]]** principle — **Don't Repeat Yourself**. Copy-paste is the enemy of DRY. A [[function]] is the cure.",
+    },
+    {
+      type: "text",
+      md: "**def creates a recipe — it does not cook the meal.**\n\nIn Chapter 2, every line of code ran the moment Python reached it. A [[definition]] changes that rule.\n\nThink of `def` like writing a recipe card. The card describes what to do. But writing the card does not make the food. You have to *use* the recipe to actually cook.\n\nWith a [[function]], Python reads the `def` block and sets it aside. Nothing prints. Nothing runs. The code just waits.\n\nThen, when you write the function name followed by `()`, that is the [[call]]. Python pulls out the recipe card and follows it from top to bottom. When the body is done, Python returns to where it left off.\n\nThis is the [[abstraction]] idea: you give a name to a whole block of steps. Instead of thinking about the steps, you just say the name.",
     },
     {
       type: "example",
@@ -33,7 +42,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## Change once, fix everywhere\n\nHere is why [[function|functions]] beat copy-paste for real.\n\nSuppose you copy-pasted that cheer five times across your program. Then your team changes its name. You now have **five places** to edit. One slip and the old name is still in there — that is a bug you might not notice.\n\nWith a function, there is **one place**: the `def` block. You change it once. Every [[call]] in the entire program automatically uses the new version. This is the DRY principle in action.\n\nThe CS rule here is: **a bug should be fixable in exactly one place**. Copy-paste makes that impossible. Functions make it automatic.",
+      md: "**Change once, fix everywhere.**\n\nHere is why [[function|functions]] beat copy-paste for real.\n\nSuppose you copy-pasted that cheer five times across your program. Then your team changes its name. You now have **five places** to edit. One slip and the old name is still in there — that is a bug you might not notice.\n\nWith a function, there is **one place**: the `def` block. You change it once. Every [[call]] in the entire program automatically uses the new version. This is the DRY principle in action.\n\nThe CS rule here is: **a bug should be fixable in exactly one place**. Copy-paste makes that impossible. Functions make it automatic.",
     },
     {
       type: "exercise",
@@ -115,15 +124,15 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "## The Problem Functions Solve\n\nImagine you wrote ten lines to draw a star.\n\nNow you need to draw it five times.\n\nWithout functions, you copy those ten lines five times — **50 lines** that are almost identical.\n\nThis breaks the **DRY principle**: Don't Repeat Yourself.\n\nEvery copy is a bug waiting to happen. Fix the star? You fix it in five places.\n\nA [[definition]] lets you name the ten lines once, then just say `draw_star()` five times.\n\nThat is the core idea: **name it once, run it many times**."
+      md: "**The Problem Functions Solve.**\n\nImagine you wrote ten lines to draw a star.\n\nNow you need to draw it five times.\n\nWithout functions, you copy those ten lines five times — **50 lines** that are almost identical.\n\nThis breaks the **DRY principle**: Don't Repeat Yourself.\n\nEvery copy is a bug waiting to happen. Fix the star? You fix it in five places.\n\nA [[definition]] lets you name the ten lines once, then just say `draw_star()` five times.\n\nThat is the core idea: **name it once, run it many times**."
     },
     {
       type: "text",
-      md: "## Anatomy of a `def`\n\nHere is the smallest possible function:\n\n```\ndef greet():\n    print(\"Hello!\")\n```\n\nFour parts, each has a job:\n\n**`def`** — the keyword that says \"I am defining a function.\"\n\n**`greet`** — the name you choose. Use [[indentation]] snake_case: lowercase words joined by underscores.\n\n**`()`** — the parentheses. Empty for now; later they will hold inputs.\n\n**`:`** — the colon that opens a new block.\n\nThen comes the [[body]] — every line indented **exactly 4 spaces**.\n\nNotice: `def` uses the same colon + indent pattern as `if`, `for`, and `while`.\n\nPython is consistent — every block opens with `:` and indents.\n\nThe difference: `def` does **not** run the body right away."
+      md: "**Anatomy of a `def`.**\n\nHere is the smallest possible function: `def greet(): print(\"Hello!\")`.\n\nFour parts, each has a job:\n\n**`def`** — the keyword that says \"I am defining a function.\"\n\n**`greet`** — the name you choose. Use snake_case: lowercase words joined by underscores.\n\n**`()`** — the parentheses. Empty for now; later they will hold inputs.\n\n**`:`** — the colon that opens a new block.\n\nThen comes the [[body]] — every line indented **exactly 4 spaces**.\n\nNotice: `def` uses the same colon + indent pattern as `if`, `for`, and `while`.\n\nPython is consistent — every block opens with `:` and indents.\n\nThe difference: `def` does **not** run the body right away."
     },
     {
       type: "text",
-      md: "## The Two-Pass Mental Model\n\nPython reads your file top-to-bottom, but it does **two different things** as it goes.\n\nWhen Python sees a `def` line, it **registers** the function — it remembers the name and stores the body. It does NOT execute a single line of the body.\n\nWhen Python sees a [[call]] like `greet()`, it jumps into the body and runs it.\n\nThink of it like a recipe card. Writing the recipe on the card (the `def`) does not cook the food. Calling the recipe — actually following the steps — is the [[call]].\n\n**Order matters.** The call must come *after* the `def`:\n\n```\ngreet()       # NameError! Python hasn't read the def yet.\n\ndef greet():\n    print(\"Hello!\")\n```\n\nPython hits `greet()` before it has registered the function. It raises `NameError: name 'greet' is not defined`.\n\n**Fix:** always put `def` blocks before the calls that use them."
+      md: "**The Two-Pass Mental Model.**\n\nPython reads your file top-to-bottom, but it does **two different things** as it goes.\n\nWhen Python sees a `def` line, it **registers** the function — it remembers the name and stores the body. It does NOT execute a single line of the body.\n\nWhen Python sees a [[call]] like `greet()`, it jumps into the body and runs it.\n\nThink of it like a recipe card. Writing the recipe on the card (the `def`) does not cook the food. Calling the recipe — actually following the steps — is the [[call]].\n\n**Order matters.** The call must come *after* the `def`. Writing `greet()` before the `def` raises `NameError: name 'greet' is not defined`.\n\n**Fix:** always put `def` blocks before the calls that use them."
     },
     {
       type: "example",
@@ -171,7 +180,16 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## IndentationError: The #1 Beginner Mistake\n\nThe [[body]] of a function **must** be indented. Forget the indent and Python raises `IndentationError`:\n\n```\ndef greet():\nprint(\"Hello!\")   # IndentationError — no indent!\n```\n\nPython sees a colon and expects at least one indented line. If the very next line is at column zero, it panics.\n\nThe fix is always the same: add 4 spaces before every line inside the function.\n\nThis is the same rule as `if` and `for` — Python uses [[indentation]] to show what belongs inside a block."
+      md: "**IndentationError: The #1 Beginner Mistake.**\n\nThe [[body]] of a function **must** be indented. Forget the indent and Python raises `IndentationError`.",
+    },
+    {
+      type: "example",
+      note: "This crashes — IndentationError: the print line is at column zero, outside the function body.",
+      code: "def greet():\nprint(\"Hello!\")   # IndentationError — no indent!",
+    },
+    {
+      type: "text",
+      md: "Python sees a colon and expects at least one indented line. If the very next line is at column zero, it panics.\n\nThe fix is always the same: add 4 spaces before every line inside the function.\n\nThis is the same rule as `if` and `for` — Python uses [[indentation]] to show what belongs inside a block."
     },
     {
       type: "exercise",
@@ -188,12 +206,17 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## Functions Return `None` When You Don't Say Otherwise\n\nEvery function gives back a value when it finishes. If you don't write `return`, Python gives back the special value **[[None]]**.\n\n`None` means \"nothing\". It has its own type: `type(None)` gives `<class 'NoneType'>`.\n\nWatch what happens when you store the result of `greet()`:\n\n```\ndef greet():\n    print(\"Hello!\")\n\nx = greet()   # greet prints Hello!, then returns None\nprint(x)      # prints: None\n```\n\n**Anti-pattern:** treating a void function's result as a useful value.\n\n```\ntotal = print(1 + 2)   # print() returns None, not 3!\nprint(total + 1)       # TypeError: unsupported operand type(s) for +: 'NoneType' and 'int'\n```\n\n`print()` itself returns `None`. Storing its result and doing math on it crashes.\n\n**The rule:** if a function's job is to *do* something (print, draw, play a note), don't store its return value. If its job is to *compute* something, it should have a `return` statement — which you will see in the next lesson."
+      md: "**Functions Return `None` When You Don't Say Otherwise.**\n\nEvery function gives back a value when it finishes. If you don't write `return`, Python gives back the special value **[[None]]**.\n\n`None` means \"nothing\". It has its own type: `type(None)` gives `<class 'NoneType'>`.\n\nWatch what happens when you store the result of `greet()` — the function prints `Hello!` as a side effect, then returns `None`.\n\n**Anti-pattern:** treating a void function's result as a useful value. `print()` itself returns `None`. Storing its result and doing math on it crashes with a `TypeError`.\n\n**The rule:** if a function's job is to *do* something (print, draw, play a note), don't store its return value. If its job is to *compute* something, it should have a `return` statement — which you will see in the next lesson."
     },
     {
       type: "example",
       note: "The function prints 'Hello!' as a side effect, but its return value is None. Storing it and printing it confirms that.",
       code: "def greet():\n    print(\"Hello!\")\n\nx = greet()\nprint(x)\n"
+    },
+    {
+      type: "example",
+      note: "Anti-pattern: storing print's return value. print() returns None, not the number — so total + 1 crashes with TypeError.",
+      code: "total = print(1 + 2)   # print() returns None, not 3!\nprint(total + 1)       # TypeError: NoneType and int",
     },
     {
       type: "exercise",
@@ -233,7 +256,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "## The Blank Label on the Box\n\nLook at this function:\n\n```python\ndef double(n):\n    print(n * 2)\n```\n\n`n` is a **[[parameter]]**. It is a blank label on a box — the box has no value yet.\n\nWhen you write `double(7)`, Python does something specific: it **[[binding|binds]]** the value `7` to the name `n`. That binding step is `n = 7`. Then the body runs with `n` holding `7`.\n\nThe value `7` in the call is the **[[argument]]**. So: **parameter = placeholder in the definition. Argument = real value in the call.**\n\nThink of it like a recipe. The recipe says \"add N cups of flour.\" N is the parameter — a blank. When you actually bake, you decide N is 2. That decision is the argument."
+      md: "**The Blank Label on the Box.**\n\n`n` in `def double(n):` is a **[[parameter]]**. It is a blank label on a box — the box has no value yet.\n\nWhen you write `double(7)`, Python does something specific: it **[[binding|binds]]** the value `7` to the name `n`. That binding step is `n = 7`. Then the body runs with `n` holding `7`.\n\nThe value `7` in the call is the **[[argument]]**. So: **parameter = placeholder in the definition. Argument = real value in the call.**\n\nThink of it like a recipe. The recipe says \"add N cups of flour.\" N is the parameter — a blank. When you actually bake, you decide N is 2. That decision is the argument."
     },
     {
       type: "example",
@@ -255,11 +278,20 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## Names Are Independent\n\nHere is a common misconception. Students think the caller's variable name must match the parameter name. It does not.\n\n```python\nx = 10\ndouble(x)\n```\n\nPython passes the **value** `10`, not the variable `x`. Inside `double`, only `n` exists — `x` is invisible there. You could rename `x` to `apples` and `double` would not care.\n\nThis is the **LEGB scope rule** at work. The function body has its own local scope. It sees `n` but it cannot see `x`, `apples`, or anything else from the caller.\n\nWhy did Python choose this design? It prevents functions from accidentally reading or overwriting the caller's variables. Each function is a sealed room — inputs arrive through the parameter door only."
+      md: "**Names Are Independent.**\n\nHere is a common misconception. Students think the caller's variable name must match the parameter name. It does not.\n\nWhen you write `x = 10` then `double(x)`, Python passes the **value** `10`, not the variable `x`. Inside `double`, only `n` exists — `x` is invisible there. You could rename `x` to `apples` and `double` would not care.\n\nThis is the **LEGB scope rule** at work. The function body has its own local scope. It sees `n` but it cannot see `x`, `apples`, or anything else from the caller.\n\nWhy did Python choose this design? It prevents functions from accidentally reading or overwriting the caller's variables. Each function is a sealed room — inputs arrive through the parameter door only."
     },
     {
       type: "text",
-      md: "## Multiple Parameters — Order Matters\n\nYou can have more than one parameter. Separate them with commas:\n\n```python\ndef subtract(a, b):\n    print(a - b)\n\nsubtract(10, 3)   # a = 10, b = 3 → prints 7\nsubtract(3, 10)   # a = 3,  b = 10 → prints -7\n```\n\nPython matches arguments to parameters **by position**, left to right. Swapping the arguments gives a different answer — sometimes a wrong one. This is called **positional binding**.\n\nThe CS principle here is **DRY** (Don't Repeat Yourself). Instead of writing separate `subtract_10_3` and `subtract_3_10` functions, one function with parameters covers every case.\n\nTo add a second parameter, just add it to the `def` line and update your call to pass both values."
+      md: "**Multiple Parameters — Order Matters.**\n\nYou can have more than one parameter. Separate them with commas.",
+    },
+    {
+      type: "example",
+      note: "Python matches arguments to parameters by position. Swapping the arguments gives a different answer.",
+      code: "def subtract(a, b):\n    print(a - b)\n\nsubtract(10, 3)   # a = 10, b = 3 → prints 7\nsubtract(3, 10)   # a = 3,  b = 10 → prints -7",
+    },
+    {
+      type: "text",
+      md: "Python matches arguments to parameters **by position**, left to right. This is called **positional binding**.\n\nThe CS principle here is **DRY** (Don't Repeat Yourself). Instead of writing separate `subtract_10_3` and `subtract_3_10` functions, one function with parameters covers every case.\n\nTo add a second parameter, just add it to the `def` line and update your call to pass both values."
     },
     {
       type: "exercise",
@@ -276,7 +308,16 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## TypeError — The Wrong Argument Count\n\nPython counts arguments at call time. If the count is wrong, you get a `TypeError` immediately.\n\n**Anti-pattern:**\n```python\ndef add(a, b):\n    print(a + b)\n\nadd(3)   # TypeError: add() missing 1 required positional argument: 'b'\n```\n\nWhat breaks: Python cannot bind `b` because no second argument was passed. The function cannot run at all.\n\nThe error message tells you exactly what is missing. The fix is always: look at the `def` line, count the parameters, then match that count in your call.\n\nDo not guess — read the `def`. If `def add(a, b):` has two parameters, every call needs two arguments."
+      md: "**TypeError — The Wrong Argument Count.**\n\nPython counts arguments at call time. If the count is wrong, you get a `TypeError` immediately.",
+    },
+    {
+      type: "example",
+      note: "Anti-pattern: calling add(3) when it needs two arguments. Python raises TypeError immediately.",
+      code: "def add(a, b):\n    print(a + b)\n\nadd(3)   # TypeError: add() missing 1 required positional argument: 'b'",
+    },
+    {
+      type: "text",
+      md: "What breaks: Python cannot bind `b` because no second argument was passed. The function cannot run at all.\n\nThe error message tells you exactly what is missing. The fix is always: look at the `def` line, count the parameters, then match that count in your call.\n\nDo not guess — read the `def`. If `def add(a, b):` has two parameters, every call needs two arguments."
     },
     {
       type: "exercise",
@@ -329,11 +370,16 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "## print vs return — the key distinction\n\nThese two lines look similar but do very different things:\n\n```\nprint(a + b)   # sends the answer to the SCREEN\nreturn a + b   # sends the answer to the CALLER\n```\n\nHere is the same function written two ways:\n\n```\ndef add_wrong(a, b):   # anti-pattern\n    print(a + b)\n\ndef add_right(a, b):   # correct\n    return a + b\n```\n\nNow try to use the result:\n\n```\ntotal = add_wrong(3, 4) + 1   # CRASH: TypeError\ntotal = add_right(3, 4) + 1   # works: total is 8\n```\n\nWhy does `add_wrong` crash? It prints `7` to the screen, then returns `None`. Python tries to compute `None + 1` — and `None` is not a number, so you get a **TypeError**.\n\nThe rule: **if you need the answer anywhere else in your program, use `return`, not `print`.**\n\nThis is the single most common beginner bug in Python. Knowing it by name — the **print-not-return bug** — helps you spot it instantly."
+      md: "**print vs return — the key distinction.**\n\n`print(a + b)` sends the answer to the screen. `return a + b` sends the answer to the [[caller]].\n\nWhy does the print version crash when you try to use the result? It prints `7` to the screen, then returns `None`. Python tries to compute `None + 1` — and `None` is not a number, so you get a **TypeError**.\n\nThe rule: **if you need the answer anywhere else in your program, use `return`, not `print`.**\n\nThis is the single most common beginner bug in Python. Knowing it by name — the **print-not-return bug** — helps you spot it instantly."
+    },
+    {
+      type: "example",
+      note: "Anti-pattern: add_wrong prints instead of returning. Anti-pattern is below add_right for comparison.",
+      code: "def add_wrong(a, b):   # anti-pattern\n    print(a + b)\n\ndef add_right(a, b):   # correct\n    return a + b\n\ntotal = add_wrong(3, 4) + 1   # CRASH: TypeError — None + 1\ntotal = add_right(3, 4) + 1   # works: total is 8",
     },
     {
       type: "text",
-      md: "## None revisited\n\nEvery function that has no `return` statement gives back `None`. This connects to what you learned in Lesson 3.1.\n\n`None` is Python's way of saying \"no answer\". It is a real value with its own type (`NoneType`). It is not zero. It is not an empty string. It means *nothing was returned*.\n\nYou can store `None` in a variable — Python will not complain. But the moment you try to use `None` in arithmetic or string building, you get a crash.\n\nCS principle: Python chose to make \"no return value\" explicit by giving it a name (`None`) rather than silently returning zero or crashing. That design choice makes bugs visible instead of hiding them."
+      md: "**None revisited.**\n\nEvery function that has no `return` statement gives back `None`. This connects to what you learned in Lesson 3.1.\n\n`None` is Python's way of saying \"no answer\". It is a real value with its own type (`NoneType`). It is not zero. It is not an empty string. It means *nothing was returned*.\n\nYou can store `None` in a variable — Python will not complain. But the moment you try to use `None` in arithmetic or string building, you get a crash.\n\nCS principle: Python chose to make \"no return value\" explicit by giving it a name (`None`) rather than silently returning zero or crashing. That design choice makes bugs visible instead of hiding them."
     },
     {
       type: "exercise",
@@ -363,7 +409,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## Early return — exit the function immediately\n\nA `return` statement does two things at once: it sends a value back to the [[caller]], **and it exits the function right there**. No more lines in the function run.\n\nThis is very useful for **guard clauses** — checks at the top of a function that handle special cases early:\n\n```\ndef is_prime(n):\n    if n < 2:\n        return False   # exit immediately, skip the loop\n    for divisor in range(2, n):\n        ...\n```\n\nWithout early return, you would need to wrap the entire loop in an `if n >= 2:` block. The code gets more deeply indented and harder to read.\n\nCS principle: **single exit vs early exit** is a real design debate. In short functions, early return is cleaner. The key insight: once you know the answer, return it — don't make the function do extra work."
+      md: "**Early return — exit the function immediately.**\n\nA `return` statement does two things at once: it sends a value back to the [[caller]], **and it exits the function right there**. No more lines in the function run.\n\nThis is very useful for **guard clauses** — checks at the top of a function that handle special cases early. Without early return, you would need to wrap the entire loop in an `if n >= 2:` block. The code gets more deeply indented and harder to read.\n\nCS principle: **single exit vs early exit** is a real design debate. In short functions, early return is cleaner. The key insight: once you know the answer, return it — don't make the function do extra work."
     },
     {
       type: "exercise",
@@ -380,11 +426,21 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## Composition — functions calling functions\n\n[[Composition]] means passing one function's return value directly into another function. It works because `return` gives the [[caller]] a real value to use.\n\n```\ndef square(n):\n    return n * n\n\ndef double(n):\n    return n * 2\n\nresult = double(square(3))   # square(3) gives 9, double(9) gives 18\nprint(str(result) + \" is the answer\")  # str() wraps the int\n```\n\nPython evaluates this from the inside out: `square(3)` runs first and returns `9`. Then `double(9)` runs and returns `18`. Then `str(18)` returns `\"18\"`.\n\nThis is how programs scale without becoming spaghetti. Each function does one job cleanly. You combine them to build more powerful operations — without rewriting any of the pieces.\n\nAlternative without composition: you would need `temp1 = square(3)`, then `temp2 = double(temp1)`, then `str(temp2)`. That is fine too, and sometimes clearer. But composition is shorter when the logic is simple."
+      md: "**Composition — functions calling functions.**\n\n[[Composition]] means passing one function's return value directly into another function. It works because `return` gives the [[caller]] a real value to use.\n\nPython evaluates `double(square(3))` from the inside out: `square(3)` runs first and returns `9`. Then `double(9)` runs and returns `18`. Then `str(18)` returns `\"18\"`.\n\nThis is how programs scale without becoming spaghetti. Each function does one job cleanly. You combine them to build more powerful operations — without rewriting any of the pieces.\n\nAlternative without composition: you would need `temp1 = square(3)`, then `temp2 = double(temp1)`, then `str(temp2)`. That is fine too, and sometimes clearer. But composition is shorter when the logic is simple."
+    },
+    {
+      type: "example",
+      note: "Composition: square(3) returns 9, double(9) returns 18, str(18) returns the string.",
+      code: "def square(n):\n    return n * n\n\ndef double(n):\n    return n * 2\n\nresult = double(square(3))   # square(3) gives 9, double(9) gives 18\nprint(str(result) + \" is the answer\")",
     },
     {
       type: "text",
-      md: "## Accumulator pattern + return\n\nIn Chapter 2 you learned the **accumulator pattern** — starting at zero and adding to a running total inside a loop. That pattern was always followed by a `print` at the end.\n\nNow you can replace that `print` with a `return` — and suddenly the caller can use the result:\n\n```\ndef sum_to(n):\n    total = 0\n    for i in range(1, n + 1):\n        total += i\n    return total\n\nbig_sum = sum_to(100)\nprint(\"Sum:\", big_sum)\nprint(\"Double:\", big_sum * 2)   # can use it twice!\n```\n\nIf `sum_to` printed instead of returning, you could never use the result in `big_sum * 2`. The value would be stuck on the screen, unreachable.\n\nThis is the payoff of `return`: it makes your function's answer **available to the rest of the program**."
+      md: "**Accumulator pattern + return.**\n\nIn Chapter 2 you learned the **accumulator pattern** — starting at zero and adding to a running total inside a loop. That pattern was always followed by a `print` at the end.\n\nNow you can replace that `print` with a `return` — and suddenly the caller can use the result.\n\nIf `sum_to` printed instead of returning, you could never use the result in `big_sum * 2`. The value would be stuck on the screen, unreachable.\n\nThis is the payoff of `return`: it makes your function's answer **available to the rest of the program**."
+    },
+    {
+      type: "example",
+      note: "sum_to returns the result so the caller can use it — here it is used twice.",
+      code: "def sum_to(n):\n    total = 0\n    for i in range(1, n + 1):\n        total += i\n    return total\n\nbig_sum = sum_to(100)\nprint(\"Sum:\", big_sum)\nprint(\"Double:\", big_sum * 2)   # can use it twice!",
     },
     {
       type: "exercise",
@@ -438,7 +494,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "## Every call gets its own whiteboard\n\nImagine each function call opens a **private whiteboard**. Only that call can see it.\n\nVariables you create inside the function are written on that whiteboard. When the call returns, Python **erases the whiteboard entirely**.\n\nTwo calls to the same function each get their **own separate whiteboard** — they never share notes. This private workspace is called a [[frame]].\n\nThe rule for which variables a name refers to is called the **LEGB rule**: Python looks **L**ocal first, then **G**lobal. Today we cover L and G.\n\nThis is the [[scope]] system. [[scope]] decides which variables a name refers to at any point in your program.",
+      md: "**Every call gets its own whiteboard.**\n\nImagine each function call opens a **private whiteboard**. Only that call can see it.\n\nVariables you create inside the function are written on that whiteboard. When the call returns, Python **erases the whiteboard entirely**.\n\nTwo calls to the same function each get their **own separate whiteboard** — they never share notes. This private workspace is called a [[frame]].\n\nThe rule for which variables a name refers to is called the **LEGB rule**: Python looks **L**ocal first, then **G**lobal. Today we cover L and G.\n\nThis is the [[scope]] system. [[scope]] decides which variables a name refers to at any point in your program.",
     },
     {
       type: "example",
@@ -447,7 +503,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## Same name, different [[scope]]\n\nBoth functions above use `result`. They never clash.\n\nThis is what makes functions **safe to combine**. Internal names don't leak out. You can write `make_upper` without knowing anything about `make_lower`'s internals.\n\nThe CS principle at work here is **[[separation of concerns]]**: each function manages its own private state. No function needs to know what variables another function chose.\n\nCompare the alternative — one giant block of code with one shared `result` variable. Every line can overwrite it. You can't reuse any piece. Functions fix that completely.",
+      md: "**Same name, different [[scope]].**\n\nBoth functions above use `result`. They never clash.\n\nThis is what makes functions **safe to combine**. Internal names don't leak out. You can write `make_upper` without knowing anything about `make_lower`'s internals.\n\nThe CS principle at work here is **[[separation of concerns]]**: each function manages its own private state. No function needs to know what variables another function chose.\n\nCompare the alternative — one giant block of code with one shared `result` variable. Every line can overwrite it. You can't reuse any piece. Functions fix that completely.",
     },
     {
       type: "exercise",
@@ -464,7 +520,17 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## The `UnboundLocalError` trap\n\nHere is a subtle crash that surprises everyone the first time.\n\n```\ncount = 10\n\ndef reset():\n    count = count - 10\n    return count\n```\n\nPython **scans the entire function body before running a single line**. It sees `count =` inside the function, so it decides: `count` is a [[local variable]] throughout this function.\n\nNow when it tries to run `count - 10`, the local `count` has no value yet. Python raises `UnboundLocalError: local variable 'count' referenced before assignment`.\n\nThe anti-pattern: reaching outside your [[frame]] to read a [[global variable]] and then writing to a local with the same name in the same function.\n\n**The fix is always the same: pass the value as a parameter.**\n\n```\ndef reset(n):\n    return n - 10\n\nprint(reset(count))\n```\n\nNow `reset` owns its data through a parameter. No confusion about which `n` is local vs global — `n` is always local.",
+      md: "**The `UnboundLocalError` trap.**\n\nHere is a subtle crash that surprises everyone the first time.\n\nPython **scans the entire function body before running a single line**. If it sees `count =` inside the function, it decides: `count` is a [[local variable]] throughout this function. Then when it tries to run `count - 10`, the local `count` has no value yet — `UnboundLocalError: local variable 'count' referenced before assignment`.\n\nThe anti-pattern: reaching outside your [[frame]] to read a [[global variable]] and then writing to a local with the same name.\n\n**The fix is always the same: pass the value as a parameter.**\n\nNow `reset` owns its data through a parameter. No confusion about which `n` is local vs global — `n` is always local.",
+    },
+    {
+      type: "example",
+      note: "Anti-pattern: UnboundLocalError because count is treated as local but has no value yet.",
+      code: "count = 10\n\ndef reset():\n    count = count - 10   # UnboundLocalError!\n    return count",
+    },
+    {
+      type: "example",
+      note: "Fix: pass the value as a parameter instead of reading the global directly.",
+      code: "def reset(n):\n    return n - 10\n\nprint(reset(count))",
     },
     {
       type: "exercise",
@@ -481,7 +547,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## The `global` keyword — and why not to use it\n\nPython does give you an escape hatch:\n\n```\ncount = 0\n\ndef add_one():\n    global count\n    count = count + 1\n```\n\nThe line `global count` tells Python: \"don't create a local `count` — reach outside my [[frame]] and modify the [[global variable]] directly.\"\n\nThis works. But **don't use it**.\n\nFunctions that modify [[global variable|global variables]] are hard to test — you can't call them without setting up global state first. They are hard to reuse — moving the function to a new file breaks it. Two functions that both use `global count` start interfering with each other in ways that are painful to debug.\n\nThe professional rule: **functions receive data through parameters and return data through `return`**. That is the entire contract. No side effects on shared variables.",
+      md: "**The `global` keyword — and why not to use it.**\n\nPython does give you an escape hatch: `global count` inside a function tells Python to reach outside the [[frame]] and modify the [[global variable]] directly.\n\nThis works. But **don't use it**.\n\nFunctions that modify [[global variable|global variables]] are hard to test — you can't call them without setting up global state first. They are hard to reuse — moving the function to a new file breaks it. Two functions that both use `global count` start interfering with each other in ways that are painful to debug.\n\nThe professional rule: **functions receive data through parameters and return data through `return`**. That is the entire contract. No side effects on shared variables.",
     },
     {
       type: "exercise",
@@ -498,7 +564,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## Functions calling functions: stacked frames\n\nWhen one function calls another, Python **stacks a new [[frame]] on top**.\n\nImagine `is_match(\"  Hello  \", \"hello\")` runs:\n\n1. Python opens an `is_match` [[frame]]. `a = \"  Hello  \"`, `b = \"hello\"`.\n2. `is_match` calls `clean(a)`. Python opens a **second** [[frame]] for `clean`. `text = \"  Hello  \"`.\n3. `clean` finishes and returns `\"hello\"`. Its [[frame]] closes and disappears.\n4. `is_match` calls `clean(b)`. A **new** `clean` [[frame]] opens. `text = \"hello\"`.\n5. That `clean` [[frame]] closes. `is_match` now compares the two results and returns.\n6. The `is_match` [[frame]] closes.\n\nThis layered structure is called the **call stack**. Real programs stack dozens of frames. Each frame is isolated — `clean` has no idea that `is_match` exists, and `is_match` has no idea how `clean` does its job. That is [[separation of concerns]] in action.",
+      md: "**Functions calling functions: stacked frames.**\n\nWhen one function calls another, Python **stacks a new [[frame]] on top**.\n\nImagine `is_match(\"  Hello  \", \"hello\")` runs:\n\n1. Python opens an `is_match` [[frame]]. `a = \"  Hello  \"`, `b = \"hello\"`.\n2. `is_match` calls `clean(a)`. Python opens a **second** [[frame]] for `clean`. `text = \"  Hello  \"`.\n3. `clean` finishes and returns `\"hello\"`. Its [[frame]] closes and disappears.\n4. `is_match` calls `clean(b)`. A **new** `clean` [[frame]] opens. `text = \"hello\"`.\n5. That `clean` [[frame]] closes. `is_match` now compares the two results and returns.\n6. The `is_match` [[frame]] closes.\n\nThis layered structure is called the **call stack**. Real programs stack dozens of frames. Each frame is isolated — `clean` has no idea that `is_match` exists, and `is_match` has no idea how `clean` does its job. That is [[separation of concerns]] in action.",
     },
     {
       type: "exercise",
@@ -537,11 +603,16 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "## The problem defaults solve\n\nYou already know `range()` has shortcuts.\n\n`range(5)` is really `range(0, 5, 1)` — start and step have **default values**.\n\nWithout defaults, you would have to write `range(0, 5, 1)` every single time.\n\nThat violates **DRY** (Don't Repeat Yourself): the common case shouldn't need extra typing.\n\nPython's design choice: defaults make functions easy to call in the typical case, while still letting you override them when needed.\n\nAnti-pattern — imagine `range` had no defaults:\n\n```\nrange(5)        # SyntaxError — missing start and step!\nrange(0, 5, 1)  # you'd always have to write this\n```\n\nWith defaults, the common case is short, and the override is still possible."
+      md: "**The problem defaults solve.**\n\nYou already know `range()` has shortcuts.\n\n`range(5)` is really `range(0, 5, 1)` — start and step have **default values**.\n\nWithout defaults, you would have to write `range(0, 5, 1)` every single time.\n\nThat violates **DRY** (Don't Repeat Yourself): the common case shouldn't need extra typing.\n\nPython's design choice: defaults make functions easy to call in the typical case, while still letting you override them when needed.\n\nWith defaults, the common case is short — `range(5)` — and the full form `range(0, 5, 1)` is still available when you need it."
     },
     {
       type: "text",
-      md: "## Default argument syntax\n\nAdd `=value` after the parameter name:\n\n```\ndef greet(name, greeting=\"Hello\"):\n    return greeting + \", \" + name + \"!\"\n```\n\n`name` is **required** — the caller must pass it.\n\n`greeting` is **optional** — it falls back to `\"Hello\"` if omitted.\n\n**The order rule:** required parameters must come BEFORE defaulted ones.\n\nThis is a [[default argument]] constraint Python enforces strictly.\n\nBreaking the rule:\n\n```\ndef greet(greeting=\"Hello\", name):  # SyntaxError!\n    ...\n```\n\nError message: `SyntaxError: non-default argument follows default argument`.\n\nWhy? Python matches arguments **by position**.\n\nIf `greeting` has a default and comes first, Python can't tell which value goes where when you call `greet(\"Sam\")`."
+      md: "**Default argument syntax.**\n\nAdd `=value` after the parameter name. In `def greet(name, greeting=\"Hello\"):`, `name` is **required** and `greeting` is **optional** — it falls back to `\"Hello\"` if omitted.\n\n**The order rule:** required parameters must come BEFORE defaulted ones.\n\nThis is a [[default argument]] constraint Python enforces strictly. Breaking the rule raises `SyntaxError: non-default argument follows default argument`.\n\nWhy? Python matches arguments **by position**. If `greeting` has a default and comes first, Python can't tell which value goes where when you call `greet(\"Sam\")`.",
+    },
+    {
+      type: "example",
+      note: "Anti-pattern: required parameter after defaulted one — SyntaxError.",
+      code: "def greet(greeting=\"Hello\", name):  # SyntaxError!\n    ...",
     },
     {
       type: "example",
@@ -563,7 +634,12 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## Docstrings: built-in documentation\n\nA [[docstring]] is the **first string literal** inside a function body.\n\n```\ndef add_bonus(score, bonus=10):\n    \"\"\"Return score plus a bonus (default 10).\"\"\"\n    return score + bonus\n```\n\nPython stores it as `add_bonus.__doc__`.\n\nType `help(add_bonus)` in any Python shell and Python prints it — this is exactly how Python's own built-in docs work.\n\n**One-line vs multi-line:**\n\n```\n# Simple function — one line is enough\ndef double(x):\n    \"\"\"Return x multiplied by 2.\"\"\"\n    return x * 2\n\n# Complex function — multi-line explains each param\ndef repeat_word(word, times=3, sep=\" \"):\n    \"\"\"\n    Repeat word a number of times, joined by sep.\n\n    word  — the string to repeat\n    times — how many times (default 3)\n    sep   — separator between copies (default space)\n    \"\"\"\n    ...\n```\n\n**Anti-pattern — comment instead of docstring:**\n\n```\ndef double(x):\n    # Returns x multiplied by 2   <-- this is a comment, NOT a docstring\n    return x * 2\n\nhelp(double)  # prints nothing useful!\n```\n\nComments are invisible to `help()`. Always use triple quotes for function documentation."
+      md: "**Docstrings: built-in documentation.**\n\nA [[docstring]] is the **first string literal** inside a function body. Python stores it as `add_bonus.__doc__`. Type `help(add_bonus)` in any Python shell and Python prints it — this is exactly how Python's own built-in docs work.\n\n**Anti-pattern — comment instead of docstring:** `# Returns x...` is a comment — invisible to `help()`. Always use triple quotes for function documentation.",
+    },
+    {
+      type: "example",
+      note: "A docstring sits right after the def line, in triple quotes. help() displays it; a comment would not.",
+      code: "def add_bonus(score, bonus=10):\n    \"\"\"Return score plus a bonus (default 10).\"\"\"\n    return score + bonus\n\n# One-line is fine for simple functions:\ndef double(x):\n    \"\"\"Return x multiplied by 2.\"\"\"\n    return x * 2",
     },
     {
       type: "exercise",
@@ -628,7 +704,12 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "Now [[helper function]]s can call each other.\n\n`draw_square` calls `draw_polygon(4, size)`. `draw_house` calls `draw_square` and `draw_roof`. The top level just calls `draw_house`.\n\nBut there's a trap. What if you write this?\n\n```\ndef draw_house():\n    draw_square(side)   # BUG\n```\n\nPython looks for a variable named `side` in the current scope. There isn't one. You get `NameError: name 'side' is not defined`.\n\n**The rule:** every value a helper needs must be *passed explicitly* as an argument. Never assume a variable from somewhere else will be visible. If `draw_house` knows the size, it must hand it to `draw_square` directly: `draw_square(80)`.",
+      md: "Now [[helper function]]s can call each other.\n\n`draw_square` calls `draw_polygon(4, size)`. `draw_house` calls `draw_square` and `draw_roof`. The top level just calls `draw_house`.\n\nBut there's a trap. If `draw_house` calls `draw_square(side)` where `side` is not a defined variable, Python raises `NameError: name 'side' is not defined`.\n\n**The rule:** every value a helper needs must be *passed explicitly* as an argument. Never assume a variable from somewhere else will be visible. If `draw_house` knows the size, it must hand it to `draw_square` directly: `draw_square(80)`.",
+    },
+    {
+      type: "example",
+      note: "Bug: draw_square(side) — 'side' is not defined in draw_house's scope.",
+      code: "def draw_house():\n    draw_square(side)   # NameError: name 'side' is not defined",
     },
     {
       type: "text",
@@ -773,7 +854,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "## The copy-paste trap\n\nImagine a 4-bar drum loop. Without functions it looks like this:\n\n`sample(\"kick\")` `sample(\"hihat\")` `sample(\"kick\")` `sample(\"hihat\")` — repeated 32 times.\n\nNow you want 8 bars instead of 4. You paste 32 more lines.\n\nNow you want to swap \"hihat\" for \"snare\". You edit 32 lines — and you will miss one.\n\nThis violates **DRY** (Don't Repeat Yourself). Every repeated copy is a future bug waiting to happen.\n\nWith a function the fix is one number:\n\n```\ndef beat():\n    sample(\"kick\")\n    sleep(0.5)\n    sample(\"hihat\")\n    sleep(0.5)\n\nfor _ in range(4):   # 4 bars\n    beat()\n```\n\nWant 8 bars? Change `4` to `8`. Want snare? Change one line inside `beat()`. The function is a **recipe card** — write it once, run it anywhere."
+      md: "**The copy-paste trap.**\n\nImagine a 4-bar drum loop. Without functions: `sample(\"kick\")` `sample(\"hihat\")` — repeated 32 times.\n\nNow you want 8 bars? You paste 32 more lines. Want to swap \"hihat\" for \"snare\"? You edit 32 lines — and you will miss one.\n\nThis violates **DRY** (Don't Repeat Yourself). Every repeated copy is a future bug waiting to happen.\n\nWith a function, the fix is one number. Want 8 bars? Change `4` to `8`. Want snare? Change one line inside `beat()`. The function is a **recipe card** — write it once, run it anywhere."
     },
     {
       type: "example",
@@ -803,7 +884,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## Parameters shift the whole melody\n\nHere is a melody function with a [[root]] parameter:\n\n```\ndef verse(root):\n    play(root)\n    play(root + 2)\n    play(root + 4)\n    play(root + 7)\n```\n\n`verse(60)` plays notes 60, 62, 64, 67.\n\n`verse(65)` plays notes 65, 67, 69, 72.\n\nThe **shape** is identical — only the starting point shifts.\n\nIn music this is called **transposition**: moving a melody to a new key without rewriting it.\n\nIn CS it is called **parameterisation**: one function, many contexts.\n\nThe anti-pattern is writing `verse_c()` and `verse_f()` as two separate functions. When you fix a bug in one, the other still has the bug."
+      md: "**Parameters shift the whole melody.**\n\nWith a `root` parameter, `verse(60)` plays notes 60, 62, 64, 67 and `verse(65)` plays 65, 67, 69, 72. The **shape** is identical — only the starting point shifts.\n\nIn music this is called **transposition**: moving a melody to a new key without rewriting it.\n\nIn CS it is called **parameterisation**: one function, many contexts.\n\nThe anti-pattern is writing `verse_c()` and `verse_f()` as two separate functions. When you fix a bug in one, the other still has the bug."
     },
     {
       type: "example",
@@ -812,7 +893,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## MIDI note numbers — a quick map\n\nEvery note is just a number. **60 is C4** — middle C on a piano.\n\nAdding 1 moves one semitone up (one piano key to the right).\n\nSo `root + 2` is a whole tone, `root + 4` is a major third, `root + 7` is a perfect fifth.\n\nYou do not need to memorise intervals. What matters is this: **+N always means N semitones higher**, and functions let you express that relationship once."
+      md: "**MIDI note numbers — a quick map.**\n\nEvery note is just a number. **60 is C4** — middle C on a piano.\n\nAdding 1 moves one semitone up (one piano key to the right).\n\nSo `root + 2` is a whole tone, `root + 4` is a major third, `root + 7` is a perfect fifth.\n\nYou do not need to memorise intervals. What matters is this: **+N always means N semitones higher**, and functions let you express that relationship once."
     },
     {
       type: "exercise",
@@ -835,7 +916,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## The song hierarchy\n\nGood song code is a **tree of functions**, each layer giving you higher-level control:\n\n- `beat()` — the leaf. Plays raw samples directly.\n- `verse(root)` — calls `beat()` or plays notes. Knows the melodic shape.\n- `song()` — calls `verse()` several times. Knows the structure.\n\nWhen you want to change the [[tempo]] you change `song()`. When you want to change the drum sound you change `beat()`. Each function has **one job** — this is the CS principle called **separation of concerns**.\n\nThe alternative is one giant block of `play()` and `sample()` calls with no structure. Try finding the chorus in 200 lines of that."
+      md: "**The song hierarchy.**\n\nGood song code is a **tree of functions**, each layer giving you higher-level control:\n\n- `beat()` — the leaf. Plays raw samples directly.\n- `verse(root)` — calls `beat()` or plays notes. Knows the melodic shape.\n- `song()` — calls `verse()` several times. Knows the structure.\n\nWhen you want to change the [[tempo]] you change `song()`. When you want to change the drum sound you change `beat()`. Each function has **one job** — this is the CS principle called **separation of concerns**.\n\nThe alternative is one giant block of `play()` and `sample()` calls with no structure. Try finding the chorus in 200 lines of that."
     },
     {
       type: "example",
@@ -888,15 +969,30 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "## Design Before You Code\n\nProfessional programmers write the *plan* before the code.\n\nThe technique has a name: **wishful thinking** (also called top-down design).\nYou write what you *wish* existed, then you make it true.\n\nHere is the full [[design]] for `is_palindrome` before a single line of body code exists:\n\n```\ndef is_palindrome(word):\n    \"\"\"Return True if word reads the same forwards and backwards.\n    Examples: is_palindrome(\"racecar\") -> True\n              is_palindrome(\"hello\")   -> False\n    \"\"\"\n    pass  # body goes here\n```\n\nWriting the signature and examples first forces you to answer three questions:\n- What goes *in*?\n- What comes *out*?\n- What are two concrete cases I can check?\n\nOnly after answering those do you write the body.\nThis prevents the most common beginner mistake: writing code without knowing what it should do.\n\n**CS principle — separation of concerns:** each function has exactly one job.\n`is_palindrome` just answers a yes/no question.\nIt does not print, it does not ask the user anything — it just returns `True` or `False`.",
+      md: "**Design Before You Code.**\n\nProfessional programmers write the *plan* before the code.\n\nThe technique has a name: **wishful thinking** (also called top-down design). You write what you *wish* existed, then you make it true.\n\nWriting the signature and docstring first forces you to answer three questions: What goes *in*? What comes *out*? What are two concrete cases I can check?\n\nOnly after answering those do you write the body. This prevents the most common beginner mistake: writing code without knowing what it should do.\n\n**CS principle — separation of concerns:** each function has exactly one job. `is_palindrome` just answers a yes/no question. It does not print, it does not ask the user anything — it just returns `True` or `False`.",
+    },
+    {
+      type: "example",
+      note: "Design-first: write the signature and docstring before the body. The pass is a placeholder.",
+      code: "def is_palindrome(word):\n    \"\"\"Return True if word reads the same forwards and backwards.\n    Examples: is_palindrome(\"racecar\") -> True\n              is_palindrome(\"hello\")   -> False\n    \"\"\"\n    pass  # body goes here",
     },
     {
       type: "text",
-      md: "## String [[Iteration]]: `for char in text:`\n\nYou know the `for` loop from Chapter 2.\nStrings are sequences too. Python visits each character, one at a time.\n\nSo the same loop works on a string:\n\n```\nfor char in \"hello\":\n    print(char)\n```\n\nThis prints `h`, then `e`, then `l`, then `l`, then `o`.\n\n**Two ways to do the same thing:**\n\n```\n# Messy: you track the index yourself\nfor i in range(len(text)):\n    print(text[i])\n\n# Clean: Python handles the stepping\nfor char in text:\n    print(char)\n```\n\nPython chose the clean version as the natural way. Code is read more than it is written. Short, clear code wins.\n\nAdd an accumulator and a condition, and you have a puzzle function:\n\n```\ntotal = 0\nfor char in text:\n    if char in \"aeiou\":\n        total += 1\n```\n\n`char in \"aeiou\"` is a [[membership test]]. You used `in` in Chapter 2.\nHere it checks whether `char` is one of the five vowel letters.",
+      md: "**String [[Iteration]]: `for char in text:`**\n\nYou know the `for` loop from Chapter 2. Strings are sequences too — Python visits each character, one at a time.\n\nPython chose the clean version as the natural way. Code is read more than it is written. Short, clear code wins.\n\nAdd an accumulator and a condition, and you have a puzzle function. `char in \"aeiou\"` is a [[membership test]] — you used `in` in Chapter 2. Here it checks whether `char` is one of the five vowel letters.",
+    },
+    {
+      type: "example",
+      note: "Two ways to iterate a string — clean vs messy. Python prefers the clean version.",
+      code: "# Messy: you track the index yourself\nfor i in range(len(text)):\n    print(text[i])\n\n# Clean: Python handles the stepping\nfor char in text:\n    print(char)",
+    },
+    {
+      type: "example",
+      note: "Accumulator + membership test: count vowels in a string.",
+      code: "total = 0\nfor char in text:\n    if char in \"aeiou\":\n        total += 1",
     },
     {
       type: "text",
-      md: "## The Prepend-Reverse Trick\n\nTo reverse a string, we use the **accumulator pattern from Chapter 2** — but with a twist.\n\nNormal accumulator (appending):\n```\nresult = result + char   # char lands at the END\n```\n\nPrepend-reverse trick:\n```\nresult = char + result   # char lands at the FRONT\n```\n\nWhy does prepending reverse the string?\n\nImagine the loop visiting `\"abc\"` in order: `a`, then `b`, then `c`.\n\n- After `a`: `result = \"a\"`\n- After `b`: `result = \"b\" + \"a\"` = `\"ba\"`\n- After `c`: `result = \"c\" + \"ba\"` = `\"cba\"`\n\nThe first character visited (`a`) gets pushed to the back by every character that comes after it.\nThe last character visited (`c`) stays at the front.\nResult: the string is reversed.\n\n**Anti-pattern:** if you append instead of prepend, you get the *original* string back, not the reverse.\n`result = result + char` gives you `\"abc\"` — no change, and `is_palindrome` always returns `True`.",
+      md: "**The Prepend-Reverse Trick.**\n\nTo reverse a string, use the **accumulator pattern** — but with a twist. Normally you append: `result = result + char` (char lands at the END). The prepend trick: `result = char + result` (char lands at the FRONT).\n\nWhy does prepending reverse the string? Imagine the loop visiting `\"abc\"`: after `a`: `\"a\"`, after `b`: `\"ba\"`, after `c`: `\"cba\"`. The first character gets pushed to the back by every later character.\n\n**Anti-pattern:** if you append instead of prepend, you get the *original* string back, not the reverse — and `is_palindrome` always returns `True`.",
     },
     {
       type: "example",
@@ -905,11 +1001,26 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "## FizzBuzz: Order Matters in `elif` Chains\n\nFizzBuzz is a classic puzzle.\n\n- If `n` is divisible by both 3 and 5, print `\"FizzBuzz\"`.\n- If divisible by 3 only, print `\"Fizz\"`.\n- If divisible by 5 only, print `\"Buzz\"`.\n- Otherwise, print the number.\n\nHere is the **anti-pattern** that breaks:\n\n```\n# WRONG ORDER\ndef fizzbuzz(n):\n    if n % 3 == 0:       # 15 hits this first!\n        return \"Fizz\"\n    elif n % 5 == 0:\n        return \"Buzz\"\n    elif n % 15 == 0:    # never reached for 15\n        return \"FizzBuzz\"\n```\n\nFor `n = 15`: `15 % 3 == 0` is `True`, so Python returns `\"Fizz\"` immediately.\nIt never checks `n % 15`.\n\nThis is the **first match wins** rule from Chapter 2's `elif` chains.\n\nThe fix is the **specificity rule**: check the *narrower* (more specific) condition first.\n`n % 15 == 0` is the most specific — it requires *both* divisors — so it goes first.\n\n```\n# CORRECT ORDER\nif n % 15 == 0:    # most specific first\n    return \"FizzBuzz\"\nelif n % 3 == 0:\n    return \"Fizz\"\nelif n % 5 == 0:\n    return \"Buzz\"\n```",
+      md: "**FizzBuzz: Order Matters in `elif` Chains.**\n\nFizzBuzz: if `n` is divisible by both 3 and 5 print `\"FizzBuzz\"`, if by 3 only print `\"Fizz\"`, if by 5 only print `\"Buzz\"`, otherwise print the number.\n\nFor `n = 15`: if you check `n % 3 == 0` first, Python returns `\"Fizz\"` immediately and never reaches the `n % 15` check.\n\nThis is the **first match wins** rule from Chapter 2's `elif` chains.\n\nThe fix is the **specificity rule**: check the *narrower* (more specific) condition first. `n % 15 == 0` is the most specific — it requires *both* divisors — so it goes first.",
+    },
+    {
+      type: "example",
+      note: "Anti-pattern: wrong order — n%3 comes before n%15, so 15 always returns 'Fizz'.",
+      code: "# WRONG ORDER\ndef fizzbuzz(n):\n    if n % 3 == 0:       # 15 hits this first!\n        return \"Fizz\"\n    elif n % 5 == 0:\n        return \"Buzz\"\n    elif n % 15 == 0:    # never reached for 15\n        return \"FizzBuzz\"",
+    },
+    {
+      type: "example",
+      note: "Correct order: most specific condition (n%15) checked first.",
+      code: "# CORRECT ORDER\nif n % 15 == 0:    # most specific first\n    return \"FizzBuzz\"\nelif n % 3 == 0:\n    return \"Fizz\"\nelif n % 5 == 0:\n    return \"Buzz\"",
     },
     {
       type: "text",
-      md: "## Function Composition: `word_inspector`\n\nOnce you have `count_vowels` and `is_palindrome`, you can build a function that *uses* them.\n\n```\ndef word_inspector(word):\n    print(\"Vowels:\", count_vowels(word))\n    print(\"Palindrome:\", is_palindrome(word))\n    print(word.upper())\n```\n\n`word_inspector` does not know *how* `count_vowels` counts — it just trusts that it works.\n`word_inspector` does not know *how* `is_palindrome` reverses — it just trusts the answer.\n\nThis is **function composition**: combining functions to build bigger behaviour.\n\n**CS principle — separation of concerns:** each function has one job.\n`count_vowels` counts. `is_palindrome` checks reversal. `word_inspector` reports.\nNone of them do each other's job.\n\nThis is how real software is built — thousands of small, focused functions, composed together.",
+      md: "**Function Composition: `word_inspector`.**\n\nOnce you have `count_vowels` and `is_palindrome`, you can build a function that *uses* them. `word_inspector` does not know *how* `count_vowels` counts — it just trusts that it works.\n\nThis is **function composition**: combining functions to build bigger behaviour.\n\n**CS principle — separation of concerns:** each function has one job. `count_vowels` counts. `is_palindrome` checks reversal. `word_inspector` reports. None of them do each other's job.\n\nThis is how real software is built — thousands of small, focused functions, composed together.",
+    },
+    {
+      type: "example",
+      note: "word_inspector calls count_vowels and is_palindrome — it trusts they work, not how.",
+      code: "def word_inspector(word):\n    print(\"Vowels:\", count_vowels(word))\n    print(\"Palindrome:\", is_palindrome(word))\n    print(word.upper())",
     },
     {
       type: "exercise",
@@ -1026,7 +1137,12 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**The missing-return bug at capstone scale.**\n\nThe most common mistake when combining functions is forgetting `return`. The function runs. It computes a value. But it hands nothing back. The result at the call site is `None`.\n\nThe tell: you see `Perimeter: None` or `Total: None` instead of a number. The function is not broken — it just kept the answer to itself.\n\nAnti-pattern:\n```\ndef area(w, h):\n    total = w * h\n    # oops — no return\n```\n\nEvery time a function computes something you plan to use, ask: does it `return` it?"
+      md: "**The missing-return bug at capstone scale.**\n\nThe most common mistake when combining functions is forgetting `return`. The function runs. It computes a value. But it hands nothing back. The result at the call site is `None`.\n\nThe tell: you see `Perimeter: None` or `Total: None` instead of a number. The function is not broken — it just kept the answer to itself.\n\nEvery time a function computes something you plan to use, ask: does it `return` it?",
+    },
+    {
+      type: "example",
+      note: "Anti-pattern: area computes total but never returns it — the caller gets None.",
+      code: "def area(w, h):\n    total = w * h\n    # oops — no return",
     },
     {
       type: "exercise",
@@ -1097,7 +1213,12 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**Song structure as code.**\n\nReal music software represents notes as numbers. A melody is a sequence of numbers. A function that plays a melody is a musical phrase.\n\nWhen you write `play_verse(root)`, you can call it with any starting note. `play_verse(60)` plays in one key. `play_verse(65)` plays the same phrase five notes higher. This is called **transposition** — and it is free when the melody is defined relative to `root`.\n\nAnti-pattern: writing out every note by hand.\n```\nplay(60)\nplay(62)\nplay(64)\nplay(67)\nplay(65)   # a different verse? copy-paste the whole block\n```\n\nWith a function, you change one number and the whole phrase moves. This is the separation of concerns principle: the melody shape lives in `play_verse`, the starting pitch comes from the caller."
+      md: "**Song structure as code.**\n\nReal music software represents notes as numbers. A melody is a sequence of numbers. A function that plays a melody is a musical phrase.\n\nWhen you write `play_verse(root)`, you can call it with any starting note. `play_verse(60)` plays in one key. `play_verse(65)` plays the same phrase five notes higher. This is called **transposition** — and it is free when the melody is defined relative to `root`.\n\nWith a function, you change one number and the whole phrase moves. This is the separation of concerns principle: the melody shape lives in `play_verse`, the starting pitch comes from the caller.",
+    },
+    {
+      type: "example",
+      note: "Anti-pattern: writing out every note by hand — a different verse means copy-pasting the whole block.",
+      code: "play(60)\nplay(62)\nplay(64)\nplay(67)\nplay(65)   # a different verse? copy-paste the whole block",
     },
     {
       type: "example",
