@@ -16,7 +16,7 @@ window.CODELAB.lessons.push({
   glossary: {
     boolean: "The value True or False. Python's type name is bool. Every comparison expression produces a boolean.",
     comparison: "An expression using ==, !=, <, >, <=, or >= that evaluates to True or False.",
-    truthiness: "Python's rule for deciding whether a non-boolean value counts as True or False inside a condition. Zero, empty string, and None are falsy; everything else is truthy.",
+    truthiness: "Python's rule for deciding whether a non-boolean value counts as True or False inside a condition. False, zero (0 and 0.0), empty string, and None are falsy; everything else is truthy.",
     "short-circuit": "Python's behavior of stopping evaluation of and/or as soon as the result is determined. If the left side of and is False, the right side is never evaluated.",
   },
   content: [
@@ -53,12 +53,12 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "Python's `if` statement does not demand a strict `True` or `False`. It accepts any value and applies a rule called **[[truthiness]]**: some values count as true, others as false.\n\n**Falsy** values — ones Python treats as false — are exactly these three: the number `0`, the empty string `\"\"`, and the special value `None`. Every other value is **truthy**. A non-zero number, any non-empty string, even a single space — all truthy.\n\nThis means `if name:` and `if name != \"\":` say the same thing. Both pass when `name` holds any non-empty string.",
+      md: "Python's `if` statement does not demand a strict `True` or `False`. It accepts any value and applies a rule called **[[truthiness]]**: some values count as true, others as false.\n\n**Falsy** values — ones Python treats as false — are: `False`, zero (`0` and `0.0`), the empty string `\"\"`, and the special value `None`. (In Chapter 4 you will meet two more: the empty list `[]` and empty dictionary `{}`.) Every other value is **truthy**. A non-zero number, any non-empty string, even a single space — all truthy.\n\nThis means `if name:` and `if name != \"\":` say the same thing. Both pass when `name` holds any non-empty string.",
     },
     {
       type: "example",
       note: "bool() converts any value to its True/False equivalent. Predict each line before running.",
-      code: "print(bool(0))      # False\nprint(bool(\"\"))     # False\nprint(bool(None))   # False\nprint(bool(42))     # True\nprint(bool(\"hi\"))   # True\nprint(bool(\" \"))    # True — one space is not empty\n",
+      code: "print(bool(False))  # False\nprint(bool(0))      # False\nprint(bool(0.0))    # False\nprint(bool(\"\"))     # False\nprint(bool(None))   # False\nprint(bool(42))     # True\nprint(bool(\"hi\"))   # True\nprint(bool(\" \"))    # True — one space is not empty\n",
     },
     {
       type: "text",
@@ -80,7 +80,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**Why truthiness is designed this way.** Python's rule is consistent: values that represent 'empty' or 'nothing' are falsy — `0`, `\"\"`, `None`, and later `[]` (empty list). Everything else is truthy. This is a deliberate design choice that lets you write `if name:` instead of `if name != \"\"`, and `if count:` instead of `if count != 0`. It is not magic; it is a convention about what 'empty' means.\n\n**Short-circuit evaluation — not just a speed trick.** In `a and b`, if `a` is `False`, Python never evaluates `b`. In `a or b`, if `a` is `True`, Python never evaluates `b`. This prevents crashes: `if x != 0 and 10 / x > 2:` is safe because when `x` is `0`, the `and` short-circuits before the division executes. If Python always evaluated both sides, that division by zero would crash regardless of the first condition. Short-circuit evaluation is a real safety tool.",
+      md: "**Why truthiness is designed this way.** Python's rule is consistent: values that represent 'empty' or 'nothing' are falsy — `False`, `0`, `0.0`, `\"\"`, `None`, and later `[]` (empty list) and `{}` (empty dictionary). Everything else is truthy. This is a deliberate design choice that lets you write `if name:` instead of `if name != \"\"`, and `if count:` instead of `if count != 0`. It is not magic; it is a convention about what 'empty' means.\n\n**Short-circuit evaluation — not just a speed trick.** In `a and b`, if `a` is `False`, Python never evaluates `b`. In `a or b`, if `a` is `True`, Python never evaluates `b`. This prevents crashes: `if x != 0 and 10 / x > 2:` is safe because when `x` is `0`, the `and` short-circuits before the division executes. If Python always evaluated both sides, that division by zero would crash regardless of the first condition. Short-circuit evaluation is a real safety tool.",
     },
     {
       type: "text",

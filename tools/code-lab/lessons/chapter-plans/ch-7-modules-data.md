@@ -11,6 +11,12 @@ and import their own module, read a documentation page independently, extract
 structured facts from raw text, persist data as JSON files, and run basic SQL
 queries — giving them the toolkit for the capstone projects in Ch.11.
 
+**Ch.6-to-Ch.7 transition.** After OOP, a student might expect more objects. This
+chapter pivots to `import math` without a bridge — which risks confusion. Open
+the chapter with one paragraph: "You now know how to organise code into functions
+(Ch.3) and objects (Ch.6). Python itself has thousands of solved problems waiting.
+This chapter is where you learn to use what others have already built."
+
 Rungs 1–6 (Predict → Modify → Fix → Complete → Write). Strands: core, words, data.
 Sits between Ch.6 (OOP) and Real Tools I.
 
@@ -64,11 +70,35 @@ Sits between Ch.6 (OOP) and Real Tools I.
 ```
 
 **Recalled from earlier chapters (spiral weaving — do not re-teach):**
-- Ch.1: strings (including `str.split()`, `str.join()`, indexing, slicing),
-  `print`, variables, `input()`, type conversions, immutability
-- Ch.2: `for` loops, `if/elif/else`, `while`
+
+> **Authoring dependency note (Blocker B4):** `str.split(sep)` with a custom
+> separator, `str.join()`, and f-strings are NOT confirmed as taught in c1.js–c3.js
+> (c1.js teaches no-arg `split()` only; `join` appears as a Codex note without an
+> exercise; f-strings appear once as a code comment in c2.js without formal
+> introduction). Authoring of 7.5, 7.6, and 7.7 is blocked until one of these
+> resolutions is confirmed by the chapter-chain author:
+> (a) `str.split(sep)`, `str.join()`, and f-strings are formally introduced and
+> exercised in Ch.2, Ch.4, or Ch.5 (not yet written) — update the "Recalled from"
+> attribution to name the correct chapter; or
+> (b) introduce them formally in the first chapter that needs them (Ch.4 or Ch.5),
+> and mark Ch.7 as recalling them from that chapter.
+> Until resolved, exercises in 7.5–7.7 must avoid relying on `str.join()` and
+> f-strings as prior knowledge, and `str.split(sep)` must be explicitly shown (not
+> merely assumed) in each worked example that first uses it.
+
+- Ch.1: strings (including no-arg `str.split()`, indexing, slicing, `str.strip()`,
+  `str.lower()`, `str.upper()`), `print`, variables, `input()`, type conversions,
+  immutability. (**`str.split(sep)` with a custom separator and `str.join()` are
+  NOT confirmed in c1.js — see authoring dependency note above.**)
+- Ch.2: `for` loops, `if/elif/else`, `while`, `try/except` (Ch.2 owns this);
+  f-strings used in one worked example but not formally introduced — see note above
 - Ch.3: `def`, parameters, `return`, docstrings, scope, default arguments
 - Ch.4: lists, dicts, indexing, `.append()`, looping over collections
+- Ch.5: decomposition, naming, DRY, debugging protocol (apply when
+  `ModuleNotFoundError` appears — it is a structural, diagnosable error)
+- Ch.6: classes, instances, `AttributeError`; the `datetime.date` object in 7.3
+  is an object like the `Pet` class from Ch.6 (name this explicitly as a spiral
+  connection)
 
 ---
 
@@ -78,26 +108,50 @@ Sits between Ch.6 (OOP) and Real Tools I.
 **Arc role:** Hook — run real code that uses the standard library; motivates the
 whole chapter. **Strand:** core. **Rungs:** 3–5.
 
+**Warm-up:** "Write the call that runs `print` with two arguments: the string
+`"Score:"` and the number `42`." (Recalls Ch.1 print + Ch.3 function calls.)
+
+**Namespace mental model (teach before any worked examples):** A module is like a
+separate room full of names. `import math` puts a key called `math` in your room,
+pointing at that room — so `math.sqrt` means "go to the math room, grab `sqrt`."
+`from math import sqrt` carries one name out of that room into your own room
+directly. The difference matters: after `from math import sqrt`, if you later write
+`sqrt = "surprise"` in your file, you have overwritten the function. `math.sqrt`
+still works because the room is unchanged; only your local binding changed.
+
 **Concepts:** `import math`, `from math import sqrt`, `import random as r`;
 the module as a namespace (dot notation); `dir(math)` to peek inside; `help()`.
 
 **Worked-example ideas (easy → harder):**
 1. `import math; print(math.pi, math.sqrt(144))` — see a result immediately; dot
-   notation explained.
+   notation explained as "name in the math room." (Note: `math.sqrt(144)`
+   returns `12.0`, a float — `math.sqrt` always returns float even when the
+   answer is a whole number. A good moment to recall Ch.1 type lesson: every
+   function returns a specific type.)
 2. `from random import randint, choice; print(choice(["rock","paper","scissors"]))`
    — picks one item; reuses Ch.4 lists.
 3. `import os; print(os.getcwd())` — a module that isn't math; shows the std lib
    is vast; reuses the idea that functions return values (Ch.3).
+
+**Note on `dir(math)`:** `dir(math)` floods output with dunder names before
+any user-facing names appear. Show the filtered form instead:
+`[name for name in dir(math) if not name.startswith("_")]` — give this as a
+read-only one-liner with the note: "Don't worry how this filter works yet — you'll
+learn it in Ch.8." Alternatively, use a curated list of five useful names.
 
 **Exercise ideas:**
 - (Modify, rung 3) Change `math.sqrt` to `math.ceil` and predict the new output.
 - (Complete, rung 5) Given a stub that imports `random`, complete a "roll two
   dice and print their sum" program.
 - (Fix, rung 4) `from math import Sqrt` → `ImportError: cannot import name 'Sqrt' from 'math'`; spot the casing mistake.
+- (Complete, rung 5) Call `help(math.gcd)` to find what it does, then use it to
+  find the GCD of 48 and 18. (Bridges 7.1 to 7.4 organically.)
 
 **Misconceptions:** "import gives me all of Python" — no, you choose what to
 bring in. "`from X import Y` copies the code into my file" — it binds a name.
-"I can use `sqrt` without `import math`" — `NameError`.
+"I can use `sqrt` without `import math`" — `NameError`. "Python re-runs the
+module file every time I import it" — Python caches after the first load; repeated
+imports return the cached module.
 
 **Error classes:** `ModuleNotFoundError`, `ImportError` (wrong name or casing),
 `AttributeError` (e.g. `math.Sqrt`).
@@ -110,50 +164,94 @@ lists (`choice` on a list).
 ### 7.2 — Writing a Module
 **Arc role:** Concept lesson 1. **Strand:** core. **Rungs:** 5–6.
 
+**Warm-up:** "What does `return` give back from a function?" (Recalls Ch.3.)
+
 **Concepts:** a `.py` file *is* a module; `import mymodule`; dot access to its
 functions; `if __name__ == "__main__"` guard and why it matters; naming
 collision (don't call your file `math.py`).
 
+**Dual-role mental model for `__name__` (teach before the guard):** Python runs
+every top-level statement in a `.py` file on import — including `def` statements
+(which create function objects but do not call them). The variable `__name__` is
+a string Python sets to `"__main__"` when a file is run directly, and to the
+module's name (e.g. `"greetings"`) when it is imported. Show this with a
+`print(__name__)` call inside the module file: run it directly → `__main__`; import
+it from another script → `greetings`. Once the student has seen that, the guard
+`if __name__ == "__main__":` becomes a logical consequence ("only run the test code
+when I'm the main program"), not a ritual.
+
+Even `def hello():` at module level is a top-level statement Python runs on
+import — it just creates the function without calling it. That is why only the
+test code (which calls the function) needs the guard; the definitions are safe.
+
 **Worked-example ideas:**
-1. Two files: `greetings.py` (defines `hello(name)`) and a main script that does
-   `import greetings; greetings.hello("Ada")`. Run both.
-2. Show what happens *without* the `__name__` guard — the module's test code runs
-   on import; then add the guard to fix it.
+1. Two files: `greetings.py` (defines `hello(name)` with a docstring, per Ch.3
+   discipline) and a main script that does `import greetings; greetings.hello("Ada")`.
+   Run both. All functions in the module should carry docstrings — this reinforces
+   Ch.3 without extra explanation. Anchor a Ch.6 spiral here: optionally the
+   module exports a `Playlist` class (mirroring Ch.6's `Pet`) so students see that
+   modules can hold classes too.
+2. Add `print(__name__)` at the module's top level; run the module directly
+   (`__main__`), then import it from another file (`greetings`). Let the student
+   observe the difference. Then add `if __name__ == "__main__":` as the natural
+   fix for keeping test code out of import context.
 3. `from greetings import hello` — import one name directly; compare behaviour
    when the module has two functions and you only want one.
 
 **Exercise ideas:**
 - (Complete, rung 5) A `converter.py` stub with `def celsius_to_fahrenheit(c):`
-  has a missing formula; complete it and import it in a test script.
+  (include a docstring slot to fill in) has a missing formula; complete it and
+  import it in a test script.
 - (Write, rung 6) Write a `stats.py` module from scratch with `mean(nums)` and
-  `maximum(nums)`; import and call both from a main script.
+  `maximum(nums)` (each with a docstring); import and call both from a main script.
 - (Fix, rung 4) A module named `random.py` shadows the standard library;
-  diagnose the `ImportError` / unexpected behaviour and rename the file.
+  diagnose the `ImportError` / unexpected behaviour and rename the file. (Apply
+  the Ch.5 debugging protocol: read the traceback, identify the module path,
+  rename.)
 
-**Misconceptions:** "The module runs when I import it" — the guard prevents this.
-"I need `__init__` to make a module" — that's for packages, not single files.
-Shadowing a built-in name (the `random.py` trap).
+**Misconceptions:** "The module runs when I import it" — the `__name__` guard
+prevents test code from running, but `def` statements still execute (they just
+create functions without calling them). "I need `__init__` to make a module" —
+that's for packages, not single files. Shadowing a built-in name (the `random.py`
+trap). "Python re-runs the module every import" — it doesn't; cached after first.
 
 **Error classes:** `ModuleNotFoundError` (wrong path or name), `ImportError`,
 `AttributeError` (called before import or wrong dot access).
 
-**Recalls:** Ch.3 `def` and `return`, Ch.3 scope (module has its own namespace).
+**Recalls:** Ch.3 `def`, `return`, and docstrings; Ch.3 scope (module has its own
+namespace); Ch.5 debugging protocol; Ch.6 classes (a module can export a class).
 
 ---
 
 ### 7.3 — Using a Library (an API)
-**Arc role:** Concept lesson 2. **Strand:** core. **Rungs:** 3–5.
+**Arc role:** Concept lesson 2 (entry point for the api/library sub-strand).
+**Strand:** core. **Rungs:** 3–5.
+
+**Ramp note:** 7.3 (rungs 3–5) follows 7.2 (rungs 5–6). This dip is intentional
+and sound pedagogy: the student uses a library (rung 3–5) before being asked to
+read its documentation (rung 1–4 in 7.4) or write their own strand code (rungs
+5–6 in 7.5–7.6). 7.3 resets the ramp for the api/library sub-strand.
+
+**Warm-up:** "What does a function return if it has no return statement?"
+(Recalls Ch.3 return values before the lesson pivots to calling library
+functions whose return values are part of the API contract.)
 
 **Concepts:** API as a contract — what goes in, what comes out, what happens
 inside is irrelevant; the `datetime` module as a concrete example; `math` and
 `random` re-visited through an API lens; composing library calls.
 
 **Worked-example ideas:**
-1. `from datetime import date; today = date.today(); print(today.year, today.month, today.day)` — using an object from a library without knowing how it works. (Note: `datetime` is a module; `date` is a class inside it; `today()` is a method on that class. Using `from datetime import date` keeps the call to one dot and avoids the confusing `datetime.date.today()` three-level chain.)
-2. Use `random.shuffle(lst)` (in-place) vs. `sorted()` — notice one returns
-   `None` (a common API surprise); reuses Ch.4 lists.
-3. Compose `math.floor(math.log2(n))` — chain library calls; reuses Ch.3
-   function composition idea.
+1. `from datetime import date; today = date.today(); print(today.year, today.month, today.day)` — using an object from a library without knowing how it works. (Note: `datetime` is a module; `date` is a class inside it; `today()` is a method on that class. Using `from datetime import date` keeps the call to one dot and avoids the confusing `datetime.date.today()` three-level chain.) **Spiral connection:** "Notice `today` is an object — just like the `Pet` you built in Ch.6. The difference is that the `date` class was written by someone else and lives in Python's standard library."
+2. Use `random.shuffle(lst)` (in-place, returns `None`) vs. `list.sort()` (also
+   in-place, returns `None`) vs. `sorted(lst)` (returns a new list, does not
+   touch the original) — this is the correct three-way contrast. **Python design
+   rationale:** in-place operations (`shuffle`, `sort`) avoid copying the entire
+   list in memory, which matters for large datasets; `sorted()` is the
+   complementary function for when you need a non-destructive copy. Reuses Ch.4
+   lists.
+3. Compose `math.floor(math.sqrt(n))` — chain library calls with familiar
+   arithmetic (not `log2`, which is not 11-year-old math); reuses Ch.3 function
+   composition idea.
 
 **Exercise ideas:**
 - (Modify, rung 3) Given working `date.today()` code, change it to print how many
@@ -165,17 +263,32 @@ inside is irrelevant; the `datetime` module as a concrete example; `math` and
 
 **Misconceptions:** "I need to read the source to use a library" — the API
 contract is enough. "`random.shuffle()` returns the shuffled list" — it returns
-`None` and mutates in place.
+`None` and mutates in place. "`sorted()` mutates the original list" — it
+returns a new list; the original is untouched.
 
 **Error classes:** `TypeError` (wrong arg type), `AttributeError` (misspelled
 method name).
 
-**Recalls:** Ch.3 return values, Ch.4 lists and in-place mutation.
+**Recalls:** Ch.3 return values and function composition; Ch.4 lists and in-place
+mutation; Ch.6 objects (spiral connection to `datetime.date`).
 
 ---
 
 ### 7.4 — Reading Documentation
-**Arc role:** Concept lesson 3. **Strand:** core. **Rungs:** 1–4. (Intentionally lighter — reading docs is lower-intensity than writing code.)
+**Arc role:** Concept lesson 3. **Strand:** core. **Rungs:** 1–4.
+(Reading-comprehension rungs, not coding rungs — this lesson's rung scale measures
+reading skill, not code-writing depth. It does not count against the coding-ramp
+monotonicity requirement. The intentional lighter cognitive load here is sound
+pedagogy: students consolidate API understanding before the writing-heavy 7.5–7.7.)
+
+**Warm-up:** "Write the three forms of `import` you learned in 7.1." (Retrieval
+of chapter-core syntax before pivoting to documentation.)
+
+**Motivating scenario (open with this, not with docs anatomy):** "You want to
+shuffle your playlist, but you wonder: does `random` have anything else useful?
+You could search the internet — or you could read the docs directly. Let's see
+how." This seeds the question that the lesson answers, making documentation
+reading feel purposeful rather than procedural.
 
 **Concepts:** anatomy of a Python docs page — function signature, parameters
 table, return value, raises, examples section; `help()` in the REPL; reading a
@@ -184,7 +297,9 @@ arguments; when to look at source vs. docs.
 
 **Worked-example ideas:**
 1. Walk through the `str.split` docs page together — label signature, each param,
-   return type, and one example. Show `help(str.split)` gives the same.
+   return type, and one example. Show `help(str.split)` gives the same. (Bridge
+   from 7.1: the student already used `help()` there on `math.gcd`; now they see
+   the full docs anatomy behind it.)
 2. Read the `json.dumps` docs page; identify that `indent` is optional and what
    it does; then run with and without `indent=2` to confirm.
 3. Read `random.sample` — understand `population` and `k`; spot that it returns a
@@ -196,8 +311,8 @@ arguments; when to look at source vs. docs.
 - (Modify, rung 3) Given working `str.split()` code, use the docs to add the
   `maxsplit=1` argument and observe the difference.
 - (Fix, rung 4) Code that calls `random.sample("hello", 10)` crashes — read the
-  docs error message and the `ValueError` to understand the constraint (`k` cannot
-  exceed population length) and fix.
+  docs error message (`ValueError: Sample larger than population or is negative`)
+  and the `ValueError` to understand the constraint and fix.
 
 **Misconceptions:** "Parameters with = in the docs are required" — those are
 default values; the argument is optional. "The docs are for experts, not me" —
@@ -206,19 +321,32 @@ the examples section is the entry point.
 **Error classes:** `ValueError` (invalid argument per docs), `TypeError` (wrong
 type for parameter).
 
-**Recalls:** Ch.3 default arguments, Ch.1 string basics.
+**Recalls:** Ch.3 default arguments; Ch.1 string basics; 7.1 `help()` (now used
+in a full documentation-anatomy context).
 
 ---
 
 ### 7.5 — Facts from Messy Text
 **Arc role:** Strand-application (words). **Rungs:** 5–6.
 
+**Warm-up:** "Call `str.split()` on `'a b c'` with no arguments. What does it
+return?" (Recalls Ch.1 no-arg split before the lesson introduces split-with-sep.)
+
+**Authoring gate — list comprehension:** Do NOT include `[p.strip() for p in ...]`
+in any student-visible code block, worked example, or prose. Comprehensions are
+Ch.8. This is an authoring-only note for the teacher explanation of the inner-space
+trap. The student exercise must use a plain loop with an explicit strip call.
+
 **Concepts (newly owned here):** `str.replace(old, new)`; `str.find(sub)`;
 `str.startswith()` / `str.endswith()`; building a list of structured records
 from raw lines; the pattern "read line → split → clean → store".
 **Recalled from Ch.1:** `str.strip()` (remove whitespace); `str.lower()`;
-`str.upper()`; `str.split(sep)` with a custom separator; `str.join()`;
-string immutability.
+`str.upper()`; string immutability.
+**Dependency note:** `str.split(sep)` with a custom separator and `str.join()`
+must be confirmed taught in an earlier chapter before this lesson can treat them
+as recalls — see the authoring dependency note at the top of this document.
+Until confirmed, show `split(": ")` explicitly in every worked example that first
+uses it and label it "you saw no-arg split in Ch.1; here we add a separator."
 
 **Project through-line:** a game-log extractor — given a multi-line string like
 `"Alice: 1450\nBob: 882\nAlice: 2010\n"`, extract player names and scores,
@@ -226,19 +354,27 @@ compute per-player totals using a dict (Ch.4 recall), and print a ranked
 leaderboard.
 
 **Worked-example ideas:**
-1. `"Alice: 1450".split(": ")` → `["Alice", "1450"]`; index to get name and
-   score string; `int()` to convert. Simple and complete.
+1. `"Alice: 1450".split(": ")` → `["Alice", "1450"]`; index `[0]` to get name
+   and `[1]` to get score string; `int()` to convert. Simple and complete. The
+   two-field format means `[0]` and `[1]` are the only valid indices.
 2. A raw line with trailing spaces: `"  Bob : 882  ".strip().split(":")` — shows
    why outer `strip()` matters before `split()`. **Inner-space trap:** the result
    is `['Bob ', ' 882']` — each part still has leading/trailing whitespace. Show
    that `int(" 882")` works silently, but `'Bob ' == 'Bob'` is `False` — string
    comparisons against player names will fail unless each part is also stripped.
-   Fix: `[p.strip() for p in line.strip().split(":")]` — or use `split(": ")` with
-   the space included, as in example 1, to avoid inner spaces entirely. (Note: the
-   `for` comprehension here is shown only as a one-liner shorthand in teacher
-   notes; the student exercise uses a plain loop, per Ch.8 scope.)
+   Fix using a plain loop (not a comprehension — Ch.8 scope):
+   ```python
+   parts = line.strip().split(":")
+   name = parts[0].strip()
+   score = parts[1].strip()
+   ```
+   Alternatively, use `split(": ")` with the space included (as in example 1) to
+   avoid inner spaces entirely.
 3. Accumulate scores into a dict keyed by player name, handling the case where the
-   key already exists vs. first occurrence; reuses Ch.4 dicts.
+   key already exists vs. first occurrence; reuses Ch.4 dicts. **Spiral recall:**
+   show both the conditional guard approach AND the `try/except` approach for the
+   non-numeric string `ValueError` (recalling Ch.2 `try/except`) — let the student
+   choose which to use in the exercise.
 
 **Exercise ideas:**
 - (Complete, rung 5) A stub that reads the game log line-by-line (loop over a
@@ -247,8 +383,11 @@ leaderboard.
 - (Write, rung 6) Given a CSV-like string of song records
   (`"title,artist,year\nBlue,Eiffel 65,1998\n…"`), write a function `parse_songs`
   from scratch that returns a list of dicts.
-- (Fix, rung 4) `line.split(": ")[2]` → `IndexError` — a line that doesn't
-  contain `": "` causes an unexpected split; diagnose and add a guard.
+- (Fix, rung 4) `line.split(": ")[1]` raises `IndexError` when a blank line
+  (which contains no `": "`) is encountered — diagnose and add a guard. (Note:
+  the game-log data uses two fields, so the valid index is `[1]`, not `[2]`. Show
+  both a conditional guard and the `try/except` alternative so the student sees
+  both patterns from Ch.2.)
 
 **Misconceptions:** "`split()` with no args and `split(' ')` do the same thing" —
 no-arg split handles multiple consecutive spaces and strips leading/trailing;
@@ -258,13 +397,17 @@ new string (immutability, Ch.1 recall).
 **Error classes:** `IndexError` (split didn't produce enough parts), `ValueError`
 (int conversion of non-numeric string).
 
-**Recalls:** Ch.1 strings and immutability, Ch.2 loops, Ch.4 dicts (accumulate
-with a key check).
+**Recalls:** Ch.1 strings and immutability; Ch.2 loops and `try/except`; Ch.4
+dicts (accumulate with a key check).
 
 ---
 
 ### 7.6 — Saving & Loading (Files + JSON)
 **Arc role:** Strand-application (data). **Rungs:** 5–6.
+
+**Warm-up:** "What is the difference between a Python list and a JSON file?"
+(Primes the student to think about the text-vs-object distinction before the
+lesson formally teaches it.)
 
 **Concepts:** `open(path, mode)` with `'r'`/`'w'`/`'a'`; `with` as context
 manager (guarantees close); `.read()`, `.readlines()`, iterating line by line;
@@ -283,8 +426,11 @@ loaded back, and searched by artist or year.
    the script runs — not necessarily the folder the script lives in. If a student
    double-clicks or runs from the wrong folder, `open("notes.txt", "r")` raises
    `FileNotFoundError` even though the file exists. Safe idiom:
-   `pathlib.Path(__file__).parent / "notes.txt"` (introduce as a pattern, not a
-   concept lesson).
+   `pathlib.Path(__file__).parent / "notes.txt"` — introduce as a ready-to-use
+   pattern (not a concept lesson). Demystify in one sentence: "`__file__` is the
+   full path to the script being run; `.parent` is the folder it lives in; `/`
+   here joins two path pieces — the `Path` object repurposes the slash character
+   for this."
 2. `json.dumps({"title": "Blue", "year": 1998}, indent=2)` — see the formatted
    string; then `json.loads(...)` to get the dict back. No file yet.
 3. Full round-trip: a list of song dicts → `json.dump` to file → `json.load`
@@ -318,11 +464,11 @@ loaded back, and searched by artist or year.
   crash.
 - "Sets and custom objects can be serialized to JSON" — they cannot without extra
   work; use lists or dicts instead.
-- "A tuple stored in a dict survives JSON round-trip as a tuple" — tuples DO
-  serialize (`json.dumps((1,2,3))` → `'[1, 2, 3]'`), but they come back as lists
-  (`json.loads('[1, 2, 3]')` → `[1, 2, 3]`). Round-trip does not preserve the
-  tuple type. (Verified: `json.loads(json.dumps((1,2,3)))` → `[1, 2, 3]`,
-  `type` is `list`.)
+- "If you put a tuple in and load it back, you get a tuple." — **Lead with the
+  consequence:** if you put a tuple in and load it back, you get a list. For
+  example: `json.loads(json.dumps((1,2,3)))` → `[1, 2, 3]`, type is `list`.
+  Round-trip does not preserve the tuple type. Fix with `tuple(json.loads(s))` if
+  you need the tuple type back. (Verified with Python 3.)
 - "`json.load(string)` and `json.loads(string)` do the same thing" — `json.load`
   expects an open file object; passing a string raises `AttributeError: 'str'
   object has no attribute 'read'`. Use `json.loads` for strings.
@@ -340,68 +486,129 @@ conversion.
 ---
 
 ### 7.7 — A Taste of SQL
-**Arc role:** Concept lesson (data). **Rungs:** 3–5. (Full SQL deferred.)
+**Arc role:** Concept lesson (data). **Rungs:** 3–5.
+(Resets the ramp for the SQL sub-strand. 7.7 (rungs 3–5) follows 7.6 (rungs 5–6);
+this dip is intentional — SQL is a new formal language requiring its own ramp from
+predict-and-read up to completing INSERT and WHERE statements.)
 
-**Concepts:** why a database (vs. a JSON file) — many records, fast search,
-structured schema; `sqlite3.connect(path)` creates or opens a file;
-`conn.cursor()`, `cursor.execute(sql)`, `conn.commit()`, `conn.close()`;
-`CREATE TABLE IF NOT EXISTS`; `INSERT INTO … VALUES (?, ?)` — the `?` placeholder
-and why (safety); `SELECT * FROM …` and `SELECT … WHERE …`; `cursor.fetchall()`
-returns a list of tuples; the context manager form (`with sqlite3.connect(…) as
-conn:`).
+**Scope note — cognitive load (M3):** ONE lesson; minimum-viable core only.
+Required content: `connect`, `cursor.execute`, `fetchall`, `commit`, `close`,
+`CREATE TABLE IF NOT EXISTS`, `INSERT INTO`, `SELECT *`.
+Going Deeper sidebar (not required): `SELECT … WHERE` with `?` placeholder;
+`with sqlite3.connect(…) as conn:` context manager form; `row_factory`.
+The SQL injection Fix exercise (rung 4) is the ONE required advanced item — it
+teaches a safety principle that must not be skipped.
+No `JOIN`, no `UPDATE`, no `DELETE`. The capstone (Ch.11.4) goes deeper.
 
-**Scope note:** ONE lesson; no `JOIN`, no `UPDATE`, no `DELETE`. The capstone
-(Ch.11.4) uses `sqlite3` more deeply — this lesson is just the taste.
+**Warm-up:** "What is the difference between a Python list and a JSON file?" *(If
+the 7.6 warm-up already used this, replace with: "What does `json.load()` return
+when you load a list of dicts from a file?")* (Primes the why-database discussion.)
+
+**Concepts (required core):** why a database (vs. a JSON file) — many records,
+fast search, structured schema; `sqlite3.connect(path)` creates or opens a file;
+explicit cursor pattern: `cur = conn.cursor()`, `cur.execute(sql)`,
+`cur.fetchall()`; `conn.commit()`, `conn.close()`;
+`CREATE TABLE IF NOT EXISTS` — and what happens without `IF NOT EXISTS` (the script
+crashes on a second run with `sqlite3.OperationalError: table songs already exists`;
+show this anti-pattern first, then the fix); `INSERT INTO … VALUES (?, ?)`.
+
+**Use the explicit cursor pattern throughout 7.7.** The concepts section names
+`conn.cursor(); cursor.execute()`; the worked examples must match — do NOT switch
+to `conn.execute()` shortcut anywhere in this lesson. `fetchall()` requires a
+cursor anyway, so the explicit form is the only self-consistent choice.
+
+**DDL auto-commit disclosure:** `CREATE TABLE` persists even without an explicit
+`conn.commit()` in Python's sqlite3 default isolation mode, while `INSERT` does
+not. One sentence is enough: "Python's sqlite3 automatically commits structural
+changes like `CREATE TABLE` but not data changes like `INSERT` — you must call
+`conn.commit()` yourself after inserting rows."
 
 **Worked-example ideas:**
 1. Create a `songs.db` with a `songs` table (id INTEGER, title TEXT, artist TEXT,
-   year INTEGER); insert two rows; `SELECT *` and print rows. Minimal — show the
-   whole cycle in ~10 lines.
-2. **The missing-commit trap** — insert a row, call `conn.close()` without
-   `conn.commit()`, re-open the database, run `SELECT *`, and show `fetchall()`
-   returns `[]`. Then add `conn.commit()` before `close()` and show the row
-   persists. This is the single most common sqlite3 beginner error; demonstrate it
-   explicitly before the fix.
+   year INTEGER) using `CREATE TABLE IF NOT EXISTS`; show what happens on a second
+   run *without* `IF NOT EXISTS` (`OperationalError`) before introducing the fix.
+   Insert two rows; `SELECT *` using the explicit cursor and print rows. Minimal —
+   show the whole cycle in ~12 lines. This is the required rung-1 predict exercise:
+   "Given this full CREATE + INSERT + SELECT block, predict what `fetchall()`
+   returns — including the tuple structure." **Placeholder note:** worked examples
+   1 and 3 use hardcoded literal `VALUES` for brevity. Add a parenthetical after
+   the first INSERT: "These values are hardcoded for clarity — in the Fix exercise
+   below you will see why `?` is the safe pattern when values come from the user."
+   This avoids students cargo-culting the literal form before the `?` teaching lands.
+2. **The missing-commit trap** — this demo MUST follow example 1 in the same
+   session (or explicitly state "the `songs` table was already created in example 1
+   above"). Without the table, `INSERT` raises `OperationalError` before the commit
+   trap can be demonstrated. Sequence:
    ```python
-   # BUG: no commit
+   import sqlite3
+
+   # Setup (table already created above — or create it here first)
    conn = sqlite3.connect("songs.db")
-   conn.execute("INSERT INTO songs VALUES (1, 'Blue', 'Eiffel 65', 1998)")
-   conn.close()  # rows are rolled back — nothing saved
+   cur = conn.cursor()
+   cur.execute("CREATE TABLE IF NOT EXISTS songs "
+               "(id INTEGER, title TEXT, artist TEXT, year INTEGER)")
+   conn.commit()  # commit the table creation (happens automatically for DDL,
+                  # but explicit here for clarity)
+   conn.close()
+
+   # BUG: insert without commit
+   conn = sqlite3.connect("songs.db")
+   cur = conn.cursor()
+   cur.execute("INSERT INTO songs VALUES (1, 'Blue', 'Eiffel 65', 1998)")
+   conn.close()  # no commit — row is rolled back, nothing saved
+
+   # Verify: row is gone
+   conn = sqlite3.connect("songs.db")
+   cur = conn.cursor()
+   cur.execute("SELECT * FROM songs")
+   print(cur.fetchall())  # []
+   conn.close()
 
    # FIX: commit before close
    conn = sqlite3.connect("songs.db")
-   conn.execute("INSERT INTO songs VALUES (1, 'Blue', 'Eiffel 65', 1998)")
-   conn.commit()
-   conn.close()  # now the row persists
+   cur = conn.cursor()
+   cur.execute("INSERT INTO songs VALUES (1, 'Blue', 'Eiffel 65', 1998)")
+   conn.commit()   # now the row persists
+   conn.close()
    ```
 3. Insert several rows from the music-library list built in 7.6 (spiral recall);
-   run `SELECT * FROM songs WHERE artist = ?` with a parameter; print fetchall.
-4. Show the `with sqlite3.connect(…) as conn:` form vs. manual `commit/close` —
-   context manager commits automatically on clean exit. **Important:** if an error
-   happens inside the `with` block, the changes are automatically rolled back —
-   nothing is saved. Only a clean exit triggers the commit. **Unlike `with
-   open(…)`**, `with sqlite3.connect(…)` does NOT close the connection when the
-   block exits — the connection stays open and must be closed explicitly with
-   `conn.close()` if you need to release it.
+   run `SELECT *` and print `fetchall` to show the full library. (Put `SELECT WHERE`
+   in the Going Deeper sidebar and the Modify exercise, not in the required core.)
+
+**Going Deeper sidebar (optional, not gated):**
+- `SELECT * FROM songs WHERE artist = ?` with a `?` parameter; `cur.fetchall()`.
+- `with sqlite3.connect(…) as conn:` context manager form — auto-commits on clean
+  exit (no need to call `conn.commit()` explicitly inside the `with` block); rolls
+  back on exception; **does NOT close the connection** on exit. Unlike `with open(…)`,
+  which guarantees the file is closed when the block exits, the sqlite3 context
+  manager leaves the connection open — `conn.execute('SELECT 1')` still works after
+  the `with` block. Call `conn.close()` yourself after the `with` block when you
+  are done with the database. (Verified on Python 3.)
 
 **Exercise ideas:**
-- (Modify, rung 3) Given the working songs-DB code, change the `WHERE` clause to
-  filter by year instead of artist.
+- (Predict, rung 1) Given a complete CREATE + INSERT + SELECT block (no stub),
+  predict what `fetchall()` returns — including the tuple structure and field order.
+  This is the required rung-1 exercise for a new formal language.
+- (Modify, rung 3) Given the working songs-DB code, change the `WHERE` clause in
+  the Going Deeper sidebar to filter by year instead of artist.
 - (Complete, rung 5) A stub that opens a `high_scores.db`, creates a `scores`
   table, and has an `add_score(name, score)` function — complete the `INSERT`
   statement with `?` placeholders.
-- (Fix, rung 4) Code that uses `f"…{name}…"` string formatting inside
-  `execute()` instead of `?` placeholders — explain the SQL injection risk and fix
-  to use `(sql, (name,))`.
+- (Fix, rung 4 — required advanced item) Code that uses `f"…{name}…"` string
+  formatting inside `execute()` instead of `?` placeholders — explain the SQL
+  injection risk and fix to use `(sql, (name,))`. Mark as required.
 
 **Misconceptions:** "`commit()` is optional" — without it, `INSERT`s are rolled
-back on close. "`fetchall()` returns dicts" — it returns a list of tuples; use
-index or `row_factory` for names. "SQLite is a server" — it's a local file; no
-server needed.
+back on close (but `CREATE TABLE` persists without commit — DDL is different).
+"`fetchall()` returns dicts" — it returns a list of tuples; use index or
+`row_factory` for names. "SQLite is a server" — it's a local file; no server
+needed. "Inside a `with sqlite3.connect()` block I still need `conn.commit()`" —
+the context manager commits automatically on clean exit; calling commit again is
+harmless but unnecessary.
 
-**Error classes:** `sqlite3.OperationalError` (syntax error or wrong table name),
-`sqlite3.IntegrityError` (constraint violation), `sqlite3.ProgrammingError`
-(wrong number of `?` bindings).
+**Error classes:** `sqlite3.OperationalError` (syntax error, wrong table name, or
+table already exists without `IF NOT EXISTS`), `sqlite3.IntegrityError`
+(constraint violation), `sqlite3.ProgrammingError` (wrong number of `?` bindings).
 
 **Recalls:** Ch.4 dicts and list iteration, 7.6 music library (same data set),
 Ch.3 functions.
@@ -414,26 +621,35 @@ Ch.3 functions.
 1. (Modify, rung 3) Change an `import math` snippet to use `from math import …`
    form; check it still works.
 2. (Modify, rung 3) Use the `datetime` docs page to look up `date.today()` and
-   print the current day of the week.
+   print the current day of the week. **(Use the docs — `date.weekday()` or
+   `date.strftime("%A")` was not shown in any lesson. The point is to find and
+   apply an undiscovered method from docs.)**
 3. (Fix, rung 4) A module named `json.py` shadows the standard library; diagnose
    and fix.
 4. (Fix, rung 4) A `split`-based extractor has an `IndexError` on blank lines;
-   add a guard.
+   add a guard (conditional or `try/except` — either is valid).
 5. (Complete, rung 5) Complete a `load_library` / `save_library` round-trip (JSON)
    — given the function stubs.
 6. (Complete, rung 5) Given a `scores` table creation stub, complete the `INSERT`
-   and a `SELECT WHERE score > 1000` query.
+   and a `SELECT WHERE score > 1000` query using `?` placeholders.
 7. (Write, rung 6) Write a `top_artists.py` module from scratch: a function that
    takes a list of song dicts and returns the artist who appears most often; import
    and test it.
-8. (Write, rung 6) Build a tiny CLI: load the music JSON library, prompt the user
-   for an artist name (`input()`), query the SQLite DB for all songs by that
-   artist, and print them. Combines 7.5 text skills, 7.6 JSON, 7.7 SQL.
+8. **(Write, rung 6 — hardest exercise in the chapter; this is the first exercise
+   that combines every strand at once.)** Baseline: build a tiny CLI: load the
+   music JSON library, prompt the user for an artist name (`input()`), query the
+   SQLite DB for all songs by that artist (the DB must be pre-populated from 7.7
+   or from a setup step in the exercise scaffold — specify this clearly in the
+   exercise prompt), and print them. Challenge extension: re-do exercise 8 with a
+   data set of your own choice (a book list, a game high-score table, a meal
+   planner). The checker verifies structural properties (a working JSON load, a
+   working DB query) regardless of the data set — creative ownership changes
+   entirely at zero cost to concept coverage.
 
 ---
 
 ### Chapter Quiz (gate)
-Must pass before Ch.8 (JavaScript) unlocks.
+Must pass before Ch.8 (Writing Real Programs in Python) unlocks.
 
 **Must-pass concepts:**
 - Predict the output of `import math; print(math.floor(3.9))` (tests `import` +
@@ -451,16 +667,16 @@ Must pass before Ch.8 (JavaScript) unlocks.
 
 ## Progression / difficulty ramp
 
-| Lesson | Dominant rung | Write-from-scratch? |
-|--------|--------------|---------------------|
-| 7.1    | Modify / Fix | No — modify examples |
-| 7.2    | Complete / Write | Yes (the module file itself) |
-| 7.3    | Modify / Complete | No |
-| 7.4    | Predict / Modify | No — reading, not writing |
-| 7.5    | Complete / Write | Yes (parse function) |
-| 7.6    | Complete / Write | Yes (save/load/search) |
-| 7.7    | Modify / Complete | Partially (INSERT + WHERE stubs) |
-| Challenge | Modify → Write | Full write-from-scratch in exercises 7–8 |
+| Lesson | Dominant rung | Write-from-scratch? | Ramp note |
+|--------|--------------|---------------------|-----------|
+| 7.1    | Modify / Fix | No — modify examples | Coding ramp starts here |
+| 7.2    | Complete / Write | Yes (the module file itself) | Ramp continues |
+| 7.3    | Modify / Complete | No | **Sub-strand reset:** 7.3 dips after 7.2 — intentional; students USE a library before they READ its docs (7.4). Sound pedagogy. |
+| 7.4    | Predict / Modify | No — reading, not writing | **Reading-comprehension rungs** — separate scale from coding rungs; does not count against the coding ramp. |
+| 7.5    | Complete / Write | Yes (parse function) | Coding ramp resumes |
+| 7.6    | Complete / Write | Yes (save/load/search) | Ramp continues |
+| 7.7    | Predict / Modify / Complete | Partially (INSERT stubs) | **SQL sub-strand reset:** 7.7 dips after 7.6 — intentional; SQL is a new formal language with its own ramp from predict through complete. Not a coding regression. |
+| Challenge | Modify → Write | Full write-from-scratch in exercises 7–8 | |
 
 Exercises 7–8 of the Challenge are the first fully open-ended programs that
 combine multiple chapter concepts — the intended "can they do this alone?" test.
@@ -477,7 +693,9 @@ combine multiple chapter concepts — the intended "can they do this alone?" tes
   original to stay reachable.
 - Writing a module named after a stdlib module (`random.py`, `math.py`, `json.py`)
   is fine — it shadows and breaks the real one.
-- `random.shuffle()` returns the shuffled list — it returns `None`.
+- `random.shuffle()` returns the shuffled list — it returns `None` and mutates
+  in place. Use `sorted()` when you need a non-destructive copy that returns a
+  new list. `list.sort()` is the other in-place counterpart (also returns `None`).
 - JSON and Python dicts are the same format — JSON is a *text* format; round-trip
   requires `json.dump`/`load`.
 - `str.split(' ')` and `str.split()` behave identically — no-arg split normalizes
@@ -485,29 +703,84 @@ combine multiple chapter concepts — the intended "can they do this alone?" tes
 - `strip()` modifies the string in place — strings are immutable; `strip()` returns
   a new string.
 - `commit()` is optional for INSERT — without commit, rows are rolled back on
-  close.
+  close. (Exception: `CREATE TABLE` is auto-committed by Python's sqlite3 default
+  isolation mode — structural DDL persists without explicit commit, but `INSERT`,
+  `UPDATE`, and `DELETE` do not.)
 - `cursor.fetchall()` returns dicts — it returns tuples.
 - SQLite requires a server — it uses a local file.
-- Tuples cannot be serialized to JSON — they can (`json.dumps((1,2,3))` →
-  `'[1, 2, 3]'`), but they round-trip as lists, not tuples.
+- **Tuple JSON round-trip — lead with the consequence, not the false belief.**
+  If you put a tuple in and load it back, you get a list:
+  `json.loads(json.dumps((1,2,3)))` → `[1, 2, 3]`, type is `list`. The student's
+  real runtime surprise is `type(loaded_val) == tuple` being `False`, not "I
+  thought tuples couldn't serialize." Fix with `tuple(json.loads(s))` when you
+  need the tuple type back. (Verified with Python 3.)
 - `json.load(string)` and `json.loads(string)` are the same — `json.load` expects
   an open file object; passing a string raises `AttributeError: 'str' object has no
   attribute 'read'`. Use `json.loads` for strings, `json.load` for file objects.
 - `open("notes.txt")` always opens the file next to the script — the path is
   relative to the CWD when the script runs, not the script's folder.
+- Inside a `with sqlite3.connect(…) as conn:` block I still need `conn.commit()` —
+  the context manager commits automatically on clean exit; explicit `conn.commit()`
+  inside the block is unnecessary (though harmless).
+- After `with sqlite3.connect(…) as conn:` exits, the connection is closed — unlike
+  `with open(…)`, the sqlite3 context manager does **not** close the connection.
+  The connection remains open after the `with` block; call `conn.close()` when you
+  are done. (Verified: `conn.execute('SELECT 1')` succeeds after the `with` block
+  exits.)
 
 ### Error classes (chapter additions to the Codex)
-- `ModuleNotFoundError` — module name wrong or not installed
-- `ImportError` — specific name inside module not found (`from X import Y`)
+- `ModuleNotFoundError` — module name wrong or not installed. **Codex note:**
+  `ModuleNotFoundError` is a subclass of `ImportError`
+  (`issubclass(ModuleNotFoundError, ImportError)` is `True`). A traceback that
+  shows `ImportError` where you expected `ModuleNotFoundError` may be the same
+  error reported via the parent class.
+- `ImportError` — specific name inside module not found (`from X import Y`); also
+  the parent of `ModuleNotFoundError`
 - `AttributeError` — dot-accessed name doesn't exist in the module; also raised
   when `json.load(string)` is called with a string instead of a file object
   (`'str' object has no attribute 'read'`)
 - `FileNotFoundError` — `open()` in `'r'` mode on a missing file, or wrong CWD
 - `json.JSONDecodeError` — malformed JSON string
 - `TypeError` (file write) — `f.write(42)` non-string argument
-- `sqlite3.OperationalError` — SQL syntax error or missing table
+- `sqlite3.OperationalError` — SQL syntax error, missing table, or table already
+  exists (when `IF NOT EXISTS` is omitted and the script is run twice)
 - `sqlite3.IntegrityError` — constraint violation (e.g. NOT NULL)
 - `sqlite3.ProgrammingError` — wrong number of `?` bindings
+
+---
+
+## Chapter Recap (arc component 6 — retrieval set for spiral use)
+
+**Must-stick concepts (5–7 items for Ch.8 warm-up retrieval):**
+
+1. **Three import forms** — `import X`, `from X import Y`, `import X as Z`; the
+   namespace model (module as a separate room of names).
+2. **`if __name__ == "__main__"`** — Python sets `__name__` to `"__main__"` when
+   the file is run directly, and to the module name when imported; the guard keeps
+   test code from running on import.
+3. **API contract** — call a library function knowing only its inputs and outputs;
+   `random.shuffle()` returns `None` and mutates in place; `sorted()` returns a
+   new list.
+4. **Reading docs** — signature, parameters, default values, return type, raises;
+   `help()` gives the same locally.
+5. **`with open(…)` + `json.dump`/`json.load`** — the `with` block guarantees
+   file close; JSON is a text format, not a Python dict.
+6. **sqlite3 commit trap** — `INSERT` rows are rolled back on close without
+   `conn.commit()`; `CREATE TABLE` auto-commits (DDL vs. DML distinction).
+7. **`?` placeholders in sqlite3** — `cursor.execute(sql, (value,))` is safe;
+   f-string formatting inside `execute()` creates SQL injection risk.
+
+**Proposed Ch.8 warm-up questions (pull from here):**
+- "Write `from random import choice`. Now call it with a list of three strings.
+  What does it return?"
+- "What does `if __name__ == '__main__':` prevent from happening when you import
+  a module?"
+- "Call `help(str.split)` mentally — what is the default value of `sep`?"
+- "Write the two lines that save a Python list of dicts to a JSON file."
+- "Why is `cursor.execute(f'SELECT * FROM t WHERE name = {n}')` dangerous?
+  What is the safe alternative?"
+- "After running `conn.execute('INSERT …')` and `conn.close()`, is the row saved?
+  Why or why not?"
 
 ---
 

@@ -1,0 +1,41 @@
+# Panel Review — Ch.0 First Sound — Mitchel Resnick (Scratch, MIT Media Lab)
+**Verdict:** Solid
+
+## Findings (from my lens)
+
+1. [MAJOR] L0.6 exercise 1 — The plan calls this open-ended ("any four of the eight blocks the student likes, multiple correct answers") but the structure is still Parsons drag-and-drop from a constrained bank of eight. This is the strand-application lesson — the place in the chapter closest to the "Make" stage of Use-Modify-Create. Drag-selecting from a preset bank is still "modify" at best. A genuine Make moment would be: give the student a blank row of four pitch slots and a piano-style dial to hear notes, then let them type any MIDI numbers they want to hear. The checker verifies structure (four play() calls with sleep() gaps between them), not content. If the only creative latitude is "which four of these eight pre-chosen pitches," the student is still reproducing, not expressing. Fix: widen the Parsons bank to 10–12 pitches spanning more than one octave, add at least one blank "write your own pitch number" slot, and describe explicitly in the prose that there is no wrong melody. That shifts the task from arrangement toward authorship.
+
+2. [MAJOR] Chapter Challenge exercise 4 — The branch Parsons task ("if tempo is fast, use sleep(0.25); otherwise use sleep(0.5)") has no sound feedback. The student arranges a conceptual branch about tempo but never hears the difference between the two paths. This undercuts the entire hook premise of the chapter: that code makes things happen — specifically, sound. The whole chapter earns its credibility through the ear. A branch that is silent is just a logic puzzle. Fix: make exercise 4 runnable. Let the student toggle a "tempo" variable to fast or slow and hear the two different gaps. If the engine cannot do a conditional on a variable yet (no Python syntax until Ch.1), keep it as a played demonstration: "hear fast version / hear slow version," then arrange the branch that produces the slow version.
+
+3. [MINOR] L0.6 prose — the bug example in the worked examples and in exercise 3 is identical: the same five-note sequence `[60, 62, 64, 84, 62]` with `play(84)` as the outlier. The worked example walks through it fully; the exercise then asks the student to "find the bug" in the same sequence they just saw explained. This is reproduction dressed up as discovery. Students who read the worked example will tap position 4 on reflex, not because they listened and traced. Fix: use a different note sequence for the exercise — same structural idea (one pitch far out of range), different actual numbers, so the student must genuinely listen rather than recall.
+
+4. [MINOR] L0.3 exercise 2 (medium Parsons with two decoy blocks) — the plan says "one correct answer" but includes decoys that lead the robot off the edge. Decoys that must be excluded introduce implicit rung-4 behavior (recognizing and rejecting wrong options) at a point where the plan only targets rung 2. For an 11-year-old this is fine cognitively, but the rung metadata should label it rung 2+4 so the harness doesn't misclassify it as pure arrange. This is a metadata accuracy issue, not a pedagogy error.
+
+5. [MINOR] L0.4 warm-up (free-text reflection: "why is decomposing 'get home' better than one instruction?") — this is the only ungraded free-text item before the chapter challenge, which is good. But the plan doesn't say where the student's answer goes or who sees it. Coach mode? Parent-reviewable? The plan should explicitly state this follows the same pattern as the quiz question 5 (not auto-graded, surfaces in coach mode). Otherwise the harness author doesn't know what to build.
+
+6. [MINOR] The "motif" Codex entry reads: "A short, repeating musical idea — a loop of notes that gives a piece its character." Defining motif as "a loop" is inaccurate — a motif is a short idea that *can* be repeated but does not have to be. A two-note motif played once is still a motif. The definition conflates motif with ostinato. Fix: "A short, memorable musical idea — a pattern of notes that can be repeated to give a piece its character."
+
+7. [MINOR] Technical precision: In L0.5 and L0.6, `play(84)` is described as "two octaves above surrounding notes." The verification shows 84 is exactly 2 octaves above 60 (24 semitones), but only 1.67 octaves above the surrounding max of 64. The claim is technically imprecise in the context of the full sequence. For a student who has a piano at home and checks, 84 vs 64 is not two full octaves. Reword to "much higher — nearly two octaves above the notes around it" or use a cleaner bug pitch like 88 (24 semitones above the max of 64) to make the claim exactly true.
+
+## Continuity notes
+
+**Well-woven from c1–c3:**
+- The recall architecture is correctly absent — Ch.0 is the first chapter, so warm-ups draw forward within the chapter rather than backward across chapters. This is correct per the plan spec.
+- The rung-1/rung-2 constraint is faithfully maintained. Nothing in Ch.0 requires Python syntax, consistent with Ch.1 owning syntax.
+- The `play()`/`sleep()` API is introduced as opaque "words the machine knows," which is exactly the right preparation for Ch.1's lesson on function calls (L1.1) — students will have already used a function before they learn to define one.
+- Abstraction-practiced-unnamed is handled well: every Parsons task asks students to ignore irrelevant detail (which exact blocks to exclude, which sub-problem to focus on) without labeling it abstraction. Ch.3's naming of abstraction will land on prepared ground.
+
+**Missing or underprepared:**
+- Ch.0 does not preview that the `play()` and `sleep()` calls are *function calls* with *arguments*. Ch.1 will formally introduce functions and arguments. The Ch.0 hook gives students a working intuition of calling with a number inside parentheses — that is genuinely useful preparation — but it does so without any explicit linkage. L0.1 should add one sentence: "Notice the numbers inside the parentheses — in Chapter 1 you will learn exactly what those are and why they matter." Without this bridge, Ch.1's "functions" lesson starts from scratch instead of building on what students already did.
+- The chapter introduces decomposition as "break it into steps" but nowhere does it show decomposition as a design tool: how do you decide where to cut? The sandwich and grid examples are given pre-decomposed. A single worked example that shows a badly decomposed version alongside a well-decomposed one would give students a model they can apply rather than just observe. Ch.3's functions chapter builds on decomposition heavily; without seeing *why* one decomposition is better than another, Ch.3's lesson on function size and single-responsibility will feel arbitrary.
+
+**Re-taught by accident:**
+- None found. The chapter carefully avoids explaining anything that is owned by Ch.1.
+
+## What's strong
+
+- **The sound hook is genuinely motivating.** Playing two notes in three lines and hearing them — before a single CS term is defined — is exactly the low-floor high-engagement entry that gets an 11-year-old past the "this is going to be boring" threshold. The fact that changing one number changes exactly one note is a concrete, sensory demonstration of the literal-machine principle. This is the best pedagogical moment in the chapter.
+
+- **The misconception inventory is honest and complete.** "The computer fills in the gaps," "a bug means the computer made a mistake," "a loop must count numbers," "changing one thing changes many things" — these are the real misconceptions children bring to this age, sourced correctly from CS Unplugged and the Think Python tradition. Each misconception is countered by a specific exercise moment rather than a prose disclaimer. That is the right approach.
+
+- **The rung ladder is correctly calibrated for Chapter 0.** Staying at rungs 1 and 2 with exactly one rung-3 value-change as a stretch is an appropriate floor for a student who has never touched code. The single value-change moment in L0.1 and its return in Challenge exercise 6 creates a genuine arc of increasing agency across the chapter — which is the hallmark of well-designed low-floor/wide-walls scaffolding.

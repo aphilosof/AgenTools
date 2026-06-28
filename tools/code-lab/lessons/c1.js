@@ -449,11 +449,13 @@ window.CODELAB.lessons.push({
   chapter: 1,
   strand: "words",
   lang: "py",
-  timeBudgetMin: 12,
+  timeBudgetMin: 20,
   title: "Working with strings",
   glossary: {
     concatenation: "Joining two strings end to end using +. No space is added between them automatically.",
     method: "A function that belongs to a specific type, called with a dot after the value. \"hello\".upper() is a method call on a string.",
+    "f-string": "A string that starts with f before the quote. Any variable or expression inside curly braces {} is evaluated and inserted. f\"Hello {name}\" inserts the value of name.",
+    join: "A string method that joins a list of strings into one, putting the separator between each pair. \", \".join([\"a\",\"b\",\"c\"]) gives \"a, b, c\".",
   },
   content: [
     {
@@ -561,11 +563,77 @@ window.CODELAB.lessons.push({
       ],
       solution: "word = \"hello\"\nprint(word.upper())\nprint(len(word))\n",
     },
+    {
+      type: "text",
+      md: "**f-strings — the modern way to slot values into text.** Joining strings with `+` gets awkward once variables are involved: you need `str()` for every number, and the expression becomes a chain of pieces. Python's **[[f-string]]** is cleaner. Write `f` before the opening quote, then put any variable or expression inside curly braces `{}`. Python evaluates whatever is inside and slots the result in.\n\n`f\"Hello {name}\"` is equivalent to `\"Hello \" + name`, but far easier to read at a glance.",
+    },
+    {
+      type: "example",
+      note: "An f-string inserts any variable into the text — no + or str() needed.",
+      code: "name = \"Sam\"\nage = 11\nprint(f\"Hello {name}\")\nprint(f\"{name} is {age} years old.\")\n",
+    },
+    {
+      type: "text",
+      md: "**`:.2f` — always two decimal places.** Inside an f-string you can add a *format spec* after a colon: `{price:.2f}` means 'format this number with exactly 2 decimal places.' Python rounds and pads automatically: `3.5` becomes `3.50`; `12.999` becomes `13.00`. This is the standard way to print prices and measurements.",
+    },
+    {
+      type: "example",
+      note: ":.2f rounds to 2 decimal places and always shows exactly 2 digits after the point.",
+      code: "price = 3.5\nprint(f\"Price: ${price:.2f}\")\ntip = price * 0.2\ntotal = price + tip\nprint(f\"With tip: ${total:.2f}\")\n",
+    },
+    {
+      type: "exercise",
+      rung: 3,
+      prompt: "This builds a greeting with + and str(). Rewrite the print call as a single f-string — the output must stay exactly: Hello Sam, you are 11 years old.",
+      starter: "name = \"Sam\"\nage = 11\nprint(\"Hello \" + name + \", you are \" + str(age) + \" years old.\")\n",
+      check: { type: "output", expected: "Hello Sam, you are 11 years old." },
+      hints: [
+        "An f-string starts with f before the quote: f\"...\".",
+        "Put variables inside curly braces: {name} and {age}.",
+        "print(f\"Hello {name}, you are {age} years old.\")",
+      ],
+      solution: "name = \"Sam\"\nage = 11\nprint(f\"Hello {name}, you are {age} years old.\")\n",
+    },
+    {
+      type: "exercise",
+      rung: 5,
+      prompt: "price and tax are already set up. Add one print line using an f-string with :.2f that outputs exactly: Total: $4.50",
+      starter: "price = 4.0\ntax = 0.5\ntotal = price + tax\n",
+      check: { type: "output", expected: "Total: $4.50" },
+      hints: [
+        "You need to print total formatted to 2 decimal places.",
+        "Inside the f-string braces, add :.2f after the variable name: {total:.2f}.",
+        "print(f\"Total: ${total:.2f}\")",
+      ],
+      solution: "price = 4.0\ntax = 0.5\ntotal = price + tax\nprint(f\"Total: ${total:.2f}\")\n",
+    },
+    {
+      type: "text",
+      md: "`split()` with no argument splits on spaces. You can also split on a specific separator by passing it: `\"red,green,blue\".split(\",\")` gives `[\"red\", \"green\", \"blue\"]` — the separator is not included in the pieces.\n\n**`[[join]]()` is the reverse.** It is called on the separator and takes a list of strings: `\" | \".join([\"red\", \"green\", \"blue\"])` gives `\"red | green | blue\"`. The separator goes first — it reads oddly at first, but it is consistent: `join` belongs to the separator string, the thing that goes *between* the pieces.",
+    },
+    {
+      type: "example",
+      note: "split(',') breaks at commas; join puts pieces back together with any separator you choose.",
+      code: "colours = \"red,green,blue\"\nparts = colours.split(\",\")\nprint(parts)\nprint(\" | \".join(parts))\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "This should print rock → paper → scissors, but the join call is wrong — it passes the original unsplit string instead of the list. Fix the one mistake.",
+      starter: "items = \"rock,paper,scissors\"\nparts = items.split(\",\")\nprint(\" → \".join(items))\n",
+      check: { type: "output", expected: "rock → paper → scissors" },
+      hints: [
+        ".join() needs a list, not the original string.",
+        "You already split items into parts — join the list, not the original.",
+        "Change .join(items) to .join(parts).",
+      ],
+      solution: "items = \"rock,paper,scissors\"\nparts = items.split(\",\")\nprint(\" → \".join(parts))\n",
+    },
   ],
   codex: {
     topic: "string operations",
-    pattern: "\"a\" + \"b\"   \"ab\" * 3   s.upper()   s.lower()   s.strip()   s.split()   len(s)",
-    note: "+ joins strings end to end (no space added); * repeats a string. Methods like upper(), lower(), strip(), split() return transformed copies. len() counts characters.",
+    pattern: "f\"{x}\"   f\"{price:.2f}\"   s.split(\",\")   \"|\".join(lst)   s.upper()   s.lower()   s.strip()   s.split()   len(s)",
+    note: "f-strings slot values into text: f\"{name}\" inserts name. :.2f formats to 2 decimal places. split(',') breaks on a separator; join puts pieces back together. Methods return copies — the original string is unchanged.",
   },
 });
 

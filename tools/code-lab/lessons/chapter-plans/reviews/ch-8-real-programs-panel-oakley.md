@@ -1,0 +1,60 @@
+# Panel Review — Ch.8 Real Programs — Barbara Oakley (Learning How to Learn)
+**Verdict:** Solid
+
+---
+
+## Findings (from my lens)
+
+### Spaced Practice and Retrieval
+
+1. [MAJOR] **Warm-up questions are absent from every lesson.** CURRICULUM-STRUCTURE.md §B mandates "a quick recall question from an earlier lesson (spiral / retrieval)" at the start of every lesson. Ch.8 has none — not one warm-up is specified across 8.1 through 8.6, the Challenge, or the Quiz. This is the same structural omission flagged in the Ch.7 review, and it matters most in Ch.8: this is the integration chapter, the one place where spaced retrieval of Ch.1–7 material would fire on all cylinders. Without explicit warm-ups, the lesson authors have no forcing function to bring dormant material back before burying it under new syntax. Fix: specify a warm-up for each lesson. Suggested: 8.1 — "Write a function that takes a list of numbers and returns the sum, using a for loop" (primes Ch.3/4 before the hook program). 8.2 — "What is the difference between a function with `return` and one with `print`?" (primes the design lesson's core misconception). 8.3 — "Write the bulletproof input loop from Ch.2 from memory" (direct retrieval of the pattern being deepened). 8.4 — "Write a for loop that builds a new list of doubled values using `append`" (primes the comprehension as a shorter form). 8.5 — "Write a function `double(n)` that returns `n * 2`, then call it and check the output" (primes assert as a better check than reading output). 8.6 — strand-specific retrieval from Ch.4, Ch.6, Ch.7.
+
+2. [MINOR] **Chapter Recap / retrieval set for later spiral is absent.** §C of CURRICULUM-STRUCTURE specifies a sixth arc item: "Chapter recap — Codex consolidation + a retrieval set for later spiral." Ch.8 ends at the Chapter Quiz with no consolidation section and no list of retrieval targets for the JavaScript chapters to pull from. For a chapter that synthesises Ch.1–7, this gap means nothing from Ch.8 will appear in Chapter 9+ warm-ups unless someone remembers to specify it without a documented source list. Fix: add a Chapter Recap section naming the 5–7 must-stick concepts (comprehension syntax, `assert`/test function shape, the `try`/`except`/`else`/`raise` pattern, program-design workflow) and 4–5 proposed retrieval questions for use in later chapters.
+
+### Chunking and Cognitive Load
+
+3. [MAJOR] **8.3 lists too many owned concepts for one lesson.** The lesson claims to own: `try`/`except` (already taught in c2s8), `except ExceptionType as e`, the `else` clause on `try`, `finally`, `raise`, and the input-loop pattern. That is five distinct concepts — three of which are new syntax variants — plus one composite pattern, all in a single 15–25 minute lesson. The `else` clause on `try` is particularly treacherous: students' intuition that `else` runs when an exception *is* caught is directly contradicted by the truth, and the plan correctly flags this as a misconception. But correcting that misconception while simultaneously introducing `finally` and `raise` means three "here is something that works differently than you'd expect" moments in one lesson. The load is excessive. Fix: split 8.3 into two lessons. Lesson 8.3 covers `except ExceptionType as e`, `KeyError` and `ZeroDivisionError` catching, and `raise` (the natural extension of catch). Lesson 8.3b covers `else` and `finally` as cleanup clauses, with deliberate worked examples that exploit the misconception contrast. The input-loop pattern consolidates in the first lesson since it already appeared in Ch.2 and is a recall, not a new concept.
+
+4. [MINOR] **8.6 Strand Projects are all assigned to one lesson slot.** Four write-from-scratch projects — each requiring problem decomposition, multi-function architecture, exception handling, comprehensions, and testing — are listed as a single lesson (8.6a through 8.6d). At 15–25 minutes per lesson and rung-6 difficulty throughout, four blank-editor programs cannot fit one lesson. Even if treated as four sub-sessions, presenting them under a single lesson node collapses the scaffolding record: there is no explicit progression from 8.6a (simpler text tool) to 8.6d (generative music requiring `random.choice`, scale lists, and optional OOP recall from Ch.6). Fix: either split into four numbered lessons (8.6, 8.7, 8.8, 8.9) with explicit difficulty ordering in the arc, or clearly label the sub-projects as "4 sessions" and specify which skills each session activates, so the authoring team knows how much time to budget and what warm-up to give each one.
+
+### Illusions of Competence
+
+5. [MINOR] **8.5 contains a "fix the assert, not the function" exercise whose pedagogical intent is undermined by the missing failure message.** The exercise says a `def test_reverse()` has one passing assert and one with a wrong expected value — the student should fix the test, not the function. This is an excellent exercise: it teaches that the test itself can be wrong, not the code. But `assert reverse('hello') == 'hello'` raises `AssertionError` with an empty message (verified: `AssertionError: ''`). The learner sees only a blank `AssertionError` and must infer from context which assert fired and why. Without an error message, this exercise risks leaving the student thinking "I don't understand what failed" rather than "I see which expected value was wrong." Fix: change the exercise to use `assert reverse('hello') == 'hello', f"expected 'olleh', got {reverse('hello')}"` in the broken version. Showing a failing assert with a message first, then a blank one, is also a natural teaching moment for the `assert condition, message` form the lesson is supposed to own.
+
+6. [MINOR] **The "ownership" labeling of `try`/`except` in the chapter's Concepts Owned section is misleading.** The plan lists `try`/`except` as a concept owned by Ch.8, but it was fully taught in c2s8 — including bare-except danger, EAFP principle, `ValueError`, `ZeroDivisionError`, and the bulletproof input loop. A student arriving at Ch.8 has had `try`/`except` for five chapters. Labeling it as Ch.8-owned suggests to lesson authors that it needs introduction, which risks re-teaching material that should only be extended. This is a documentation bug, not a content bug, but it will cause the wrong kind of lesson if not corrected. Fix: in the Concepts Owned list, separate the items into two groups: "deepened here (first taught Ch.2): `try`/`except`" and "new in Ch.8: `except E as e`, `else` clause, `finally`, `raise`."
+
+### Spaced Recall of Prior Concepts
+
+7. [MINOR] **The Ch.7 Oakley review identified that `str.split(sep)` with an explicit separator and `str.join()` may not be in the actual written lessons.** Ch.8 relies on both — the 8.6a text tool uses `.split()` on words (which is fine, no-arg split is in c1.js), but the `freq[w] = freq.get(w, 0) + 1` dict-accumulator is labeled as "recalled from Ch.4." The Ch.4 plan is not yet written as actual lessons, so this recall cannot be confirmed against real content. The Ch.8 plan author needs to verify that `dict.get(key, default)` and the accumulator pattern are explicitly in the Ch.4 lesson files, not just in the Ch.4 plan, before labeling them as clean recalls. Fix: before authoring 8.6a, open c4.js and confirm `freq.get(w, 0)` appears in a worked example or exercise. If it does not, 8.2 or 8.3 must introduce it, not assume it.
+
+8. [MINOR] **The `sorted(freq, key=freq.get, reverse=True)` pattern in 8.6a uses `key=` with a function reference rather than a lambda.** The plan correctly notes this is "the canonical lambda-free trick." However, `sorted()` with a `key=` argument is listed in CURRICULUM-STRUCTURE §D as owned by Ch.4 ("Common built-ins: `sorted` (Ch.4)"). Passing a function reference as `key=` — specifically passing a dict's `.get` bound method — is non-trivial conceptual content: the student must understand that `freq.get` without `()` is a reference to the method, and that `sorted` calls it once per element. This is significantly harder than `sorted(lst)` with no key. The plan treats it as a transparent recall but it is closer to new material. Fix: add a brief worked example in 8.4 or 8.6a that demonstrates `sorted(lst, key=len)` first (simpler: `len` is a plain function), then extends to `sorted(freq, key=freq.get)`. Two worked examples rather than one keeps the cognitive load manageable.
+
+---
+
+## Continuity notes
+
+**Well-woven recalls (confirmed against actual c1.js/c2.js/c3.js):**
+- `while True` / `break` / `input()` / `int()` from Ch.1 and c2s4: 8.3 explicitly recalls these as the pieces the input-loop pattern combines. The recall is correct; c2s4 (while loops) and c2s8 (try/except) both teach these at depth.
+- `try`/`except ValueError`/`ZeroDivisionError` from c2s8: 8.3 deepens rather than re-teaches. The new material (`as e`, `else`, `finally`, `raise`) is genuinely additive. The plan's spiral intent is sound even if the ownership labeling is wrong.
+- `def`, `return`, docstrings from c3.js: 8.2 (program design) and 8.5 (testing) both build on Ch.3 function concepts correctly. The "write stubs first" workflow in 8.2 is a direct extension of Ch.3's function mental model.
+- EAFP principle from c2s8: c2s8 names and explains EAFP explicitly. Ch.8 does not need to re-introduce it — the plan correctly treats it as background.
+- f-strings: used throughout 8.3 and 8.6 exercises (`f"No score for {e}"`). The Ch.7 Oakley review flagged that f-strings are not in c1.js. If they were not formally taught in Ch.2–Ch.6, Ch.8 should not treat them as transparent.
+
+**Missing or unverified recalls:**
+- `dict.get(key, default)` — labeled as "recalled from Ch.4" but Ch.4 is not yet written as code. Must be verified.
+- `sorted(iterable, key=fn)` — labeled as "recalled from Ch.4 (Common built-ins)." The key= callable-reference form is harder than basic sorted and may need a bridging example.
+- String methods used in 8.6a (`.lower()`, `.strip()`, `.split()`): `.lower()` and `.strip()` are confirmed in c1.js. `.split()` (no-arg) is in c1.js. All correct.
+
+**Accidental re-teaching risks:**
+- The plan's Concepts Owned list puts `try`/`except` as a Ch.8-owned concept. If lesson authors read this literally, they will re-introduce it as if new. This is the most likely place a re-teaching error will occur.
+- The input-loop pattern (`while True` + `try` + `break`) is presented in 8.3 as a concept the lesson teaches, but it was explicitly taught, named, and exercised to rung 5 in c2s8. In 8.3 it should appear in the warm-up (recall it from memory), not in a worked example (see it again for the first time).
+
+---
+
+## What's strong
+
+- **The chapter-wide misconception inventory is the best in the course so far.** The plan names seven chapter-wide misconceptions and ties each to a specific lesson, example, or exercise. The `else` clause misunderstanding ("runs when an exception IS caught") is the subtlest and is correctly called out, with worked examples that deliberately trigger the wrong intuition before correcting it. The distinction between `assert` in development vs. user-facing error handling is precisely stated and not ducked.
+
+- **The 8.6 strand projects are correctly sequenced by complexity and the `raise` requirement is smart.** Requiring at least one sub-project to use `raise ValueError(...)` explicitly — rather than just catch exceptions — closes the loop on the EAFP principle by showing students the other side: writing code that *raises* named exceptions for callers to handle. This is the correct capstone exercise for a chapter that opened in Ch.2 with "someone else's exceptions crash your program."
+
+- **The Chapter Challenge has excellent diagnostic range.** Eight exercises spanning rung 4 to open-ended rung 6, with the open-ended final exercise ("two-sentence spec of the student's choice") doing something rare: it requires design thinking before a single line of code, which is exactly the metacognitive habit the chapter is building. The progression from "spot the wrong exception class" (item 1) to "write your own spec and program" (item 8) is a textbook scaffolding fade.

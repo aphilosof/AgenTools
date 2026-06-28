@@ -1,155 +1,119 @@
-# Deep Review (round 2) — Chapter 0 (First Sound, Then Think)
-**Verdict:** Needs fixes (minor only — no blockers; the round-1 majors all landed)
+# Deep Review Round 2 — Ch.0 First Sound
+**Verdict:** Needs fixes (no blockers; one moderate new problem introduced by revision; four minors)
 **Python verified on:** 3.14.5
 
 ---
 
 ## Round-1 fixes audit
 
-- **Finding 1 (MAJOR — strand-app lesson + chapter recap missing): CONFIRMED-FIXED.**
-  A dedicated strand-application lesson **L0.6 — Sound Strand: Build a Motif** now
-  exists, correctly tagged `strand-application · sound`, and its arc role explicitly
-  distinguishes it from the assessing Chapter Challenge ("lets students explore…
-  with no single correct answer"). A **Chapter Recap** section now follows the quiz
-  with Codex consolidation (all nine entries surfaced) plus a five-item retrieval set
-  flagged for reuse as Ch.1 warm-ups. This is exactly the §C arc shape
-  (Hook → Concepts → Strand-app → Challenge → Quiz → Recap). Fixed properly.
+All 25 synthesis items checked against the revised plan (1 blocker + 7 majors + 17 minors).
 
-- **Finding 2 (MAJOR — abstraction ownership contradiction): CONFIRMED-FIXED.**
-  The plan no longer "owns" abstraction. `Concepts owned` now says abstraction is
-  *practiced unnamed* and "**not introduced here** — it is named in Ch.3… and deepened
-  in Ch.5." The spine was also updated to match: `CURRICULUM-STRUCTURE.md` line 108–110
-  now reads "sequence, selection, iteration, decomposition, debugging — as ideas,
-  unplugged. (**Abstraction** is *practiced unnamed* in Ch.0, **named** in Ch.3…,
-  and deepened in Ch.5.)" Plan and spine are now consistent; the contradiction is gone.
+| ID | Status | Notes |
+|----|--------|-------|
+| B1 sleep() unit wrong | CONFIRMED-FIXED | Unit-free arithmetic throughout; "wait half a beat" in narration is informal language, not a committed unit |
+| M1 Challenge ex.4 tempo | CONFIRMED-FIXED | Replaced with "is it a school day?" condition from L0.4 |
+| M2 decoy Parsons too early | CONFIRMED-FIXED | L0.3 now 5-block + 7-block with no decoys; decoy variant correctly deferred to L0.5 ex.2 |
+| M3 pseudocode-to-Python anchor | CONFIRMED-FIXED | "What's Next" panel in Recap; `for i in range(3):` verified correct (iterates 0,1,2 = 3 times) |
+| M4 L0.4 free-text warm-up | CONFIRMED-FIXED | Replaced with forced-choice four-option item; answer B verified correct |
+| M5 MIDI not grounded | CONFIRMED-FIXED | MIDI sidebar in L0.1; 60=C, 64=E, 67=G verified against chromatic scale |
+| M6 retrieval spiral not contracted | CONFIRMED-FIXED | All 5 items assigned to specific L1.x, L2.x, L4.x warm-ups |
+| M7 L0.1 error handling | CONFIRMED-FIXED | Engine behaviour note added; raw Python error must be visible, not silent |
+| m1 three-note program | CONFIRMED-FIXED | Now "three-line program" throughout |
+| m2 both notes at same time | CONFIRMED-FIXED | Correct answer: "the two notes play one after the other with no pause between them" |
+| m3 bug exercises identical pattern | **PARTIALLY-FIXED / NEW-PROBLEM-INTRODUCED** | See Finding F1 below — overcorrection |
+| m4 motif = loop | CONFIRMED-FIXED | Codex entry: "A short, memorable musical idea — a pattern of notes that can be repeated…"; ostinato distinction noted |
+| m5 play(84) two octaves imprecise | CONFIRMED-FIXED | play(84) removed; duration bugs used instead |
+| m6 no parentheses bridge | CONFIRMED-FIXED | One sentence added to L0.1 after first worked example |
+| m7 pseudocode barrier | CONFIRMED-FIXED | Barrier note added at end of L0.4 |
+| m8 L0.2 ex.3 free-text generation | CONFIRMED-FIXED | Recognition task: three candidate rewrites, student selects the one a literal machine can follow |
+| m9+m10 L0.5 warm-up structure | CONFIRMED-FIXED | Now `repeat 4 times: play(60), play(64), sleep(0.5)` → answer 8; verified 4×2=8 ✓ |
+| m11 N+1 wrong label | CONFIRMED-FIXED | Correctly labeled "body-count multiplication error" in L0.4 and chapter-wide section |
+| m12 CT pillars not synthesized | CONFIRMED-FIXED | Explicit synthesis paragraph added to L0.6 before exercises |
+| m13 Ch.1 function-call debt | CONFIRMED-FIXED in plan | Callback debt section added to plan. However, c1.js L1.7 (line 674) still names only print() and forward() as prior examples — play() and sleep() are absent. The plan correctly requires a c1.js edit; that edit has not been made. |
+| m14 L0.6 ex.1 dual decision | CONFIRMED-FIXED | Four blocks pre-selected; optional stretch for wider bank |
+| m15 Challenge ex.4 no sound | CONFIRMED-FIXED (partially) | Audible feedback added; mechanism unspecified — see Finding F3 |
+| m16 L0.3 orientation panel | CONFIRMED-FIXED | "How this works" panel required before first Parsons task |
+| m17 L0.6 single warm-up item | CONFIRMED-FIXED | Expanded to three interleaved items from L0.2, L0.3/L0.4, L0.5 |
 
-- **Finding 3 (MAJOR — warm-ups + lesson-level Recap+Codex missing): CONFIRMED-FIXED,
-  with one residual gap (see new finding 1).** L0.2–L0.6 each now carry a Warm-up beat
-  (mostly genuine retrieval questions recalling the prior lesson) and a Recap + Codex
-  beat with a one-sentence summary and earned entries. The template §B
-  (`Warm-up → Subsection × 3–6 → Recap + Codex`) is now honoured for L0.2 onward.
-  Residual: **L0.1 (the hook) still has no Recap+Codex labelled as such** — it does have
-  a "Recap + Codex" block, so this is actually fine; the only true gap is that L0.1 has
-  no warm-up, which is correct (it is the first lesson, nothing to recall).
-
-- **Finding 4 (MINOR — L0.1 ex.3 rung mislabeled "rung 1" should be "rung 3"):
-  CONFIRMED-FIXED.** Exercise 3 now reads `(rung 3 — modify, single value)` and the
-  subsection header lists `rungs 1, 3`. Matches the rung ladder and the progression table.
-
-- **Finding 5 (MINOR — Overview self-contradiction on where rung 3 first appears):
-  CONFIRMED-FIXED.** Overview now reads verbatim the suggested fix: "Rung 3 (modify)
-  first appears in L0.1 as a brief value-change preview and returns in Challenge
-  exercise 6 as the capstone stretch." Consistent with the progression table.
-
-- **Finding 6 (MINOR — L0.4 while-loop-specific misconception inappropriate for
-  counted loops): CONFIRMED-FIXED.** The condition-check-vs-body-run misconception is
-  gone. It is replaced by exactly the suggested N+1 misconception: "Off-by-one on the
-  loop body count: tracing `repeat 3 times: play(60), play(64)` and guessing 4 notes
-  rather than 6 (the N+1 error)." Correct and age-appropriate.
-
-All six round-1 findings are fixed. No round-1 fix introduced a regression.
+**Summary:** 23 of 25 confirmed fixed. m3 partially fixed with a new problem introduced. m13 correctly flagged in the plan but the required c1.js edit has not been made.
 
 ---
 
 ## New / remaining findings
 
-1. **[MINOR] L0.4 Codex `iteration` entry overshoots what Ch.0 actually teaches.**
-   The earned entry reads: "A counted loop runs the block a fixed number of times; a
-   conditional loop runs it **until a condition stops being true**." Every *exercise* in
-   Ch.0 is a counted `repeat N times` loop; the only conditional-loop content is one
-   unplugged "stir until smooth" analogy in worked-example 1. Ch.2 (`ch-2-decisions-loops.md`
-   line 45) owns `while` / indefinite iteration. Locking a Codex definition that names
-   the conditional-loop case in Ch.0 mildly front-runs Ch.2's ownership and is broader
-   than the chapter's exercises support.
-   → **Fix:** Trim the Codex entry to the counted case the chapter teaches, e.g.
-   "Repeating a block of steps without rewriting them; a counted loop repeats a fixed
-   number of times." Keep "stir until smooth" as a *teaching* analogy for "loops needn't
-   count," but don't enshrine the conditional-loop definition in the Ch.0 Codex.
+### F1 — MODERATE: Bug type monotony transferred from pitch-outlier to duration (overcorrection of m3)
 
-2. **[MINOR] L0.4 exercise 3 vs. L0.5 warm-up — near-identical trace items risk a
-   copy-the-number reflex rather than retrieval.** L0.4 ex.3 is
-   `repeat 3 times: play(60), play(64), sleep(0.5)` → 6. The very next lesson's warm-up
-   is `repeat 4 times: play(60), sleep(0.5)` → 4. Quiz q3 is `repeat 3 times: play(60),
-   sleep(0.5)` → 3, and Recap q4 is `repeat 5 times: play(60), sleep(0.5)` → 5. Four
-   structurally identical "how many notes" items. The arithmetic is correct in every
-   case (verified below), but the spiral is testing one micro-skill four times rather
-   than ramping. Not a blocker; consider varying at least one (e.g. ask "how many
-   *seconds of sound+silence*" or "how many `play` vs. `sleep` calls execute") so the
-   retrieval set isn't monotone.
+The synthesis asked to change **L0.6 exercise 3** to a duration bug. The revision changed every sound bug exercise in the chapter to a duration bug. The result is five duration bugs and zero pitch bugs:
 
-3. **[MINOR] L0.6 / L0.5 "clashing note" claim is asserted, not grounded — and the
-   engine pitch model isn't pinned.** Several exercises hinge on a wrong pitch that
-   "clashes" (L0.5 worked-ex 3 and ex.3; L0.6 worked-ex 3 uses `play(67)` meant to be
-   `play(65)`; L0.6 ex.3 "too high — it clashes"). Whether a note clashes is musical,
-   not arithmetic, and depends on the surrounding notes, which aren't specified. With
-   MIDI numbering (60 = middle C), 65 = F4 and 67 = G4 are both consonant scale tones;
-   "67 clashes, 65 doesn't" is only true relative to an unstated key/melody. For an
-   11-year-old this is fine as "it sounds wrong," but the author must ensure the *actual*
-   chosen note context makes the substituted pitch audibly wrong, or replace "clash"
-   with an unambiguous cue (e.g. "one note is far too high — an octave above the rest").
-   → **Fix:** When these exercises are authored, pin the full note list so the wrong
-   note is unmistakably wrong by pitch distance, not by music-theory consonance. Prefer
-   "much higher/lower" framing over "clashes."
+| Location | Bug type | Sleep pattern | Bug position |
+|----------|----------|--------------|-------------|
+| L0.5 worked ex.3 | duration | [0.5, 0.5, **5.0**, 0.5, 0.5] | position 3 |
+| L0.5 ex.3 | duration | [0.5, 0.5, **5.0**, 0.5, 0.5] (implied) | position 3 |
+| L0.6 worked ex.3 | duration | six values, one 5.0 | unspecified |
+| L0.6 ex.3 | duration | [0.5, 0.5, **5.0**, 0.5, 0.5] | position 3 |
+| Challenge ex.5 | duration | eight values, one 10× too long | unspecified |
 
-4. **[MINOR] Challenge ex.1 answer is unverifiable as written — `sleep()` values not
-   given.** "How many seconds of silence does this algorithm produce in total?" has no
-   stated `sleep()` values in the plan, so the claimed answer can't be checked at review
-   time. This is a planning-doc gap, not a content error, but flag it so the authored
-   exercise pins the numbers and the harness checks the sum. (All *specified* arithmetic
-   in the chapter is correct — see below.)
+Three of the five exercises share the identical pattern: five sleep values with 5.0 at position 3. A student who solves L0.5 ex.3 correctly can mechanically tap position 3 in L0.6 ex.3 without reading the values at all.
 
-5. **[MINOR / consistency] L0.4 selection Codex says a branch picks "one path if true,
-   another if false," but the same lesson's misconception correctly teaches that `else`
-   is optional ("if raining, take umbrella" with no else).** The Codex `selection` entry
-   ("…follows one path if it is true, another if it is false") describes only the
-   two-armed form and contradicts the lesson's own "a branch always has two outcomes →
-   false" misconception.
-   → **Fix:** Soften the entry to "…follows one path if the condition is true, and
-   optionally a different path if it is false."
+**Internal inconsistency:** The L0.6 annotation (lines 462–465) claims the chapter's three bug exercises cover "pitch outlier in L0.5 worked ex.3, duration in L0.5 ex.3, and duration here." But L0.5 worked ex.3 (lines 368–372) is explicitly a duration bug: `sleep(5.0)` in `[60, 62, 64, 62, 60]`. The annotation is wrong about its own chapter.
+
+**What the synthesis actually required:** Vary L0.6 exercise 3 to a duration bug. The other bug exercises — including L0.5 worked ex.3 — were intended to stay varied. The revision overcorrected.
+
+**Fix:**
+- Restore L0.5 worked ex.3 to a **pitch-outlier bug** (e.g., `play(80)` in a 60–67 range sequence — unmistakably out of range, no music-theory judgment required).
+- Change the bug position in L0.6 ex.3 from position 3 to a different position (e.g., position 2 or 4) so two duration exercises do not share the same position.
+- Correct the L0.6 annotation to accurately describe the resulting three types: pitch outlier (L0.5 worked ex.3), duration at position N (L0.5 ex.3), duration at position M≠N (L0.6 ex.3).
+
+### F2 — MINOR: `precision` is Codexed but not listed in Concepts owned
+
+The "Concepts owned" section lists: sequence, selection, iteration, decomposition, abstraction (unnamed), algorithm, bug/debugging, play()/sleep(). `precision` is absent.
+
+Yet L0.2 earns a standalone Codex entry for `precision`, and it appears as the expected answer in L0.6 warm-up item 1 and Recap retrieval Q2.
+
+Options (either resolves the inconsistency):
+- Add `precision` to the owned-concepts list.
+- Absorb precision into the `algorithm` Codex entry and remove the standalone entry; update L0.6 warm-up item 1 to accept "algorithm" or "unambiguity" as correct.
+
+### F3 — MINOR: Challenge ex.4 audible feedback claims no mechanism
+
+The plan promises the lunchbox-packing branch "plays audible feedback when run — hear the school day path vs. the not school day path." The same branch in L0.4 ex.2 produces no audible feedback. Lunchbox packing has no sound output unless the engine plays a generic tone on branch execution (undocumented) or the Parsons blocks secretly include play() calls (not stated).
+
+Fix: either specify the engine mechanism (a short tone per branch) or change "hear the school day path" to "see the result of each branch."
+
+### F4 — MINOR: m13 callback debt unresolved in c1.js
+
+The plan correctly flags that Ch.1 L1.7 must name play() and sleep() as prior function-call examples. Current c1.js L1.7 (line 674) says only: "You have been using function calls since Lesson 1.1: `print('Hello')` follows the same pattern." play() and sleep() are not mentioned. This is not a plan error — the plan flags it correctly — but it is a live content defect. Add to NEXT.md as a required c1.js edit.
+
+### F5 — MINOR: L0.6 warm-up item 1 is ambiguous to auto-check
+
+Item 1 asks: "An algorithm step says 'cook it somehow.' Which property of a good algorithm does this violate?" The plan marks the answer as `precision / unambiguity` and formats it as a short-answer field. Acceptable answers include "precision," "unambiguous," "vague," "imprecise," "ambiguity." Without a specified keyword list or a multiple-choice format, the engine will either reject valid synonyms or skip auto-checking.
+
+Fix: reformat as multiple choice (four options) to match the other two warm-up items in L0.6, or specify the accepted keyword list for the checker.
 
 ---
 
-## Verified-correct (ran `python3` 3.14.5)
+## Verified-correct claims
+
+All loop-trace arithmetic verified by running Python 3.14.5:
 
 ```
-L0.4 ex3: repeat 3 × [play(60), play(64), sleep(0.5)] -> notes: 3*2 = 6   ✓
-L0.5 warmup: repeat 4 × [play(60), sleep(0.5)]        -> notes: 4*1 = 4   ✓
-Quiz q3:  repeat 3 × [play(60), sleep(0.5)] -> note 60 plays 3*1 = 3      ✓
-Recap q4: repeat 5 × [play(60), sleep(0.5)] -> note 60 plays 5*1 = 5      ✓
+L0.4 ex.3:        repeat 3 × [play(60), play(64), sleep(0.5)] → 3×2 = 6 notes   ✓
+L0.5 warm-up:     repeat 4 × [play(60), play(64), sleep(0.5)] → 4×2 = 8 notes   ✓
+L0.6 warm-up #2:  repeat 3 × [play(60), play(62), sleep(0.5)] → 3×2 = 6 notes   ✓
+Recap Q4:         repeat 5 × [play(60), sleep(0.5)] → 5×0.5 = 2.5 (unit-free)   ✓
+Challenge ex.1:   0.5+0.5+0.5 = 1.5 (unit-free)                                  ✓
+Quiz Q3:          repeat 3 × [play(60), sleep(0.5)] → note 60 plays 3 times       ✓
+Duration bug:     5.0 / 0.5 = 10.0 (correctly described as 10× too long)          ✓
 ```
-All four counted-loop trace answers in the revised plan are arithmetically correct.
 
-Boundary checks confirmed:
-- **No Python syntax appears in Ch.0.** `play()`/`sleep()` are explicitly framed as
-  "words the machine knows," not taught syntax. Honours §D pre-syntax scope.
-- **`while` / conditional iteration is owned by Ch.2** (`ch-2-decisions-loops.md` L2.4,
-  line 45/248). Ch.0 keeps loops to unplugged `repeat N times`, consistent except for
-  the Codex over-reach in finding 1.
-- **String indexing/slicing/`split`, comprehensions, `global`** — none appear in Ch.0
-  (correct; first two are Ch.1/Ch.8, last is never).
-- **Ch.1 boundary** (`ch-1-first-words.md` lines 57, 91–92, 106, 124): Ch.1 recalls
-  "sequence, algorithm exactness, debugging idea" and "Debugging as an idea → now met
-  as real error classes." Ch.0's hand-off (debugging-as-mindset, no error classes,
-  preview of tracebacks in L0.5/chapter-wide error-classes note) matches exactly. No
-  concept is used before taught or taught twice across the boundary.
+MIDI note mappings (chromatic scale from C=60): 60=C, 62=D, 64=E, 65=F, 67=G — all correctly stated in the MIDI sidebar.
 
----
+What's Next panel Python: `for i in range(3):` iterates exactly 3 times (range produces [0,1,2]); `if school_day:` is valid Python. Both correct.
 
-## Verdict notes
+Concept boundary audit: No Python syntax in Ch.0. No Ch.2-owned concept (`while`, conditional iteration) claimed as Ch.0-taught. Ch.1 boundary: Ch.1 plan correctly recalls sequence, algorithm exactness, and debugging-as-idea as prior knowledge. No concept used before owned; no duplication across the boundary.
 
-This is a strong revision. All six round-1 findings — including the two structural
-majors (missing strand-app lesson + recap; abstraction ownership contradiction) — are
-genuinely fixed, not just papered over, and the spine doc was updated in lockstep so
-plan and structure now agree on abstraction. CT-concept soundness is intact: the
-algorithm → sequence → arrange → loop/branch → debug ordering is dependency-correct and
-acyclic, the Use-Modify hook (predict → run → modify a single value) is textbook PRIMM
-and genuinely motivating for an 11-year-old, and the literal-machine through-line is
-well sustained. The new L0.6 strand lesson and the retrieval-set recap meaningfully
-strengthen the chapter.
+Difficulty ramp: within each lesson, harder rungs follow easier ones. The L0.1 rung-3 preview is labeled as intentional foreshadowing, not ramp progression. Cross-lesson ramp (predict → predict → arrange → arrange+trace → spot+fix → strand-app → challenge) is monotonically more demanding. No regression found.
 
-Remaining issues are all MINOR and authoring-level: an over-broad `iteration` Codex
-entry that front-runs Ch.2's `while`, a `selection` entry that contradicts its own
-"else is optional" teaching, four near-identical counted-loop trace items that should
-be varied, and "clashing note" exercises whose correctness depends on note context the
-plan hasn't pinned. None block proceeding; address findings 1 and 5 (Codex wording) and
-pin the note lists (findings 3–4) when the lessons are authored.
+Continuation of prior concepts: sequence from L0.1 is genuinely used in L0.2 warm-up and L0.3 exercises. Algorithm from L0.2 is used in L0.5 recalls. Decomposition from L0.3 is used in L0.4 warm-up and L0.6 synthesis. Iteration from L0.4 is used in L0.6 worked example. Debugging from L0.5 is used in L0.6 warm-up item 3 and L0.6 ex.3. Weaving is genuine, not decorative.
+
+Reading level spot-check (Flesch-Kincaid approximation): MIDI sidebar ~grade 4 (acceptable for a two-sentence orientational aside), algorithm Codex entry ~grade 9 (at ceiling, acceptable for a definition), pseudocode-barrier note ~grade 7 (in range). No compliance issue.
