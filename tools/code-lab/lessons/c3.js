@@ -124,11 +124,11 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "**The Problem Functions Solve.**\n\nImagine you wrote ten lines to draw a star.\n\nNow you need to draw it five times.\n\nWithout functions, you copy those ten lines five times — **50 lines** that are almost identical.\n\nThis breaks the **DRY principle**: Don't Repeat Yourself.\n\nEvery copy is a bug waiting to happen. Fix the star? You fix it in five places.\n\nA [[definition]] lets you name the ten lines once, then just say `draw_star()` five times.\n\nThat is the core idea: **name it once, run it many times**."
+      md: "**The Problem Functions Solve.** Imagine you wrote ten lines to draw a star and now need to draw it five times. Without functions, you copy those ten lines five times — **50 lines** that are almost identical. This breaks the **DRY principle**: Don't Repeat Yourself. Every copy is a bug waiting to happen: fix the star, and you fix it in five places. A [[definition]] lets you name the ten lines once, then just say `draw_star()` five times. That is the core idea: **name it once, run it many times**."
     },
     {
       type: "text",
-      md: "**Anatomy of a `def`.**\n\nHere is the smallest possible function: `def greet(): print(\"Hello!\")`.\n\nFour parts, each has a job:\n\n**`def`** — the keyword that says \"I am defining a function.\"\n\n**`greet`** — the name you choose. Use snake_case: lowercase words joined by underscores.\n\n**`()`** — the parentheses. Empty for now; later they will hold inputs.\n\n**`:`** — the colon that opens a new block.\n\nThen comes the [[body]] — every line indented **exactly 4 spaces**.\n\nNotice: `def` uses the same colon + indent pattern as `if`, `for`, and `while`.\n\nPython is consistent — every block opens with `:` and indents.\n\nThe difference: `def` does **not** run the body right away."
+      md: "**Anatomy of a `def`.** Here is the smallest possible function: `def greet(): print(\"Hello!\")`. It has four parts, each with a job: **`def`** is the keyword that says \"I am defining a function\"; **`greet`** is the name you choose (use snake_case — lowercase words joined by underscores); **`()`** are the parentheses, empty for now but later they will hold inputs; and **`:`** is the colon that opens a new block. Then comes the [[body]] — every line indented **exactly 4 spaces**. Notice that `def` uses the same colon + indent pattern as `if`, `for`, and `while` — Python is consistent, every block opens with `:` and indents. The difference is that `def` does **not** run the body right away."
     },
     {
       type: "text",
@@ -603,7 +603,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "**The problem defaults solve.**\n\nYou already know `range()` has shortcuts.\n\n`range(5)` is really `range(0, 5, 1)` — start and step have **default values**.\n\nWithout defaults, you would have to write `range(0, 5, 1)` every single time.\n\nThat violates **DRY** (Don't Repeat Yourself): the common case shouldn't need extra typing.\n\nPython's design choice: defaults make functions easy to call in the typical case, while still letting you override them when needed.\n\nWith defaults, the common case is short — `range(5)` — and the full form `range(0, 5, 1)` is still available when you need it."
+      md: "**The problem defaults solve.** You already know `range()` has shortcuts: `range(5)` is really `range(0, 5, 1)` because start and step have **default values**. Without defaults, you would have to write `range(0, 5, 1)` every single time, which violates **DRY** (Don't Repeat Yourself) — the common case shouldn't need extra typing. Python's design choice is that defaults make functions easy to call in the typical case while still letting you override them when needed. The common case stays short — `range(5)` — and the full form `range(0, 5, 1)` is still available when you need it."
     },
     {
       type: "text",
@@ -691,11 +691,11 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "Imagine writing `draw_house` without functions.\n\nYou'd write 30-plus `forward()` and `right()` calls in a row. Finding a bug would mean reading every line.\n\nThat's the anti-pattern: **flat spaghetti code** with no structure.\n\n[[Decomposition]] is the CS principle that fixes this. You break the drawing into named jobs: `draw_square`, `draw_roof`, `draw_house`. Each function does one thing. `draw_house` just calls the helpers — it doesn't care *how* they work.\n\nThink of a recipe. A good one says \"make the dough\" as one step. A bad one lists every flour-and-yeast action inside the main method. Named sub-tasks make the top level readable.",
+      md: "Imagine writing `draw_house` without functions — you'd write 30-plus `forward()` and `right()` calls in a row, and finding a bug would mean reading every line. That's the anti-pattern: **flat spaghetti code** with no structure. [[Decomposition]] is the CS principle that fixes this: you break the drawing into named jobs like `draw_square`, `draw_roof`, and `draw_house`, where each function does one thing and `draw_house` just calls the helpers without caring *how* they work. Think of a recipe — a good one says \"make the dough\" as one step, while a bad one lists every flour-and-yeast action inside the main method. Named sub-tasks make the top level readable.",
     },
     {
       type: "text",
-      md: "Here's the key insight: **every regular polygon uses the same formula**.\n\nA regular polygon has equal sides and equal turns. After you walk one side, you turn by the exterior angle. The exterior angle is always `360 / sides`.\n\n- Square: `360 / 4 = 90°`\n- Triangle: `360 / 3 = 120°`\n- Hexagon: `360 / 6 = 60°`\n\nOne function covers all of them. That's [[abstraction]]: hide the repeated pattern behind a single name.\n\nWithout this, you'd write a separate loop for each shape — violating **DRY** (Don't Repeat Yourself).",
+      md: "Here's the key insight: **every regular polygon uses the same formula**. A regular polygon has equal sides and equal turns — after you walk one side, you turn by the exterior angle, which is always `360 / sides`. A square uses `360 / 4 = 90°`, a triangle uses `360 / 3 = 120°`, a hexagon uses `360 / 6 = 60°`. One function covers all of them — that's [[abstraction]]: hiding the repeated pattern behind a single name. Without this, you'd write a separate loop for each shape, which violates **DRY** (Don't Repeat Yourself).",
     },
     {
       type: "example",
@@ -704,7 +704,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "Now [[helper function]]s can call each other.\n\n`draw_square` calls `draw_polygon(4, size)`. `draw_house` calls `draw_square` and `draw_roof`. The top level just calls `draw_house`.\n\nBut there's a trap. If `draw_house` calls `draw_square(side)` where `side` is not a defined variable, Python raises `NameError: name 'side' is not defined`.\n\n**The rule:** every value a helper needs must be *passed explicitly* as an argument. Never assume a variable from somewhere else will be visible. If `draw_house` knows the size, it must hand it to `draw_square` directly: `draw_square(80)`.",
+      md: "Now [[helper function]]s can call each other: `draw_square` calls `draw_polygon(4, size)`, `draw_house` calls `draw_square` and `draw_roof`, and the top level just calls `draw_house`. But there is a trap — if `draw_house` calls `draw_square(side)` where `side` is not a defined variable, Python raises `NameError: name 'side' is not defined`. **The rule:** every value a helper needs must be *passed explicitly* as an argument. Never assume a variable from somewhere else will be visible. If `draw_house` knows the size, it must hand it to `draw_square` directly: `draw_square(80)`.",
     },
     {
       type: "example",
@@ -713,7 +713,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "Between shapes, you often need to move without drawing.\n\n`penup()` lifts the pen. `forward()` moves the turtle silently. `pendown()` puts the pen back.\n\nWithout this, every move between shapes leaves a line. The canvas turns into a web of unwanted marks.\n\nThink of it like lifting your pencil off the paper to reposition it — then pressing down again to start the next shape.",
+      md: "Between shapes, you often need to move without drawing. `penup()` lifts the pen, `forward()` moves the turtle silently, and `pendown()` puts the pen back. Without this, every move between shapes leaves a line and the canvas turns into a web of unwanted marks. Think of it like lifting your pencil off the paper to reposition it, then pressing down again to start the next shape.",
     },
     {
       type: "example",
@@ -854,7 +854,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "**The copy-paste trap.**\n\nImagine a 4-bar drum loop. Without functions: `sample(\"kick\")` `sample(\"hihat\")` — repeated 32 times.\n\nNow you want 8 bars? You paste 32 more lines. Want to swap \"hihat\" for \"snare\"? You edit 32 lines — and you will miss one.\n\nThis violates **DRY** (Don't Repeat Yourself). Every repeated copy is a future bug waiting to happen.\n\nWith a function, the fix is one number. Want 8 bars? Change `4` to `8`. Want snare? Change one line inside `beat()`. The function is a **recipe card** — write it once, run it anywhere."
+      md: "**The copy-paste trap.** Imagine a 4-bar drum loop without functions: `sample(\"kick\")` and `sample(\"hihat\")` repeated 32 times. Now you want 8 bars — you paste 32 more lines. Want to swap \"hihat\" for \"snare\"? You edit 32 lines, and you will miss one. This violates **DRY** (Don't Repeat Yourself): every repeated copy is a future bug waiting to happen. With a function, the fix is one number. Want 8 bars? Change `4` to `8`. Want snare? Change one line inside `beat()`. The function is a **recipe card** — write it once, run it anywhere."
     },
     {
       type: "example",
@@ -884,7 +884,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**Parameters shift the whole melody.**\n\nWith a `root` parameter, `verse(60)` plays notes 60, 62, 64, 67 and `verse(65)` plays 65, 67, 69, 72. The **shape** is identical — only the starting point shifts.\n\nIn music this is called **transposition**: moving a melody to a new key without rewriting it.\n\nIn CS it is called **parameterisation**: one function, many contexts.\n\nThe anti-pattern is writing `verse_c()` and `verse_f()` as two separate functions. When you fix a bug in one, the other still has the bug."
+      md: "**Parameters shift the whole melody.** With a `root` parameter, `verse(60)` plays notes 60, 62, 64, 67 while `verse(65)` plays 65, 67, 69, 72 — the **shape** is identical, only the starting point shifts. In music this is called **transposition**: moving a melody to a new key without rewriting it. In CS it is called **parameterisation**: one function, many contexts. The anti-pattern is writing `verse_c()` and `verse_f()` as two separate functions — when you fix a bug in one, the other still has the bug."
     },
     {
       type: "example",
@@ -893,7 +893,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**MIDI note numbers — a quick map.**\n\nEvery note is just a number. **60 is C4** — middle C on a piano.\n\nAdding 1 moves one semitone up (one piano key to the right).\n\nSo `root + 2` is a whole tone, `root + 4` is a major third, `root + 7` is a perfect fifth.\n\nYou do not need to memorise intervals. What matters is this: **+N always means N semitones higher**, and functions let you express that relationship once."
+      md: "**MIDI note numbers — a quick map.** Every note is just a number: **60 is C4**, middle C on a piano. Adding 1 moves one semitone up (one piano key to the right), so `root + 2` is a whole tone, `root + 4` is a major third, and `root + 7` is a perfect fifth. You do not need to memorise intervals — what matters is that **+N always means N semitones higher**, and functions let you express that relationship once."
     },
     {
       type: "exercise",
@@ -916,7 +916,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**The song hierarchy.**\n\nGood song code is a **tree of functions**, each layer giving you higher-level control:\n\n- `beat()` — the leaf. Plays raw samples directly.\n- `verse(root)` — calls `beat()` or plays notes. Knows the melodic shape.\n- `song()` — calls `verse()` several times. Knows the structure.\n\nWhen you want to change the [[tempo]] you change `song()`. When you want to change the drum sound you change `beat()`. Each function has **one job** — this is the CS principle called **separation of concerns**.\n\nThe alternative is one giant block of `play()` and `sample()` calls with no structure. Try finding the chorus in 200 lines of that."
+      md: "**The song hierarchy.** Good song code is a **tree of functions**, each layer giving you higher-level control. `beat()` is the leaf — it plays raw samples directly. `verse(root)` calls `beat()` or plays notes and knows the melodic shape. `song()` calls `verse()` several times and knows the structure. When you want to change the [[tempo]] you change `song()`; when you want to change the drum sound you change `beat()`. Each function has **one job** — this is the CS principle called **separation of concerns**. The alternative is one giant block of `play()` and `sample()` calls with no structure: try finding the chorus in 200 lines of that."
     },
     {
       type: "example",
@@ -969,7 +969,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "**Design Before You Code.**\n\nProfessional programmers write the *plan* before the code.\n\nThe technique has a name: **wishful thinking** (also called top-down design). You write what you *wish* existed, then you make it true.\n\nWriting the signature and docstring first forces you to answer three questions: What goes *in*? What comes *out*? What are two concrete cases I can check?\n\nOnly after answering those do you write the body. This prevents the most common beginner mistake: writing code without knowing what it should do.\n\n**CS principle — separation of concerns:** each function has exactly one job. `is_palindrome` just answers a yes/no question. It does not print, it does not ask the user anything — it just returns `True` or `False`.",
+      md: "**Design Before You Code.** Good programmers write the *plan* before the code. The technique is called **wishful thinking** — you write what you *wish* existed, then you make it true. Start with the signature and docstring. This forces you to answer three questions: what goes *in*, what comes *out*, and what are two cases you can test. Only then do you write the body. This stops the most common beginner mistake: writing code before knowing what it should do. The CS principle here is **separation of concerns** — each function has exactly one job. `is_palindrome` answers a yes/no question. It does not print. It does not ask the user anything. It just returns `True` or `False`.",
     },
     {
       type: "example",
@@ -978,7 +978,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**String [[Iteration]]: `for char in text:`**\n\nYou know the `for` loop from Chapter 2. Strings are sequences too — Python visits each character, one at a time.\n\nPython chose the clean version as the natural way. Code is read more than it is written. Short, clear code wins.\n\nAdd an accumulator and a condition, and you have a puzzle function. `char in \"aeiou\"` is a [[membership test]] — you used `in` in Chapter 2. Here it checks whether `char` is one of the five vowel letters.",
+      md: "**String [[Iteration]]: `for char in text:`** You know the `for` loop from Chapter 2. Strings are sequences too — Python visits each character one at a time. Python chose the clean version as the natural way: code is read more than it is written, so short and clear wins. Add an accumulator and a condition and you have a puzzle function. `char in \"aeiou\"` is a [[membership test]] — you used `in` in Chapter 2, and here it checks whether `char` is a vowel.",
     },
     {
       type: "example",
@@ -992,7 +992,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**The Prepend-Reverse Trick.**\n\nTo reverse a string, use the **accumulator pattern** — but with a twist. Normally you append: `result = result + char` (char lands at the END). The prepend trick: `result = char + result` (char lands at the FRONT).\n\nWhy does prepending reverse the string? Imagine the loop visiting `\"abc\"`: after `a`: `\"a\"`, after `b`: `\"ba\"`, after `c`: `\"cba\"`. The first character gets pushed to the back by every later character.\n\n**Anti-pattern:** if you append instead of prepend, you get the *original* string back, not the reverse — and `is_palindrome` always returns `True`.",
+      md: "**The Prepend-Reverse Trick.** To reverse a string, use the **accumulator pattern** with a twist. Normally you append: `result = result + char` — char lands at the END. The prepend trick flips it: `result = char + result` — char lands at the FRONT. Trace the loop on `\"abc\"`: after `a` you have `\"a\"`, after `b` you have `\"ba\"`, after `c` you have `\"cba\"`. Each new character pushes the old ones back. **Anti-pattern:** if you append instead of prepend, you get the *original* string back, not the reverse, so `is_palindrome` always returns `True`.",
     },
     {
       type: "example",
@@ -1001,7 +1001,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**FizzBuzz: Order Matters in `elif` Chains.**\n\nFizzBuzz: if `n` is divisible by both 3 and 5 print `\"FizzBuzz\"`, if by 3 only print `\"Fizz\"`, if by 5 only print `\"Buzz\"`, otherwise print the number.\n\nFor `n = 15`: if you check `n % 3 == 0` first, Python returns `\"Fizz\"` immediately and never reaches the `n % 15` check.\n\nThis is the **first match wins** rule from Chapter 2's `elif` chains.\n\nThe fix is the **specificity rule**: check the *narrower* (more specific) condition first. `n % 15 == 0` is the most specific — it requires *both* divisors — so it goes first.",
+      md: "**FizzBuzz: Order Matters in `elif` Chains.** FizzBuzz: if `n` is divisible by both 3 and 5 return `\"FizzBuzz\"`, if by 3 only return `\"Fizz\"`, if by 5 only return `\"Buzz\"`, otherwise return the number. For `n = 15`: if you check `n % 3 == 0` first, Python returns `\"Fizz\"` immediately and never reaches the `n % 15` check — this is the **first match wins** rule from Chapter 2's `elif` chains. The fix is the **specificity rule**: check the *narrower* (more specific) condition first. `n % 15 == 0` is the most specific because it requires *both* divisors, so it goes first.",
     },
     {
       type: "example",
@@ -1015,7 +1015,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**Function Composition: `word_inspector`.**\n\nOnce you have `count_vowels` and `is_palindrome`, you can build a function that *uses* them. `word_inspector` does not know *how* `count_vowels` counts — it just trusts that it works.\n\nThis is **function composition**: combining functions to build bigger behaviour.\n\n**CS principle — separation of concerns:** each function has one job. `count_vowels` counts. `is_palindrome` checks reversal. `word_inspector` reports. None of them do each other's job.\n\nThis is how real software is built — thousands of small, focused functions, composed together.",
+      md: "**Function Composition: `word_inspector`.** Once you have `count_vowels` and `is_palindrome`, you can build a function that *uses* them — `word_inspector` does not know *how* `count_vowels` counts, it just trusts that it works. This is **function composition**: combining functions to build bigger behaviour. The CS principle is **separation of concerns**: `count_vowels` counts, `is_palindrome` checks reversal, `word_inspector` reports, and none of them do each other's job. This is how real software is built — thousands of small, focused functions, composed together.",
     },
     {
       type: "example",
@@ -1133,11 +1133,11 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "You now have three chapters of tools.\n\nChapter 1 gave you **primitives** — `forward()`, `play()`, `print()`.\nChapter 2 gave you **loops** — repeat anything, any number of times.\nChapter 3 gave you **functions** — package logic, give it a name, reuse it.\n\nEach chapter added one level of [[abstraction]]. Alone, each level is limited. Together, they unlock things that would have felt impossible in Chapter 1.\n\nConsider `draw_snowflake()`. It uses `forward()` and `right()` from Chapter 1. It uses a `for` loop from Chapter 2. It wraps everything in a function from Chapter 3. Three chapters, one function, one shape.\n\nThis is the pattern of all programming: small tools, stacked deliberately, build something complex."
+      md: "You now have three chapters of tools. Chapter 1 gave you **primitives** — `forward()`, `play()`, `print()`. Chapter 2 gave you **loops** — repeat anything, any number of times. Chapter 3 gave you **functions** — package logic, name it, reuse it. Each chapter added one level of [[abstraction]]. Alone, each level is limited. Together, they unlock things that felt impossible in Chapter 1. Think about `draw_snowflake()`: it uses `forward()` and `right()` from Chapter 1, a `for` loop from Chapter 2, and wraps it all in a function from Chapter 3. Three chapters, one function, one shape. This is the pattern of all programming: small tools, stacked on purpose, build something complex."
     },
     {
       type: "text",
-      md: "**The missing-return bug at capstone scale.**\n\nThe most common mistake when combining functions is forgetting `return`. The function runs. It computes a value. But it hands nothing back. The result at the call site is `None`.\n\nThe tell: you see `Perimeter: None` or `Total: None` instead of a number. The function is not broken — it just kept the answer to itself.\n\nEvery time a function computes something you plan to use, ask: does it `return` it?",
+      md: "**The missing-return bug at capstone scale.** The most common mistake when combining functions is forgetting `return`. The function runs and computes a value, but it hands nothing back — the result at the call site is `None`. The tell is seeing `Perimeter: None` or `Total: None` instead of a number: the function is not broken, it just kept the answer to itself. Every time a function computes something you plan to use, ask: does it `return` it?",
     },
     {
       type: "example",
@@ -1159,7 +1159,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**[[Parametric]] art: one function, infinite shapes.**\n\nA [[parametric]] function takes numbers as parameters and uses them to control a shape. Change the numbers — change the shape. No rewriting required.\n\nCompare these two calls:\n- `draw_spiral(steps=10, angle=90)` — tight square spiral\n- `draw_spiral(steps=20, angle=91)` — slowly unwinding curve\n\nOne degree of difference in `angle` produces a completely different result after enough steps. This is the DRY principle at work: one function definition, any shape from it.\n\nWithout parameters, you would write a new function for every spiral you wanted. With parameters, the loop does the variation for you. That is the [[computational thinking]] payoff."
+      md: "**[[Parametric]] art: one function, infinite shapes.** A [[parametric]] function uses numbers to control a shape. Change the numbers, change the shape — no rewriting needed. Compare two calls: `draw_spiral(steps=10, angle=90)` draws a tight square spiral, while `draw_spiral(steps=20, angle=91)` unwinds into a curve. One degree of difference in `angle` gives a totally different result after enough steps. This is DRY at work: one function, any shape. Without parameters, you would write a new function for every spiral you wanted. With parameters, the loop handles the variation for you. That is the [[computational thinking]] payoff."
     },
     {
       type: "example",
@@ -1213,7 +1213,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**Song structure as code.**\n\nReal music software represents notes as numbers. A melody is a sequence of numbers. A function that plays a melody is a musical phrase.\n\nWhen you write `play_verse(root)`, you can call it with any starting note. `play_verse(60)` plays in one key. `play_verse(65)` plays the same phrase five notes higher. This is called **transposition** — and it is free when the melody is defined relative to `root`.\n\nWith a function, you change one number and the whole phrase moves. This is the separation of concerns principle: the melody shape lives in `play_verse`, the starting pitch comes from the caller.",
+      md: "**Song structure as code.** Real music software represents notes as numbers — a melody is a sequence of numbers, and a function that plays a melody is a musical phrase. When you write `play_verse(root)`, you can call it with any starting note: `play_verse(60)` plays in one key, and `play_verse(65)` plays the same phrase five notes higher. This is called **transposition**, and it is free when the melody is defined relative to `root`. With a function, you change one number and the whole phrase moves — this is the separation of concerns principle at work: the melody shape lives in `play_verse`, and the starting pitch comes from the caller.",
     },
     {
       type: "example",
