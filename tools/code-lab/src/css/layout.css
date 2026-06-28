@@ -97,13 +97,16 @@ body { margin: 0; }
 .prompt p { margin: 0 0 10px; line-height: 1.65; color: var(--text-soft); }
 .prompt p:last-child { margin-bottom: 0; }
 /* Inline code in prose: monospace + accent color, no background chip.
-   The chip style looks fine for one or two spans per sentence but becomes
-   unreadable in code-dense paragraphs. Color alone distinguishes code from prose
-   without creating visual clutter. */
+   Inline code uses its own token (--code-inline) distinct from --accent, which is
+   reserved for clickable glossary term links. A faint pill background makes code
+   scannable without competing with accent-colored links. */
 .prompt code, .example-intro code, .content-text code, .challenge-task code, .hint-item code, .err-ann-body code {
   font-family: var(--font-code);
   font-size: 0.88em;
-  color: var(--accent);
+  color: var(--code-inline);
+  background: var(--code-inline-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
   white-space: nowrap;
 }
 
@@ -131,8 +134,8 @@ body { margin: 0; }
 .ref-table th { background: var(--panel-header); color: var(--text); font-weight: 700; font-family: var(--font-code); font-size: 0.95em; padding: 5px 10px; text-align: left; border-bottom: var(--border-w) solid var(--border); }
 .ref-table td { padding: 4px 10px; border-bottom: var(--border-w) solid var(--border); color: var(--text); }
 .ref-table tr:last-child td { border-bottom: none; }
-.ref-table td code { font-family: var(--font-code); font-size: 1em; color: var(--accent); }
-.ref-table td:first-child { font-family: var(--font-code); color: var(--accent); font-weight: 600; }
+.ref-table td code { font-family: var(--font-code); font-size: 1em; color: var(--code-inline); }
+.ref-table td:first-child { font-family: var(--font-code); color: var(--code-inline); font-weight: 600; }
 
 /* ----- panels (editor, output) ----- */
 .panel {
@@ -274,7 +277,7 @@ body { margin: 0; }
 .challenge-task { margin: 4px 0 10px; line-height: 1.5; color: var(--text); }
 /* rich sections: visual separation between stacked exercises */
 .exercise-block { margin-top: 20px; padding-top: 12px; border-top: var(--border-w) solid var(--border); }
-.exercise-block .challenge-task code { font-size: 0.82em; background: var(--panel-header); padding: 1px 4px; border-radius: 3px; }
+.exercise-block .challenge-task code { font-size: 0.82em; color: var(--code-inline); background: var(--code-inline-bg); padding: 1px 4px; border-radius: 3px; }
 .challenge-label { color: var(--accent); font-weight: 600; }
 
 /* section-type dividers: "Examples" / "Your turn" */
