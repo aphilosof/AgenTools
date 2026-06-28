@@ -116,6 +116,106 @@ The `md` field in a `text` block supports **only inline markdown**. The engine r
 
 c1.js and c2.js are the canonical reference for correct formatting. When in doubt, look there.
 
+## Lesson data reference — formats every chapter must follow
+
+These conventions are extracted from c1–c3 and are non-negotiable. They are not
+in the schema (schema validates values, not these structural norms) so they must
+be documented here.
+
+### Lesson object schema (required fields)
+
+Every lesson pushed to `window.CODELAB.lessons` must have all of these:
+
+```
+id:            "cNsM"        — chapter N, section M (e.g. "c4s2")
+chapter:       N             — integer
+strand:        "core"|"numbers"|"words"|"plot"|"sound"
+lang:          "py"          — always "py" for Python chapters
+timeBudgetMin: N             — integer, 12–25 minutes; complex topics trend toward 20–25
+title:         "Short title" — 2–5 words, human-readable
+glossary:      { ... }       — see Glossary format below
+content:       [ ... ]       — see Content block types below
+codex:         { ... }       — see Codex format below
+```
+
+**Strand semantics:** `"core"` = foundational concepts (control flow, functions,
+types); `"numbers"` = arithmetic/numeric strand; `"words"` = string/text strand;
+`"plot"` = graphics strand; `"sound"` = music strand. Every lesson belongs to
+exactly one strand. Most chapter lessons are `"core"`; strand-specific lessons
+follow the five-strands arc.
+
+### Content block types
+
+Four block types exist. Use only these; do not invent new types.
+
+- `{ type: "text", md: "..." }` — prose explanation. md supports inline markdown
+  only (see formatting rules above). Bold-lead opens every section: the pattern
+  is `**Topic or question.**` flowing directly into the first sentence on the
+  same paragraph — no blank line between the bold and the prose that follows.
+
+- `{ type: "example", note: "...", code: "..." }` — runnable demonstration.
+  `note` describes what to observe (1 sentence). `code` is the full runnable
+  snippet. Anti-pattern examples use `note: "Anti-pattern: ..."` or
+  `note: "Bug: ..."` — this label is the convention; always prefix the note
+  with one of these two markers so students know it is intentionally wrong.
+
+- `{ type: "exercise", rung: N, prompt: "...", starter: "...", check: {...},
+  hints: [...], solution: "..." }` — see Rung ladder below.
+
+- `{ type: "parsons", ... }` — drag-and-drop line arrangement; used sparingly
+  (typically rung 2). Check type is `"parsons"` with `lines` (correct order)
+  and `distractors` (decoy lines).
+
+### Rung ladder (exercise difficulty — 1 through 6)
+
+Every chapter uses this ladder. Exercises within a lesson appear in rung order,
+lowest first.
+
+| Rung | Type | Description | `starter` |
+|------|------|-------------|-----------|
+| 1 | Predict | Read code, predict exact output before running | Full code given |
+| 2 | Arrange | Parsons — drag lines into correct order | Lines provided |
+| 3 | Modify | Change one or two specific things in working code | Full code given |
+| 4 | Fix | Find and repair a deliberate bug (syntax, logic, type) | Broken code given |
+| 5 | Complete | Fill in missing lines (`pass` or blanks) | Partial code given |
+| 6 | Write | Write the full program from scratch | `starter: ""` |
+
+Hints: every exercise has 2–4 hints. Each hint targets one documented
+misconception. Progression: hint 1 = conceptual nudge (no code); hint 2 = closer
+to fix; hint 3 = near-exact guidance. Never hand over the finished line in a
+hint; guide the student's reasoning instead.
+
+### Glossary format
+
+Located at the top of the lesson object, before `content`. Flat key-value object:
+
+```js
+glossary: {
+  "term": "One or two precise sentences. No code formatting. Concrete and specific.",
+  "term2": "...",
+},
+```
+
+Definitions are complete sentences, plain language, no markdown. They feed the
+click-to-expand Codex glossary. Every `[[term]]` used in `md` strings must have
+a corresponding glossary entry in the same lesson (or an earlier lesson's
+glossary that already registered the term).
+
+### Codex entry format
+
+Located at the very end of the lesson object, after `content`. Always present.
+
+```js
+codex: {
+  topic:   "short phrase",       // 2–4 words naming the concept
+  pattern: "compact code...",    // key syntax shown as runnable snippet(s)
+  note:    "1–2 sentences.",     // the why + the most common pitfall
+},
+```
+
+The `note` is not a summary — it names one design choice Python made and the
+failure mode students will hit first. Keep it to 1–2 sentences.
+
 ## The lesson standard — what every lesson is
 
 - **Paged, numbered sections.** A lesson is a sequence of pages shown one at a

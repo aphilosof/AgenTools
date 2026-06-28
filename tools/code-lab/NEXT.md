@@ -5,7 +5,7 @@
 ## What is built and working
 
 ### Engine
-- Single-file build: `npm run build` → `dist/course-v2.html`
+- Single-file build: `node build/build.js` → `dist/course.html`
 - Lesson navigation: prev/next buttons, progress dots, click-to-jump — all wired
 - Content[] renderer: text → example → exercise blocks interleaved in author order
 - Exercises: run, check, hint ladder, model solution reveal
@@ -34,7 +34,7 @@ Chapter 1 — all 7 lessons authored and tested:
 | c1s6 | Input | 3, 5, 6 |
 | c1s7 | First Drawing and Sound | 3, 3 |
 
-All harness checks pass. Working build: `dist/course-v2.html`.
+All harness checks pass. Working build: `dist/course.html`.
 
 ---
 
@@ -78,7 +78,7 @@ All 9 lessons authored, all 16 lesson harness checks green (commit `edd9aae`).
 | c2s9 | Art and Music Capstone | 4, 5, 6 |
 
 **Gate checklist for browser testing:**
-- Open `dist/course-v2.html`, navigate to Chapter 2
+- Open `dist/course.html`, navigate to Chapter 2
 - 2.1: Parsons — drag lines into the in-range check; verify reorder feedback
 - 2.4: rung-6 Write — guessing game with secret=7; inputs 3,9,7 → "Too low / Too high / Correct!"
 - 2.5: rung-6 Write — prime checker; output should be 2 3 5 7 11 13 17 19
@@ -114,6 +114,11 @@ All 10 lessons authored (c3s0–c3s9). All harness checks pass.
 
 ### Phase D — Chapter 4 (Collections) ← NEXT
 
+**Pre-chapter gate: COMPLETE.** AUTHORING.md updated with all undocumented
+conventions from c1–c3 (rung ladder, codex/glossary format, content block types,
+lesson schema, bold-lead pattern, anti-pattern labeling, strand semantics).
+All structural, design, and writing decisions from c1–c3 are now locked in writing.
+
 Work chapter by chapter per CURRICULUM.md. Requires explicit user approval to begin.
 
 ### Phase D — Chapter 0 (pre-syntax hook)
@@ -142,7 +147,7 @@ Work chapter by chapter per CURRICULUM.md. One chapter per session.
    - Alternate `example` blocks with short `text` blocks as the idea deepens
    - Close with 2–4 `exercise` blocks climbing in rung difficulty
 4. Run `npm test`. Fix any failures before moving to the next section.
-5. Build with `npm run build` and visually check in the browser (`dist/course-v2.html`).
+5. Build with `node build/build.js` and visually check in the browser (`dist/course.html`).
 6. Commit when the lesson's sections are clean.
 
 ---
@@ -151,5 +156,5 @@ Work chapter by chapter per CURRICULUM.md. One chapter per session.
 
 - Exercise label framing: "Your turn:" repeated for successive exercises looks flat.
   Will be addressed with rung-specific labels (Predict / Modify / Fix / Challenge / Write).
-- `dist/course-v2.html` is the live build. `dist/course.html` is an old snapshot — ignore it.
+- `dist/course.html` is the single build output (`node build/build.js`). No other dist files.
 - Terminal theme is locked (intentional — unlocks after Real Tools I).
