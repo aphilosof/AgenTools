@@ -224,11 +224,16 @@ absent from the list; ask the student to name the error and handle it with an
 Culminates in a "grade averages" program written from scratch.
 
 **Cognitive load note (M6):** This lesson has five items. Split into two
-clearly labelled subsections with a schema-level gate between them so
-Subsection A is practised before Subsection B loads new concepts.
+clearly labelled subsections with a gate between them so Subsection A is
+practised before Subsection B loads new concepts. **Gate implementation:**
+Subsection A closes with a rung-5 exercise whose check must pass before the
+first Subsection B content block appears. This is standard engine behaviour —
+an exercise block gates `Next`. No special component needed; just sequence
+the content[] array so all Subsection A blocks (text + example + rung-5
+exercise) come before all Subsection B blocks.
 
 **Authoring dependency:** 4.3 warm-up recalls `:.2f` f-string formatting.
-Do not author 4.3 until the f-string subsection is present in c1s5.
+✅ SATISFIED — f-strings and `:.2f` were added to c1s5 (commit fd1a297).
 
 **Subsection A:** `for item in lst`, the `for-item` vs `range(len)` verdict,
 the accumulator applied to lists, `sum()` built-in, computing an average.
@@ -453,6 +458,11 @@ and 4.5 dicts.
    point at the same list. Changing one changes both." Then show the safe copy:
    `row = grid[0][:]` and demonstrate the original is unchanged. (Connects to
    Ch.1 string immutability: strings cannot alias because they cannot mutate.)
+   **Visualization approach:** predict-before-run IS the visualization. The
+   stepper's variable table shows both `grid` and `inner` resolving to the same
+   object after the assignment. No separate diagram component is needed — the
+   stepper makes reference semantics visible. Author as a rung-1 predict
+   exercise followed by the explanation text, then the `[:]` copy demo.
 4. Dict of lists — a simple score sheet:
    ```python
    scores = {'Alice': [88, 72, 95], 'Bob': [70, 85, 90]}
