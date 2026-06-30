@@ -18,69 +18,16 @@ window.CODELAB.lessons.push({
     "function": "A named instruction that performs a specific task. You run a function by writing its name followed by parentheses. Python comes with many built-in functions; print is one of them.",
   },
   content: [
-    {
+{
       type: "text",
       md: "A Python program runs silently by default. It can calculate, compare, and store values without ever showing you what it found. The `print` [[function]] is the instruction that makes it speak: it takes whatever you place inside its parentheses — its [[argument]] — displays it on the screen, and then moves to the next line. Remove `print` from your program and its work happens invisibly. Add it back and the result becomes readable.",
     },
-    {
+{
       type: "example",
       note: "The simplest complete program that produces visible output. Run it and notice that the quotation marks around Hello! do not appear in what prints — they are boundary markers, not part of the text.",
       code: "print(\"Hello!\")\n",
     },
-    {
-      type: "text",
-      md: "Text that you want to display must sit inside quotation marks, which turns it into a [[string]]. The quotes tell Python where the text begins and ends; they are never part of the content itself. Python accepts both single and double quotes and treats them as identical — `'Hello'` and `\"Hello\"` mean exactly the same thing. The practical reason to know both: when your text contains an apostrophe, wrap the whole thing in double quotes. Writing `\"it's fine\"` keeps the apostrophe inside as a plain character rather than a signal that the string has ended.",
-    },
-    {
-      type: "example",
-      note: "Two separate print calls produce two separate lines, in the order they appear in the program. Python reads and executes your code from top to bottom, one statement at a time — so the order you write things in is the order they happen.",
-      code: "print(\"Code\")\nprint(\"Lab\")\n",
-    },
-    {
-      type: "text",
-      md: "**Scripts vs the interactive prompt.** When you type Python at a command line (the REPL — Read Evaluate Print Loop), any expression you type shows its result automatically. Type `7 * 3` and you see `21` with no `print`. But in a script — a file you save and run — only `print()` produces visible output. Everything else runs silently. This is intentional: a script decides exactly what to show and what to keep internal. Most programs you will write are scripts, so `print()` is the deliberate voice of the program.",
-    },
-    {
-      type: "text",
-      md: "You can give `print` more than one argument by separating them with commas. It places a single space between each one on its own. Arguments don't have to be text — numbers and math work too. When `print` sees a calculation, it works it out first and shows the answer, not the calculation itself.",
-    },
-    {
-      type: "example",
-      note: "A text label and a calculation side by side. Python evaluates 7 * 3 first, getting 21, then print displays the label and the result with one space between them.",
-      code: "print(\"Score:\", 7 * 3)\n",
-    },
-    {
-      type: "example",
-      note: "Four calls showing the range of what print can display: a string, a number, an expression, and a label paired with a calculation. Run each one in your head before you run the code.",
-      code: "print(\"hello\")\nprint(42)\nprint(10 + 5)\nprint(\"Total:\", 3 * 8)\n",
-    },
-    {
-      type: "exercise",
-      rung: 1,
-      prompt: "Before you run this, predict exactly what appears on the screen — the exact words and which line each one lands on. Write your prediction in the box, then run to check.",
-      starter: "print(\"ready\")\nprint(\"set\")\nprint(\"go\")\n",
-      check: { type: "output", expected: "ready\nset\ngo" },
-      hints: [
-        "Each print call writes one piece of output, then moves to the next line.",
-        "Python runs these three calls from top to bottom, so the output appears in the same order as the code.",
-        "You should see three separate lines: ready, then set, then go.",
-      ],
-      solution: "print(\"ready\")\nprint(\"set\")\nprint(\"go\")\n",
-    },
-    {
-      type: "exercise",
-      rung: 3,
-      prompt: "This program prints Code and Lab on two separate lines. Change it so both words appear on a single line reading Code Lab, with a space between them — using one print call instead of two.",
-      starter: "print(\"Code\")\nprint(\"Lab\")\n",
-      check: { type: "output", expected: "Code Lab" },
-      hints: [
-        "Two separate print calls always produce two separate lines. To get one line, you need one print call.",
-        "A single print can take multiple arguments separated by commas. It puts one space between them automatically.",
-        "Replace both lines with a single call: print(\"Code\", \"Lab\")",
-      ],
-      solution: "print(\"Code\", \"Lab\")\n",
-    },
-    {
+{
       type: "exercise",
       rung: 4,
       prompt: "This program crashes instead of printing. Run it, read the error message carefully — it tells you exactly what Python tried to do and where it went wrong. Then fix the code so it prints Hello.",
@@ -93,7 +40,60 @@ window.CODELAB.lessons.push({
       ],
       solution: "print(\"Hello\")\n",
     },
-    {
+{
+      type: "text",
+      md: "Text that you want to display must sit inside quotation marks, which turns it into a [[string]]. The quotes tell Python where the text begins and ends; they are never part of the content itself. Python accepts both single and double quotes and treats them as identical — `'Hello'` and `\"Hello\"` mean exactly the same thing. The practical reason to know both: when your text contains an apostrophe, wrap the whole thing in double quotes. Writing `\"it's fine\"` keeps the apostrophe inside as a plain character rather than a signal that the string has ended.",
+    },
+{
+      type: "example",
+      note: "Two separate print calls produce two separate lines, in the order they appear in the program. Python reads and executes your code from top to bottom, one statement at a time — so the order you write things in is the order they happen.",
+      code: "print(\"Code\")\nprint(\"Lab\")\n",
+    },
+{
+      type: "exercise",
+      rung: 3,
+      prompt: "This program prints Code and Lab on two separate lines. Change it so both words appear on a single line reading Code Lab, with a space between them — using one print call instead of two.",
+      starter: "print(\"Code\")\nprint(\"Lab\")\n",
+      check: { type: "output", expected: "Code Lab" },
+      hints: [
+        "Two separate print calls always produce two separate lines. To get one line, you need one print call.",
+        "A single print can take multiple arguments separated by commas. It puts one space between them automatically.",
+        "Replace both lines with a single call: print(\"Code\", \"Lab\")",
+      ],
+      solution: "print(\"Code\", \"Lab\")\n",
+    },
+{
+      type: "text",
+      md: "**Scripts vs the interactive prompt.** When you type Python at a command line (the REPL — Read Evaluate Print Loop), any expression you type shows its result automatically. Type `7 * 3` and you see `21` with no `print`. But in a script — a file you save and run — only `print()` produces visible output. Everything else runs silently. This is intentional: a script decides exactly what to show and what to keep internal. Most programs you will write are scripts, so `print()` is the deliberate voice of the program.",
+    },
+{
+      type: "text",
+      md: "You can give `print` more than one argument by separating them with commas. It places a single space between each one on its own. Arguments don't have to be text — numbers and math work too. When `print` sees a calculation, it works it out first and shows the answer, not the calculation itself.",
+    },
+{
+      type: "example",
+      note: "A text label and a calculation side by side. Python evaluates 7 * 3 first, getting 21, then print displays the label and the result with one space between them.",
+      code: "print(\"Score:\", 7 * 3)\n",
+    },
+{
+      type: "example",
+      note: "Four calls showing the range of what print can display: a string, a number, an expression, and a label paired with a calculation. Run each one in your head before you run the code.",
+      code: "print(\"hello\")\nprint(42)\nprint(10 + 5)\nprint(\"Total:\", 3 * 8)\n",
+    },
+{
+      type: "exercise",
+      rung: 1,
+      prompt: "Before you run this, predict exactly what appears on the screen — the exact words and which line each one lands on. Write your prediction in the box, then run to check.",
+      starter: "print(\"ready\")\nprint(\"set\")\nprint(\"go\")\n",
+      check: { type: "output", expected: "ready\nset\ngo" },
+      hints: [
+        "Each print call writes one piece of output, then moves to the next line.",
+        "Python runs these three calls from top to bottom, so the output appears in the same order as the code.",
+        "You should see three separate lines: ready, then set, then go.",
+      ],
+      solution: "print(\"ready\")\nprint(\"set\")\nprint(\"go\")\n",
+    },
+{
       type: "exercise",
       rung: 6,
       prompt: "Write a program from scratch that prints exactly these three lines:\n\nPython speaks.\nSo do I.\nLet's begin.\n\nPay attention to punctuation. The apostrophe in the third line will end your string early if you use the wrong kind of quotes.",
@@ -106,7 +106,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "print(\"Python speaks.\")\nprint(\"So do I.\")\nprint(\"Let's begin.\")\n",
     },
-  ],
+],
   codex: {
     topic: "printing",
     pattern: "print(value)\nprint(a, b, c)",
@@ -251,68 +251,24 @@ window.CODELAB.lessons.push({
     assignment: "The instruction that links a name to a value. Written as name = value. The = sign is not equality — it is an action: store this value under this name.",
   },
   content: [
-    {
+{
       type: "text",
       md: "So far your programs work with values directly — you typed `7 * 3` and Python computed it right there. That works once, but what if you want to keep a result and use it later? That is what **[[variable|variables]]** are for. A [[variable]] is a name you choose that refers to a value. Whenever you write the name later in your code, Python looks up the value stored there and uses it.",
     },
-    {
+{
       type: "text",
       md: "The instruction that creates this link is called **[[assignment]]**, written as `name = value`. Read `score = 100` as \"let score refer to 100\". Python evaluates the right side first, then links the name on the left to that result. The `=` sign is **not** asking whether two things are equal — it is an action: evaluate the right, then store the result under the name on the left.",
     },
-    {
+{
       type: "text",
       md: "**Python variables vs maths variables.** In maths, `x = 5` is a permanent fact — `x` is always `5`. In Python, `x = 5` means 'right now, `x` refers to 5' — and that can change at any time. Think of a Python variable as a sticky note attached to a value. Writing `x = 10` later removes the sticky note from `5` and attaches it to `10`. The old value is not changed; only the name's pointer changes.\n\nThe direction matters too. `score = 100` stores 100 under `score`. Writing `100 = score` is a `SyntaxError` — Python always reads the left side of `=` as a name to store into, never as a value to compare. In maths, `5 = x` is a valid statement; in Python, it crashes. A number on the left of `=` makes no sense as a storage destination.",
     },
-    {
+{
       type: "example",
       note: "Store a value in a variable, then print it. The print sees the name score and looks up what it refers to.",
       code: "score = 100\nprint(score)\n",
     },
-    {
-      type: "text",
-      md: "A variable's value can change. Writing the name on the left side of `=` again simply points it at a new value — the old link disappears. Watch this in the **stepper** on the right: after the first line, the variable table shows `score → 100`. After the second line, it changes to `score → 200`. The name stays the same; what it refers to changes.",
-    },
-    {
-      type: "example",
-      note: "Reassignment replaces the old value. Each print shows what the name refers to at that moment.",
-      code: "score = 100\nprint(score)\nscore = 200\nprint(score)\n",
-    },
-    {
-      type: "text",
-      md: "Python always evaluates the right side of `=` completely before doing anything with the left. That means you can use the current value of a variable to compute the next one. Look at the example below: Python reads `score + 5` (which is `10 + 5`), gets `15`, then stores that under `score`, replacing the old `10`.\n\n**A quick note on comments.** As programs grow, you will want to leave notes for yourself or anyone reading the code. A comment starts with `#` and continues to the end of the line — Python ignores it entirely. You can also put `#` in front of a whole line to switch it off without deleting it, which is handy when you are debugging.",
-    },
-    {
-      type: "example",
-      note: "The right side is evaluated before the name is updated. After this code, score holds 15 — not 10.",
-      code: "score = 10\nscore = score + 5  # 10 + 5 = 15\nprint(score)\n",
-    },
-    {
-      type: "exercise",
-      rung: 1,
-      prompt: "Before you run this, trace through it step by step in your head. After each line, what does the variable table show? What does the program print?",
-      starter: "x = 5\nx = 10\nprint(x)\n",
-      check: { type: "output", expected: "10" },
-      hints: [
-        "After x = 5, the variable table shows x → 5.",
-        "After x = 10, x is rebound: the table now shows x → 10. The old 5 is gone.",
-        "print(x) looks up x and finds 10. Output: 10.",
-      ],
-      solution: "x = 5\nx = 10\nprint(x)\n",
-    },
-    {
-      type: "exercise",
-      rung: 3,
-      prompt: "Right now this ends by printing Bob. Change the second assignment so the program prints Charlie instead.",
-      starter: "name = \"Alice\"\nname = \"Bob\"\nprint(name)\n",
-      check: { type: "output", expected: "Charlie" },
-      hints: [
-        "The last print shows whatever name currently refers to.",
-        "name = \"Bob\" is the second assignment — it overwrites Alice. Change the string on its right side.",
-        "Change name = \"Bob\" to name = \"Charlie\".",
-      ],
-      solution: "name = \"Alice\"\nname = \"Charlie\"\nprint(name)\n",
-    },
-    {
+{
       type: "exercise",
       rung: 4,
       prompt: "This should print 15, but it crashes. Read the error message — it tells you exactly which name Python could not find. Fix the mistake so the program prints 15.",
@@ -325,7 +281,51 @@ window.CODELAB.lessons.push({
       ],
       solution: "points = 10\ntotal = points + 5\nprint(total)\n",
     },
-    {
+{
+      type: "text",
+      md: "A variable's value can change. Writing the name on the left side of `=` again simply points it at a new value — the old link disappears. Watch this in the **stepper** on the right: after the first line, the variable table shows `score → 100`. After the second line, it changes to `score → 200`. The name stays the same; what it refers to changes.",
+    },
+{
+      type: "example",
+      note: "Reassignment replaces the old value. Each print shows what the name refers to at that moment.",
+      code: "score = 100\nprint(score)\nscore = 200\nprint(score)\n",
+    },
+{
+      type: "exercise",
+      rung: 1,
+      prompt: "Before you run this, trace through it step by step in your head. After each line, what does the variable table show? What does the program print?",
+      starter: "x = 5\nx = 10\nprint(x)\n",
+      check: { type: "output", expected: "10" },
+      hints: [
+        "After x = 5, the variable table shows x → 5.",
+        "After x = 10, x is rebound: the table now shows x → 10. The old 5 is gone.",
+        "print(x) looks up x and finds 10. Output: 10.",
+      ],
+      solution: "x = 5\nx = 10\nprint(x)\n",
+    },
+{
+      type: "exercise",
+      rung: 3,
+      prompt: "Right now this ends by printing Bob. Change the second assignment so the program prints Charlie instead.",
+      starter: "name = \"Alice\"\nname = \"Bob\"\nprint(name)\n",
+      check: { type: "output", expected: "Charlie" },
+      hints: [
+        "The last print shows whatever name currently refers to.",
+        "name = \"Bob\" is the second assignment — it overwrites Alice. Change the string on its right side.",
+        "Change name = \"Bob\" to name = \"Charlie\".",
+      ],
+      solution: "name = \"Alice\"\nname = \"Charlie\"\nprint(name)\n",
+    },
+{
+      type: "text",
+      md: "Python always evaluates the right side of `=` completely before doing anything with the left. That means you can use the current value of a variable to compute the next one. Look at the example below: Python reads `score + 5` (which is `10 + 5`), gets `15`, then stores that under `score`, replacing the old `10`.\n\n**A quick note on comments.** As programs grow, you will want to leave notes for yourself or anyone reading the code. A comment starts with `#` and continues to the end of the line — Python ignores it entirely. You can also put `#` in front of a whole line to switch it off without deleting it, which is handy when you are debugging.",
+    },
+{
+      type: "example",
+      note: "The right side is evaluated before the name is updated. After this code, score holds 15 — not 10.",
+      code: "score = 10\nscore = score + 5  # 10 + 5 = 15\nprint(score)\n",
+    },
+{
       type: "exercise",
       rung: 6,
       prompt: "Write a program that stores the string \"Alex\" in a variable called name and the number 11 in a variable called age. Then print them on one line: Alex is 11",
@@ -338,7 +338,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "name = \"Alex\"\nage = 11\nprint(name, \"is\", age)\n",
     },
-  ],
+],
   codex: {
     topic: "variables",
     pattern: "name = value\nname = name + 1",
@@ -360,55 +360,24 @@ window.CODELAB.lessons.push({
     "operator": "A symbol that combines values to produce a new value. + - * / are operators.",
   },
   content: [
-    {
+{
       type: "text",
       md: "Every value you have typed so far — `7`, `3.14`, `\"Hello\"` — is itself an **[[expression]]**. But an expression can be more than a bare value: it is anything Python can evaluate to produce a result. `7 * 3` is an expression that produces `21`. `10 - 4` is an expression that produces `6`. The result is just another value, and you can do anything with it: print it, store it in a variable, or use it inside a bigger expression.",
     },
-    {
+{
       type: "text",
       md: "Python has the arithmetic operators you would expect, plus a few especially useful ones. `+` adds, `-` subtracts, `*` multiplies. `/` **always gives a float**: `7 / 2` is `3.5`, and even `6 / 2` is `3.0`, not `3`. `//` is **floor division** — divide and drop the remainder: `7 // 2` is `3`. `%` gives the **remainder**: `7 % 3` is `1` (seven divided by three leaves one over). `**` raises to a power: `2 ** 8` is `256`.",
     },
-    {
+{
       type: "text",
       md: "**Why `/` always gives a float in Python 3.** In Python 2, `7 / 2` gave `3` — the remainder was silently dropped. This caused a constant class of bugs where programmers expected a decimal and got a truncated integer with no error or warning. Python 3 fixed this by making `/` always produce a float (`3.5`), so the behaviour is predictable. Use `//` explicitly when you want the whole-number part. Explicit is better than implicit — one of Python's core design principles.\n\n**Why `%` is more useful than it looks.** The remainder operator has two uses that come up constantly. First: even and odd. `n % 2` is `0` for even numbers and `1` for odd ones — you will use this in Chapter 2 to make decisions. Second: cycling. If you want to pick colour number `i` from a set of 3 colours, `i % 3` gives `0`, `1`, `2`, `0`, `1`, `2`, ... no matter how large `i` gets. This is called **clock arithmetic** — the same maths your phone uses to display 12:00 instead of 24:00. You will use it extensively in loops, music patterns, and drawing.",
     },
-    {
+{
       type: "example",
       note: "Division always gives a float, even when the answer is a whole number. Floor division keeps only the whole part.",
       code: "print(7 / 2)    # float: 3.5\nprint(7 // 2)   # floor: 3\nprint(7 % 3)    # remainder: 1\nprint(2 ** 8)   # power: 256\n",
     },
-    {
-      type: "text",
-      md: "Python follows the same order of operations as maths: `**` is worked out first, then `*` `/` `//` `%` (left to right), then `+` `-` (left to right). Use **parentheses** to override this order — anything inside parentheses is worked out first. When in doubt, add parentheses to make your intention clear.",
-    },
-    {
-      type: "example",
-      note: "The parentheses change everything. Work out both lines in your head before running.",
-      code: "print(3 + 4 * 2)    # 11: * first, then +\nprint((3 + 4) * 2)  # 14: () first, then *\n",
-    },
-    {
-      type: "text",
-      md: "An expression produces a value. You can use that value anywhere: print it directly, store it in a variable, or use it inside another expression. The example below shows both styles producing the same output. Store a result when you need it more than once, or when a name makes the code clearer.",
-    },
-    {
-      type: "example",
-      note: "Both approaches print the same thing — the only difference is whether you store the result first.",
-      code: "print(7 * 3 + 1)\nresult = 7 * 3 + 1\nprint(result)\n",
-    },
-    {
-      type: "exercise",
-      rung: 1,
-      prompt: "Before you run this, work out each answer in your head. The order of operations is the key — write your predictions, then run to check.",
-      starter: "print(2 + 3 * 4)\nprint((2 + 3) * 4)\nprint(10 % 3)\n",
-      check: { type: "output", expected: "14\n20\n1" },
-      hints: [
-        "2 + 3 * 4: multiplication before addition, so 3 * 4 = 12 first, then 2 + 12 = 14.",
-        "(2 + 3) * 4: parentheses first, so 2 + 3 = 5 first, then 5 * 4 = 20.",
-        "10 % 3: 10 divided by 3 is 3 remainder 1. The % operator gives the remainder.",
-      ],
-      solution: "print(2 + 3 * 4)\nprint((2 + 3) * 4)\nprint(10 % 3)\n",
-    },
-    {
+{
       type: "exercise",
       rung: 3,
       prompt: "This calculates the number of seconds in 5 minutes (5 × 60 = 300). Change it to calculate the number of seconds in 3 hours instead. It should print 10800.",
@@ -421,7 +390,38 @@ window.CODELAB.lessons.push({
       ],
       solution: "print(3 * 60 * 60)\n",
     },
-    {
+{
+      type: "text",
+      md: "Python follows the same order of operations as maths: `**` is worked out first, then `*` `/` `//` `%` (left to right), then `+` `-` (left to right). Use **parentheses** to override this order — anything inside parentheses is worked out first. When in doubt, add parentheses to make your intention clear.",
+    },
+{
+      type: "example",
+      note: "The parentheses change everything. Work out both lines in your head before running.",
+      code: "print(3 + 4 * 2)    # 11: * first, then +\nprint((3 + 4) * 2)  # 14: () first, then *\n",
+    },
+{
+      type: "exercise",
+      rung: 1,
+      prompt: "Before you run this, work out each answer in your head. The order of operations is the key — write your predictions, then run to check.",
+      starter: "print(2 + 3 * 4)\nprint((2 + 3) * 4)\nprint(10 % 3)\n",
+      check: { type: "output", expected: "14\n20\n1" },
+      hints: [
+        "2 + 3 * 4: multiplication before addition, so 3 * 4 = 12 first, then 2 + 12 = 14.",
+        "(2 + 3) * 4: parentheses first, so 2 + 3 = 5 first, then 5 * 4 = 20.",
+        "10 % 3: 10 divided by 3 is 3 remainder 1. The % operator gives the remainder.",
+      ],
+      solution: "print(2 + 3 * 4)\nprint((2 + 3) * 4)\nprint(10 % 3)\n",
+    },
+{
+      type: "text",
+      md: "An expression produces a value. You can use that value anywhere: print it directly, store it in a variable, or use it inside another expression. The example below shows both styles producing the same output. Store a result when you need it more than once, or when a name makes the code clearer.",
+    },
+{
+      type: "example",
+      note: "Both approaches print the same thing — the only difference is whether you store the result first.",
+      code: "print(7 * 3 + 1)\nresult = 7 * 3 + 1\nprint(result)\n",
+    },
+{
       type: "exercise",
       rung: 4,
       prompt: "This should print the average of 10, 20, and 30, which is 20.0. But because of how Python applies operator order, it calculates something different. Add parentheses to fix it.",
@@ -434,7 +434,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "print((10 + 20 + 30) / 3)\n",
     },
-  ],
+],
   codex: {
     topic: "expressions",
     pattern: "+ - * / // % **",
@@ -803,6 +803,26 @@ window.CODELAB.lessons.push({
         "Change play(64) to play(65).",
       ],
       solution: "play(60)\nsleep(1)\nplay(65)\nsleep(1)\nplay(67)\n",
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "A square turns 4 × 90° = 360°. A triangle needs 3 turns that also add up to 360°. Write the commands to draw an equilateral triangle with sides of 100 units. Do not use a loop — just the raw turtle calls.",
+      starter: "",
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "forward", val: 100 }, { fn: "right", val: 120 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 120 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 120 },
+        ],
+      },
+      hints: [
+        "A triangle has 3 equal sides and 3 equal turns. 360 ÷ 3 = 120 degrees per turn.",
+        "Each side: forward(100). Each turn: right(120). You need 3 of each.",
+        "Six lines total: forward(100), right(120), forward(100), right(120), forward(100), right(120).",
+      ],
+      solution: "forward(100)\nright(120)\nforward(100)\nright(120)\nforward(100)\nright(120)\n",
     },
   ],
   codex: {

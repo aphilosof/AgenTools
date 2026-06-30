@@ -20,78 +20,25 @@ window.CODELAB.lessons.push({
     "short-circuit": "Python's behavior of stopping evaluation of and/or as soon as the result is determined. If the left side of and is False, the right side is never evaluated.",
   },
   content: [
-    {
+{
       type: "example",
       note: "Run this. Then change 18 to 10, run again, and see which branch fires. You are already making decisions with code — before reading a word about how they work.",
       code: "age = 18\nif age >= 18:\n    print(\"You can vote.\")\nelse:\n    print(\"Not yet.\")\n",
     },
-    {
+{
       type: "text",
       md: "**`==` is a question; `=` is a command.** `=` stores a value: `age = 11` means 'let age hold 11.' `==` asks a question: `age == 11` means 'does age currently hold 11?' The answer is `True` or `False`. Python deliberately uses two different symbols so you can never accidentally store when you meant to ask. Writing `if age = 11:` is a `SyntaxError` — Python refuses to let you confuse the two. The error message says 'cannot assign to literal' — it recognised you tried to store a value where a question was expected.\n\n**Why `True` and `False` are capitalised.** Python is case-sensitive: `true` is a `NameError` — Python looks for a variable named `true` and finds nothing. `True` is a built-in constant. The capitalisation is the standard across many languages that treat boolean values as proper named constants rather than keywords.",
     },
-    {
+{
       type: "text",
       md: "Every condition in that program is a **[[comparison]]** — an expression that asks a question and answers it with **[[boolean|True or False]]**. `age >= 18` is not a filter you apply; it is a full expression with a value. That value is either `True` or `False`, and you can print it, store it in a variable, or combine it with other comparisons.\n\nPython has six comparison operators. `==` tests equality. `!=` tests inequality (not equal). `<` and `>` test whether one value is strictly less than or greater than another. `<=` and `>=` include equality as well: `age >= 18` is True when age is exactly 18, not only when it exceeds 18.",
     },
-    {
+{
       type: "example",
       note: "Every comparison is an expression. Run each line and notice that Python prints the value True or False, just as it would print any other value.",
       code: "print(5 > 3)       # True\nprint(5 < 3)       # False\nprint(5 == 5)      # True\nprint(5 != 5)      # False\nprint(\"7\" == 7)    # False — type matters\nprint(10 >= 10)    # True — >= includes equality\n",
     },
-    {
-      type: "text",
-      md: "Notice `\"7\" == 7`. You learned in Chapter 1 that the string `\"7\"` and the integer `7` are different types. Python does not convert them before comparing: different types are never `==`, so this is always `False`. The type of each side matters, not just the visual appearance.",
-    },
-    {
-      type: "text",
-      md: "There is one trap beginners hit on their first condition. The `=` sign you know from Chapter 1 is an **action** — it stores a value. The `==` operator is a **question** — it asks whether two values are equal. Inside an `if` condition, Python expects a question. If you write `=` instead, Python stops immediately with a `SyntaxError`.\n\nThe error message says *invalid syntax* and points at the `=`. That is your cue: look for a lone `=` where `==` belongs.",
-    },
-    {
-      type: "example",
-      note: "Run this deliberately broken code and read the SyntaxError. Then fix = to == and run again to see it work.",
-      code: "x = 5\nif x = 5:\n    print(\"five\")\n",
-    },
-    {
-      type: "text",
-      md: "Python's `if` statement does not demand a strict `True` or `False`. It accepts any value and applies a rule called **[[truthiness]]**: some values count as true, others as false.\n\n**Falsy** values — ones Python treats as false — are: `False`, zero (`0` and `0.0`), the empty string `\"\"`, and the special value `None`. (In Chapter 4 you will meet two more: the empty list `[]` and empty dictionary `{}`.) Every other value is **truthy**. A non-zero number, any non-empty string, even a single space — all truthy.\n\nThis means `if name:` and `if name != \"\":` say the same thing. Both pass when `name` holds any non-empty string.",
-    },
-    {
-      type: "example",
-      note: "bool() converts any value to its True/False equivalent. Predict each line before running.",
-      code: "print(bool(False))  # False\nprint(bool(0))      # False\nprint(bool(0.0))    # False\nprint(bool(\"\"))     # False\nprint(bool(None))   # False\nprint(bool(42))     # True\nprint(bool(\"hi\"))   # True\nprint(bool(\" \"))    # True — one space is not empty\n",
-    },
-    {
-      type: "text",
-      md: "A single comparison asks one question. The three **boolean operators** let you combine questions.\n\n`and` requires both sides to be true: `age >= 13 and age < 18` is True only when age is at least 13 and also less than 18. If either side is false, the whole expression is false.\n\n`or` requires at least one side to be true: `score >= 90 or bonus` is True when the score is high, or when there is a bonus, or both.\n\n`not` flips a single value: `not True` gives `False`, and `not False` gives `True`.\n\nPrecedence: `not` is applied first, then `and`, then `or`. Use parentheses to override the order.",
-    },
-    {
-      type: "example",
-      note: "Three compound conditions. Work each one out before running.",
-      code: "age = 15\nprint(age >= 13 and age < 18)    # True and True → True\nprint(age < 10 or age >= 13)     # False or True → True\nprint(not age >= 18)              # not False → True\n",
-    },
-    {
-      type: "text",
-      md: "Python evaluates `and` and `or` from left to right and **stops as soon as the result is decided**. This is called **[[short-circuit]]** evaluation.\n\nFor `and`: if the left side is `False`, the whole expression must be `False`, so Python never evaluates the right side.\n\nFor `or`: if the left side is `True`, the whole expression must be `True`, so Python skips the right side.\n\nThis matters when the right side could crash. In the example below, if `age` is zero, dividing by it would cause a `ZeroDivisionError`. Because `age > 0` is `False`, Python stops there and never reaches `100 / age`.",
-    },
-    {
-      type: "example",
-      note: "With age=0, short-circuit stops at the first condition being False and never runs the division.",
-      code: "age = 0\nif age > 0 and 100 / age > 2:\n    print(\"ratio is high\")\nelse:\n    print(\"age is zero — division was never attempted\")\n",
-    },
-    {
-      type: "text",
-      md: "**Why truthiness is designed this way.** Python's rule is consistent: values that represent 'empty' or 'nothing' are falsy — `False`, `0`, `0.0`, `\"\"`, `None`, and later `[]` (empty list) and `{}` (empty dictionary). Everything else is truthy. This is a deliberate design choice that lets you write `if name:` instead of `if name != \"\"`, and `if count:` instead of `if count != 0`. It is not magic; it is a convention about what 'empty' means.\n\n**Short-circuit evaluation — not just a speed trick.** In `a and b`, if `a` is `False`, Python never evaluates `b`. In `a or b`, if `a` is `True`, Python never evaluates `b`. This prevents crashes: `if x != 0 and 10 / x > 2:` is safe because when `x` is `0`, the `and` short-circuits before the division executes. If Python always evaluated both sides, that division by zero would crash regardless of the first condition. Short-circuit evaluation is a real safety tool.",
-    },
-    {
-      type: "text",
-      md: "Here is a trap that looks reasonable but is wrong in a way Python will not catch for you.\n\nSuppose you want to check whether `x` equals `1` or `2`. You might write `if x == 1 or 2:`. Python reads this as `if (x == 1) or (2):`. The value `2` stands alone, and because `2` is non-zero it is always truthy. So the condition is **always True**, regardless of what `x` holds.\n\nThe fix is: `if x == 1 or x == 2:`. Each side of `or` needs its own complete comparison.",
-    },
-    {
-      type: "example",
-      note: "The first if prints 'match' even when x is 99. The second one never prints. Run it to see the difference.",
-      code: "x = 99\nif x == 1 or 2:\n    print(\"match\")          # always runs — 2 is always truthy\n\nif x == 1 or x == 2:\n    print(\"really 1 or 2\")  # never runs when x is 99\n",
-    },
-    {
+{
       type: "exercise",
       rung: 1,
       prompt: "Before you run this, predict what each line prints — True or False? Work through the type and value on each side of the comparison. Write your six predictions, then run to check.",
@@ -104,7 +51,51 @@ window.CODELAB.lessons.push({
       ],
       solution: "print(5 > 3)\nprint(5 < 3)\nprint(5 == 5)\nprint(\"7\" == 7)\nprint(not True)\nprint(10 >= 10)\n",
     },
-    {
+{
+      type: "text",
+      md: "Notice `\"7\" == 7`. You learned in Chapter 1 that the string `\"7\"` and the integer `7` are different types. Python does not convert them before comparing: different types are never `==`, so this is always `False`. The type of each side matters, not just the visual appearance.",
+    },
+{
+      type: "text",
+      md: "There is one trap beginners hit on their first condition. The `=` sign you know from Chapter 1 is an **action** — it stores a value. The `==` operator is a **question** — it asks whether two values are equal. Inside an `if` condition, Python expects a question. If you write `=` instead, Python stops immediately with a `SyntaxError`.\n\nThe error message says *invalid syntax* and points at the `=`. That is your cue: look for a lone `=` where `==` belongs.",
+    },
+{
+      type: "example",
+      note: "Run this deliberately broken code and read the SyntaxError. Then fix = to == and run again to see it work.",
+      code: "x = 5\nif x = 5:\n    print(\"five\")\n",
+    },
+{
+      type: "exercise",
+      rung: 4,
+      prompt: "This program crashes before it runs a single line. Read the error message — it names the error type and the line number. Fix the code so it prints five.",
+      starter: "x = 5\nif x = 5:\n    print(\"five\")\n",
+      check: { type: "output", expected: "five" },
+      hints: [
+        "The error is SyntaxError. Python refused to run the program at all — it spotted the problem before executing anything.",
+        "Look at the condition on the if line. The = sign is an assignment action. Inside a condition, Python expects a question, not an action.",
+        "Change = to == to ask 'is x equal to 5?' rather than trying to store 5 in x.",
+      ],
+      solution: "x = 5\nif x == 5:\n    print(\"five\")\n",
+    },
+{
+      type: "text",
+      md: "Python's `if` statement does not demand a strict `True` or `False`. It accepts any value and applies a rule called **[[truthiness]]**: some values count as true, others as false.\n\n**Falsy** values — ones Python treats as false — are: `False`, zero (`0` and `0.0`), the empty string `\"\"`, and the special value `None`. (In Chapter 4 you will meet two more: the empty list `[]` and empty dictionary `{}`.) Every other value is **truthy**. A non-zero number, any non-empty string, even a single space — all truthy.\n\nThis means `if name:` and `if name != \"\":` say the same thing. Both pass when `name` holds any non-empty string.",
+    },
+{
+      type: "example",
+      note: "bool() converts any value to its True/False equivalent. Predict each line before running.",
+      code: "print(bool(False))  # False\nprint(bool(0))      # False\nprint(bool(0.0))    # False\nprint(bool(\"\"))     # False\nprint(bool(None))   # False\nprint(bool(42))     # True\nprint(bool(\"hi\"))   # True\nprint(bool(\" \"))    # True — one space is not empty\n",
+    },
+{
+      type: "text",
+      md: "A single comparison asks one question. The three **boolean operators** let you combine questions.\n\n`and` requires both sides to be true: `age >= 13 and age < 18` is True only when age is at least 13 and also less than 18. If either side is false, the whole expression is false.\n\n`or` requires at least one side to be true: `score >= 90 or bonus` is True when the score is high, or when there is a bonus, or both.\n\n`not` flips a single value: `not True` gives `False`, and `not False` gives `True`.\n\nPrecedence: `not` is applied first, then `and`, then `or`. Use parentheses to override the order.",
+    },
+{
+      type: "example",
+      note: "Three compound conditions. Work each one out before running.",
+      code: "age = 15\nprint(age >= 13 and age < 18)    # True and True → True\nprint(age < 10 or age >= 13)     # False or True → True\nprint(not age >= 18)              # not False → True\n",
+    },
+{
       type: "exercise",
       rung: 2,
       prompt: "Arrange these lines into a program that prints 'in range' if n is between 10 and 20 (including both endpoints), and 'out of range' otherwise. One line is a decoy that does not belong.",
@@ -127,20 +118,42 @@ window.CODELAB.lessons.push({
       ],
       solution: "n = 15\nif n >= 10 and n <= 20:\n    print(\"in range\")\nelse:\n    print(\"out of range\")\n",
     },
-    {
+{
+      type: "text",
+      md: "Python evaluates `and` and `or` from left to right and **stops as soon as the result is decided**. This is called **[[short-circuit]]** evaluation.\n\nFor `and`: if the left side is `False`, the whole expression must be `False`, so Python never evaluates the right side.\n\nFor `or`: if the left side is `True`, the whole expression must be `True`, so Python skips the right side.\n\nThis matters when the right side could crash. In the example below, if `age` is zero, dividing by it would cause a `ZeroDivisionError`. Because `age > 0` is `False`, Python stops there and never reaches `100 / age`.",
+    },
+{
+      type: "example",
+      note: "With age=0, short-circuit stops at the first condition being False and never runs the division.",
+      code: "age = 0\nif age > 0 and 100 / age > 2:\n    print(\"ratio is high\")\nelse:\n    print(\"age is zero — division was never attempted\")\n",
+    },
+{
+      type: "text",
+      md: "**Why truthiness is designed this way.** Python's rule is consistent: values that represent 'empty' or 'nothing' are falsy — `False`, `0`, `0.0`, `\"\"`, `None`, and later `[]` (empty list) and `{}` (empty dictionary). Everything else is truthy. This is a deliberate design choice that lets you write `if name:` instead of `if name != \"\"`, and `if count:` instead of `if count != 0`. It is not magic; it is a convention about what 'empty' means.\n\n**Short-circuit evaluation — not just a speed trick.** In `a and b`, if `a` is `False`, Python never evaluates `b`. In `a or b`, if `a` is `True`, Python never evaluates `b`. This prevents crashes: `if x != 0 and 10 / x > 2:` is safe because when `x` is `0`, the `and` short-circuits before the division executes. If Python always evaluated both sides, that division by zero would crash regardless of the first condition. Short-circuit evaluation is a real safety tool.",
+    },
+{
+      type: "text",
+      md: "Here is a trap that looks reasonable but is wrong in a way Python will not catch for you.\n\nSuppose you want to check whether `x` equals `1` or `2`. You might write `if x == 1 or 2:`. Python reads this as `if (x == 1) or (2):`. The value `2` stands alone, and because `2` is non-zero it is always truthy. So the condition is **always True**, regardless of what `x` holds.\n\nThe fix is: `if x == 1 or x == 2:`. Each side of `or` needs its own complete comparison.",
+    },
+{
+      type: "example",
+      note: "The first if prints 'match' even when x is 99. The second one never prints. Run it to see the difference.",
+      code: "x = 99\nif x == 1 or 2:\n    print(\"match\")          # always runs — 2 is always truthy\n\nif x == 1 or x == 2:\n    print(\"really 1 or 2\")  # never runs when x is 99\n",
+    },
+{
       type: "exercise",
       rung: 4,
-      prompt: "This program crashes before it runs a single line. Read the error message — it names the error type and the line number. Fix the code so it prints five.",
-      starter: "x = 5\nif x = 5:\n    print(\"five\")\n",
-      check: { type: "output", expected: "five" },
+      prompt: "This code has a logic bug: it prints `match` for every value of `x`, even `99`. Read the condition carefully and fix it so it correctly checks whether `x` is 1 or 2.",
+      starter: "x = 99\nif x == 1 or 2:\n    print(\"match\")\nelse:\n    print(\"no match\")\n",
+      check: { type: "output", expected: "no match" },
       hints: [
-        "The error is SyntaxError. Python refused to run the program at all — it spotted the problem before executing anything.",
-        "Look at the condition on the if line. The = sign is an assignment action. Inside a condition, Python expects a question, not an action.",
-        "Change = to == to ask 'is x equal to 5?' rather than trying to store 5 in x.",
+        "Python reads `x == 1 or 2` as `(x == 1) or (2)`. The standalone `2` is always truthy, so the whole condition is always True.",
+        "Each side of `or` needs its own complete comparison.",
+        "Change `x == 1 or 2` to `x == 1 or x == 2`.",
       ],
-      solution: "x = 5\nif x == 5:\n    print(\"five\")\n",
+      solution: "x = 99\nif x == 1 or x == 2:\n    print(\"match\")\nelse:\n    print(\"no match\")\n",
     },
-  ],
+],
   codex: {
     topic: "comparisons and booleans",
     pattern: "==  !=  <  >  <=  >=\nand  or  not\nbool(v)   # reveals truthiness",
@@ -163,73 +176,20 @@ window.CODELAB.lessons.push({
     "TabError": "An error raised when a file mixes tab characters and spaces for indentation. Python 3 does not allow mixing the two.",
   },
   content: [
-    {
+{
       type: "text",
       md: "A comparison produces True or False, but by itself it does nothing — it does not change what happens next. The `if` statement uses that value to choose between two paths, called **[[branch|branches]]**. It runs the first branch when the condition is true, and the second when it is false. **Exactly one branch runs per execution** — never both, never neither.",
     },
-    {
+{
       type: "text",
       md: "**Why Python uses indentation instead of braces.** Most languages use curly braces `{}` to mark blocks. Python uses indentation — the whitespace at the start of each line. This was a deliberate design decision: programmers indent their code for readability whether or not the language requires it. Making indentation mandatory means the visual structure of the code and the logical structure are always identical. In brace languages, it is possible to write code whose indentation lies — that looks like it does one thing but does another. Python makes that impossible. Four spaces per level is the Python standard.",
     },
-    {
+{
       type: "example",
       note: "The complete if/else structure. Run it, then change score to 55 and run again. Notice that each run follows exactly one path.",
       code: "score = 85\nif score >= 60:\n    print(\"Passed\")\nelse:\n    print(\"Try again\")\n",
     },
-    {
-      type: "text",
-      md: "Two things about the syntax that cause real errors if you miss them.\n\nFirst, each header line — the `if` line and the `else` line — must end with a **colon**. Without it, Python raises a `SyntaxError` pointing at the line after, since that is where it first noticed something was wrong.\n\nSecond, the **body** of each branch is the indented block below the colon. Python uses the indentation level to decide what belongs to the branch and what comes after it. The standard indent is four spaces.",
-    },
-    {
-      type: "example",
-      note: "Two versions: one correct, one with the colon missing. Run the broken one first, read the SyntaxError, then compare.",
-      code: "# Correct\nif True:\n    print(\"yes\")\n\n# Missing colon — SyntaxError\n# if True\n#     print(\"yes\")\n",
-    },
-    {
-      type: "text",
-      md: "When the indentation is wrong, Python raises an **[[IndentationError]]**. The tricky part: the error message often points to the line **after** the real problem. If Python reports an IndentationError on line 6, look at line 5 — that is frequently where the wrong indent is.\n\nA related error is **[[TabError]]**: Python 3 does not allow mixing tab characters and spaces in the same file. If you mix them, Python raises a TabError. The fix is to use only spaces (four per level) throughout.",
-    },
-    {
-      type: "example",
-      note: "The print on the third line has two spaces instead of four. Run this and read the IndentationError. Note that Python reports the problem on the print line.",
-      code: "x = 10\nif x > 5:\n  print(\"big\")   # only 2 spaces — wrong indent level\n",
-    },
-    {
-      type: "text",
-      md: "Here is a fact that trips many beginners: **code that comes after the if/else block always runs**, regardless of which branch fired.\n\nLook at the example below. The `print(\"done\")` line is at the same indent level as `if` — it is not inside either branch. After the if/else makes its choice and runs one branch, Python moves on to `print(\"done\")` every single time.",
-    },
-    {
-      type: "text",
-      md: "**One `if` vs `if/else` — when each fits.** Use `if/else` when exactly one of two alternatives should run. Use two separate `if` statements when the conditions are independent and both might be true. `if score >= 90: print('A')` followed by `if score >= 80: print('B')` checks both independently: a score of 95 triggers both prints. That is a bug — one student gets two grades. If the grades are mutually exclusive, use `elif` (next lesson). The test: 'can both conditions be true at the same time?' If yes, two ifs. If no, if/elif/else.",
-    },
-    {
-      type: "example",
-      note: "The third print always runs. It is outside the if/else block — Python reaches it no matter which branch fired.",
-      code: "score = 85\nif score >= 60:\n    print(\"Passed\")       # only runs when score >= 60\nelse:\n    print(\"Try again\")    # only runs when score < 60\nprint(\"Assessment done\")  # ALWAYS runs\n",
-    },
-    {
-      type: "text",
-      md: "There is a difference between a chain of independent `if` statements and a single `if`/`else`. With independent `if`s, Python evaluates each condition separately — and if more than one is true, more than one branch can fire.\n\nAn `if`/`else` is different: it is a single decision. Python checks the condition once and runs exactly one branch. If you want only one branch to fire, use `if`/`else`, not two separate `if`s.",
-    },
-    {
-      type: "example",
-      note: "With n=15, both independent ifs fire and you see two lines. With if/else, exactly one fires.",
-      code: "n = 15\n\n# Two separate ifs — both conditions are true, both branches run\nif n > 10:\n    print(\"over 10\")\nif n > 5:\n    print(\"over 5\")\n\n# if/else — exactly one branch runs\nif n > 10:\n    print(\"big\")\nelse:\n    print(\"small\")\n",
-    },
-    {
-      type: "exercise",
-      rung: 1,
-      prompt: "Before you run this, trace through it for n=4 and then n=8. Which branch fires each time? What does the program print? Write your prediction for both values, then run to check.",
-      starter: "n = 4\nif n % 2 == 0:\n    print(n, \"is even\")\nelse:\n    print(n, \"is odd\")\n",
-      check: { type: "output", expected: "4 is even" },
-      hints: [
-        "The condition is n % 2 == 0. The % operator gives the remainder. 4 divided by 2 leaves no remainder.",
-        "When n is 4, n % 2 is 0. The condition 0 == 0 is True, so the if branch runs.",
-        "The output is: 4 is even. (For n=8, the same branch fires — 8 % 2 is also 0.)",
-      ],
-      solution: "n = 4\nif n % 2 == 0:\n    print(n, \"is even\")\nelse:\n    print(n, \"is odd\")\n",
-    },
-    {
+{
       type: "exercise",
       rung: 3,
       prompt: "This program prints 'Too hot' when temperature is above 30 and 'Just right' otherwise. Change the threshold from 30 to 25, and change 'Too hot' to 'Very warm'.",
@@ -242,7 +202,25 @@ window.CODELAB.lessons.push({
       ],
       solution: "temperature = 28\nif temperature > 25:\n    print(\"Very warm\")\nelse:\n    print(\"Just right\")\n",
     },
-    {
+{
+      type: "text",
+      md: "Two things about the syntax that cause real errors if you miss them.\n\nFirst, each header line — the `if` line and the `else` line — must end with a **colon**. Without it, Python raises a `SyntaxError` pointing at the line after, since that is where it first noticed something was wrong.\n\nSecond, the **body** of each branch is the indented block below the colon. Python uses the indentation level to decide what belongs to the branch and what comes after it. The standard indent is four spaces.",
+    },
+{
+      type: "example",
+      note: "Two versions: one correct, one with the colon missing. Run the broken one first, read the SyntaxError, then compare.",
+      code: "# Correct\nif True:\n    print(\"yes\")\n\n# Missing colon — SyntaxError\n# if True\n#     print(\"yes\")\n",
+    },
+{
+      type: "text",
+      md: "When the indentation is wrong, Python raises an **[[IndentationError]]**. The tricky part: the error message often points to the line **after** the real problem. If Python reports an IndentationError on line 6, look at line 5 — that is frequently where the wrong indent is.\n\nA related error is **[[TabError]]**: Python 3 does not allow mixing tab characters and spaces in the same file. If you mix them, Python raises a TabError. The fix is to use only spaces (four per level) throughout.",
+    },
+{
+      type: "example",
+      note: "The print on the third line has two spaces instead of four. Run this and read the IndentationError. Note that Python reports the problem on the print line.",
+      code: "x = 10\nif x > 5:\n  print(\"big\")   # only 2 spaces — wrong indent level\n",
+    },
+{
       type: "exercise",
       rung: 4,
       prompt: "This program crashes with an IndentationError. The error points to a line — but the real problem is one line earlier. Read the traceback, find the actual mistake, and fix it so the program prints the correct message.",
@@ -255,7 +233,20 @@ window.CODELAB.lessons.push({
       ],
       solution: "score = 75\nif score >= 60:\n    print(\"Passed\")\n    print(\"Well done\")\n",
     },
-    {
+{
+      type: "text",
+      md: "Here is a fact that trips many beginners: **code that comes after the if/else block always runs**, regardless of which branch fired.\n\nLook at the example below. The `print(\"done\")` line is at the same indent level as `if` — it is not inside either branch. After the if/else makes its choice and runs one branch, Python moves on to `print(\"done\")` every single time.",
+    },
+{
+      type: "text",
+      md: "**One `if` vs `if/else` — when each fits.** Use `if/else` when exactly one of two alternatives should run. Use two separate `if` statements when the conditions are independent and both might be true. `if score >= 90: print('A')` followed by `if score >= 80: print('B')` checks both independently: a score of 95 triggers both prints. That is a bug — one student gets two grades. If the grades are mutually exclusive, use `elif` (next lesson). The test: 'can both conditions be true at the same time?' If yes, two ifs. If no, if/elif/else.",
+    },
+{
+      type: "example",
+      note: "The third print always runs. It is outside the if/else block — Python reaches it no matter which branch fired.",
+      code: "score = 85\nif score >= 60:\n    print(\"Passed\")       # only runs when score >= 60\nelse:\n    print(\"Try again\")    # only runs when score < 60\nprint(\"Assessment done\")  # ALWAYS runs\n",
+    },
+{
       type: "exercise",
       rung: 5,
       prompt: "Complete this discount checker. If the price is 50 or more, print 'Discount: 10%'. Otherwise, print 'No discount'. The condition and both branch labels are already placed — fill in the two print calls.",
@@ -268,7 +259,29 @@ window.CODELAB.lessons.push({
       ],
       solution: "price = 60\nif price >= 50:\n    print(\"Discount: 10%\")\nelse:\n    print(\"No discount\")\n",
     },
-  ],
+{
+      type: "text",
+      md: "There is a difference between a chain of independent `if` statements and a single `if`/`else`. With independent `if`s, Python evaluates each condition separately — and if more than one is true, more than one branch can fire.\n\nAn `if`/`else` is different: it is a single decision. Python checks the condition once and runs exactly one branch. If you want only one branch to fire, use `if`/`else`, not two separate `if`s.",
+    },
+{
+      type: "example",
+      note: "With n=15, both independent ifs fire and you see two lines. With if/else, exactly one fires.",
+      code: "n = 15\n\n# Two separate ifs — both conditions are true, both branches run\nif n > 10:\n    print(\"over 10\")\nif n > 5:\n    print(\"over 5\")\n\n# if/else — exactly one branch runs\nif n > 10:\n    print(\"big\")\nelse:\n    print(\"small\")\n",
+    },
+{
+      type: "exercise",
+      rung: 1,
+      prompt: "Before you run this, trace through it for n=4 and then n=8. Which branch fires each time? What does the program print? Write your prediction for both values, then run to check.",
+      starter: "n = 4\nif n % 2 == 0:\n    print(n, \"is even\")\nelse:\n    print(n, \"is odd\")\n",
+      check: { type: "output", expected: "4 is even" },
+      hints: [
+        "The condition is n % 2 == 0. The % operator gives the remainder. 4 divided by 2 leaves no remainder.",
+        "When n is 4, n % 2 is 0. The condition 0 == 0 is True, so the if branch runs.",
+        "The output is: 4 is even. (For n=8, the same branch fires — 8 % 2 is also 0.)",
+      ],
+      solution: "n = 4\nif n % 2 == 0:\n    print(n, \"is even\")\nelse:\n    print(n, \"is odd\")\n",
+    },
+],
   codex: {
     topic: "if and else",
     pattern: "if condition:\n    # runs when True\nelse:\n    # runs when False",
@@ -289,60 +302,16 @@ window.CODELAB.lessons.push({
     elif: "Short for 'else if'. Adds a new condition to check when all previous conditions were false. Python stops at the first branch whose condition is true.",
   },
   content: [
-    {
+{
       type: "text",
       md: "`if`/`else` makes a binary choice — true or false, this or that. Real programs often need more branches. The `[[elif]]` keyword adds extra conditions between the `if` and the `else`. Python checks each condition in order and runs the **first one that is true** — then skips all the rest.\n\nThis is the defining rule: only the first matching branch fires. If none of the conditions match, the `else` branch runs (if you included one).",
     },
-    {
+{
       type: "example",
       note: "Four branches for a grade classifier. Run it with different scores to see which branch fires each time.",
       code: "score = 85\nif score >= 90:\n    print(\"A\")\nelif score >= 80:\n    print(\"B\")\nelif score >= 70:\n    print(\"C\")\nelse:\n    print(\"D or below\")\n",
     },
-    {
-      type: "text",
-      md: "The **order of your conditions matters**. Because Python stops at the first true branch, putting a broader condition before a narrower one will swallow results it should not.\n\nIn the broken example below, `score >= 50` appears before `score >= 90`. A score of 95 satisfies both — but Python fires the first matching condition and prints 'Average', never reaching the 'Excellent' branch.",
-    },
-    {
-      type: "text",
-      md: "**`elif` is 'else if' — the first match wins and Python stops.** Once a condition in an `elif` chain is `True`, Python runs that block and skips all remaining `elif` and `else` branches. This is different from two separate `if` statements, which always check their condition regardless of what came before. Order in an `elif` chain matters when conditions overlap: `if score >= 90:` before `elif score >= 80:` is correct because a score of 95 hits the first branch and stops. Reversing the order means every A student gets a B instead — the less-specific condition fires first.\n\n**'Flat is better than nested' — a Python principle.** The Zen of Python, a short document of guiding principles, includes: 'Flat is better than nested.' `elif` is the tool for keeping conditional logic flat. The alternative — writing `else:` and then an `if:` inside it — grows rightward with each level and becomes hard to read. `elif` chains stay at the same indentation. Flat code is easier to follow, easier to change, and easier to debug.",
-    },
-    {
-      type: "example",
-      note: "A score of 95 should print Excellent, but the elif order is wrong. Run it and see the broken output, then look at the fix.",
-      code: "score = 95\n\n# Wrong order — too-early condition swallows high scores\nif score >= 50:\n    print(\"Average\")    # fires for 95, which is wrong\nelif score >= 90:\n    print(\"Excellent\")  # never reached\n\n# Correct: narrow conditions first\nif score >= 90:\n    print(\"Excellent\")\nelif score >= 50:\n    print(\"Average\")\n",
-    },
-    {
-      type: "text",
-      md: "Remember the lesson on multiple independent `if` statements? With `elif`, only one branch fires. Without it, every condition is tested independently and several can fire. Here is the difference side by side.",
-    },
-    {
-      type: "example",
-      note: "With score=95, the independent-if version prints two lines because both conditions are true. The elif version prints one.",
-      code: "score = 95\n\n# Two separate ifs — both fire\nif score >= 90:\n    print(\"Excellent\")\nif score >= 50:\n    print(\"Average\")\n\n# With elif — only the first matching branch fires\nif score >= 90:\n    print(\"Excellent\")\nelif score >= 50:\n    print(\"Average\")\n",
-    },
-    {
-      type: "text",
-      md: "You might be tempted to write `else:` followed by `if ...:` on the next line — instead of `elif`. This is not a SyntaxError; it is valid Python. But it creates a **nested** `if` inside the `else` branch, adding an extra level of indentation. If you then omit the inner `else`, you get silent wrong behavior — a case where nothing prints at all.\n\nUsing `elif` avoids this by keeping all the conditions at the same level. Prefer `elif` over `else: / if ...:` whenever you are building a multi-branch decision.",
-    },
-    {
-      type: "example",
-      note: "Both versions produce the same output here — but the nested version is harder to read and easier to break. Notice the extra indent level.",
-      code: "x = 5\n\n# Using elif (preferred)\nif x > 10:\n    print(\"big\")\nelif x > 3:\n    print(\"medium\")\nelse:\n    print(\"small\")\n\n# Using else: / if: (nested — avoid)\nif x > 10:\n    print(\"big\")\nelse:\n    if x > 3:\n        print(\"medium\")\n    # forgot the inner else — small never prints\n",
-    },
-    {
-      type: "exercise",
-      rung: 4,
-      prompt: "This grade classifier produces wrong results because the elif conditions are in the wrong order. A score of 92 prints 'Average' instead of 'Excellent'. Fix the order so conditions run from highest to lowest.",
-      starter: "score = 92\nif score >= 60:\n    print(\"Average\")\nelif score >= 80:\n    print(\"Good\")\nelif score >= 90:\n    print(\"Excellent\")\n",
-      check: { type: "output", expected: "Excellent" },
-      hints: [
-        "With score=92, the first condition score >= 60 is true — so Python fires that branch and skips the rest. The problem is the condition ordering.",
-        "Put the most specific (highest) threshold first so narrow conditions have a chance to fire.",
-        "Reorder: if score >= 90: Excellent, elif score >= 80: Good, elif score >= 60: Average.",
-      ],
-      solution: "score = 92\nif score >= 90:\n    print(\"Excellent\")\nelif score >= 80:\n    print(\"Good\")\nelif score >= 60:\n    print(\"Average\")\n",
-    },
-    {
+{
       type: "exercise",
       rung: 5,
       prompt: "Complete this password-strength checker. A password is 'Weak' if it has fewer than 6 characters, 'OK' if it has 6 to 9 characters, and 'Strong' if it has 10 or more. The structure is set up — fill in the three conditions.",
@@ -355,7 +324,64 @@ window.CODELAB.lessons.push({
       ],
       solution: "password = \"hello123\"\nlength = len(password)\nif length < 6:\n    print(\"Weak\")\nelif length < 10:\n    print(\"OK\")\nelse:\n    print(\"Strong\")\n",
     },
-    {
+{
+      type: "text",
+      md: "The **order of your conditions matters**. Because Python stops at the first true branch, putting a broader condition before a narrower one will swallow results it should not.\n\nIn the broken example below, `score >= 50` appears before `score >= 90`. A score of 95 satisfies both — but Python fires the first matching condition and prints 'Average', never reaching the 'Excellent' branch.",
+    },
+{
+      type: "text",
+      md: "**`elif` is 'else if' — the first match wins and Python stops.** Once a condition in an `elif` chain is `True`, Python runs that block and skips all remaining `elif` and `else` branches. This is different from two separate `if` statements, which always check their condition regardless of what came before. Order in an `elif` chain matters when conditions overlap: `if score >= 90:` before `elif score >= 80:` is correct because a score of 95 hits the first branch and stops. Reversing the order means every A student gets a B instead — the less-specific condition fires first.\n\n**'Flat is better than nested' — a Python principle.** The Zen of Python, a short document of guiding principles, includes: 'Flat is better than nested.' `elif` is the tool for keeping conditional logic flat. The alternative — writing `else:` and then an `if:` inside it — grows rightward with each level and becomes hard to read. `elif` chains stay at the same indentation. Flat code is easier to follow, easier to change, and easier to debug.",
+    },
+{
+      type: "example",
+      note: "A score of 95 should print Excellent, but the elif order is wrong. Run it and see the broken output, then look at the fix.",
+      code: "score = 95\n\n# Wrong order — too-early condition swallows high scores\nif score >= 50:\n    print(\"Average\")    # fires for 95, which is wrong\nelif score >= 90:\n    print(\"Excellent\")  # never reached\n\n# Correct: narrow conditions first\nif score >= 90:\n    print(\"Excellent\")\nelif score >= 50:\n    print(\"Average\")\n",
+    },
+{
+      type: "exercise",
+      rung: 4,
+      prompt: "This grade classifier produces wrong results because the elif conditions are in the wrong order. A score of 92 prints 'Average' instead of 'Excellent'. Fix the order so conditions run from highest to lowest.",
+      starter: "score = 92\nif score >= 60:\n    print(\"Average\")\nelif score >= 80:\n    print(\"Good\")\nelif score >= 90:\n    print(\"Excellent\")\n",
+      check: { type: "output", expected: "Excellent" },
+      hints: [
+        "With score=92, the first condition score >= 60 is true — so Python fires that branch and skips the rest. The problem is the condition ordering.",
+        "Put the most specific (highest) threshold first so narrow conditions have a chance to fire.",
+        "Reorder: if score >= 90: Excellent, elif score >= 80: Good, elif score >= 60: Average.",
+      ],
+      solution: "score = 92\nif score >= 90:\n    print(\"Excellent\")\nelif score >= 80:\n    print(\"Good\")\nelif score >= 60:\n    print(\"Average\")\n",
+    },
+{
+      type: "text",
+      md: "Remember the lesson on multiple independent `if` statements? With `elif`, only one branch fires. Without it, every condition is tested independently and several can fire. Here is the difference side by side.",
+    },
+{
+      type: "example",
+      note: "With score=95, the independent-if version prints two lines because both conditions are true. The elif version prints one.",
+      code: "score = 95\n\n# Two separate ifs — both fire\nif score >= 90:\n    print(\"Excellent\")\nif score >= 50:\n    print(\"Average\")\n\n# With elif — only the first matching branch fires\nif score >= 90:\n    print(\"Excellent\")\nelif score >= 50:\n    print(\"Average\")\n",
+    },
+{
+      type: "exercise",
+      rung: 1,
+      prompt: "These two conditions are **separate `if` statements**, not an `elif` chain. Before running, predict what prints when `score` is `95`.",
+      starter: "score = 95\n\nif score >= 90:\n    print(\"Excellent\")\nif score >= 50:\n    print(\"Average\")\n",
+      check: { type: "output", expected: "Excellent\nAverage" },
+      hints: [
+        "Each `if` is evaluated independently — the second one runs regardless of the first.",
+        "Is 95 >= 90? Yes → prints 'Excellent'. Then Python checks the second if fresh.",
+        "Is 95 >= 50? Yes → also prints 'Average'. Both branches fire.",
+      ],
+      solution: "score = 95\n\nif score >= 90:\n    print(\"Excellent\")\nif score >= 50:\n    print(\"Average\")\n",
+    },
+{
+      type: "text",
+      md: "You might be tempted to write `else:` followed by `if ...:` on the next line — instead of `elif`. This is not a SyntaxError; it is valid Python. But it creates a **nested** `if` inside the `else` branch, adding an extra level of indentation. If you then omit the inner `else`, you get silent wrong behavior — a case where nothing prints at all.\n\nUsing `elif` avoids this by keeping all the conditions at the same level. Prefer `elif` over `else: / if ...:` whenever you are building a multi-branch decision.",
+    },
+{
+      type: "example",
+      note: "Both versions produce the same output here — but the nested version is harder to read and easier to break. Notice the extra indent level.",
+      code: "x = 5\n\n# Using elif (preferred)\nif x > 10:\n    print(\"big\")\nelif x > 3:\n    print(\"medium\")\nelse:\n    print(\"small\")\n\n# Using else: / if: (nested — avoid)\nif x > 10:\n    print(\"big\")\nelse:\n    if x > 3:\n        print(\"medium\")\n    # forgot the inner else — small never prints\n",
+    },
+{
       type: "exercise",
       rung: 6,
       prompt: "Write a BMI classifier from scratch. Read weight in kilograms and height in metres using float(input()). Compute BMI as weight divided by height squared. Then print one of four labels:\n\n- Under 18.5: Underweight\n- 18.5 to under 25: Normal\n- 25 to under 30: Overweight\n- 30 or above: Obese\n\nWith inputs 70 and 1.75, it should print Normal.",
@@ -369,7 +395,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "weight = float(input())\nheight = float(input())\nbmi = weight / (height ** 2)\nif bmi < 18.5:\n    print(\"Underweight\")\nelif bmi < 25:\n    print(\"Normal\")\nelif bmi < 30:\n    print(\"Overweight\")\nelse:\n    print(\"Obese\")\n",
     },
-  ],
+],
   codex: {
     topic: "elif",
     pattern: "if condition1:\n    ...\nelif condition2:\n    ...\nelse:\n    ...",
@@ -691,33 +717,46 @@ window.CODELAB.lessons.push({
     "logic bug": "Code that runs without crashing but produces the wrong result. Python cannot detect logic bugs — only you can.",
   },
   content: [
-    {
+{
       type: "text",
       md: "Errors fall into three categories, and knowing which category you have tells you where to look.\n\nA **[[syntax error]]** means Python refused to run the program at all. The code broke a grammar rule — a missing colon, a `=` where `==` belongs. Python catches these before running a single line.\n\nA **[[runtime error]]** means Python started running but crashed mid-program. The grammar was fine, but something went wrong during execution — dividing by zero, calling `range()` with a float, or referencing a name that was never assigned.\n\nA **[[logic bug]]** means the program ran and finished, but it printed the wrong answer. Python cannot detect logic bugs — the code did exactly what you told it to do, but you told it the wrong thing.",
     },
-    {
+{
       type: "text",
       md: "**Debugging is a skill, not luck — follow a process.** Experienced programmers debug systematically. Step one: read the error message completely. It names the file, the line, and the type of error. That line is where Python stopped — which is often (but not always) close to the actual mistake. Step two: understand what Python expected versus what it found. A `TypeError` on `total + item` means one of those is not a number — check what each variable actually holds at that point. Step three: fix the root cause, not the symptom. Indenting a line differently might silence an `IndentationError` without fixing the underlying confusion about which block the line belongs to.\n\n**Print debugging — the oldest tool.** Add `print()` calls to see what variables hold mid-program. If a loop produces the wrong total, add `print(i, total)` inside it. See the actual values on each iteration. Most bugs become obvious when you compare what the computer actually computed against what you assumed it computed. Remove the print calls once the bug is fixed — they are diagnostic scaffolding, not permanent code.",
     },
-    {
+{
       type: "text",
       md: "When you hit an error, follow these three steps before changing anything:\n\n1. **Read the error class and message.** The first word after the colon names the type: `SyntaxError`, `IndentationError`, `TypeError`, `NameError`. The message after it says what specifically went wrong.\n2. **Go to the indicated line — then look at the line before it.** Python reports where it *noticed* the problem, which is sometimes one line after where the mistake actually is. The classic case: `IndentationError` often points to the line after the mis-indented one.\n3. **Understand the cause before changing anything.** If you fix something without understanding it, you may introduce a new bug or hide the original one. Ask: 'Why did this specific thing fail here?'",
     },
-    {
+{
       type: "example",
       note: "IndentationError pointing to the wrong line. Python reports line 5, but the real problem is the wrong indent on the print below it. Read the error, look one line earlier, and spot the cause.",
       code: "# Run this and read the IndentationError.\n# Then look at line 4 vs what Python expected.\ntotal = 0\nfor n in range(1, 4):\n    total += n\n  print(total)   # 2-space indent in a 4-space block\n",
     },
-    {
+{
+      type: "exercise",
+      rung: 1,
+      prompt: "The `print` is **outside** the loop — it runs once, after the loop finishes. Before running, predict what it prints.",
+      starter: "total = 0\nfor n in range(1, 4):\n    total += n\nprint(total)\n",
+      check: { type: "output", expected: "6" },
+      hints: [
+        "`range(1, 4)` produces 1, 2, 3 — it stops before 4.",
+        "Each iteration adds `n` to `total`: 0 + 1 + 2 + 3 = 6.",
+        "`print(total)` runs once after the loop. Output: 6.",
+      ],
+      solution: "total = 0\nfor n in range(1, 4):\n    total += n\nprint(total)\n",
+    },
+{
       type: "example",
       note: "The fixed version: print is now outside the loop (no indent) where it prints the final total once.",
       code: "total = 0\nfor n in range(1, 4):\n    total += n\nprint(total)    # 6 — printed once, after the loop\n",
     },
-    {
+{
       type: "text",
       md: "One more thing to know: **fixing the first error may reveal a second one underneath**. Python stops at the first problem it finds, so your code might have multiple bugs hiding behind each other. Fix one, re-run, and read the next error fresh. Each fix should be deliberate — understand each error before moving to the next.",
     },
-    {
+{
       type: "exercise",
       rung: 4,
       prompt: "This program should print 15, but it crashes with an IndentationError. Read the traceback — the error points to a specific line, but the real problem is one line earlier. Fix it so the program prints 15.",
@@ -730,7 +769,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "total = 0\nfor n in range(1, 6):\n    total += n\nprint(total)\n",
     },
-    {
+{
       type: "exercise",
       rung: 4,
       prompt: "This program should print 0 1 2 3 4 on one line but crashes with a TypeError. Read the error, understand why range() cannot use that value, and fix it.",
@@ -743,7 +782,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "limit = 10\nfor i in range(limit // 2):\n    print(i, end=\" \")\n",
     },
-    {
+{
       type: "exercise",
       rung: 4,
       prompt: "This program runs without crashing but prints 5 instead of 15. It is a logic bug — no error message, just a wrong answer. Find and fix the mistake.",
@@ -756,7 +795,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "total = 0\nfor n in range(1, 6):\n    total += n\nprint(total)\n",
     },
-  ],
+],
   codex: {
     topic: "debugging protocol",
     pattern: "# 1. Read the error class and message\n# 2. Go to the line — look one line earlier too\n# 3. Understand the cause before changing anything",
@@ -777,52 +816,52 @@ window.CODELAB.lessons.push({
     "_": "The underscore variable name, used by convention when you need to loop a set number of times but do not actually use the loop variable in the body.",
   },
   content: [
-    {
+{
       type: "text",
       md: "In the last two lessons, loops counted numbers. Here they do something more interesting: they draw shapes and schedule music. The loop itself is unchanged — the only difference is what you call inside the body.\n\nThe key idea in this lesson: **the loop variable does not have to be a counter you print — it can be a parameter that changes what happens on each step**. When you write `forward(i * 10)`, the turtle moves a different distance on every iteration. That changing distance is what makes a spiral open outward instead of repeating the same step.",
     },
-    {
+{
       type: "text",
       md: "**The `_` convention — communicating throwaway variables.** In Python, `_` is a valid variable name, but by convention it means 'I do not need this value.' Writing `for _ in range(6):` tells any reader: 'this loop runs 6 times; the loop count itself is not used.' Without `_`, a reader would wonder where `i` gets used later. The underscore is the standard Python signal for a throwaway — you will see it in professional code constantly.\n\n**Using the loop variable as a parameter — the key to procedural art.** `forward(i * 10)` means the distance changes with every step: 0, 10, 20, 30, ... The loop variable `i` is not just a counter; it is a *scaling parameter* that drives the drawing. This is the core trick behind spirals, gradients, and patterns: let the iteration number control the size, angle, or colour. The same principle applies to music: `play(60 + i)` plays a rising sequence, one note per step.",
     },
-    {
+{
       type: "example",
       note: "A square. We repeat the same two steps four times. The loop variable _ is the underscore convention — it signals that the count exists but you do not need to use its value.",
       code: "for _ in range(4):\n    forward(100)\n    right(90)\n",
     },
-    {
+{
+      type: "exercise",
+      rung: 6,
+      prompt: "Write a hexagon from scratch. A hexagon has 6 equal sides. Each exterior angle is 60 degrees. Use a for loop and the _ convention since you do not need the counter. Each side should be 100 units long.",
+      starter: "",
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "forward", val: 100 }, { fn: "right", val: 60 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 60 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 60 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 60 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 60 },
+          { fn: "forward", val: 100 }, { fn: "right", val: 60 },
+        ],
+      },
+      hints: [
+        "A hexagon has 6 sides, so range(6). The _ convention: for _ in range(6).",
+        "Each side is a forward(100) call. Each turn is a right(60) call.",
+        "for _ in range(6): then forward(100) and right(60) inside the body.",
+      ],
+      solution: "for _ in range(6):\n    forward(100)\n    right(60)\n",
+    },
+{
       type: "text",
       md: "The `_` name is a Python convention for 'I need to loop N times, but I do not need the count'. It is a real variable — you could call it `i` — but `_` tells any reader that the loop variable is intentionally unused in the body. You will see it often in real code.",
     },
-    {
+{
       type: "example",
       note: "A spiral: the step length grows on every iteration because i multiplies forward's distance. Without i * 5, you get a circle.",
       code: "for i in range(36):\n    forward(i * 5)    # i changes every step — that's what makes it a spiral\n    right(10)\n",
     },
-    {
-      type: "example",
-      note: "A kick on every beat, repeated four times. sample('kick') plays the sample; sleep(0.5) adds a half-second gap before the next beat.",
-      code: "for beat in range(4):\n    sample(\"kick\")\n    sleep(0.5)\n",
-    },
-    {
-      type: "text",
-      md: "Loops can contain `if` statements to vary what happens on different iterations. The `%` operator from Chapter 1 is especially useful here: `beat % 2 == 0` is True on beats 0, 2, 4, 6... (the even ones) and False on beats 1, 3, 5, 7... (the odd ones). This lets you alternate between two sounds or actions on alternating steps.",
-    },
-    {
-      type: "example",
-      note: "Kick on even beats, snare on odd beats. The if/else inside the loop picks a different sample depending on the beat number.",
-      code: "for beat in range(8):\n    if beat % 2 == 0:\n        sample(\"kick\")\n    else:\n        sample(\"snare\")\n    sleep(0.5)\n",
-    },
-    {
-      type: "text",
-      md: "Two loops can be nested: one inside the other. The inner loop runs to completion on **each** iteration of the outer loop. In the drum example below, for each bar the inner loop plays all four beats. Four bars of four beats gives sixteen events total.",
-    },
-    {
-      type: "example",
-      note: "A nested drum pattern. The outer loop controls the bar; the inner loop plays the beats. bar is held steady while beat cycles through 0,1,2,3.",
-      code: "for bar in range(4):\n    for beat in range(4):\n        if beat == 0:\n            sample(\"kick\")\n        else:\n            sample(\"hihat\")\n        sleep(0.5)\n",
-    },
-    {
+{
       type: "exercise",
       rung: 4,
       prompt: "This code draws a hexagon instead of a spiral because forward uses a fixed distance on every step. Fix it so the distance grows with each iteration — use the loop variable to multiply the step size — so the shape opens outward.",
@@ -845,7 +884,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "for i in range(6):\n    forward(i * 15)\n    right(60)\n",
     },
-    {
+{
       type: "exercise",
       rung: 5,
       prompt: "Complete this spiral. The for header is given. Fill in the two turtle calls inside the body so each step moves forward by i * 10 units and turns right by 91 degrees.",
@@ -870,30 +909,21 @@ window.CODELAB.lessons.push({
       ],
       solution: "for i in range(8):\n    forward(i * 10)\n    right(91)\n",
     },
-    {
-      type: "exercise",
-      rung: 6,
-      prompt: "Write a hexagon from scratch. A hexagon has 6 equal sides. Each exterior angle is 60 degrees. Use a for loop and the _ convention since you do not need the counter. Each side should be 100 units long.",
-      starter: "",
-      check: {
-        type: "calls",
-        calls: [
-          { fn: "forward", val: 100 }, { fn: "right", val: 60 },
-          { fn: "forward", val: 100 }, { fn: "right", val: 60 },
-          { fn: "forward", val: 100 }, { fn: "right", val: 60 },
-          { fn: "forward", val: 100 }, { fn: "right", val: 60 },
-          { fn: "forward", val: 100 }, { fn: "right", val: 60 },
-          { fn: "forward", val: 100 }, { fn: "right", val: 60 },
-        ],
-      },
-      hints: [
-        "A hexagon has 6 sides, so range(6). The _ convention: for _ in range(6).",
-        "Each side is a forward(100) call. Each turn is a right(60) call.",
-        "for _ in range(6): then forward(100) and right(60) inside the body.",
-      ],
-      solution: "for _ in range(6):\n    forward(100)\n    right(60)\n",
+{
+      type: "example",
+      note: "A kick on every beat, repeated four times. sample('kick') plays the sample; sleep(0.5) adds a half-second gap before the next beat.",
+      code: "for beat in range(4):\n    sample(\"kick\")\n    sleep(0.5)\n",
     },
-    {
+{
+      type: "text",
+      md: "Loops can contain `if` statements to vary what happens on different iterations. The `%` operator from Chapter 1 is especially useful here: `beat % 2 == 0` is True on beats 0, 2, 4, 6... (the even ones) and False on beats 1, 3, 5, 7... (the odd ones). This lets you alternate between two sounds or actions on alternating steps.",
+    },
+{
+      type: "example",
+      note: "Kick on even beats, snare on odd beats. The if/else inside the loop picks a different sample depending on the beat number.",
+      code: "for beat in range(8):\n    if beat % 2 == 0:\n        sample(\"kick\")\n    else:\n        sample(\"snare\")\n    sleep(0.5)\n",
+    },
+{
       type: "exercise",
       rung: 5,
       prompt: "Complete this 4-beat drum loop. On even beats (0 and 2) play a kick; on odd beats (1 and 3) play a snare. The loop and the if/else structure are given — fill in the two sample calls.",
@@ -914,7 +944,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "for beat in range(4):\n    if beat % 2 == 0:\n        sample(\"kick\")\n    else:\n        sample(\"snare\")\n    sleep(0.5)\n",
     },
-    {
+{
       type: "exercise",
       rung: 6,
       prompt: "Write an 8-beat loop from scratch. On even beats call sample('kick'); on odd beats call sample('hihat'). Add sleep(0.5) after each beat to set the pace.",
@@ -939,7 +969,16 @@ window.CODELAB.lessons.push({
       ],
       solution: "for beat in range(8):\n    if beat % 2 == 0:\n        sample(\"kick\")\n    else:\n        sample(\"hihat\")\n    sleep(0.5)\n",
     },
-  ],
+{
+      type: "text",
+      md: "Two loops can be nested: one inside the other. The inner loop runs to completion on **each** iteration of the outer loop. In the drum example below, for each bar the inner loop plays all four beats. Four bars of four beats gives sixteen events total.",
+    },
+{
+      type: "example",
+      note: "A nested drum pattern. The outer loop controls the bar; the inner loop plays the beats. bar is held steady while beat cycles through 0,1,2,3.",
+      code: "for bar in range(4):\n    for beat in range(4):\n        if beat == 0:\n            sample(\"kick\")\n        else:\n            sample(\"hihat\")\n        sleep(0.5)\n",
+    },
+],
   codex: {
     topic: "loops for drawing and sound",
     pattern: "for _ in range(n):      # repeat n times\n    forward(100)\n    right(60)\n\nfor i in range(n):      # vary with i\n    forward(i * 10)\n    right(91)\n\nfor beat in range(8):   # drum pattern\n    if beat % 2 == 0:\n        sample(\"kick\")\n    sleep(0.5)",
@@ -964,46 +1003,16 @@ window.CODELAB.lessons.push({
     "ZeroDivisionError": "Raised when dividing by zero.",
   },
   content: [
-    {
+{
       type: "text",
       md: "You have already seen `ValueError` at work: `int(\"hello\")` crashes with it. Until now, the only way to avoid that crash was to check the input before calling `int()`. Python gives you a second tool: `try`/`except`.\n\nThe idea is direct. Put the risky code inside a `try` block. If an **[[exception]]** occurs, Python jumps immediately to the matching `except` block and runs it instead. If no exception occurs, the `except` block is skipped entirely.",
     },
-    {
+{
       type: "example",
       note: "Run this. int('hello') raises a ValueError — Python jumps to the except block and prints the message. The line print(n) inside the try block never runs.",
       code: "try:\n    n = int(\"hello\")\n    print(n)              # never reached\nexcept ValueError:\n    print(\"not a valid number\")\nprint(\"program continues\")  # always runs\n",
     },
-    {
-      type: "text",
-      md: "**Why not just use `if` to check first?** You could try to guard against bad input before calling `int()`. Python strings have a method called `.isdigit()` that returns `True` if every character is a digit. Looks like a solution — but `.isdigit()` returns `False` for `\"-5\"` (has a minus sign), `\"3.14\"` (has a dot), and `\" 7\"` (has a leading space). All three are valid integers or near-integers that `int()` actually handles fine. The pre-check rejects numbers you want to accept.\n\nYou also end up writing the work twice: check the string, then convert the string. `try`/`except` does it once — attempt the conversion, handle the failure. The rule of thumb: use `if` when you can test a condition cleanly and cheaply before doing the work. Use `try`/`except` when the only reliable way to know if something works is to try it.",
-    },
-    {
-      type: "text",
-      md: "The `except` line names the specific **[[exception]]** class it handles. `except ValueError:` catches only `ValueError` — other exceptions still propagate and crash the program as usual. This is correct behaviour: you should only catch exceptions you know how to handle.\n\nYou can have multiple `except` blocks below one `try`, each handling a different class. Python checks them in order and runs the first one that matches.",
-    },
-    {
-      type: "example",
-      note: "Two except blocks, two different errors. Change the inputs to see each branch fire.",
-      code: "try:\n    a = float(input())\n    b = float(input())\n    print(a / b)\nexcept ValueError:\n    print(\"Enter numbers only.\")\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero.\")\n",
-    },
-    {
-      type: "text",
-      md: "**Python's philosophy: EAFP.** Python programmers call this style EAFP — 'Easier to Ask Forgiveness than Permission'. Instead of pre-checking every possible problem before doing something, you attempt the thing and handle failures in named `except` blocks. The alternative is called LBYL — 'Look Before You Leap' — which produces chains of `if` guards that are often harder to read and still miss edge cases.\n\nEAFP keeps the normal path clean. The `try` block reads like the code would if nothing went wrong. Error handling is separated into blocks that are clearly labelled with exactly what went wrong. Exceptions are **named objects** — `ValueError` and `ZeroDivisionError` are Python classes that carry information about what failed. Naming them in `except` is making a claim: 'I know exactly what can go wrong on these lines, and I know what to do about it.' That specificity is what makes exception handling good design, not just defensive coding.",
-    },
-    {
-      type: "text",
-      md: "**Bare `except:` — why it is dangerous.** You may see `except:` written without a class name. This catches everything, including `KeyboardInterrupt` (what fires when someone presses Ctrl-C to stop the program), `SystemExit`, and `MemoryError`. More importantly, it catches bugs in your own code. If you have a typo that causes a `NameError`, a bare `except:` swallows it silently and runs your error-handling message instead — making the bug invisible. You spend an hour wondering why the wrong thing happens, not realising the program is hiding a crash from you.\n\nAlways name the class you intend to handle. Catching `ValueError` means: 'this line can fail with a bad value and I know what to print.' Everything else — including bugs you did not anticipate — still crashes loudly, which is correct.",
-    },
-    {
-      type: "text",
-      md: "**Bulletproof input: combining what you know.** The most practical pattern `try`/`except` unlocks is a loop that keeps asking until it gets a valid answer. You already know all the pieces: `while True:` from Lesson 2.4 loops forever, and `break` exits the loop early. Wrap the risky conversion in `try`, put `break` right after the line that can fail, and put the retry message in `except`.\n\nWhy does `break` go after `int(input())` and not after the whole `try` block? Because if `int()` raises a `ValueError`, Python immediately jumps to `except` — the `break` is never reached. The loop restarts. Only when `int()` succeeds does execution reach `break` and exit the loop. The structure uses the exception itself as the signal: success means break, failure means loop again.\n\nThis is the standard Python idiom for validated input. Almost every real program that reads from a person eventually needs it.",
-    },
-    {
-      type: "example",
-      note: "Keep asking until the user enters a valid integer. break exits the loop only when int() succeeds. Any non-integer restarts the loop.",
-      code: "while True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        print(\"That's not a number. Try again.\")\nprint(\"Got:\", n)\n",
-    },
-    {
+{
       type: "exercise",
       rung: 1,
       prompt: "Before you run this, predict which block executes and what prints. Write your prediction, then run to check.",
@@ -1016,7 +1025,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "try:\n    n = int(\"42\")\n    print(\"success:\", n)\nexcept ValueError:\n    print(\"not a number\")\n",
     },
-    {
+{
       type: "exercise",
       rung: 3,
       prompt: "This catches a ValueError and prints 'oops'. Change the except message to 'Enter a whole number.' instead.",
@@ -1029,7 +1038,15 @@ window.CODELAB.lessons.push({
       ],
       solution: "try:\n    n = int(\"hello\")\n    print(n)\nexcept ValueError:\n    print(\"Enter a whole number.\")\n",
     },
-    {
+{
+      type: "text",
+      md: "**Why not just use `if` to check first?** You could try to guard against bad input before calling `int()`. Python strings have a method called `.isdigit()` that returns `True` if every character is a digit. Looks like a solution — but `.isdigit()` returns `False` for `\"-5\"` (has a minus sign), `\"3.14\"` (has a dot), and `\" 7\"` (has a leading space). All three are valid integers or near-integers that `int()` actually handles fine. The pre-check rejects numbers you want to accept.\n\nYou also end up writing the work twice: check the string, then convert the string. `try`/`except` does it once — attempt the conversion, handle the failure. The rule of thumb: use `if` when you can test a condition cleanly and cheaply before doing the work. Use `try`/`except` when the only reliable way to know if something works is to try it.",
+    },
+{
+      type: "text",
+      md: "The `except` line names the specific **[[exception]]** class it handles. `except ValueError:` catches only `ValueError` — other exceptions still propagate and crash the program as usual. This is correct behaviour: you should only catch exceptions you know how to handle.\n\nYou can have multiple `except` blocks below one `try`, each handling a different class. Python checks them in order and runs the first one that matches.",
+    },
+{
       type: "exercise",
       rung: 4,
       prompt: "This program should catch the error from int('hello') and print 'not a number'. But it specifies the wrong exception class, so the real ValueError escapes and crashes the program. Fix the except line so it catches the right error.",
@@ -1042,21 +1059,12 @@ window.CODELAB.lessons.push({
       ],
       solution: "try:\n    n = int(\"hello\")\n    print(n)\nexcept ValueError:\n    print(\"not a number\")\n",
     },
-    {
-      type: "exercise",
-      rung: 5,
-      prompt: "Complete the bulletproof input loop. The while True and try/break structure are in place — add one print call inside the except block so the user knows to try again.",
-      starter: "while True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        pass  # tell the user to try again\nprint(\"Got:\", n)\n",
-      mockInput: ["abc", "5"],
-      check: { type: "output", expected: "That's not a number. Try again.\nGot: 5" },
-      hints: [
-        "Replace pass with a print call. When the user types 'abc', int() raises ValueError and the except block runs — your message should appear there.",
-        "The loop keeps going after the except block. On the next iteration, the user enters 5 — int('5') succeeds, break exits the loop.",
-        "Replace pass with: print(\"That's not a number. Try again.\")",
-      ],
-      solution: "while True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        print(\"That's not a number. Try again.\")\nprint(\"Got:\", n)\n",
+{
+      type: "example",
+      note: "Two except blocks, two different errors. Change the inputs to see each branch fire.",
+      code: "try:\n    a = float(input())\n    b = float(input())\n    print(a / b)\nexcept ValueError:\n    print(\"Enter numbers only.\")\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero.\")\n",
     },
-    {
+{
       type: "exercise",
       rung: 6,
       prompt: "Write a safe divider from scratch. Read two numbers with float(input()). Divide the first by the second and print the result. Handle two possible errors: if the user types a non-number, print 'Enter numbers only.'; if the second number is zero, print 'Cannot divide by zero.' With inputs 10 and 2, it should print 5.0.",
@@ -1070,7 +1078,38 @@ window.CODELAB.lessons.push({
       ],
       solution: "try:\n    a = float(input())\n    b = float(input())\n    print(a / b)\nexcept ValueError:\n    print(\"Enter numbers only.\")\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero.\")\n",
     },
-  ],
+{
+      type: "text",
+      md: "**Python's philosophy: EAFP.** Python programmers call this style EAFP — 'Easier to Ask Forgiveness than Permission'. Instead of pre-checking every possible problem before doing something, you attempt the thing and handle failures in named `except` blocks. The alternative is called LBYL — 'Look Before You Leap' — which produces chains of `if` guards that are often harder to read and still miss edge cases.\n\nEAFP keeps the normal path clean. The `try` block reads like the code would if nothing went wrong. Error handling is separated into blocks that are clearly labelled with exactly what went wrong. Exceptions are **named objects** — `ValueError` and `ZeroDivisionError` are Python classes that carry information about what failed. Naming them in `except` is making a claim: 'I know exactly what can go wrong on these lines, and I know what to do about it.' That specificity is what makes exception handling good design, not just defensive coding.",
+    },
+{
+      type: "text",
+      md: "**Bare `except:` — why it is dangerous.** You may see `except:` written without a class name. This catches everything, including `KeyboardInterrupt` (what fires when someone presses Ctrl-C to stop the program), `SystemExit`, and `MemoryError`. More importantly, it catches bugs in your own code. If you have a typo that causes a `NameError`, a bare `except:` swallows it silently and runs your error-handling message instead — making the bug invisible. You spend an hour wondering why the wrong thing happens, not realising the program is hiding a crash from you.\n\nAlways name the class you intend to handle. Catching `ValueError` means: 'this line can fail with a bad value and I know what to print.' Everything else — including bugs you did not anticipate — still crashes loudly, which is correct.",
+    },
+{
+      type: "text",
+      md: "**Bulletproof input: combining what you know.** The most practical pattern `try`/`except` unlocks is a loop that keeps asking until it gets a valid answer. You already know all the pieces: `while True:` from Lesson 2.4 loops forever, and `break` exits the loop early. Wrap the risky conversion in `try`, put `break` right after the line that can fail, and put the retry message in `except`.\n\nWhy does `break` go after `int(input())` and not after the whole `try` block? Because if `int()` raises a `ValueError`, Python immediately jumps to `except` — the `break` is never reached. The loop restarts. Only when `int()` succeeds does execution reach `break` and exit the loop. The structure uses the exception itself as the signal: success means break, failure means loop again.\n\nThis is the standard Python idiom for validated input. Almost every real program that reads from a person eventually needs it.",
+    },
+{
+      type: "example",
+      note: "Keep asking until the user enters a valid integer. break exits the loop only when int() succeeds. Any non-integer restarts the loop.",
+      code: "while True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        print(\"That's not a number. Try again.\")\nprint(\"Got:\", n)\n",
+    },
+{
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete the bulletproof input loop. The while True and try/break structure are in place — add one print call inside the except block so the user knows to try again.",
+      starter: "while True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        pass  # tell the user to try again\nprint(\"Got:\", n)\n",
+      mockInput: ["abc", "5"],
+      check: { type: "output", expected: "That's not a number. Try again.\nGot: 5" },
+      hints: [
+        "Replace pass with a print call. When the user types 'abc', int() raises ValueError and the except block runs — your message should appear there.",
+        "The loop keeps going after the except block. On the next iteration, the user enters 5 — int('5') succeeds, break exits the loop.",
+        "Replace pass with: print(\"That's not a number. Try again.\")",
+      ],
+      solution: "while True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        print(\"That's not a number. Try again.\")\nprint(\"Got:\", n)\n",
+    },
+],
   codex: {
     topic: "try and except",
     pattern: "try:\n    risky_code()\nexcept ValueError:\n    print(\"handle it\")\nexcept ZeroDivisionError:\n    print(\"zero\")\n\n# Bulletproof input:\nwhile True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        print(\"Try again.\")",
@@ -1091,15 +1130,15 @@ window.CODELAB.lessons.push({
     capstone: "A project that combines everything you have learned so far. No new syntax — only new combinations.",
   },
   content: [
-    {
+{
       type: "text",
       md: "This lesson introduces no new syntax. Everything here — variables, loops, conditions, try/except, turtle commands, and sound commands — you already know. The goal is to combine them in ways that are bigger than any single lesson.\n\nThe exercises below are split into two groups: drawing first, then music. Each group starts with a worked example, then a reference card, then exercises.",
     },
-    {
+{
       type: "text",
       md: "**Drawing with the turtle.** Here is the complete toolkit for what follows. Keep this visible while you work through the drawing exercises.",
     },
-    {
+{
       type: "table",
       title: "Turtle colours — any of these work in pencolor()",
       head: ["colour", "colour", "colour", "colour", "colour", "colour", "colour"],
@@ -1108,7 +1147,7 @@ window.CODELAB.lessons.push({
         ["`\"cyan\"`", "`\"magenta\"`", "`\"gold\"`", "`\"coral\"`", "`\"teal\"`", "`\"lime\"`", "`\"indigo\"`"],
       ],
     },
-    {
+{
       type: "table",
       title: "Polygon angles — regular shapes",
       head: ["shape", "sides", "turn angle"],
@@ -1120,44 +1159,31 @@ window.CODELAB.lessons.push({
         ["5-pointed star", "—", "`144`° (skips every other vertex)"],
       ],
     },
-    {
+{
       type: "example",
       note: "A spiral that changes colour every three steps. Three ideas from different lessons working together: the loop variable as a parameter, the % operator for cycling, and pencolor() from the turtle library.",
       code: "for i in range(18):\n    if i % 3 == 0:\n        pencolor(\"red\")\n    elif i % 3 == 1:\n        pencolor(\"blue\")\n    else:\n        pencolor(\"green\")\n    forward(i * 8)\n    right(91)\n",
     },
-    {
-      type: "example",
-      note: "A melody that repeats a three-note motif four times. The outer loop counts repetitions; the inner play/sleep lines lay down the notes. set_tempo() controls the speed.",
-      code: "set_tempo(110)\nfor rep in range(4):\n    play(60)\n    sleep(0.5)\n    play(64)\n    sleep(0.5)\n    play(67)\n    sleep(0.5)\n",
-    },
-    {
-      type: "example",
-      note: "A 16-beat groove: kick on every beat, snare on beats 3 and 11 (the backbeat in a bar of 16). Change the beat numbers to shift the snare position.",
-      code: "set_tempo(120)\nfor beat in range(16):\n    sample(\"kick\")\n    if beat == 3 or beat == 11:\n        sample(\"snare\")\n    sleep(0.25)\n",
-    },
-    {
+{
       type: "exercise",
       rung: 4,
-      prompt: "This is meant to draw a 5-pointed star, but the angle is wrong so it draws something else. A regular 5-pointed star needs an exterior angle of 144 degrees — not 120. Fix the turn angle.",
-      starter: "for _ in range(5):\n    forward(100)\n    right(120)\n",
+      prompt: "This spiral should grow outward with each step, but all the lines are the same length — it is drawing a rough circle instead of a spiral. Find the bug in the `forward()` call and fix it.",
+      starter: "for i in range(6):\n    if i % 3 == 0:\n        pencolor(\"red\")\n    elif i % 3 == 1:\n        pencolor(\"blue\")\n    else:\n        pencolor(\"green\")\n    forward(50)  # bug: should grow with i\n    right(91)\n",
       check: {
         type: "calls",
         calls: [
-          { fn: "forward", val: 100 }, { fn: "right", val: 144 },
-          { fn: "forward", val: 100 }, { fn: "right", val: 144 },
-          { fn: "forward", val: 100 }, { fn: "right", val: 144 },
-          { fn: "forward", val: 100 }, { fn: "right", val: 144 },
-          { fn: "forward", val: 100 }, { fn: "right", val: 144 },
+          { fn: "color", val: "red" },  { fn: "forward", val: 0 },  { fn: "right", val: 91 },
+          { fn: "color", val: "blue" }, { fn: "forward", val: 8 },  { fn: "right", val: 91 },
         ],
       },
       hints: [
-        "A regular polygon with n sides has an exterior angle of 360/n degrees. But a 5-pointed star is not a regular pentagon — each point turns 144 degrees, not 72.",
-        "The current angle 120 draws a triangle-like shape. A proper 5-pointed star goes forward, turns 144, forward, turns 144, and so on for all five points.",
-        "Change right(120) to right(144).",
+        "Look at the lesson example: each step moves `i * 8` units, so the first step moves 0, the second moves 8, the third moves 16. The spiral grows because the distance increases with `i`.",
+        "The bug is `forward(50)` — that is a fixed distance. A spiral needs a growing distance.",
+        "Fix: change `forward(50)` to `forward(i * 8)`.",
       ],
-      solution: "for _ in range(5):\n    forward(100)\n    right(144)\n",
+      solution: "for i in range(6):\n    if i % 3 == 0:\n        pencolor(\"red\")\n    elif i % 3 == 1:\n        pencolor(\"blue\")\n    else:\n        pencolor(\"green\")\n    forward(i * 8)\n    right(91)\n",
     },
-    {
+{
       type: "exercise",
       rung: 5,
       prompt: "Complete this colour-changing spiral. The loop runs 6 steps. On each step, pick a colour based on i % 3 (0 → red, 1 → blue, 2 → green), then move forward by i * 10 and turn right 91 degrees. The three pencolor calls are missing — fill them in.",
@@ -1180,34 +1206,30 @@ window.CODELAB.lessons.push({
       ],
       solution: "for i in range(6):\n    if i % 3 == 0:\n        pencolor(\"red\")\n    elif i % 3 == 1:\n        pencolor(\"blue\")\n    else:\n        pencolor(\"green\")\n    forward(i * 10)\n    right(91)\n",
     },
-    {
+{
       type: "exercise",
       rung: 6,
-      prompt: "Write a polygon generator. Use bulletproof input (while True / try / break / except ValueError) to read the number of sides. Then draw a regular polygon: each side is 100 units and each turn is 360 divided by the number of sides degrees. With input 5, it draws a pentagon.",
+      prompt: "Write a colour-changing spiral from scratch. Loop `i` from 0 to 8 (9 steps total). Each step: if `i % 3 == 0` set colour to `'red'`; if `i % 3 == 1` set colour to `'orange'`; otherwise set colour to `'yellow'`. Then move `forward(i * 12)` and turn `right(91)`.",
       starter: "",
-      mockInput: ["5"],
       check: {
         type: "calls",
         calls: [
-          { fn: "forward", val: 100 }, { fn: "right", val: 72.0 },
-          { fn: "forward", val: 100 }, { fn: "right", val: 72.0 },
-          { fn: "forward", val: 100 }, { fn: "right", val: 72.0 },
-          { fn: "forward", val: 100 }, { fn: "right", val: 72.0 },
-          { fn: "forward", val: 100 }, { fn: "right", val: 72.0 },
+          { fn: "color", val: "red" },    { fn: "forward", val: 0 },  { fn: "right", val: 91 },
+          { fn: "color", val: "orange" }, { fn: "forward", val: 12 }, { fn: "right", val: 91 },
         ],
       },
       hints: [
-        "Use the bulletproof input pattern from Lesson 2.8: while True: / try: n = int(input()) / break / except ValueError: print(...)",
-        "Once you have n, use a for loop: for _ in range(n): then forward(100) and right(360 / n).",
-        "360 / 5 = 72.0 — division gives a float, which right() accepts. You do not need to convert it.",
+        "Start with `for i in range(9):`. Every other line goes inside this loop.",
+        "Use `if i % 3 == 0:` / `elif i % 3 == 1:` / `else:` for the three colour branches, exactly like the lesson example.",
+        "After the colour block: `forward(i * 12)` then `right(91)`. When `i=0` the turtle moves 0; when `i=1` it moves 12, then 24, and so on.",
       ],
-      solution: "while True:\n    try:\n        n = int(input())\n        break\n    except ValueError:\n        print(\"Enter a whole number.\")\nfor _ in range(n):\n    forward(100)\n    right(360 / n)\n",
+      solution: "for i in range(9):\n    if i % 3 == 0:\n        pencolor(\"red\")\n    elif i % 3 == 1:\n        pencolor(\"orange\")\n    else:\n        pencolor(\"yellow\")\n    forward(i * 12)\n    right(91)\n",
     },
-    {
+{
       type: "text",
       md: "**Making music.** The next exercises are all about sound. Use the reference cards below while you build.",
     },
-    {
+{
       type: "table",
       title: "Note numbers — C major scale (middle octave)",
       head: ["C", "D", "E", "F", "G", "A", "B", "high C"],
@@ -1215,7 +1237,7 @@ window.CODELAB.lessons.push({
         ["`60`", "`62`", "`64`", "`65`", "`67`", "`69`", "`71`", "`72`"],
       ],
     },
-    {
+{
       type: "table",
       title: "Going higher or lower — add or subtract 12 per octave",
       head: ["low C", "middle C", "high C", "very high C"],
@@ -1223,7 +1245,7 @@ window.CODELAB.lessons.push({
         ["`48`", "`60`", "`72`", "`84`"],
       ],
     },
-    {
+{
       type: "table",
       title: "Minor scale — darker, moodier sound",
       head: ["C", "D", "Eb", "F", "G", "Ab", "Bb", "C"],
@@ -1231,7 +1253,7 @@ window.CODELAB.lessons.push({
         ["`60`", "`62`", "`63`", "`65`", "`67`", "`68`", "`70`", "`72`"],
       ],
     },
-    {
+{
       type: "table",
       title: "Pentatonic — five notes that sound good in any order",
       head: ["C", "D", "E", "G", "A"],
@@ -1239,18 +1261,7 @@ window.CODELAB.lessons.push({
         ["`60`", "`62`", "`64`", "`67`", "`69`"],
       ],
     },
-    {
-      type: "table",
-      title: "Drum sounds — use with sample()",
-      head: ["name", "sound"],
-      rows: [
-        ["`\"kick\"`", "deep bass drum hit"],
-        ["`\"snare\"`", "cracking mid hit"],
-        ["`\"hihat\"`", "short high tick"],
-        ["`\"clap\"` / `\"tom\"` / any name", "short percussive click"],
-      ],
-    },
-    {
+{
       type: "table",
       title: "sleep() values — how long to wait between notes or beats",
       head: ["call", "feels like"],
@@ -1260,7 +1271,12 @@ window.CODELAB.lessons.push({
         ["`sleep(0.25)`", "quarter beat (sixteenth note — driving groove)"],
       ],
     },
-    {
+{
+      type: "example",
+      note: "A melody that repeats a three-note motif four times. The outer loop counts repetitions; the inner play/sleep lines lay down the notes. set_tempo() controls the speed.",
+      code: "set_tempo(110)\nfor rep in range(4):\n    play(60)\n    sleep(0.5)\n    play(64)\n    sleep(0.5)\n    play(67)\n    sleep(0.5)\n",
+    },
+{
       type: "exercise",
       rung: 5,
       prompt: "Complete this repeating arpeggio. The outer loop runs 3 times. Inside each repetition, play three notes — 60 (C), 64 (E), and 67 (G) — with a sleep(0.5) after each note. The loop header and set_tempo are given; add the six missing lines.",
@@ -1280,7 +1296,23 @@ window.CODELAB.lessons.push({
       ],
       solution: "set_tempo(100)\nfor rep in range(3):\n    play(60)\n    sleep(0.5)\n    play(64)\n    sleep(0.5)\n    play(67)\n    sleep(0.5)\n",
     },
-    {
+{
+      type: "table",
+      title: "Drum sounds — use with sample()",
+      head: ["name", "sound"],
+      rows: [
+        ["`\"kick\"`", "deep bass drum hit"],
+        ["`\"snare\"`", "cracking mid hit"],
+        ["`\"hihat\"`", "short high tick"],
+        ["`\"clap\"` / `\"tom\"` / any name", "short percussive click"],
+      ],
+    },
+{
+      type: "example",
+      note: "A 16-beat groove: kick on every beat, snare on beats 3 and 11 (the backbeat in a bar of 16). Change the beat numbers to shift the snare position.",
+      code: "set_tempo(120)\nfor beat in range(16):\n    sample(\"kick\")\n    if beat == 3 or beat == 11:\n        sample(\"snare\")\n    sleep(0.25)\n",
+    },
+{
       type: "exercise",
       rung: 6,
       prompt: "Write an 8-beat groove from scratch. On every beat play a kick with sample('kick'). On beats 2 and 6 also play a snare with sample('snare') — after the kick. Add sleep(0.5) after each beat's sounds. Use a for loop over range(8) and if with the or operator.",
@@ -1305,7 +1337,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "for beat in range(8):\n    sample(\"kick\")\n    if beat == 2 or beat == 6:\n        sample(\"snare\")\n    sleep(0.5)\n",
     },
-  ],
+],
   codex: {
     topic: "Chapter 2 capstone",
     pattern: "# Colour spiral\nfor i in range(n):\n    pencolor(\"red\" if i%3==0 else \"blue\")\n    forward(i * step)\n    right(angle)\n\n# Drum groove\nfor beat in range(8):\n    sample(\"kick\")\n    if beat == 2 or beat == 6:\n        sample(\"snare\")\n    sleep(0.5)",

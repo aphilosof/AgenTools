@@ -28,6 +28,19 @@ window.CODELAB.lessons.push({
       code: 'print("Go team!")\nprint("Win this!")\nprint("Go team!")\nprint("Win this!")\nprint("Go team!")\nprint("Win this!")',
     },
     {
+      type: "exercise",
+      rung: 4,
+      prompt: "The code below should print the same cheer four times, but one line has a typo. Find and fix the one wrong line.",
+      starter: 'print("Go team!")\nprint("Win this!")\nprint("Go team!")\nprint("Win thisq!")\nprint("Go team!")\nprint("Win this!")\nprint("Go team!")\nprint("Win this!")',
+      check: { type: "output", expected: "Go team!\nWin this!\nGo team!\nWin this!\nGo team!\nWin this!\nGo team!\nWin this!" },
+      hints: [
+        "Read every line carefully. One has an extra character that should not be there.",
+        "Compare each 'Win this!' line — only one is different.",
+        "Having to check eight lines for a typo is exactly the problem DRY solves.",
+      ],
+      solution: 'print("Go team!")\nprint("Win this!")\nprint("Go team!")\nprint("Win this!")\nprint("Go team!")\nprint("Win this!")\nprint("Go team!")\nprint("Win this!")',
+    },
+    {
       type: "text",
       md: "Six lines. It works — for now.\n\nBut what if the cheer changes? You edit line 1, then line 3, then line 5. Miss one and you have a bug. That is the **failure mode of copy-paste**: every change must happen in five places instead of one.\n\nThis is so common in programming that it has a name: the **[[DRY]]** principle — **Don't Repeat Yourself**. Copy-paste is the enemy of DRY. A [[function]] is the cure.",
     },
@@ -80,6 +93,19 @@ window.CODELAB.lessons.push({
         "The blank line separates the definition from the calls.",
       ],
       solution: 'def cheer():\n    print("Go!")\n    print("Yeah!")\n\ncheer()\ncheer()\n',
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "Write a function `repeat_line(text, n)` that prints `text` exactly `n` times. Then call `repeat_line(\"Rock on!\", 3)`. This is DRY in action: one definition, any number of uses.",
+      starter: "",
+      check: { type: "output", expected: "Rock on!\nRock on!\nRock on!" },
+      hints: [
+        "def repeat_line(text, n): starts the function.",
+        "Use a for loop with range(n) inside the function body.",
+        "Call the function with the two arguments after the definition.",
+      ],
+      solution: "def repeat_line(text, n):\n    for _ in range(n):\n        print(text)\n\nrepeat_line(\"Rock on!\", 3)",
     },
     {
       type: "exercise",
@@ -230,7 +256,20 @@ window.CODELAB.lessons.push({
         "The second print should output exactly: I run on your computer. — note the period at the end."
       ],
       solution: "def describe():\n    print(\"I am Python.\")\n    print(\"I run on your computer.\")\n\ndescribe()\ndescribe()\n"
-    }
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "Write `print_stars(n)` from scratch. It should print `n` stars on a single line (e.g. `print_stars(4)` prints `****`). Call it three times: with 3, 5, and 2.",
+      starter: "",
+      check: { type: "output", expected: "***\n*****\n**" },
+      hints: [
+        "def print_stars(n): is the function header.",
+        "Inside the body, print('*' * n) prints n stars on one line.",
+        "Call it three times: print_stars(3), print_stars(5), print_stars(2).",
+      ],
+      solution: "def print_stars(n):\n    print('*' * n)\n\nprint_stars(3)\nprint_stars(5)\nprint_stars(2)",
+    },
   ],
   codex: {
     topic: "def syntax",
@@ -344,6 +383,19 @@ window.CODELAB.lessons.push({
         "The two print calls are already correct — only the function body needs fixing."
       ],
       solution: "def celsius_to_f(c):\n    return (c * 9 / 5) + 32\n\nprint(celsius_to_f(0))\nprint(celsius_to_f(100))\n"
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "Write `bmi(weight_kg, height_m)` from scratch. The formula is `weight_kg / (height_m ** 2)`. Return the result rounded to 1 decimal place. Test it with `print(bmi(70, 1.75))`.",
+      starter: "",
+      check: { type: "output", expected: "22.9" },
+      hints: [
+        "Use ** for exponentiation: height_m ** 2.",
+        "round(value, 1) rounds to one decimal place.",
+        "Return the rounded value, then print(bmi(70, 1.75)) to test it.",
+      ],
+      solution: "def bmi(weight_kg, height_m):\n    return round(weight_kg / (height_m ** 2), 1)\n\nprint(bmi(70, 1.75))",
     },
   ],
   codex: {
@@ -519,6 +571,29 @@ window.CODELAB.lessons.push({
       solution: 'def make_upper(text):\n    result = text.upper()\n    return result\n\ndef make_lower(text):\n    result = text.lower()\n    return result\n\nprint(make_upper("hello"))\nprint(make_lower("WORLD"))\n',
     },
     {
+      type: "exercise",
+      rung: 2,
+      prompt: "Arrange these lines to build a function that doubles a string and prints the result. Notice that `text` is used both outside the function (as a global variable) and as a parameter name inside — they are completely independent.",
+      starter: "",
+      check: {
+        type: "parsons",
+        lines: [
+          'text = "rock"',
+          "def double_text(text):",
+          "    result = text + text",
+          "    return result",
+          "print(double_text(text))",
+        ],
+        distractors: ["    return text", "result = text + text"],
+      },
+      hints: [
+        "Start with the global assignment: `text = \"rock\"`.",
+        "The function definition comes next. Its parameter is also named `text` — that is intentional; Python treats them as separate.",
+        "Inside the function, `result = text + text` concatenates the parameter. Then `return result`. Outside, `print(double_text(text))` passes the global `text`.",
+      ],
+      solution: 'text = "rock"\ndef double_text(text):\n    result = text + text\n    return result\nprint(double_text(text))',
+    },
+    {
       type: "text",
       md: "**The `UnboundLocalError` trap.**\n\nHere is a subtle crash that surprises everyone the first time.\n\nPython **scans the entire function body before running a single line**. If it sees `count =` inside the function, it decides: `count` is a [[local variable]] throughout this function. Then when it tries to run `count - 10`, the local `count` has no value yet — `UnboundLocalError: local variable 'count' referenced before assignment`.\n\nThe anti-pattern: reaching outside your [[frame]] to read a [[global variable]] and then writing to a local with the same name.\n\n**The fix is always the same: pass the value as a parameter.**\n\nNow `reset` owns its data through a parameter. No confusion about which `n` is local vs global — `n` is always local.",
     },
@@ -621,6 +696,19 @@ window.CODELAB.lessons.push({
     },
     {
       type: "exercise",
+      rung: 1,
+      prompt: "Read the function, then predict what each `print` outputs. Notice that `volume(3, 4)` omits `h` — which default kicks in?",
+      starter: "def volume(l, w, h=1):\n    return l * w * h\n\nprint(volume(3, 4))\nprint(volume(3, 4, 5))\n",
+      check: { type: "output", expected: "12\n60" },
+      hints: [
+        "`h` has a default of `1`. When you omit it, Python uses `1`.",
+        "`volume(3, 4)` computes `3 * 4 * 1 = 12`.",
+        "`volume(3, 4, 5)` overrides `h` with `5`: `3 * 4 * 5 = 60`.",
+      ],
+      solution: "def volume(l, w, h=1):\n    return l * w * h\n\nprint(volume(3, 4))\nprint(volume(3, 4, 5))\n",
+    },
+    {
+      type: "exercise",
       rung: 3,
       prompt: "The function below requires both `name` and `greeting` every time it is called.\n\nAdd a default value of `\"Hello\"` to the `greeting` parameter.\n\nThen change the first `print` call to `greet(\"Sam\")` — no second argument — and keep the second call as `greet(\"Sam\", \"Hi\")`.\n\nExpected output:\n```\nHello, Sam!\nHi, Sam!\n```",
       starter: "def greet(name, greeting):\n    return greeting + \", \" + name + \"!\"\n\nprint(greet(\"Sam\", \"Hello\"))\nprint(greet(\"Sam\", \"Hi\"))\n",
@@ -631,6 +719,19 @@ window.CODELAB.lessons.push({
         "Required parameters come before defaulted ones: `def greet(name, greeting=\"Hello\"):`"
       ],
       solution: "def greet(name, greeting=\"Hello\"):\n    return greeting + \", \" + name + \"!\"\n\nprint(greet(\"Sam\"))\nprint(greet(\"Sam\", \"Hi\"))\n"
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "The function has a bug: calling `repeat_char(\"*\")` prints nothing. Fix the default so that calling with no second argument repeats the character **3** times.",
+      starter: "def repeat_char(char, times=0):\n    return char * times\n\nprint(repeat_char(\"*\"))     # should print ***\nprint(repeat_char(\"*\", 5))  # should print *****\n",
+      check: { type: "output", expected: "***\n*****" },
+      hints: [
+        "The bug is `times=0`. Zero repetitions gives an empty string.",
+        "Change the default to `times=3`.",
+        "The second call passes `5` explicitly, overriding the default.",
+      ],
+      solution: "def repeat_char(char, times=3):\n    return char * times\n\nprint(repeat_char(\"*\"))\nprint(repeat_char(\"*\", 5))\n",
     },
     {
       type: "text",
@@ -689,38 +790,20 @@ window.CODELAB.lessons.push({
     "helper function": "A function that does one small job and is called by other functions to build something bigger.",
   },
   content: [
-    {
+{
       type: "text",
       md: "Imagine writing `draw_house` without functions — you'd write 30-plus `forward()` and `right()` calls in a row, and finding a bug would mean reading every line. That's the anti-pattern: **flat spaghetti code** with no structure. [[Decomposition]] is the CS principle that fixes this: you break the drawing into named jobs like `draw_square`, `draw_roof`, and `draw_house`, where each function does one thing and `draw_house` just calls the helpers without caring *how* they work. Think of a recipe — a good one says \"make the dough\" as one step, while a bad one lists every flour-and-yeast action inside the main method. Named sub-tasks make the top level readable.",
     },
-    {
+{
       type: "text",
       md: "Here's the key insight: **every regular polygon uses the same formula**. A regular polygon has equal sides and equal turns — after you walk one side, you turn by the exterior angle, which is always `360 / sides`. A square uses `360 / 4 = 90°`, a triangle uses `360 / 3 = 120°`, a hexagon uses `360 / 6 = 60°`. One function covers all of them — that's [[abstraction]]: hiding the repeated pattern behind a single name. Without this, you'd write a separate loop for each shape, which violates **DRY** (Don't Repeat Yourself).",
     },
-    {
+{
       type: "example",
       note: "draw_polygon works for any regular shape. The loop runs `sides` times. Each iteration moves forward, then turns by the exterior angle. Try it with 5, 8, or 12 sides.",
       code: "def draw_polygon(sides, length):\n    for _ in range(sides):\n        forward(length)\n        right(360 / sides)\n\ndraw_polygon(4, 60)  # square\ndraw_polygon(6, 50)  # hexagon\n",
     },
-    {
-      type: "text",
-      md: "Now [[helper function]]s can call each other: `draw_square` calls `draw_polygon(4, size)`, `draw_house` calls `draw_square` and `draw_roof`, and the top level just calls `draw_house`. But there is a trap — if `draw_house` calls `draw_square(side)` where `side` is not a defined variable, Python raises `NameError: name 'side' is not defined`. **The rule:** every value a helper needs must be *passed explicitly* as an argument. Never assume a variable from somewhere else will be visible. If `draw_house` knows the size, it must hand it to `draw_square` directly: `draw_square(80)`.",
-    },
-    {
-      type: "example",
-      note: "Bug: draw_square(side) — 'side' is not defined in draw_house's scope.",
-      code: "def draw_house():\n    draw_square(side)   # NameError: name 'side' is not defined",
-    },
-    {
-      type: "text",
-      md: "Between shapes, you often need to move without drawing. `penup()` lifts the pen, `forward()` moves the turtle silently, and `pendown()` puts the pen back. Without this, every move between shapes leaves a line and the canvas turns into a web of unwanted marks. Think of it like lifting your pencil off the paper to reposition it, then pressing down again to start the next shape.",
-    },
-    {
-      type: "example",
-      note: "draw_house calls two helpers. Each helper knows nothing about the other — they only receive what they need as parameters. That's separation of concerns.",
-      code: "def draw_polygon(sides, length):\n    for _ in range(sides):\n        forward(length)\n        right(360 / sides)\n\ndef draw_square(size):\n    draw_polygon(4, size)\n\ndef draw_roof(size):\n    draw_polygon(3, size)\n\ndef draw_house(size=80):\n    draw_square(size)\n    draw_roof(size)\n\ndraw_house()\n",
-    },
-    {
+{
       type: "exercise",
       rung: 1,
       prompt: "Read the code. What will it print? Run it to check your prediction.",
@@ -733,7 +816,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "def draw_polygon(sides, length):\n    print(\"sides:\", sides, \"length:\", length)\n    for _ in range(sides):\n        forward(length)\n        right(360 / sides)\n\ndraw_polygon(4, 60)\ndraw_polygon(3, 80)\n",
     },
-    {
+{
       type: "exercise",
       rung: 3,
       prompt: "The code draws a square (4 sides, length 60). Change the call to draw a **hexagon** with side length 50 instead.",
@@ -756,7 +839,16 @@ window.CODELAB.lessons.push({
       ],
       solution: "def draw_polygon(sides, length):\n    for _ in range(sides):\n        forward(length)\n        right(360 / sides)\n\ndraw_polygon(6, 50)\n",
     },
-    {
+{
+      type: "text",
+      md: "Now [[helper function]]s can call each other: `draw_square` calls `draw_polygon(4, size)`, `draw_house` calls `draw_square` and `draw_roof`, and the top level just calls `draw_house`. But there is a trap — if `draw_house` calls `draw_square(side)` where `side` is not a defined variable, Python raises `NameError: name 'side' is not defined`. **The rule:** every value a helper needs must be *passed explicitly* as an argument. Never assume a variable from somewhere else will be visible. If `draw_house` knows the size, it must hand it to `draw_square` directly: `draw_square(80)`.",
+    },
+{
+      type: "example",
+      note: "Bug: draw_square(side) — 'side' is not defined in draw_house's scope.",
+      code: "def draw_house():\n    draw_square(side)   # NameError: name 'side' is not defined",
+    },
+{
       type: "exercise",
       rung: 4,
       prompt: "This code crashes with `NameError: name 'side' is not defined`. Find the bug and fix it so the house draws a square with side length 80.",
@@ -777,7 +869,16 @@ window.CODELAB.lessons.push({
       ],
       solution: "def draw_square(size):\n    for _ in range(4):\n        forward(size)\n        right(90)\n\ndef draw_house():\n    draw_square(80)\n\ndraw_house()\n",
     },
-    {
+{
+      type: "text",
+      md: "Between shapes, you often need to move without drawing. `penup()` lifts the pen, `forward()` moves the turtle silently, and `pendown()` puts the pen back. Without this, every move between shapes leaves a line and the canvas turns into a web of unwanted marks. Think of it like lifting your pencil off the paper to reposition it, then pressing down again to start the next shape.",
+    },
+{
+      type: "example",
+      note: "draw_house calls two helpers. Each helper knows nothing about the other — they only receive what they need as parameters. That's separation of concerns.",
+      code: "def draw_polygon(sides, length):\n    for _ in range(sides):\n        forward(length)\n        right(360 / sides)\n\ndef draw_square(size):\n    draw_polygon(4, size)\n\ndef draw_roof(size):\n    draw_polygon(3, size)\n\ndef draw_house(size=80):\n    draw_square(size)\n    draw_roof(size)\n\ndraw_house()\n",
+    },
+{
       type: "exercise",
       rung: 5,
       prompt: "Complete `draw_roof` so it draws a triangle using `draw_polygon`. The `draw_house` function will call both `draw_square` and `draw_roof` with the same size.",
@@ -801,7 +902,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "def draw_polygon(sides, length):\n    for _ in range(sides):\n        forward(length)\n        right(360 / sides)\n\ndef draw_square(size):\n    draw_polygon(4, size)\n\ndef draw_roof(size):\n    draw_polygon(3, size)\n\ndef draw_house(size=80):\n    draw_square(size)\n    draw_roof(size)\n\ndraw_house()\n",
     },
-    {
+{
       type: "exercise",
       rung: 6,
       prompt: "Write `draw_scene()` from scratch. It should: draw a square (size 80), lift the pen, move forward 150, lower the pen, then draw a triangle (size 80). The helper functions are already defined for you.",
@@ -828,7 +929,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "def draw_polygon(sides, length):\n    for _ in range(sides):\n        forward(length)\n        right(360 / sides)\n\ndef draw_square(size):\n    draw_polygon(4, size)\n\ndef draw_triangle(size):\n    draw_polygon(3, size)\n\ndef draw_scene():\n    draw_square(80)\n    penup()\n    forward(150)\n    pendown()\n    draw_triangle(80)\n\ndraw_scene()\n",
     },
-  ],
+],
   codex: {
     topic: "drawing with functions",
     pattern: "def draw_polygon(sides, length):\n    for _ in range(sides):\n        forward(length)\n        right(360 / sides)",
@@ -863,6 +964,19 @@ window.CODELAB.lessons.push({
     },
     {
       type: "exercise",
+      rung: 1,
+      prompt: "Read the code. `beat()` now prints instead of playing samples. Predict what the output will be when the loop runs 4 times — how many lines total, and in what order?",
+      starter: "def beat():\n    print(\"kick\")\n    print(\"hihat\")\n\nfor _ in range(4):\n    beat()\n",
+      check: { type: "output", expected: "kick\nhihat\nkick\nhihat\nkick\nhihat\nkick\nhihat" },
+      hints: [
+        "beat() runs two print statements each time it is called.",
+        "The loop calls beat() 4 times. Each call prints 2 lines.",
+        "4 calls × 2 lines = 8 lines total, always kick then hihat.",
+      ],
+      solution: "def beat():\n    print(\"kick\")\n    print(\"hihat\")\n\nfor _ in range(4):\n    beat()\n",
+    },
+    {
+      type: "exercise",
       rung: 3,
       prompt: "Add `sample(\"snare\")` and `sleep(0.5)` **after** the hihat inside `beat()`. The loop still runs 4 times, but now each beat has three sounds: kick, hihat, snare.",
       starter: "def beat():\n    sample(\"kick\")\n    sleep(0.5)\n    sample(\"hihat\")\n    sleep(0.5)\n\nfor _ in range(4):\n    beat()\n",
@@ -890,6 +1004,29 @@ window.CODELAB.lessons.push({
       type: "example",
       note: "verse(root) takes the starting note and calculates the other notes from it. verse(60) and verse(65) play the same melodic shape, 5 semitones apart.",
       code: "def verse(root):\n    play(root)\n    sleep(0.25)\n    play(root + 2)\n    sleep(0.25)\n    play(root + 4)\n    sleep(0.25)\n    play(root + 7)\n    sleep(0.25)\n\nverse(60)   # starts on middle C\nverse(65)   # starts 5 semitones higher\n"
+    },
+    {
+      type: "exercise",
+      rung: 2,
+      prompt: "Arrange these lines to build `minor_third(root)`, which prints the root note and the note 3 semitones above it. Notice the **relative offset** — the same function works for any starting pitch.",
+      starter: "",
+      check: {
+        type: "parsons",
+        lines: [
+          "def minor_third(root):",
+          "    print(root)",
+          "    print(root + 3)",
+          "minor_third(60)",
+          "minor_third(67)",
+        ],
+        distractors: ["    print(root + 2)", "    print(root + 7)"],
+      },
+      hints: [
+        "Start with the def line. The function takes one parameter: root.",
+        "Inside the function, print root first, then root + 3.",
+        "The two calls go outside the function (no indentation).",
+      ],
+      solution: "def minor_third(root):\n    print(root)\n    print(root + 3)\nminor_third(60)\nminor_third(67)",
     },
     {
       type: "text",
@@ -967,62 +1104,52 @@ window.CODELAB.lessons.push({
     design: "Planning what a function should do — its name, inputs, and outputs — before writing the body.",
   },
   content: [
-    {
+{
       type: "text",
       md: "**Design Before You Code.** Good programmers write the *plan* before the code. The technique is called **wishful thinking** — you write what you *wish* existed, then you make it true. Start with the signature and docstring. This forces you to answer three questions: what goes *in*, what comes *out*, and what are two cases you can test. Only then do you write the body. This stops the most common beginner mistake: writing code before knowing what it should do. The CS principle here is **separation of concerns** — each function has exactly one job. `is_palindrome` answers a yes/no question. It does not print. It does not ask the user anything. It just returns `True` or `False`.",
     },
-    {
+{
       type: "example",
       note: "Design-first: write the signature and docstring before the body. The pass is a placeholder.",
       code: "def is_palindrome(word):\n    \"\"\"Return True if word reads the same forwards and backwards.\n    Examples: is_palindrome(\"racecar\") -> True\n              is_palindrome(\"hello\")   -> False\n    \"\"\"\n    pass  # body goes here",
     },
-    {
+{
       type: "text",
       md: "**String [[Iteration]]: `for char in text:`** You know the `for` loop from Chapter 2. Strings are sequences too — Python visits each character one at a time. Python chose the clean version as the natural way: code is read more than it is written, so short and clear wins. Add an accumulator and a condition and you have a puzzle function. `char in \"aeiou\"` is a [[membership test]] — you used `in` in Chapter 2, and here it checks whether `char` is a vowel.",
     },
-    {
+{
       type: "example",
       note: "Two ways to iterate a string — clean vs messy. Python prefers the clean version.",
       code: "# Messy: you track the index yourself\nfor i in range(len(text)):\n    print(text[i])\n\n# Clean: Python handles the stepping\nfor char in text:\n    print(char)",
     },
-    {
+{
       type: "example",
       note: "Accumulator + membership test: count vowels in a string.",
       code: "total = 0\nfor char in text:\n    if char in \"aeiou\":\n        total += 1",
     },
-    {
+{
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete `count_vowels`. Replace the `pass` with an `if` statement that checks whether `char` is in `\"aeiou\"`. If it is, add 1 to `total`.",
+      starter: 'def count_vowels(text):\n    total = 0\n    for char in text:\n        pass  # if char is in "aeiou", add 1 to total\n    return total\n\nprint(count_vowels("hello world"))\nprint(count_vowels("python"))\n',
+      check: { type: "output", expected: "3\n1" },
+      hints: [
+        "The `in` operator tests membership: `char in \"aeiou\"` is True if char is a vowel.",
+        "Replace `pass` with: `if char in \"aeiou\":` on one line, then `total += 1` indented beneath it.",
+        "\"hello world\" has e, o, o — that is 3 vowels. \"python\" has just o — that is 1.",
+      ],
+      solution: 'def count_vowels(text):\n    total = 0\n    for char in text:\n        if char in "aeiou":\n            total += 1\n    return total\n\nprint(count_vowels("hello world"))\nprint(count_vowels("python"))\n',
+    },
+{
       type: "text",
       md: "**The Prepend-Reverse Trick.** To reverse a string, use the **accumulator pattern** with a twist. Normally you append: `result = result + char` — char lands at the END. The prepend trick flips it: `result = char + result` — char lands at the FRONT. Trace the loop on `\"abc\"`: after `a` you have `\"a\"`, after `b` you have `\"ba\"`, after `c` you have `\"cba\"`. Each new character pushes the old ones back. **Anti-pattern:** if you append instead of prepend, you get the *original* string back, not the reverse, so `is_palindrome` always returns `True`.",
     },
-    {
+{
       type: "example",
       note: "Watch how the accumulator builds the reversed string step by step.",
       code: 'def is_palindrome(word):\n    reversed_word = ""\n    for char in word:\n        reversed_word = char + reversed_word  # prepend\n    return reversed_word == word\n\nprint(is_palindrome("racecar"))  # True\nprint(is_palindrome("hello"))    # False\n',
     },
-    {
-      type: "text",
-      md: "**FizzBuzz: Order Matters in `elif` Chains.** FizzBuzz: if `n` is divisible by both 3 and 5 return `\"FizzBuzz\"`, if by 3 only return `\"Fizz\"`, if by 5 only return `\"Buzz\"`, otherwise return the number. For `n = 15`: if you check `n % 3 == 0` first, Python returns `\"Fizz\"` immediately and never reaches the `n % 15` check — this is the **first match wins** rule from Chapter 2's `elif` chains. The fix is the **specificity rule**: check the *narrower* (more specific) condition first. `n % 15 == 0` is the most specific because it requires *both* divisors, so it goes first.",
-    },
-    {
-      type: "example",
-      note: "Anti-pattern: wrong order — n%3 comes before n%15, so 15 always returns 'Fizz'.",
-      code: "# WRONG ORDER\ndef fizzbuzz(n):\n    if n % 3 == 0:       # 15 hits this first!\n        return \"Fizz\"\n    elif n % 5 == 0:\n        return \"Buzz\"\n    elif n % 15 == 0:    # never reached for 15\n        return \"FizzBuzz\"",
-    },
-    {
-      type: "example",
-      note: "Correct order: most specific condition (n%15) checked first.",
-      code: "# CORRECT ORDER\nif n % 15 == 0:    # most specific first\n    return \"FizzBuzz\"\nelif n % 3 == 0:\n    return \"Fizz\"\nelif n % 5 == 0:\n    return \"Buzz\"",
-    },
-    {
-      type: "text",
-      md: "**Function Composition: `word_inspector`.** Once you have `count_vowels` and `is_palindrome`, you can build a function that *uses* them — `word_inspector` does not know *how* `count_vowels` counts, it just trusts that it works. This is **function composition**: combining functions to build bigger behaviour. The CS principle is **separation of concerns**: `count_vowels` counts, `is_palindrome` checks reversal, `word_inspector` reports, and none of them do each other's job. This is how real software is built — thousands of small, focused functions, composed together.",
-    },
-    {
-      type: "example",
-      note: "word_inspector calls count_vowels and is_palindrome — it trusts they work, not how.",
-      code: "def word_inspector(word):\n    print(\"Vowels:\", count_vowels(word))\n    print(\"Palindrome:\", is_palindrome(word))\n    print(word.upper())",
-    },
-    {
+{
       type: "exercise",
       rung: 1,
       prompt: "Read the code carefully. Before you run it, predict what each `print` will output. Then run it to check.",
@@ -1035,7 +1162,34 @@ window.CODELAB.lessons.push({
       ],
       solution: 'def is_palindrome(word):\n    reversed_word = ""\n    for char in word:\n        reversed_word = char + reversed_word\n    return reversed_word == word\n\nprint(is_palindrome("racecar"))\nprint(is_palindrome("hello"))\nprint(is_palindrome("level"))\n',
     },
-    {
+{
+      type: "exercise",
+      rung: 4,
+      prompt: "This `digit_sum` function has a bug. For `digit_sum(1234)` it should return `10` (1+2+3+4), but it gives the wrong answer. Find the bug on the line that extracts the last digit and fix it.",
+      starter: "def digit_sum(n):\n    total = 0\n    while n > 0:\n        digit = n / 10   # bug is here\n        total += digit\n        n = n // 10\n    return total\n\nprint(digit_sum(1234))\n",
+      check: { type: "output", expected: "10" },
+      hints: [
+        "n / 10 gives the quotient — for n=1234 that is 123.4, not 4.",
+        "You need the *remainder* when you divide by 10. Which operator gives the remainder?",
+        "Use % instead of /. n % 10 gives the last digit: 1234 % 10 is 4.",
+      ],
+      solution: "def digit_sum(n):\n    total = 0\n    while n > 0:\n        digit = n % 10\n        total += digit\n        n = n // 10\n    return total\n\nprint(digit_sum(1234))\n",
+    },
+{
+      type: "text",
+      md: "**FizzBuzz: Order Matters in `elif` Chains.** FizzBuzz: if `n` is divisible by both 3 and 5 return `\"FizzBuzz\"`, if by 3 only return `\"Fizz\"`, if by 5 only return `\"Buzz\"`, otherwise return the number. For `n = 15`: if you check `n % 3 == 0` first, Python returns `\"Fizz\"` immediately and never reaches the `n % 15` check — this is the **first match wins** rule from Chapter 2's `elif` chains. The fix is the **specificity rule**: check the *narrower* (more specific) condition first. `n % 15 == 0` is the most specific because it requires *both* divisors, so it goes first.",
+    },
+{
+      type: "example",
+      note: "Anti-pattern: wrong order — n%3 comes before n%15, so 15 always returns 'Fizz'.",
+      code: "# WRONG ORDER\ndef fizzbuzz(n):\n    if n % 3 == 0:       # 15 hits this first!\n        return \"Fizz\"\n    elif n % 5 == 0:\n        return \"Buzz\"\n    elif n % 15 == 0:    # never reached for 15\n        return \"FizzBuzz\"",
+    },
+{
+      type: "example",
+      note: "Correct order: most specific condition (n%15) checked first.",
+      code: "# CORRECT ORDER\nif n % 15 == 0:    # most specific first\n    return \"FizzBuzz\"\nelif n % 3 == 0:\n    return \"Fizz\"\nelif n % 5 == 0:\n    return \"Buzz\"",
+    },
+{
       type: "exercise",
       rung: 2,
       prompt: "Arrange these lines to build `fizzbuzz(n)` correctly. Remember: the **most specific condition goes first** — check `n % 15` before `n % 3` or `n % 5`.",
@@ -1067,33 +1221,16 @@ window.CODELAB.lessons.push({
       ],
       solution: 'def fizzbuzz(n):\n    if n % 15 == 0:\n        return "FizzBuzz"\n    elif n % 3 == 0:\n        return "Fizz"\n    elif n % 5 == 0:\n        return "Buzz"\n    else:\n        return str(n)\n\nprint(fizzbuzz(15))\nprint(fizzbuzz(3))\nprint(fizzbuzz(5))\nprint(fizzbuzz(7))\n',
     },
-    {
-      type: "exercise",
-      rung: 4,
-      prompt: "This `digit_sum` function has a bug. For `digit_sum(1234)` it should return `10` (1+2+3+4), but it gives the wrong answer. Find the bug on the line that extracts the last digit and fix it.",
-      starter: "def digit_sum(n):\n    total = 0\n    while n > 0:\n        digit = n / 10   # bug is here\n        total += digit\n        n = n // 10\n    return total\n\nprint(digit_sum(1234))\n",
-      check: { type: "output", expected: "10" },
-      hints: [
-        "n / 10 gives the quotient — for n=1234 that is 123.4, not 4.",
-        "You need the *remainder* when you divide by 10. Which operator gives the remainder?",
-        "Use % instead of /. n % 10 gives the last digit: 1234 % 10 is 4.",
-      ],
-      solution: "def digit_sum(n):\n    total = 0\n    while n > 0:\n        digit = n % 10\n        total += digit\n        n = n // 10\n    return total\n\nprint(digit_sum(1234))\n",
+{
+      type: "text",
+      md: "**Function Composition: `word_inspector`.** Once you have `count_vowels` and `is_palindrome`, you can build a function that *uses* them — `word_inspector` does not know *how* `count_vowels` counts, it just trusts that it works. This is **function composition**: combining functions to build bigger behaviour. The CS principle is **separation of concerns**: `count_vowels` counts, `is_palindrome` checks reversal, `word_inspector` reports, and none of them do each other's job. This is how real software is built — thousands of small, focused functions, composed together.",
     },
-    {
-      type: "exercise",
-      rung: 5,
-      prompt: "Complete `count_vowels`. Replace the `pass` with an `if` statement that checks whether `char` is in `\"aeiou\"`. If it is, add 1 to `total`.",
-      starter: 'def count_vowels(text):\n    total = 0\n    for char in text:\n        pass  # if char is in "aeiou", add 1 to total\n    return total\n\nprint(count_vowels("hello world"))\nprint(count_vowels("python"))\n',
-      check: { type: "output", expected: "3\n1" },
-      hints: [
-        "The `in` operator tests membership: `char in \"aeiou\"` is True if char is a vowel.",
-        "Replace `pass` with: `if char in \"aeiou\":` on one line, then `total += 1` indented beneath it.",
-        "\"hello world\" has e, o, o — that is 3 vowels. \"python\" has just o — that is 1.",
-      ],
-      solution: 'def count_vowels(text):\n    total = 0\n    for char in text:\n        if char in "aeiou":\n            total += 1\n    return total\n\nprint(count_vowels("hello world"))\nprint(count_vowels("python"))\n',
+{
+      type: "example",
+      note: "word_inspector calls count_vowels and is_palindrome — it trusts they work, not how.",
+      code: "def word_inspector(word):\n    print(\"Vowels:\", count_vowels(word))\n    print(\"Palindrome:\", is_palindrome(word))\n    print(word.upper())",
     },
-    {
+{
       type: "exercise",
       rung: 6,
       prompt: "Write `word_inspector(word)`. It should call `count_vowels` and `is_palindrome` (already defined in the starter) and print a 3-line report:\n\n```\nVowels: N\nPalindrome: True/False\nWORD_IN_CAPS\n```\n\nTest it with `word_inspector(\"racecar\")` and `word_inspector(\"hello\")`.",
@@ -1109,7 +1246,7 @@ window.CODELAB.lessons.push({
       ],
       solution: 'def count_vowels(text):\n    total = 0\n    for char in text:\n        if char in "aeiou":\n            total += 1\n    return total\n\ndef is_palindrome(word):\n    reversed_word = ""\n    for char in word:\n        reversed_word = char + reversed_word\n    return reversed_word == word\n\ndef word_inspector(word):\n    print("Vowels:", count_vowels(word))\n    print("Palindrome:", is_palindrome(word))\n    print(word.upper())\n\nword_inspector("racecar")\nword_inspector("hello")\n',
     },
-  ],
+],
   codex: {
     topic: "string iteration",
     pattern: 'for char in text:\n    if char in "aeiou":\n        total += 1',

@@ -166,24 +166,35 @@ Four block types exist. Use only these; do not invent new types.
   (typically rung 2). Check type is `"parsons"` with `lines` (correct order)
   and `distractors` (decoy lines).
 
-### Rung ladder (exercise difficulty — 1 through 6)
+### Exercise types and difficulty
 
-Every chapter uses this ladder. Exercises within a lesson appear in rung order,
-lowest first.
+Six exercise types exist, ordered from easiest to hardest. Use them by name — never call them "rung N" anywhere in code, prose, prompts, commits, or this document.
 
-| Rung | Type | Description | `starter` |
-|------|------|-------------|-----------|
-| 1 | Predict | Read code, predict exact output before running | Full code given |
-| 2 | Arrange | Parsons — drag lines into correct order | Lines provided |
-| 3 | Modify | Change one or two specific things in working code | Full code given |
-| 4 | Fix | Find and repair a deliberate bug (syntax, logic, type) | Broken code given |
-| 5 | Complete | Fill in missing lines (`pass` or blanks) | Partial code given |
-| 6 | Write | Write the full program from scratch | `starter: ""` |
+| Type | Description | `starter` field | `rung` value (schema only) |
+|------|-------------|-----------------|---------------------------|
+| Predict | Read code, predict exact output before running | Full code given | 1 |
+| Arrange | Parsons — drag lines into correct order | Lines provided | 2 |
+| Modify | Change one or two specific things in working code | Full code given | 3 |
+| Fix | Find and repair a deliberate bug (syntax, logic, type) | Broken code given | 4 |
+| Complete | Fill in missing lines (`pass` or blanks) | Partial code given | 5 |
+| Write | Write the full program from scratch | `starter: ""` | 6 |
 
-Hints: every exercise has 2–4 hints. Each hint targets one documented
-misconception. Progression: hint 1 = conceptual nudge (no code); hint 2 = closer
-to fix; hint 3 = near-exact guidance. Never hand over the finished line in a
-hint; guide the student's reasoning instead.
+The `rung:` field exists only in the lesson data schema as a sort key. It is an implementation detail — never surface it to the student, never use the word "rung" anywhere the student or author reads.
+
+**Exercises are not a one-per-type quota.** A single example may have two Predict exercises (one simple trace, one harder), two Fix exercises (different bugs), two Complete exercises, and two Write exercises. The type names describe *what the student does*, not how many of each are allowed. Use as many exercises as the concept needs, particularly for important concepts where mastery requires varied practice.
+
+**Exercise count must grow with chapter number.** As chapters advance, concepts are deeper and students need more practice to consolidate them. The expected minimums:
+- Chapter 1 lessons: 3–5 exercises total
+- Chapter 2 lessons: 4–6 exercises total
+- Chapter 3 lessons: 5–7 exercises total
+- Chapter 4 lessons: 6–9 exercises total
+- Capstone lessons (c_s9 / c_s10): 7–12 exercises total
+
+Exceeding these minimums is encouraged whenever a concept has multiple worth-practising facets. Falling below them is a deficiency.
+
+**Within each example section**, exercises go from easier types to harder types (Predict or Arrange first, Write or Complete last). Across the full lesson, the difficulty arc also ascends — the first exercise in the lesson cannot be a Write if easier types haven't appeared yet.
+
+Hints: every exercise has 2–4 hints. Each hint targets one documented misconception. Progression: hint 1 = conceptual nudge (no code); hint 2 = closer to the fix; hint 3 = near-exact guidance. Never hand over the finished line in a hint — guide the student's reasoning instead.
 
 ### Glossary format
 
@@ -299,6 +310,114 @@ For every construct, build the mental model alongside the syntax:
 - Loop: the variable table (stepper) changes on every iteration — tie prose to what the stepper shows.
 - Exception: Python creates an object, stops the current block, and searches for a matching handler.
 - Function call: the parentheses are the on-switch; the name without parentheses is just a reference.
+
+## Exercise and example quality standards — MANDATORY FOR ALL LESSONS
+
+These rules apply equally when writing new lessons and when auditing or editing existing ones. Violating any of them is a bug that must be fixed before the lesson is considered done.
+
+### 1. Exercises sit immediately after their relevant example
+
+An exercise must appear in the `content` array directly after the example it is based on. **Never group exercises at the end of a lesson.** If a lesson has three distinct examples A, B, and C with exercises for each, the structure must be:
+
+```
+example A → exercises on A → example B → exercises on B → example C → exercises on C
+```
+
+Not: `A → B → C → exercises on A, B, C`.
+
+Reference tables and text blocks may appear between examples and their exercises only if they directly support those exercises (e.g., a chord reference table before a music exercise).
+
+**How to audit:** Run the block-type sequence for each lesson (`node -e "...l.content.map(b=>b.type[0])..."`). Any lesson where all `X` (exercise) blocks come after all `E` (example) blocks is broken and must be restructured.
+
+### 2. Every exercise must use exactly the code shown in the preceding example
+
+The function names, variable names, data structures, and operations in an exercise must match what was explicitly demonstrated in the example immediately above it. A student who just read example N and then looks at exercise N+1 should immediately recognise the pattern — not encounter a new function they haven't seen.
+
+Concretely:
+- If the example shows `letter_freq(text)`, the exercises that follow are on `letter_freq` — not on a new function `word_count` that wasn't in the example.
+- If the example shows `draw_spiral(steps, start, angle)`, the exercises use `draw_spiral` with those same parameters — not `draw_snowflake` or `draw_star`.
+- If a Predict exercise traces code, that code must be the example or a minimal simplification of it.
+
+**How to audit:** Read each exercise prompt and check: does this exercise use the same function and data from the example block immediately above it in `content[]`? If not, the exercise is in the wrong place or has the wrong content.
+
+### 3. Real-world, interesting data — no toy data ever
+
+Every example and exercise must use data that is real, named, and interesting. The goal is that a student thinks "oh, that's actually about something" — not "what is this nonsense".
+
+**Required:**
+- Music: named real songs (Twinkle Twinkle, Ode to Joy, Smoke on the Water, We Will Rock You, Bohemian Rhapsody). Use their actual MIDI intervals or lyrics.
+- Text analysis: real song lyrics, famous lines, or actual English sentences long enough to produce meaningful results.
+- Science: real data (planet moon counts, letter frequency in English, actual measurements).
+- Numbers: data that tells a story (sports scores, population figures, dice-roll simulations that converge to expected values).
+
+**Forbidden:**
+- `"the cat sat on the mat"` or any invented repetitive text with no intrinsic meaning.
+- Unnamed number arrays like `[1, 2, 3, 4, 5]` or `[10, 20, 30]` used as data.
+- Placeholder strings like `"foo"`, `"bar"`, `"hello world"` as domain data.
+- Fake names and fake scores (Alice=88, Bob=72) when real-world data is available and equally simple.
+- Generic music notation (`play(60); play(62)`) with no named melody — always name the song.
+
+**How to audit:** Read each example and exercise. If you cannot answer "what is this data about in the real world?", replace it.
+
+### 4. Difficulty progression within every section
+
+For each distinct example in a lesson, its exercises should start easier and end harder — Predict or Arrange first, Write or Complete last. Across a full lesson, the overall difficulty arc must also ascend: the first exercise in the lesson cannot be a Write if no easier exercises have appeared yet.
+
+Every section (example + its exercises) should cover at least two difficulty levels. A section with only one Write exercise leaves the student without scaffolded practice. A section with only a Predict exercise doesn't develop the skill. Multiple exercises of the same type are fine and encouraged when a concept has more than one important facet to practise.
+
+### 5. Every distinct example must have at least one exercise
+
+An example with no exercise is a concept with no practice. If an example in a lesson has no exercises beneath it, either add one or merge it into an adjacent example.
+
+The only exceptions are anti-pattern examples (`note: "Anti-pattern: ..."`) which exist to contrast good code, not to be practised directly.
+
+### 6. Exercises must be diverse — no single-topic repetition
+
+Within a lesson, exercises must cover different aspects of the concept, not repeat the same operation with different data. If every exercise in a lesson reduces to "count words in some text and call bar()", the student has practised one thing six times. That is not coverage — it is repetition.
+
+Each exercise must differ from the others in at least one meaningful way:
+- Different operation (predict vs. fix vs. write from scratch)
+- Different angle on the concept (e.g. frequency counting → sorting → charting → edge cases)
+- Different data type or domain (letters vs. words vs. numbers)
+- Different failure mode being targeted (KeyError vs. sort order vs. wrong variable name)
+
+**Anti-pattern to avoid:** A lesson with 5 Modify exercises that all change one value in the same function. This is not a progression — it is the same exercise five times.
+
+**How to audit:** Read all the exercises in a lesson. Can you describe what makes each one distinct from the others? If the answer is only "different data passed to the same function", add exercises that approach the concept differently.
+
+### 7. Later lessons must build on earlier chapters
+
+From chapter 2 onwards, exercises are not isolated to the current chapter's concepts. They should require students to use skills from earlier chapters as the scaffolding for new ones. This is cumulative learning.
+
+- **Chapter 2 exercises:** Loops are the new concept, but the loop body should use variables, expressions, and print() from chapter 1 — not just a single `play()` call.
+- **Chapter 3 exercises:** Functions are the new concept, but the function body should use loops (chapter 2) and the function should be called with expressions (chapter 1).
+- **Chapter 4 exercises:** Collections are the new concept, but exercises should naturally combine: list comprehensions use loops (ch2), functions operate on collections (ch3), conditionals filter data (ch2).
+- **Capstone lessons (c_s9, c_s10):** These are explicitly integration lessons. Every capstone exercise must combine concepts from at least two earlier chapters. An exercise in c4s10 that only uses chapter 4 concepts and no loops, functions, or conditionals has missed the point of a capstone entirely. The capstone is where everything clicks together.
+
+When writing a capstone exercise, explicitly ask: which earlier concepts is this student practising alongside the current chapter's ideas? If the answer is "none", the exercise is too narrow.
+
+### 8. Complete topic coverage — exercises must cover everything taught
+
+The lesson's text introduces concepts. The exercises must collectively test all of those concepts. A concept introduced in a text block but never exercised is a gap.
+
+After writing or reviewing a lesson, list every distinct concept the text introduces. Map each one to at least one exercise. Any concept with no exercise is missing coverage and must have one added.
+
+This check is also the job of the reviewer agent (Step 0 in the process). But the author must not leave obvious gaps hoping the reviewer will catch them.
+
+### Pre-commit audit checklist
+
+Before marking any lesson (new or edited) as done, run through this list:
+
+- [ ] Block sequence: every exercise follows its relevant example immediately — no EEEXXX pattern.
+- [ ] Each exercise: prompt references a function/pattern shown in the example directly above it.
+- [ ] Each example and exercise: uses named real-world data, not toy strings or anonymous arrays.
+- [ ] Difficulty arc: exercise types within each section go easier-to-harder; lesson-wide arc also ascends.
+- [ ] No isolated examples: every non-anti-pattern example has at least one exercise beneath it.
+- [ ] Exercise count meets chapter minimum (Ch1: 3–5, Ch2: 4–6, Ch3: 5–7, Ch4: 6–9, capstone: 7–12). The real test is coverage, not the number — but falling below minimum is a signal of under-coverage.
+- [ ] Diversity: no two exercises in the lesson do the same operation on the same concept. Each one is distinct in what it asks the student to do.
+- [ ] Build-up: exercises from chapter 2 onwards use concepts from earlier chapters as scaffolding. Capstone exercises combine at least two chapters' concepts explicitly.
+- [ ] Coverage: every concept introduced in the lesson's text blocks has at least one exercise that tests it.
+- [ ] Tests green: `npm test` passes with all solutions executing and all invariants passing.
 
 ## The bar
 The reference lesson is `lessons/exemplar-w1-values-and-types.md`. New lessons
