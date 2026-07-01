@@ -344,11 +344,11 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "**Objects add a new twist to Lesson 5.5's hypothesis loop.** You already know: observe, hypothesize, predict, test, revise. With two instances of the same class, one extra question joins that loop: *which instance*, and what happened to it before now? Both instances run identical code — the bug isn't in the class, it's in the specific sequence of calls made against one particular object.",
+      md: "**Objects add a new twist to Lesson 5.5's hypothesis loop.** You already know it: observe, hypothesize, predict, test, revise. Every bug you've hunted so far lived inside a single call chain, and reading it top to bottom told you the whole story. With two instances of the same class, one extra question joins the loop before any of the others: *which instance*, and what happened to it before now? Both `blaze` and `storm` run the exact same class definition — if only one of them misbehaves, the bug can't be in the code they share. It has to be in the specific sequence of calls made against that one object.",
     },
     {
       type: "text",
-      md: "**The sneakiest instance bug: two names for the same object.** `storm = blaze` doesn't make a new creature. It makes `storm` a second name pointing at the exact same object `blaze` already names — the identical trap Lesson 4.6 called [[aliasing]] for lists. Changing `storm` changes `blaze` too, because there's only one object between them.",
+      md: "**The sneakiest instance bug: two names for the same object.** `storm = blaze` looks like it should build a second creature. It doesn't. Look at what's actually on the right-hand side: not `Creature(...)`, just `blaze` — an existing name. So `storm = blaze` does exactly what any assignment does: it points a new name at whatever the right side already refers to. There's still only one `Creature` object in memory; `blaze` and `storm` are now two labels taped onto it. This is the identical trap Lesson 4.6 called [[aliasing]] for lists, showing up again here because instances, like lists, are mutable objects referenced by name rather than copied on assignment.",
     },
     {
       type: "example",
@@ -383,7 +383,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**Tracking two instances at once means tracing two separate stories.** Calls on `blaze` and `storm` can happen in any order. Each instance only remembers what happened to *it*. Trace them as two independent timelines, not one shared one.",
+      md: "**Tracking two instances at once means tracing two separate stories, not one shared one.** Calls on `blaze` and `storm` below are interleaved on the page — one line for `blaze`, then one for `storm`, back and forth — but that's just how the code happens to be typed. Each instance only remembers what happened to *it*. The cleanest way to trace this: cover up every line that doesn't mention `blaze`, read only blaze's lines top to bottom, then repeat the same pass for `storm`. Reading the two stories tangled together, in file order, is exactly how a small mistake stays invisible.",
     },
     {
       type: "exercise",
@@ -400,7 +400,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**A misspelled attribute is a silent trap until something finally reads it.** `self.HP` (capital) and `self.hp` (lowercase) are two different attributes to Python. Say `__init__` sets `HP`, but a later method reads `hp`. Nothing goes wrong at first. The method that reads `hp` is where `AttributeError` finally fires — far from where the typo actually happened.",
+      md: "**A misspelled attribute is a silent trap until something finally reads it.** `self.HP` (capital) and `self.hp` (lowercase) are two different attributes, the exact same way `blaze.Name` and `blaze.name` were back in Lesson 6.1 — Python still isn't checking a fixed list of \"correct\" attribute names. Say `__init__` sets `HP`, but a later method reads `hp`. `__init__` runs and finishes with no complaint at all, because assigning to a new attribute always succeeds. The crash doesn't happen until some other method actually tries to *read* `hp` — which might be several lines, or several methods, away from the line that actually made the mistake.",
     },
     {
       type: "exercise",
@@ -451,7 +451,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "**Attributes can hold lists, too — including a list every instance builds up over time.** An `inventory` attribute works exactly like `hp`: each instance gets its own list, as long as it's created fresh inside `__init__`.",
+      md: "**Attributes can hold lists, too — including a list every instance builds up over time.** An `inventory` attribute works exactly like `hp`: each instance gets its own separate value, as long as it's created fresh inside `__init__`. The difference is what \"fresh\" means for a number versus a list. `self.hp = hp` just copies whatever number was passed in — there's nothing to share. `self.inventory = []` is different: it builds one brand-new, empty list every single time `__init__` runs, so every instance really does get its own list, not a shared reference to one.",
     },
     {
       type: "example",
@@ -473,7 +473,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**Writing the list in the wrong place shares it across every instance.** A **[[class attribute]]** — written directly inside the `class` body, not inside `__init__` — is created exactly once, the moment the class itself is defined. Every instance that doesn't set its own copy shares that one list. `blaze.pick_up(...)` doesn't create a new list for `blaze`; it appends onto the *one* list every `Creature` is quietly sharing.",
+      md: "**Writing the list in the wrong place shares it across every instance.** `__init__` runs once *per instance* — every `Creature(...)` call triggers it fresh. The `class` body itself is different: it only runs once, *ever*, the moment Python first reads the `class Creature:` block, long before any instance exists. A **[[class attribute]]** — a value assigned directly inside that body, not inside `__init__` — is built during that one-time setup, and every instance that doesn't create its own copy just looks up the same shared value. `blaze.pick_up(...)` doesn't build a new list for `blaze`. It appends onto the *one* list every `Creature` ever made is quietly pointing at.",
     },
     {
       type: "example",
