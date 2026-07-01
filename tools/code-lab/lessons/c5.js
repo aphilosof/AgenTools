@@ -636,3 +636,137 @@ window.CODELAB.lessons.push({
     note: "Debugging is a loop that sometimes needs several passes, not a checklist run once. A silent bug has no traceback to anchor on — you have to notice the wrong output yourself, usually by checking against a hand-computed value.",
   },
 });
+
+/* ── Lesson 5.6 ─────────────────────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c5s6",
+  chapter: 5,
+  strand: "core",
+  lang: "py",
+  timeBudgetMin: 25,
+  title: "Checkpoint Projects",
+  glossary: {},
+  content: [
+    {
+      type: "text",
+      md: "**Three projects, one job: use everything this chapter taught.** Each one starts as flat, working code — like the kind you've written since Chapter 2 — and your job is to read it cold (Lesson 5.3), decompose and name it well (5.1), remove its repetition (5.2), and hunt down the bugs seeded inside it (5.4, 5.5). Every project combines skills from at least two earlier chapters, and every bug here is exactly the kind this chapter trained you to find.",
+    },
+    {
+      type: "text",
+      md: "**Project 1: the number-guessing game, decomposed.** This is Lesson 2.4's guessing game again — same secret number, same three guesses — but now you'll read it, split it into named functions, and find a bug hiding inside one of them.",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "Trace this exactly like Lesson 2.4's version. Predict the four printed lines.",
+      starter: "secret = 7\nguesses = [3, 9, 7]\nattempts = 0\nfor guess in guesses:\n    attempts += 1\n    if guess < secret:\n        print(\"Too low!\")\n    elif guess > secret:\n        print(\"Too high!\")\n    else:\n        print(\"Correct!\")\n    if guess == secret:\n        break\nprint(\"Attempts:\", attempts)\n",
+      check: { type: "output", expected: "Too low!\nToo high!\nCorrect!\nAttempts: 3" },
+      hints: [
+        "3 is less than 7. 9 is greater than 7. 7 equals 7.",
+        "The loop breaks as soon as guess == secret, after the third guess.",
+        "Three guesses ran, so attempts ends at 3.",
+      ],
+      solution: "secret = 7\nguesses = [3, 9, 7]\nattempts = 0\nfor guess in guesses:\n    attempts += 1\n    if guess < secret:\n        print(\"Too low!\")\n    elif guess > secret:\n        print(\"Too high!\")\n    else:\n        print(\"Correct!\")\n    if guess == secret:\n        break\nprint(\"Attempts:\", attempts)\n",
+    },
+    {
+      type: "exercise",
+      rung: 5,
+      prompt: "Decompose the game above into two functions: `check_guess(guess, secret)` returns one of the three messages, and `play_game` (already written) calls it. Complete `check_guess` so the output matches the flat version exactly.",
+      starter: "secret = 7\nguesses = [3, 9, 7]\n\ndef check_guess(guess, secret):\n    pass  # return \"Too low!\", \"Too high!\", or \"Correct!\"\n\ndef play_game(guesses, secret):\n    attempts = 0\n    for guess in guesses:\n        attempts += 1\n        print(check_guess(guess, secret))\n        if guess == secret:\n            break\n    return attempts\n\ntotal = play_game(guesses, secret)\nprint(\"Attempts:\", total)\n",
+      check: { type: "output", expected: "Too low!\nToo high!\nCorrect!\nAttempts: 3" },
+      hints: [
+        "check_guess needs the same if/elif/else logic as the flat version, but return each message instead of printing it.",
+        "play_game already does the printing — it prints whatever check_guess returns.",
+        "if guess < secret: return \"Too low!\" — then elif for \"Too high!\", else for \"Correct!\".",
+      ],
+      solution: "secret = 7\nguesses = [3, 9, 7]\n\ndef check_guess(guess, secret):\n    if guess < secret:\n        return \"Too low!\"\n    elif guess > secret:\n        return \"Too high!\"\n    else:\n        return \"Correct!\"\n\ndef play_game(guesses, secret):\n    attempts = 0\n    for guess in guesses:\n        attempts += 1\n        print(check_guess(guess, secret))\n        if guess == secret:\n            break\n    return attempts\n\ntotal = play_game(guesses, secret)\nprint(\"Attempts:\", total)\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "This version prints `None` instead of `Correct!` on the last line — a silent bug, not a crash. `check_guess`'s last branch never returns anything. Fix it.",
+      starter: "secret = 7\nguesses = [3, 9, 7]\n\ndef check_guess(guess, secret):\n    if guess < secret:\n        return \"Too low!\"\n    elif guess > secret:\n        return \"Too high!\"\n    else:\n        pass\n\ndef play_game(guesses, secret):\n    attempts = 0\n    for guess in guesses:\n        attempts += 1\n        print(check_guess(guess, secret))\n        if guess == secret:\n            break\n    return attempts\n\ntotal = play_game(guesses, secret)\nprint(\"Attempts:\", total)\n",
+      check: { type: "output", expected: "Too low!\nToo high!\nCorrect!\nAttempts: 3" },
+      hints: [
+        "A function with no return statement on a code path returns None from that path — that's the source of the None you saw printed.",
+        "The else branch runs exactly when guess == secret — that's the \"Correct!\" case.",
+        "Replace pass with return \"Correct!\".",
+      ],
+      solution: "secret = 7\nguesses = [3, 9, 7]\n\ndef check_guess(guess, secret):\n    if guess < secret:\n        return \"Too low!\"\n    elif guess > secret:\n        return \"Too high!\"\n    else:\n        return \"Correct!\"\n\ndef play_game(guesses, secret):\n    attempts = 0\n    for guess in guesses:\n        attempts += 1\n        print(check_guess(guess, secret))\n        if guess == secret:\n            break\n    return attempts\n\ntotal = play_game(guesses, secret)\nprint(\"Attempts:\", total)\n",
+    },
+    {
+      type: "text",
+      md: "**Project 2: the text-statistics tool.** Same real lyrics you counted letters in back in Lesson 5.1 — now you'll find the most common *word* instead, decomposed into three functions, with a bug that crashes two frames away from where it actually happened.",
+    },
+    {
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete `most_common_word`: call `word_counts(text)` to get the dictionary, then return the key with the highest count.",
+      starter: "def word_counts(text):\n    counts = {}\n    for word in text.split():\n        counts[word] = counts.get(word, 0) + 1\n    return counts\n\ndef most_common_word(text):\n    pass  # use word_counts(text), then return the key with the highest count\n\ndef report(text):\n    top = most_common_word(text)\n    print(\"Most common word:\", top)\n\nreport(\"buddy youre a boy make a big noise playing in the street gonna be a big man someday you got mud on your face you big disgrace kicking your can all over the place we will rock you we will rock you\")\n",
+      check: { type: "output", expected: "Most common word: you" },
+      hints: [
+        "word_counts(text) gives you a dictionary of word to count — the same shape as Lesson 5.1's letter_variety.",
+        "max(counts, key=counts.get) returns the KEY with the highest value, not the value itself.",
+        "counts = word_counts(text); return max(counts, key=counts.get)",
+      ],
+      solution: "def word_counts(text):\n    counts = {}\n    for word in text.split():\n        counts[word] = counts.get(word, 0) + 1\n    return counts\n\ndef most_common_word(text):\n    counts = word_counts(text)\n    return max(counts, key=counts.get)\n\ndef report(text):\n    top = most_common_word(text)\n    print(\"Most common word:\", top)\n\nreport(\"buddy youre a boy make a big noise playing in the street gonna be a big man someday you got mud on your face you big disgrace kicking your can all over the place we will rock you we will rock you\")\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "This crashes with `AttributeError: 'NoneType' object has no attribute 'get'`, reported inside `most_common_word`. `word_counts` builds the dictionary correctly but never returns it — walk back one frame to find and fix the real bug.",
+      starter: "def word_counts(text):\n    counts = {}\n    for word in text.split():\n        counts[word] = counts.get(word, 0) + 1\n\ndef most_common_word(text):\n    counts = word_counts(text)\n    return max(counts, key=counts.get)\n\ndef report(text):\n    top = most_common_word(text)\n    print(\"Most common word:\", top)\n\nreport(\"buddy youre a boy make a big noise playing in the street gonna be a big man someday you got mud on your face you big disgrace kicking your can all over the place we will rock you we will rock you\")\n",
+      check: { type: "output", expected: "Most common word: you" },
+      hints: [
+        "most_common_word only reads what word_counts hands it — it can't be the source of a missing dictionary.",
+        "word_counts builds counts correctly inside the loop, but there's no return statement at the end of the function.",
+        "Add return counts as the last line of word_counts.",
+      ],
+      solution: "def word_counts(text):\n    counts = {}\n    for word in text.split():\n        counts[word] = counts.get(word, 0) + 1\n    return counts\n\ndef most_common_word(text):\n    counts = word_counts(text)\n    return max(counts, key=counts.get)\n\ndef report(text):\n    top = most_common_word(text)\n    print(\"Most common word:\", top)\n\nreport(\"buddy youre a boy make a big noise playing in the street gonna be a big man someday you got mud on your face you big disgrace kicking your can all over the place we will rock you we will rock you\")\n",
+    },
+    {
+      type: "text",
+      md: "**Project 3: refactor a messy song.** Twinkle Twinkle's first two phrases, played as fourteen individual `play()`/`sleep()` calls in a row — the same repetition Lesson 5.2 taught you to spot. Decompose it into one function called twice.",
+    },
+    {
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete `play_phrase(notes, root)` so it plays each note in `notes` transposed by `root`, with a 0.5 second sleep between notes. Then it's called once per phrase instead of fourteen separate play/sleep pairs.",
+      starter: "root = 60\nphrase1 = [0, 0, 7, 7, 9, 9, 7]\nphrase2 = [5, 5, 4, 4, 2, 2, 0]\n\ndef play_phrase(notes, root):\n    pass  # play each note transposed by root, with 0.5s sleep between\n\nplay_phrase(phrase1, root)\nplay_phrase(phrase2, root)\n",
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "play", note: 60 }, { fn: "play", note: 60 }, { fn: "play", note: 67 }, { fn: "play", note: 67 },
+          { fn: "play", note: 69 }, { fn: "play", note: 69 }, { fn: "play", note: 67 },
+          { fn: "play", note: 65 }, { fn: "play", note: 65 }, { fn: "play", note: 64 }, { fn: "play", note: 64 },
+          { fn: "play", note: 62 }, { fn: "play", note: 62 }, { fn: "play", note: 60 },
+        ],
+      },
+      hints: [
+        "Loop over notes with for n in notes:, calling play(root + n) then sleep(0.5) each time.",
+        "This is exactly Lesson 5.2's generalize-and-parameterize move — one function replaces many near-identical calls.",
+        "Inside the loop: play(root + n), then sleep(0.5) — that's the whole body.",
+      ],
+      solution: "root = 60\nphrase1 = [0, 0, 7, 7, 9, 9, 7]\nphrase2 = [5, 5, 4, 4, 2, 2, 0]\n\ndef play_phrase(notes, root):\n    for n in notes:\n        play(root + n)\n        sleep(0.5)\n\nplay_phrase(phrase1, root)\nplay_phrase(phrase2, root)\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "Changing `root` to 65 should transpose the whole phrase up — but the notes don't move. `play_phrase` never actually uses its `root` parameter. Find the hardcoded number and fix it.",
+      starter: "def play_phrase(notes, root):\n    for n in notes:\n        play(60 + n)\n        sleep(0.5)\n\nroot = 65\nphrase = [0, 0, 7]\nplay_phrase(phrase, root)\n",
+      check: { type: "calls", calls: [{ fn: "play", note: 65 }, { fn: "play", note: 65 }, { fn: "play", note: 72 }] },
+      hints: [
+        "play_phrase takes root as a parameter, but the body never mentions it — it uses the literal number 60 instead.",
+        "A parameter that's never used in the function body was pointless to add.",
+        "Change play(60 + n) to play(root + n).",
+      ],
+      solution: "def play_phrase(notes, root):\n    for n in notes:\n        play(root + n)\n        sleep(0.5)\n\nroot = 65\nphrase = [0, 0, 7]\nplay_phrase(phrase, root)\n",
+    },
+  ],
+  codex: {
+    topic: "chapter 5 checkpoint",
+    pattern: "# Read cold (5.3) -> decompose & name (5.1) -> generalize\n# repetition (5.2) -> hunt bugs with the crime-scene map (5.4)\n# and the scientist's loop (5.5).",
+    note: "Every checkpoint bug here is a bug this chapter specifically trained you to find: a silent missing-return, an AttributeError-from-None two frames away, and an unused parameter that quietly does nothing.",
+  },
+});

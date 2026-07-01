@@ -143,7 +143,7 @@ trusts) and diffing actual stdout against the value below:**
 - 4.9 `c4s9` rung-6 Write: `letter_vs_word(text)` → `10\n4`; `word_trend(text, keyword)` → `2` ✅
 - 4.10 `c4s10` rung-6 Write: `song_analysis(melody, root, bpm)` → `7\n3` ✅
 
-### Phase E — Chapter 5 (Thinking in Code) ← NEXT
+### Phase E — Chapter 5 (Thinking in Code) ✅ COMPLETE
 
 **Pre-chapter gate: COMPLETE.** 5-reviewer curriculum audit run (Downey, Resnick,
 Severance, Guzdial, Ko lenses), synthesized, fact-checked against actual Ch3/Ch4
@@ -163,8 +163,31 @@ lesson source, and approved. Full table recorded in CURRICULUM.md. Key findings:
   checkpoint's messy-song refactor (no lesson previously taught reading
   unfamiliar code cold).
 
-Now authoring lesson by lesson per CURRICULUM.md's Chapter 5 table, following
-the same process as Ch1–4 (see "Authoring a new lesson" below).
+All 6 lessons authored (c5s1–c5s6), all harness checks pass (`npm test` green
+across 42 lessons).
+
+| ID | Title | Rungs |
+|----|-------|-------|
+| c5s1 | Decomposition & Naming | 1, 2, 4, 4, 3, 4, 6 |
+| c5s2 | Generalizing Repetition | 1, 5, 4, 4, 3, 6 |
+| c5s3 | Reading Someone Else's Code | 1, 1, 1, 1 |
+| c5s4 | Debugging: Reading the Crime Scene | 1, 4, 4, 4 |
+| c5s5 | Debugging: The Scientist's Method | 4, 1, 1, 4 |
+| c5s6 | Checkpoint Projects | 1, 5, 4, 5, 4, 5, 4 |
+
+**Gate checklist — verified by running each solution through
+`tests/mocks/runner.py` (the deterministic runner, same one `tests/run.js`
+inv1 uses) and diffing actual output against the value below. All items are
+text/calls output, no browser-only visual checks needed for this chapter:**
+- c5s1 ex7 (moons capstone, Write): `describe_moons(moons)` → `Most moons: Saturn (146)\nFewest moons: Earth (1)` ✅
+- c5s2 ex6 (moons capstone, Write): `count_moons_above(moons, 50)` then `count_moons_above(moons, 20)` → `2\n3` ✅
+- c5s4 ex4 (IndexError misdirection, Fix): `announce_top(titles)` → `Winner: Dance Monkey` ✅
+- c5s5 ex4 (silent bug, Fix): `count_dance_tracks([80,110,140,96])` with corrected `>` → `1` ✅
+- c5s6 ex3 (number-guessing decomposed + fixed, Fix): → `Too low!\nToo high!\nCorrect!\nAttempts: 3` ✅
+- c5s6 ex7 (messy-song refactor, unused-parameter Fix): `play_phrase([0,0,7], 65)` → play(65), play(65), play(72) ✅
+
+Chapter 5 complete: content, engine, and docs. Next: Chapter 0 (pre-syntax
+hook) or Chapters 6+ per CURRICULUM.md.
 
 ### Phase D — Chapter 0 (pre-syntax hook)
 Author Chapter 0 sections: First Sound, Algorithms Are Exact, Guide the Robot,
