@@ -431,3 +431,107 @@ window.CODELAB.lessons.push({
     note: "Reading cold is a different skill from writing — skim for shape first, then trace with real values. A code smell (magic number, deep nesting) makes code harder to trust, but it's not automatically a bug.",
   },
 });
+
+/* ── Lesson 5.4 ─────────────────────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c5s4",
+  chapter: 5,
+  strand: "core",
+  lang: "py",
+  timeBudgetMin: 24,
+  title: "Debugging: Reading the Crime Scene",
+  glossary: {
+    "AttributeError": "Raised when you call a method on a value that doesn't have it — very often because a variable holds None instead of the object you expected, usually from a function that forgot to return.",
+  },
+  content: [
+    {
+      type: "text",
+      md: "**You already know what a traceback is showing you.** Lesson 3.4 taught that every function call opens its own [[frame]] — a private whiteboard that Python erases when the call returns. A traceback is a printout of the frames that were still open when something went wrong: the outermost call first, the crash site last. You've been reading call stacks since Chapter 2's first error message. This lesson makes that reading deliberate.",
+    },
+    {
+      type: "example",
+      note: "Three frames deep: track_length_estimate calls seconds_for_beats, which calls to_beats_per_second. Trace outward to inward.",
+      code: "def to_beats_per_second(bpm):\n    return bpm / 60\n\ndef seconds_for_beats(bpm, beats):\n    per_second = to_beats_per_second(bpm)\n    return beats / per_second\n\ndef track_length_estimate(bpm, total_beats):\n    seconds = seconds_for_beats(bpm, total_beats)\n    return round(seconds, 1)\n\nprint(track_length_estimate(120, 240))\n",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "Trace all three frames: to_beats_per_second first (it's called first), then seconds_for_beats, then track_length_estimate. Predict the printed value.",
+      starter: "def to_beats_per_second(bpm):\n    return bpm / 60\n\ndef seconds_for_beats(bpm, beats):\n    per_second = to_beats_per_second(bpm)\n    return beats / per_second\n\ndef track_length_estimate(bpm, total_beats):\n    seconds = seconds_for_beats(bpm, total_beats)\n    return round(seconds, 1)\n\nprint(track_length_estimate(120, 240))\n",
+      check: { type: "output", expected: "120.0" },
+      hints: [
+        "to_beats_per_second(120) returns 120 / 60.",
+        "seconds_for_beats divides total_beats (240) by that result.",
+        "240 / 2.0 is 120.0, and round(120.0, 1) doesn't change it.",
+      ],
+      solution: "def to_beats_per_second(bpm):\n    return bpm / 60\n\ndef seconds_for_beats(bpm, beats):\n    per_second = to_beats_per_second(bpm)\n    return beats / per_second\n\ndef track_length_estimate(bpm, total_beats):\n    seconds = seconds_for_beats(bpm, total_beats)\n    return round(seconds, 1)\n\nprint(track_length_estimate(120, 240))\n",
+    },
+    {
+      type: "text",
+      md: "**The crash line is where Python noticed the problem — not necessarily where the mistake happened.** A function that quietly returns `None` doesn't crash itself. The crash surfaces one frame up, wherever the caller tries to use that `None` as if it were a real value. Reading a traceback means walking backward through the frames until you find the one that actually did something wrong — which is often not the frame named at the bottom.",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "This crashes with `TypeError: unsupported operand type(s) for /: 'int' and 'NoneType'`, reported inside `seconds_for_beats`. But `seconds_for_beats` didn't cause the mistake — it just tried to use a bad value. Walk back one frame to find where that `None` came from, and fix it there.",
+      starter: "def to_beats_per_second(bpm):\n    result = bpm / 60\n\ndef seconds_for_beats(bpm, beats):\n    per_second = to_beats_per_second(bpm)\n    return beats / per_second\n\ndef track_length_estimate(bpm, total_beats):\n    seconds = seconds_for_beats(bpm, total_beats)\n    return round(seconds, 1)\n\nprint(track_length_estimate(120, 240))\n",
+      check: { type: "output", expected: "120.0" },
+      hints: [
+        "seconds_for_beats calls to_beats_per_second and expects a number back — but to_beats_per_second never returns anything.",
+        "A function with no return statement returns None. That None is what crashes the division one frame up.",
+        "Add return in front of the calculation inside to_beats_per_second.",
+      ],
+      solution: "def to_beats_per_second(bpm):\n    return bpm / 60\n\ndef seconds_for_beats(bpm, beats):\n    per_second = to_beats_per_second(bpm)\n    return beats / per_second\n\ndef track_length_estimate(bpm, total_beats):\n    seconds = seconds_for_beats(bpm, total_beats)\n    return round(seconds, 1)\n\nprint(track_length_estimate(120, 240))\n",
+    },
+    {
+      type: "text",
+      md: "**Each exception class points at a different family of mistake.** You've met most of these since Chapter 1 — here's what each one means and the first move to make when you see it.",
+    },
+    {
+      type: "table",
+      title: "Error class → first move",
+      head: ["Error", "Usually means", "First move"],
+      rows: [
+        ["`NameError`", "A name was used before it was assigned, or misspelled.", "Check the spelling, and check it was assigned before this line ran."],
+        ["`TypeError`", "An operation got a value of the wrong type — often `None` from a forgotten `return`.", "Check what the value actually is with `print(type(x))` right before the crash."],
+        ["`IndexError`", "A list index is out of range.", "Print `len(the_list)` and the index right before the access."],
+        ["`KeyError`", "A dictionary key doesn't exist — often a typo.", "Print the dictionary's actual keys and compare, character by character."],
+        ["`ValueError`", "The type is right but the value can't be used this way (`int(\"abc\")`).", "Print the raw value right before the conversion."],
+        ["`ZeroDivisionError`", "Dividing by zero — usually a symptom of a count being empty somewhere upstream.", "Trace back to why the denominator ended up at zero."],
+        ["`[[AttributeError]]`", "Calling a method on a value that doesn't have it — very often `None` again.", "Same move as TypeError: print the value's type right before the crash."],
+      ],
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "This crashes with `KeyError: 'Blinding Lights'`, reported inside `lookup`. But the dictionary itself was built with the wrong capitalization — walk back to `build_bpm_table` and fix the typo there.",
+      starter: "def build_bpm_table():\n    return {\"Blinding lights\": 171, \"Dance Monkey\": 98}\n\ndef lookup(title, table):\n    return table[title]\n\ndef describe(title, table):\n    bpm = lookup(title, table)\n    return title + \": \" + str(bpm) + \" bpm\"\n\ntable = build_bpm_table()\nprint(describe(\"Blinding Lights\", table))\n",
+      check: { type: "output", expected: "Blinding Lights: 171 bpm" },
+      hints: [
+        "lookup only reads the dictionary — it can't be the source of a wrong key. The dictionary was built wrong somewhere earlier.",
+        "Compare the key inside build_bpm_table letter by letter against \"Blinding Lights\" in the print call.",
+        "\"Blinding lights\" has a lowercase l — change it to match \"Blinding Lights\".",
+      ],
+      solution: "def build_bpm_table():\n    return {\"Blinding Lights\": 171, \"Dance Monkey\": 98}\n\ndef lookup(title, table):\n    return table[title]\n\ndef describe(title, table):\n    bpm = lookup(title, table)\n    return title + \": \" + str(bpm) + \" bpm\"\n\ntable = build_bpm_table()\nprint(describe(\"Blinding Lights\", table))\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "This crashes with `IndexError: list index out of range`, reported inside `announce_top`. `top_three_titles` correctly returns 3 titles (indexes 0, 1, 2) — the mistake is that `announce_top` asks for index 3, which was never intended to mean \"the winner.\" Fix the index.",
+      starter: "def top_three_titles(titles):\n    return titles[0:3]\n\ndef announce_top(titles):\n    top = top_three_titles(titles)\n    return \"Winner: \" + top[3]\n\ntitles = [\"Dance Monkey\", \"Blinding Lights\", \"Shape of You\"]\nprint(announce_top(titles))\n",
+      check: { type: "output", expected: "Winner: Dance Monkey" },
+      hints: [
+        "top_three_titles never touches index 3 — it always returns exactly 3 items, at indexes 0, 1, 2.",
+        "\"The winner\" means the first title in the top three, not the fourth.",
+        "Change top[3] to top[0].",
+      ],
+      solution: "def top_three_titles(titles):\n    return titles[0:3]\n\ndef announce_top(titles):\n    top = top_three_titles(titles)\n    return \"Winner: \" + top[0]\n\ntitles = [\"Dance Monkey\", \"Blinding Lights\", \"Shape of You\"]\nprint(announce_top(titles))\n",
+    },
+  ],
+  codex: {
+    topic: "reading the crime scene",
+    pattern: "# A traceback lists frames outermost-first, crash site last.\n# The crash line is where Python NOTICED the problem --\n# walk backward through the frames to find where it started.",
+    note: "A traceback is the call stack from Lesson 3.4, printed out. The reported line is the symptom; the actual mistake is often one or more frames away — especially when a forgotten return lets None quietly propagate upward.",
+  },
+});
