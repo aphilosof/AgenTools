@@ -526,3 +526,101 @@ window.CODELAB.lessons.push({
     note: "A mutable value (like a list) written inside __init__ as self.x = [] gives every instance its own copy. The same value written in the class body, outside __init__, is created once and shared by every instance — a real, well-documented Python trap.",
   },
 });
+
+/* ── Lesson 6.6 ─────────────────────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c6s6",
+  chapter: 6,
+  strand: "sound",
+  lang: "py",
+  timeBudgetMin: 22,
+  title: "A Note Class",
+  glossary: {},
+  content: [
+    {
+      type: "text",
+      md: "**A `Note` bundles pitch and duration with the action of playing itself.** `self.pitch` and `self.duration` are just attributes — the new part is `play(self)`, a method that calls the real `play()`/`sleep()` functions from Lesson 1.7. Naming the method `play` doesn't clash with the built-in `play()` function — inside the method, `play(self.pitch)` (no `self.` in front) still means the engine function, not the method itself.",
+    },
+    {
+      type: "example",
+      note: "n1.play() calls the real engine — this actually makes sound, not just stores numbers.",
+      code: "class Note:\n    def __init__(self, pitch, duration):\n        self.pitch = pitch\n        self.duration = duration\n\n    def play(self):\n        play(self.pitch)\n        sleep(self.duration)\n\nn1 = Note(60, 0.5)\nn1.play()\n",
+    },
+    {
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete `play(self)` — it should call `play(self.pitch)` then `sleep(self.duration)`.",
+      starter: "class Note:\n    def __init__(self, pitch, duration):\n        self.pitch = pitch\n        self.duration = duration\n\n    def play(self):\n        pass  # call play(self.pitch), then sleep(self.duration)\n\nn1 = Note(64, 0.5)\nn1.play()\n",
+      check: { type: "calls", calls: [{ fn: "play", note: 64 }] },
+      hints: [
+        "Two lines: play(self.pitch), then sleep(self.duration).",
+        "self.pitch is 64 here — that's the note that should play.",
+        "play(self.pitch)\\nsleep(self.duration)",
+      ],
+      solution: "class Note:\n    def __init__(self, pitch, duration):\n        self.pitch = pitch\n        self.duration = duration\n\n    def play(self):\n        play(self.pitch)\n        sleep(self.duration)\n\nn1 = Note(64, 0.5)\nn1.play()\n",
+    },
+    {
+      type: "text",
+      md: "**A melody is a list of `Note` instances.** Lesson 4.6 built melodies as plain lists of numbers. Now each note can also know its own duration, and a list comprehension (Lesson 4.6) builds the whole sequence in one line.",
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "Write the `Note` class from scratch, with `__init__(self, pitch, duration)` and `play(self)`. Build `notes` as a list of `Note` instances from Twinkle Twinkle's intervals `[0, 0, 7, 7, 9, 9, 7]`, each transposed by `root = 60` with duration `0.4`. Play every note in order.",
+      starter: "root = 60\nintervals = [0, 0, 7, 7, 9, 9, 7]\n\n# write class Note here, then build notes as a list of Note instances\n# and play each one\n",
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "play", note: 60 }, { fn: "play", note: 60 }, { fn: "play", note: 67 }, { fn: "play", note: 67 },
+          { fn: "play", note: 69 }, { fn: "play", note: 69 }, { fn: "play", note: 67 },
+        ],
+      },
+      hints: [
+        "class Note: def __init__(self, pitch, duration): self.pitch = pitch; self.duration = duration; def play(self): play(self.pitch); sleep(self.duration)",
+        "notes = [Note(root + i, 0.4) for i in intervals] — a list comprehension building one Note per interval.",
+        "for n in notes: n.play()",
+      ],
+      solution: "root = 60\nintervals = [0, 0, 7, 7, 9, 9, 7]\n\nclass Note:\n    def __init__(self, pitch, duration):\n        self.pitch = pitch\n        self.duration = duration\n\n    def play(self):\n        play(self.pitch)\n        sleep(self.duration)\n\nnotes = [Note(root + i, 0.4) for i in intervals]\nfor n in notes:\n    n.play()\n",
+    },
+    {
+      type: "text",
+      md: "**A method that computes but never acts is a silent bug.** Below, `play(self)` builds a description and returns it, but never actually calls the engine's `play()`/`sleep()`. Nothing crashes. Nothing plays, either — because nobody captures or uses the returned string.",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "Calling `n1.play()` makes no sound at all — no crash, just silence. `play(self)` builds a description and returns it instead of actually calling the engine. Fix it so it calls `play(self.pitch)` and `sleep(self.duration)`.",
+      starter: "class Note:\n    def __init__(self, pitch, duration):\n        self.pitch = pitch\n        self.duration = duration\n\n    def play(self):\n        return \"Playing \" + str(self.pitch)\n\nn1 = Note(67, 0.5)\nn1.play()\n",
+      check: { type: "calls", calls: [{ fn: "play", note: 67 }] },
+      hints: [
+        "return \"Playing \" + str(self.pitch) builds a string but never calls the real play() function.",
+        "Nothing prints this returned string either, so right now this method has no visible effect at all.",
+        "Replace the return line with play(self.pitch) followed by sleep(self.duration).",
+      ],
+      solution: "class Note:\n    def __init__(self, pitch, duration):\n        self.pitch = pitch\n        self.duration = duration\n\n    def play(self):\n        play(self.pitch)\n        sleep(self.duration)\n\nn1 = Note(67, 0.5)\nn1.play()\n",
+    },
+    {
+      type: "text",
+      md: "**Two notes with identical pitch and duration are still not `==`.** By default, `==` between two instances checks whether they're the *same object* — not whether their attributes match. `n1 == n2` compares identity here, not content, and this course doesn't cover changing that.",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "`n1` and `n2` have identical pitch and duration, but they're two separate instances. Predict both printed lines.",
+      starter: "class Note:\n    def __init__(self, pitch, duration):\n        self.pitch = pitch\n        self.duration = duration\n\nn1 = Note(60, 0.5)\nn2 = Note(60, 0.5)\nprint(n1 == n2)\nprint(n1 == n1)\n",
+      check: { type: "output", expected: "False\nTrue" },
+      hints: [
+        "By default, == between instances checks whether they're the exact same object, not whether their attributes match.",
+        "n1 and n2 are two separate Note objects, even with identical pitch and duration.",
+        "n1 == n2 is False (different objects). n1 == n1 is True (same object).",
+      ],
+      solution: "class Note:\n    def __init__(self, pitch, duration):\n        self.pitch = pitch\n        self.duration = duration\n\nn1 = Note(60, 0.5)\nn2 = Note(60, 0.5)\nprint(n1 == n2)\nprint(n1 == n1)\n",
+    },
+  ],
+  codex: {
+    topic: "a class that acts",
+    pattern: "class Note:\n    def __init__(self, pitch, duration):\n        self.pitch = pitch\n        self.duration = duration\n\n    def play(self):\n        play(self.pitch)\n        sleep(self.duration)",
+    note: "A method's job isn't finished just because it computes something — it has to actually call play()/sleep() (or return the right value) to have any effect. By default, == between instances compares identity, not attribute values.",
+  },
+});
