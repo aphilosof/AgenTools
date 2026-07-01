@@ -535,3 +535,104 @@ window.CODELAB.lessons.push({
     note: "A traceback is the call stack from Lesson 3.4, printed out. The reported line is the symptom; the actual mistake is often one or more frames away — especially when a forgotten return lets None quietly propagate upward.",
   },
 });
+
+/* ── Lesson 5.5 ─────────────────────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c5s5",
+  chapter: 5,
+  strand: "core",
+  lang: "py",
+  timeBudgetMin: 24,
+  title: "Debugging: The Scientist's Method",
+  glossary: {
+    "silent bug": "A bug that produces no error message at all — the program runs to completion, but the output is simply wrong. There is no traceback pointing anywhere, so you have to notice the wrongness yourself.",
+    "minimal reproducible example": "The smallest, simplest input that still makes a suspected bug show up — used to test a hypothesis without wading through a large program or dataset.",
+  },
+  content: [
+    {
+      type: "text",
+      md: "**Debugging is a loop, not a checklist you run once.** Observe the wrong behavior. Form ONE specific hypothesis about the cause — not \"something's broken,\" but \"I think X is happening because Y.\" Predict what a small test would show if you're right. Run that test. If you're wrong, that's not failure — it's information, and you revise the hypothesis and go again. A single pass through this loop is normal; needing three or four is normal too.",
+    },
+    {
+      type: "example",
+      note: "Hypothesis 1 (len is wrong) is tested and rejected. Hypothesis 2 (the loop total is wrong) is tested and confirmed -- that's the loop, not a straight line.",
+      code: "song_plays = {\"Dance Monkey\": 2500, \"Shape of You\": 2800, \"Blinding Lights\": 3200}\n\ndef average_plays(plays):\n    total = 0\n    for song in plays:\n        total = total + 1   # bug\n    return round(total / len(plays), 1)\n\n# Hypothesis 1: maybe len(plays) is wrong.\nprint(len(song_plays))            # 3 -- correct, this hypothesis is rejected\n\n# Hypothesis 2, revised: maybe the loop total is wrong.\nprint(average_plays(song_plays))  # 1.0 -- far too low, this IS the bug\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "A first hypothesis — that `len(plays)` is somehow wrong — turned out to be correct on inspection (it's 3, as expected), which rules it out. The real bug is in the loop: `total` is counting how many songs there are, not adding up their play counts. Fix the loop body.",
+      starter: "song_plays = {\"Dance Monkey\": 2500, \"Shape of You\": 2800, \"Blinding Lights\": 3200}\n\ndef average_plays(plays):\n    total = 0\n    for song in plays:\n        total = total + 1\n    return round(total / len(plays), 1)\n\nprint(average_plays(song_plays))\n",
+      check: { type: "output", expected: "2833.3" },
+      hints: [
+        "total + 1 adds one for every song, regardless of how many plays it had — that's counting songs, not summing plays.",
+        "You need each song's actual play count, which is plays[song] inside the loop.",
+        "Change total = total + 1 to total = total + plays[song].",
+      ],
+      solution: "song_plays = {\"Dance Monkey\": 2500, \"Shape of You\": 2800, \"Blinding Lights\": 3200}\n\ndef average_plays(plays):\n    total = 0\n    for song in plays:\n        total = total + plays[song]\n    return round(total / len(plays), 1)\n\nprint(average_plays(song_plays))\n",
+    },
+    {
+      type: "text",
+      md: "**Test the suspect alone, on the smallest input you can check by hand.** Before trusting `average_plays` on the real 3-song dictionary, run it on a tiny 2-item dictionary instead. Pick numbers where you already know the right answer. This is a **[[minimal reproducible example]]**. A hand-checkable input tells you right away if the function is wrong. The real dataset can't do that — a strange-looking number there might be a bug, or it might just be surprising real data.",
+    },
+    {
+      type: "example",
+      note: "2 and 4 average to 3 by hand. If average_plays returned anything else here, you'd know instantly, without touching the real dataset.",
+      code: "def average_plays(plays):\n    total = 0\n    for song in plays:\n        total = total + plays[song]\n    return round(total / len(plays), 1)\n\ntiny = {\"A\": 2, \"B\": 4}\nprint(average_plays(tiny))\n",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "Trace `average_plays(tiny)` by hand — you should be able to check this one without running it. Predict the output.",
+      starter: "def average_plays(plays):\n    total = 0\n    for song in plays:\n        total = total + plays[song]\n    return round(total / len(plays), 1)\n\ntiny = {\"A\": 2, \"B\": 4}\nprint(average_plays(tiny))\n",
+      check: { type: "output", expected: "3.0" },
+      hints: [
+        "total adds up every value in the dictionary: 2 + 4.",
+        "There are 2 entries, so divide the sum by 2.",
+        "6 / 2 is 3.0, and round(3.0, 1) doesn't change it.",
+      ],
+      solution: "def average_plays(plays):\n    total = 0\n    for song in plays:\n        total = total + plays[song]\n    return round(total / len(plays), 1)\n\ntiny = {\"A\": 2, \"B\": 4}\nprint(average_plays(tiny))\n",
+    },
+    {
+      type: "text",
+      md: "**Not every bug announces itself.** Every bug this chapter has fixed so far crashed with a traceback pointing somewhere. A **[[silent bug]]** doesn't: the program runs cleanly, prints a number, and stops — and that number is simply wrong. There's no red text to anchor a hypothesis on, which is exactly when it's tempting to start changing lines at random and hoping something works. Resist that. The fix is the same loop as always — you just have to notice something is wrong before you can hypothesize about it, usually by checking the output against a value you computed some other way.",
+    },
+    {
+      type: "example",
+      note: "This is supposed to match Lesson 5.3's is_dance_tempo, which used bpm > 110. Read exactly what's written here, not what you'd assume it does.",
+      code: "def count_dance_tracks(tracks):\n    count = 0\n    for t in tracks:\n        if t >= 110:\n            count += 1\n    return count\n\nbpm = [80, 110, 140, 96]\nprint(count_dance_tracks(bpm))\n",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "Trace this exactly as written — not as you'd expect a function named count_dance_tracks to behave. Predict what it prints for this list.",
+      starter: "def count_dance_tracks(tracks):\n    count = 0\n    for t in tracks:\n        if t >= 110:\n            count += 1\n    return count\n\nbpm = [80, 110, 140, 96]\nprint(count_dance_tracks(bpm))\n",
+      check: { type: "output", expected: "2" },
+      hints: [
+        "The condition is t >= 110, which includes a track at exactly 110.",
+        "110 and 140 both satisfy t >= 110. 80 and 96 do not.",
+        "Two tracks qualify, so the output is 2 — even though this doesn't crash, it doesn't mean it's correct.",
+      ],
+      solution: "def count_dance_tracks(tracks):\n    count = 0\n    for t in tracks:\n        if t >= 110:\n            count += 1\n    return count\n\nbpm = [80, 110, 140, 96]\nprint(count_dance_tracks(bpm))\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "You just confirmed this prints 2. But Lesson 5.3's `is_dance_tempo` defined dance tempo as strictly above 110, not 110-or-above — a track at exactly 110 shouldn't count. Fix the comparison so a track at exactly 110 is excluded.",
+      starter: "def count_dance_tracks(tracks):\n    count = 0\n    for t in tracks:\n        if t >= 110:\n            count += 1\n    return count\n\nbpm = [80, 110, 140, 96]\nprint(count_dance_tracks(bpm))\n",
+      check: { type: "output", expected: "1" },
+      hints: [
+        ">= includes the boundary value itself; > does not.",
+        "Only 140 is strictly greater than 110 in this list.",
+        "Change t >= 110 to t > 110.",
+      ],
+      solution: "def count_dance_tracks(tracks):\n    count = 0\n    for t in tracks:\n        if t > 110:\n            count += 1\n    return count\n\nbpm = [80, 110, 140, 96]\nprint(count_dance_tracks(bpm))\n",
+    },
+  ],
+  codex: {
+    topic: "the scientist's method",
+    pattern: "# 1. Observe. 2. Hypothesize (one specific, testable claim).\n# 3. Predict what a small test would show. 4. Test it.\n# Wrong? That's data -- revise and repeat.",
+    note: "Debugging is a loop that sometimes needs several passes, not a checklist run once. A silent bug has no traceback to anchor on — you have to notice the wrong output yourself, usually by checking against a hand-computed value.",
+  },
+});
