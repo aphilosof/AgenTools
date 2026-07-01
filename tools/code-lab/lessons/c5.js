@@ -331,3 +331,103 @@ window.CODELAB.lessons.push({
     note: "A near-duplicate is two blocks that do the same job with one value different — find that value, make it a parameter. True duplication is sharper: two copies quietly drift apart the moment only one gets updated.",
   },
 });
+
+/* ── Lesson 5.3 ─────────────────────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c5s3",
+  chapter: 5,
+  strand: "core",
+  lang: "py",
+  timeBudgetMin: 18,
+  title: "Reading Someone Else's Code",
+  glossary: {
+    "magic number": "A literal number embedded directly in code with no explanation of what it means or why that value was chosen.",
+    "code smell": "A pattern in working code that isn't necessarily wrong, but makes the code harder to read or trust — a signal worth investigating, not an automatic bug.",
+  },
+  content: [
+    {
+      type: "text",
+      md: "**Every exercise so far handed you code you'd already seen built.** Lesson 5.6's checkpoint hands you a program someone else wrote — messy, undocumented, and unfamiliar. That's a different skill from writing your own: **reading cold**. The process is two passes, not one. First, skim for the shape: what functions exist, what do their names suggest they do? Second, pick concrete values and trace the code line by line, the same way you traced your own programs since Chapter 1 — just without the comfort of having written it yourself.",
+    },
+    {
+      type: "example",
+      note: "Skim first: two functions, tempo_shift sounds like it counts something about tempo changing. Then trace with real values.",
+      code: "def tempo_shift(tracks):\n    shifts = 0\n    for i in range(1, len(tracks)):\n        if tracks[i] > tracks[i - 1]:\n            shifts += 1\n    return shifts\n\nbpm = [80, 120, 140, 96]\nprint(tempo_shift(bpm))\n",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "Trace `tempo_shift(bpm)` by hand: for each pair of neighboring tracks, is the second one faster than the first? Count how many times that's true, then predict the output.",
+      starter: "def tempo_shift(tracks):\n    shifts = 0\n    for i in range(1, len(tracks)):\n        if tracks[i] > tracks[i - 1]:\n            shifts += 1\n    return shifts\n\nbpm = [80, 120, 140, 96]\nprint(tempo_shift(bpm))\n",
+      check: { type: "output", expected: "2" },
+      hints: [
+        "range(1, len(tracks)) starts at index 1, so the first comparison is tracks[1] vs tracks[0].",
+        "80→120 is faster (shift). 120→140 is faster (shift). 140→96 is slower (no shift).",
+        "Two of the three neighboring pairs got faster, so shifts ends at 2.",
+      ],
+      solution: "def tempo_shift(tracks):\n    shifts = 0\n    for i in range(1, len(tracks)):\n        if tracks[i] > tracks[i - 1]:\n            shifts += 1\n    return shifts\n\nbpm = [80, 120, 140, 96]\nprint(tempo_shift(bpm))\n",
+    },
+    {
+      type: "text",
+      md: "**Code smell #1: the [[magic number]].** `bpm > 110` runs fine, but nothing in the code says why 110 is the line between slow and fast. Is it a music-industry standard? Someone's guess? A value that used to make sense but never got updated? A **[[code smell]]** isn't a bug — the code above is completely correct — it's a warning sign that makes the code harder to trust, because you can't tell if 110 is important or arbitrary without asking whoever wrote it.",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "The 110 here is a magic number — the code never explains why that's the cutoff. Trace `is_dance_tempo` on each track in `bpm` anyway, and predict the four printed lines.",
+      starter: "def is_dance_tempo(bpm):\n    return bpm > 110\n\nfor t in [80, 120, 140, 96]:\n    print(is_dance_tempo(t))\n",
+      check: { type: "output", expected: "False\nTrue\nTrue\nFalse" },
+      hints: [
+        "The function returns True when the track's bpm is above 110, False otherwise.",
+        "80 and 96 are both 110 or under. 120 and 140 are both above 110.",
+        "In list order: 80 → False, 120 → True, 140 → True, 96 → False.",
+      ],
+      solution: "def is_dance_tempo(bpm):\n    return bpm > 110\n\nfor t in [80, 120, 140, 96]:\n    print(is_dance_tempo(t))\n",
+    },
+    {
+      type: "text",
+      md: "**Code smell #2: deep nesting.** An `if` inside an `if` inside an `if` forces you to hold every outer condition in your head while reading the innermost line — the same **flat-is-better-than-nested** principle from Lesson 2.3, now showing up as a reading cost instead of a writing one. It isn't wrong, and you can still trace it — it just takes more concentration than flat code asks for.",
+    },
+    {
+      type: "example",
+      note: "Two levels of nesting. Trace both conditions for each call before deciding which branch runs.",
+      code: "def categorize(plays, bpm):\n    if plays > 2000:\n        if bpm > 110:\n            return \"dance hit\"\n        else:\n            return \"hit\"\n    else:\n        if bpm > 110:\n            return \"dance track\"\n        else:\n            return \"track\"\n\nprint(categorize(3200, 120))\nprint(categorize(1000, 90))\n",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "Trace both calls to `categorize` above. For each one, check the outer condition first, then the inner one, to find which of the four return lines runs.",
+      starter: "def categorize(plays, bpm):\n    if plays > 2000:\n        if bpm > 110:\n            return \"dance hit\"\n        else:\n            return \"hit\"\n    else:\n        if bpm > 110:\n            return \"dance track\"\n        else:\n            return \"track\"\n\nprint(categorize(3200, 120))\nprint(categorize(1000, 90))\n",
+      check: { type: "output", expected: "dance hit\ntrack" },
+      hints: [
+        "First call: plays=3200 is over 2000, so you're in the top branch. bpm=120 is over 110, so it's the first return.",
+        "Second call: plays=1000 is not over 2000, so you're in the bottom branch. bpm=90 is not over 110.",
+        "First call returns \"dance hit\". Second call returns \"track\".",
+      ],
+      solution: "def categorize(plays, bpm):\n    if plays > 2000:\n        if bpm > 110:\n            return \"dance hit\"\n        else:\n            return \"hit\"\n    else:\n        if bpm > 110:\n            return \"dance track\"\n        else:\n            return \"track\"\n\nprint(categorize(3200, 120))\nprint(categorize(1000, 90))\n",
+    },
+    {
+      type: "text",
+      md: "**Before you touch someone else's code, assess it first.** Trace what each function does and summarize it in one sentence. Note every smell you spot — magic numbers, deep nesting, or a function doing more than one job (Lesson 5.1's single-responsibility test still applies when you're reading, not just writing). Only after that pass do you start changing anything. This is exactly the pass you'll run at the start of Lesson 5.6's refactor.",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "Two functions, one calling the other. Trace `average_bpm(bpm)` first, then use that result to trace `is_upbeat(bpm)`. Predict both printed lines.",
+      starter: "def average_bpm(tracks):\n    total = 0\n    for t in tracks:\n        total = total + t\n    return total / len(tracks)\n\ndef is_upbeat(tracks):\n    avg = average_bpm(tracks)\n    if avg > 100:\n        return True\n    else:\n        return False\n\nbpm = [80, 120, 140, 96]\nprint(average_bpm(bpm))\nprint(is_upbeat(bpm))\n",
+      check: { type: "output", expected: "109.0\nTrue" },
+      hints: [
+        "80 + 120 + 140 + 96 = 436. Divide by 4 tracks.",
+        "average_bpm(bpm) is 109.0 — that's what is_upbeat compares against 100.",
+        "109.0 is greater than 100, so is_upbeat returns True.",
+      ],
+      solution: "def average_bpm(tracks):\n    total = 0\n    for t in tracks:\n        total = total + t\n    return total / len(tracks)\n\ndef is_upbeat(tracks):\n    avg = average_bpm(tracks)\n    if avg > 100:\n        return True\n    else:\n        return False\n\nbpm = [80, 120, 140, 96]\nprint(average_bpm(bpm))\nprint(is_upbeat(bpm))\n",
+    },
+  ],
+  codex: {
+    topic: "reading unfamiliar code",
+    pattern: "# 1. Skim: what functions exist, what do their names suggest?\n# 2. Trace: pick real values, follow the code line by line.\n# 3. Note smells: magic numbers, deep nesting, functions doing >1 job.",
+    note: "Reading cold is a different skill from writing — skim for shape first, then trace with real values. A code smell (magic number, deep nesting) makes code harder to trust, but it's not automatically a bug.",
+  },
+});
