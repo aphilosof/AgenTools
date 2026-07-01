@@ -330,3 +330,199 @@ window.CODELAB.lessons.push({
     note: "self is the instance a method was called on — an ordinary parameter, not a keyword. A mutator method changes self's attributes; a query method only reads and returns a value. Attributes persist between calls; local variables don't.",
   },
 });
+
+/* ── Lesson 6.4 ─────────────────────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c6s4",
+  chapter: 6,
+  strand: "core",
+  lang: "py",
+  timeBudgetMin: 24,
+  title: "Comparing and Debugging Instances",
+  glossary: {},
+  content: [
+    {
+      type: "text",
+      md: "**Objects add a new twist to Lesson 5.5's hypothesis loop.** You already know: observe, hypothesize, predict, test, revise. With two instances of the same class, one extra question joins that loop: *which instance*, and what happened to it before now? Both instances run identical code — the bug isn't in the class, it's in the specific sequence of calls made against one particular object.",
+    },
+    {
+      type: "text",
+      md: "**The sneakiest instance bug: two names for the same object.** `storm = blaze` doesn't make a new creature. It makes `storm` a second name pointing at the exact same object `blaze` already names — the identical trap Lesson 4.6 called [[aliasing]] for lists. Changing `storm` changes `blaze` too, because there's only one object between them.",
+    },
+    {
+      type: "example",
+      note: "Bug: storm = blaze makes storm another name for the SAME object, not a new creature.",
+      code: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\nblaze = Creature(\"Blaze\", 100)\nstorm = blaze   # NOT a new creature -- storm IS blaze\nstorm.name = \"Storm\"\nprint(blaze.name)\nprint(storm.name)\n",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "`storm = blaze` does not create a second creature. Trace what happens to `blaze.name` when `storm.name` is changed. Predict both printed lines.",
+      starter: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\nblaze = Creature(\"Blaze\", 100)\nstorm = blaze\nstorm.name = \"Storm\"\nprint(blaze.name)\nprint(storm.name)\n",
+      check: { type: "output", expected: "Storm\nStorm" },
+      hints: [
+        "storm = blaze does not build a new Creature — it makes storm a second name for the same object.",
+        "There is only one creature here, with two names pointing at it. Changing it through either name changes the same object.",
+        "Both lines print Storm, because blaze and storm are the same object.",
+      ],
+      solution: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\nblaze = Creature(\"Blaze\", 100)\nstorm = blaze\nstorm.name = \"Storm\"\nprint(blaze.name)\nprint(storm.name)\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "`blaze` and `storm` were meant to be two separate creatures, but `storm = blaze` only made a second name for the same one — that's why renaming `storm` also renamed `blaze`. Fix it so `storm` is a genuinely new `Creature`, named \"Storm\" with 80 hp, independent of `blaze`.",
+      starter: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\nblaze = Creature(\"Blaze\", 100)\nstorm = blaze\nprint(blaze.name)\nprint(storm.name)\n",
+      check: { type: "output", expected: "Blaze\nStorm" },
+      hints: [
+        "storm = blaze aliases the same object. You need storm = Creature(...) to build a real second instance.",
+        "Give the new Creature its own name (\"Storm\") and hp (80) instead of copying blaze.",
+        "storm = Creature(\"Storm\", 80)",
+      ],
+      solution: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\nblaze = Creature(\"Blaze\", 100)\nstorm = Creature(\"Storm\", 80)\nprint(blaze.name)\nprint(storm.name)\n",
+    },
+    {
+      type: "text",
+      md: "**Tracking two instances at once means tracing two separate stories.** Calls on `blaze` and `storm` can happen in any order. Each instance only remembers what happened to *it*. Trace them as two independent timelines, not one shared one.",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "Calls on `blaze` and `storm` are interleaved. Trace each instance's own timeline separately. Predict both final `hp` values.",
+      starter: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\n    def take_damage(self, amount):\n        self.hp -= amount\n\nblaze = Creature(\"Blaze\", 100)\nstorm = Creature(\"Storm\", 80)\nblaze.take_damage(20)\nstorm.take_damage(10)\nblaze.take_damage(30)\nprint(blaze.hp)\nprint(storm.hp)\n",
+      check: { type: "output", expected: "50\n70" },
+      hints: [
+        "blaze's calls: take_damage(20), then later take_damage(30). storm only gets take_damage(10) in between.",
+        "blaze: 100 - 20 - 30. storm: 80 - 10.",
+        "blaze.hp ends at 50. storm.hp ends at 70.",
+      ],
+      solution: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\n    def take_damage(self, amount):\n        self.hp -= amount\n\nblaze = Creature(\"Blaze\", 100)\nstorm = Creature(\"Storm\", 80)\nblaze.take_damage(20)\nstorm.take_damage(10)\nblaze.take_damage(30)\nprint(blaze.hp)\nprint(storm.hp)\n",
+    },
+    {
+      type: "text",
+      md: "**A misspelled attribute is a silent trap until something finally reads it.** `self.HP` (capital) and `self.hp` (lowercase) are two different attributes to Python. Say `__init__` sets `HP`, but a later method reads `hp`. Nothing goes wrong at first. The method that reads `hp` is where `AttributeError` finally fires — far from where the typo actually happened.",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "This crashes with `AttributeError: 'Creature' object has no attribute 'hp'`, reported inside `is_alive`. But `is_alive` didn't cause the mistake — `__init__` set `self.HP` (capital) instead of `self.hp`. Fix the typo in `__init__`.",
+      starter: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.HP = hp\n\n    def is_alive(self):\n        return self.hp > 0\n\nblaze = Creature(\"Blaze\", 100)\nprint(blaze.is_alive())\n",
+      check: { type: "output", expected: "True" },
+      hints: [
+        "is_alive only reads self.hp — it can't be the source of a missing attribute.",
+        "__init__ stored the value as self.HP, capital, which is a different attribute from self.hp.",
+        "Change self.HP = hp to self.hp = hp.",
+      ],
+      solution: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\n    def is_alive(self):\n        return self.hp > 0\n\nblaze = Creature(\"Blaze\", 100)\nprint(blaze.is_alive())\n",
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "Write two genuinely independent `Creature` instances: `ivy` (hp 90) and `rex` (hp 110). Damage `ivy` once by 25. Damage `rex` twice, by 40 each time. Print `ivy.hp` then `rex.hp`.",
+      starter: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\n    def take_damage(self, amount):\n        self.hp -= amount\n\n# create ivy and rex, damage each, then print both hp values\n",
+      check: { type: "output", expected: "65\n30" },
+      hints: [
+        "ivy = Creature(\"Ivy\", 90), rex = Creature(\"Rex\", 110) — two separate Creature(...) calls, not an alias.",
+        "ivy.take_damage(25) once. rex.take_damage(40) twice.",
+        "90 - 25 = 65. 110 - 40 - 40 = 30.",
+      ],
+      solution: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\n    def take_damage(self, amount):\n        self.hp -= amount\n\nivy = Creature(\"Ivy\", 90)\nrex = Creature(\"Rex\", 110)\nivy.take_damage(25)\nrex.take_damage(40)\nrex.take_damage(40)\nprint(ivy.hp)\nprint(rex.hp)\n",
+    },
+  ],
+  codex: {
+    topic: "comparing instances",
+    pattern: "storm = blaze          # ALIAS -- same object, not a new one\nstorm = Creature(...)  # a genuinely new, independent instance",
+    note: "storm = blaze makes two names for one object — the same aliasing trap as Lesson 4.6's lists. When two instances misbehave differently, trace each one's own call history separately, not as a shared story.",
+  },
+});
+
+/* ── Lesson 6.5 ─────────────────────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c6s5",
+  chapter: 6,
+  strand: "data",
+  lang: "py",
+  timeBudgetMin: 22,
+  title: "Instances With Collections",
+  glossary: {
+    "class attribute": "A value written directly inside a class body (not inside __init__). It is created once, when the class is defined, and shared by every instance — unlike an instance attribute, which each object gets its own separate copy of.",
+  },
+  content: [
+    {
+      type: "text",
+      md: "**Attributes can hold lists, too — including a list every instance builds up over time.** An `inventory` attribute works exactly like `hp`: each instance gets its own list, as long as it's created fresh inside `__init__`.",
+    },
+    {
+      type: "example",
+      note: "inventory is created fresh inside __init__, so each instance gets its own separate list.",
+      code: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n        self.inventory = []\n\n    def pick_up(self, item):\n        self.inventory.append(item)\n\nblaze = Creature(\"Blaze\", 100)\nstorm = Creature(\"Storm\", 80)\nblaze.pick_up(\"Sword\")\nprint(blaze.inventory)\nprint(storm.inventory)\n",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "`blaze` picks up a sword. `storm` never does. Predict both printed inventories.",
+      starter: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n        self.inventory = []\n\n    def pick_up(self, item):\n        self.inventory.append(item)\n\nblaze = Creature(\"Blaze\", 100)\nstorm = Creature(\"Storm\", 80)\nblaze.pick_up(\"Sword\")\nprint(blaze.inventory)\nprint(storm.inventory)\n",
+      check: { type: "output", expected: "['Sword']\n[]" },
+      hints: [
+        "Each Creature's __init__ runs its own self.inventory = [] — two separate empty lists.",
+        "Only blaze.pick_up(\"Sword\") ever runs. storm's inventory is never touched.",
+        "blaze.inventory has one item. storm.inventory is still empty.",
+      ],
+      solution: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n        self.inventory = []\n\n    def pick_up(self, item):\n        self.inventory.append(item)\n\nblaze = Creature(\"Blaze\", 100)\nstorm = Creature(\"Storm\", 80)\nblaze.pick_up(\"Sword\")\nprint(blaze.inventory)\nprint(storm.inventory)\n",
+    },
+    {
+      type: "text",
+      md: "**Writing the list in the wrong place shares it across every instance.** A **[[class attribute]]** — written directly inside the `class` body, not inside `__init__` — is created exactly once, the moment the class itself is defined. Every instance that doesn't set its own copy shares that one list. `blaze.pick_up(...)` doesn't create a new list for `blaze`; it appends onto the *one* list every `Creature` is quietly sharing.",
+    },
+    {
+      type: "example",
+      note: "Bug: inventory is a class attribute (inside the class body, outside __init__), so every instance shares the exact same list.",
+      code: "class Creature:\n    inventory = []   # BUG: one shared list, not one per instance\n\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\n    def pick_up(self, item):\n        self.inventory.append(item)\n\nblaze = Creature(\"Blaze\", 100)\nstorm = Creature(\"Storm\", 80)\nblaze.pick_up(\"Sword\")\nprint(blaze.inventory)\nprint(storm.inventory)\n",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "`inventory` is written as a class attribute here, not inside `__init__`. Trace what `storm.inventory` shows even though `storm` never picked anything up. Predict both printed lines.",
+      starter: "class Creature:\n    inventory = []\n\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\n    def pick_up(self, item):\n        self.inventory.append(item)\n\nblaze = Creature(\"Blaze\", 100)\nstorm = Creature(\"Storm\", 80)\nblaze.pick_up(\"Sword\")\nprint(blaze.inventory)\nprint(storm.inventory)\n",
+      check: { type: "output", expected: "['Sword']\n['Sword']" },
+      hints: [
+        "inventory is written inside the class body, not inside __init__ — that makes it one shared list.",
+        "blaze.pick_up(\"Sword\") appends onto that one shared list, which storm also points at.",
+        "Both blaze.inventory and storm.inventory show the same list: ['Sword'].",
+      ],
+      solution: "class Creature:\n    inventory = []\n\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\n    def pick_up(self, item):\n        self.inventory.append(item)\n\nblaze = Creature(\"Blaze\", 100)\nstorm = Creature(\"Storm\", 80)\nblaze.pick_up(\"Sword\")\nprint(blaze.inventory)\nprint(storm.inventory)\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "`storm.inventory` shows `['Sword']` even though `storm` never picked anything up — every `Creature` is quietly sharing one list. Fix it so each instance gets its own separate inventory.",
+      starter: "class Creature:\n    inventory = []\n\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\n    def pick_up(self, item):\n        self.inventory.append(item)\n\nblaze = Creature(\"Blaze\", 100)\nstorm = Creature(\"Storm\", 80)\nblaze.pick_up(\"Sword\")\nprint(blaze.inventory)\nprint(storm.inventory)\n",
+      check: { type: "output", expected: "['Sword']\n[]" },
+      hints: [
+        "Move inventory out of the class body and into __init__, as self.inventory.",
+        "Each instance's __init__ call then creates its own fresh empty list.",
+        "Delete the class-level inventory = [] line; add self.inventory = [] inside __init__.",
+      ],
+      solution: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n        self.inventory = []\n\n    def pick_up(self, item):\n        self.inventory.append(item)\n\nblaze = Creature(\"Blaze\", 100)\nstorm = Creature(\"Storm\", 80)\nblaze.pick_up(\"Sword\")\nprint(blaze.inventory)\nprint(storm.inventory)\n",
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "Write a `Creature` class with `__init__(self, name, hp)` that also sets up an empty `inventory` list (inside `__init__`, not the class body). Write `pick_up(self, item)`. Create `nova` and `echo`. Have `nova` pick up \"Shield\" and \"Potion\". Print `nova.inventory` then `echo.inventory`.",
+      starter: "# write class Creature with __init__ (name, hp, inventory) and pick_up here,\n# then create nova and echo, have nova pick up Shield and Potion, print both inventories\n",
+      check: { type: "output", expected: "['Shield', 'Potion']\n[]" },
+      hints: [
+        "self.inventory = [] must be inside __init__, one line after self.hp = hp.",
+        "pick_up(self, item): self.inventory.append(item).",
+        "nova.pick_up(\"Shield\"); nova.pick_up(\"Potion\") — echo is never touched.",
+      ],
+      solution: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n        self.inventory = []\n\n    def pick_up(self, item):\n        self.inventory.append(item)\n\nnova = Creature(\"Nova\", 60)\necho = Creature(\"Echo\", 45)\nnova.pick_up(\"Shield\")\nnova.pick_up(\"Potion\")\nprint(nova.inventory)\nprint(echo.inventory)\n",
+    },
+  ],
+  codex: {
+    topic: "class attributes vs instance attributes",
+    pattern: "class Creature:\n    def __init__(self, name):\n        self.inventory = []  # correct: one list per instance",
+    note: "A mutable value (like a list) written inside __init__ as self.x = [] gives every instance its own copy. The same value written in the class body, outside __init__, is created once and shared by every instance — a real, well-documented Python trap.",
+  },
+});
