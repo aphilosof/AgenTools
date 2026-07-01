@@ -34,6 +34,19 @@ window.CODELAB.lessons.push({
       code: "scores = [88, 72, 95]\nprint(scores)\nprint(len(scores))",
     },
     {
+      type: "exercise",
+      rung: 1,
+      prompt: "Read this code and predict what it prints — then run it to check. The list holds BPM (beats per minute) for four tracks.",
+      starter: "bpm = [80, 120, 140, 96]\nprint(bpm[0])\nprint(bpm[-1])\nprint(len(bpm))",
+      check: { type: "output", expected: "80\n96\n4" },
+      hints: [
+        "Index 0 is the first item — the leftmost.",
+        "Index -1 is always the last item, counting from the right.",
+        "len() returns how many items are in the list.",
+      ],
+      solution: "bpm = [80, 120, 140, 96]\nprint(bpm[0])\nprint(bpm[-1])\nprint(len(bpm))",
+    },
+    {
       type: "text",
       md: "**Mental model: a row of labelled slots.** Picture a list as a strip of sticky notes lined up in a row. Each sticky note holds one value. The strip itself has one name — `scores`. When you print the whole list, Python prints all the sticky notes together, with square brackets around them. `len(scores)` counts how many sticky notes are on the strip. Adding a new value means sticking one more note on the right end.",
     },
@@ -47,6 +60,19 @@ window.CODELAB.lessons.push({
       code: "friends = [\"Ana\", \"Ben\", \"Cal\"]\nfriends.append(\"Dana\")\nprint(friends)\nprint(len(friends))\n\n# Anti-pattern — do NOT do this:\n# friends = friends.append(\"Eve\")  # friends becomes None!",
     },
     {
+      type: "exercise",
+      rung: 4,
+      prompt: "This code should build a playlist with three songs and print 3, but it always prints a TypeError instead. Find and fix the bug — change the minimum number of lines.",
+      starter: "playlist = []\nplaylist = playlist.append(\"Blinding Lights\")\nplaylist = playlist.append(\"Shape of You\")\nplaylist = playlist.append(\"Dance Monkey\")\nprint(len(playlist))",
+      check: { type: "output", expected: "3" },
+      hints: [
+        "What does append() return? Check the example above — it says 'returns None'.",
+        "Assigning the return value of append() back to playlist replaces the list with None.",
+        "Remove the `playlist =` part from each append line so the list grows in place.",
+      ],
+      solution: "playlist = []\nplaylist.append(\"Blinding Lights\")\nplaylist.append(\"Shape of You\")\nplaylist.append(\"Dance Monkey\")\nprint(len(playlist))",
+    },
+    {
       type: "text",
       md: "**What about `lst + [item]`?** You can combine two lists with `+`, like `friends + [\"Eve\"]`. This works, but it creates a brand-new list and leaves the original untouched. If you do not capture the result (`friends = friends + [\"Eve\"]`) nothing changes. `append` is usually what you want when growing a list one item at a time — it is faster and more direct. Use `+` when you need to build a new list without touching the old one.",
     },
@@ -54,6 +80,29 @@ window.CODELAB.lessons.push({
       type: "example",
       note: "Accumulate in a loop — the first five square numbers.",
       code: "squares = []\nfor n in range(1, 6):\n    squares.append(n * n)\nprint(squares)",
+    },
+    {
+      type: "exercise",
+      rung: 2,
+      prompt: "Arrange these lines to build a list of the top three chart artists in order and print the first one.",
+      starter: "",
+      check: {
+        type: "parsons",
+        lines: [
+          "top_3 = []",
+          "top_3.append(\"Billie Eilish\")",
+          "top_3.append(\"Taylor Swift\")",
+          "top_3.append(\"Drake\")",
+          "print(top_3[0])",
+        ],
+        distractors: ["print(top_3[1])", "top_3 = [\"Billie Eilish\"]"],
+      },
+      hints: [
+        "Create the empty list before you append anything to it.",
+        "append() adds items to the end one at a time.",
+        "top_3[0] accesses the first item — the one you appended first.",
+      ],
+      solution: "top_3 = []\ntop_3.append(\"Billie Eilish\")\ntop_3.append(\"Taylor Swift\")\ntop_3.append(\"Drake\")\nprint(top_3[0])",
     },
     {
       type: "text",
@@ -136,6 +185,19 @@ window.CODELAB.lessons.push({
       code: "word = \"Python\"\nprint(word[0])    # P  — first character\nprint(word[-1])   # n  — last character\nprint(word[1:4])  # yth — stop is exclusive\n\ncolours = [\"red\", \"green\", \"blue\", \"yellow\"]\nprint(colours[0])    # red\nprint(colours[-1])   # yellow\nprint(colours[1:4])  # ['green', 'blue', 'yellow'] — stop is exclusive",
     },
     {
+      type: "exercise",
+      rung: 1,
+      prompt: "Predict what this code prints, then run it to check. The variable holds a song title.",
+      starter: "song = \"Imagine\"\nprint(song[0])\nprint(song[-1])\nprint(len(song))",
+      check: { type: "output", expected: "I\ne\n7" },
+      hints: [
+        "Index 0 is the very first character.",
+        "Index -1 is the very last character.",
+        "len() counts characters in a string, just like items in a list.",
+      ],
+      solution: "song = \"Imagine\"\nprint(song[0])\nprint(song[-1])\nprint(len(song))",
+    },
+    {
       type: "text",
       md: "**Zero-based counting — and why.** The first element is at index 0, not 1. This surprises almost everyone at first. The reason is that an index measures how far an element is from the start: the first item is zero steps away, the second is one step away, and so on. Most programming languages, including JavaScript and C, count this way. Negative indexes count from the right: `-1` is the last element, `-2` is second-to-last. Crucially, `-1` is never an error — it is a perfectly valid shortcut for `len(lst) - 1`.",
     },
@@ -151,6 +213,19 @@ window.CODELAB.lessons.push({
       type: "example",
       note: "Mutation on a list works; the same syntax on a string raises TypeError.",
       code: "colours = [\"red\", \"green\", \"blue\", \"yellow\"]\ncolours[0] = \"pink\"   # mutation — list changes in place\nprint(colours)\n\nword = \"Python\"\n# word[0] = \"X\"  # TypeError: 'str' object does not support item assignment",
+    },
+    {
+      type: "exercise",
+      rung: 3,
+      prompt: "The code below prints the first two albums. Change the slice so it prints the **last two** albums instead — change only the `[...]` part.",
+      starter: "albums = [\"Abbey Road\", \"Thriller\", \"Kind of Blue\", \"Rumours\", \"Purple Rain\"]\nfirst_two = albums[0:2]\nprint(first_two)",
+      check: { type: "output", expected: "['Rumours', 'Purple Rain']" },
+      hints: [
+        "There are 5 albums. The last two are at positions 3 and 4.",
+        "albums[3:5] gives positions 3 and 4. Or use a negative start: albums[-2:].",
+        "Omitting the stop in a slice means 'go to the end': albums[-2:] works.",
+      ],
+      solution: "albums = [\"Abbey Road\", \"Thriller\", \"Kind of Blue\", \"Rumours\", \"Purple Rain\"]\nfirst_two = albums[-2:]\nprint(first_two)",
     },
     {
       type: "text",
@@ -215,6 +290,19 @@ window.CODELAB.lessons.push({
       ],
       solution: "def clamp(lst, lo, hi):\n    result = []\n    for v in lst:\n        if v < lo:\n            result.append(lo)\n        elif v > hi:\n            result.append(hi)\n        else:\n            result.append(v)\n    return result\n\nprint(clamp([5, 10, 15, 20, 25], 8, 18))",
     },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "Write a function `last_two(lst)` that returns the last two items of any list. If the list has fewer than two items, return the whole list unchanged. Test it on `[\"Bohemian Rhapsody\", \"Stairway to Heaven\", \"Hotel California\", \"Imagine\"]`.",
+      starter: "",
+      check: { type: "output", expected: "['Hotel California', 'Imagine']" },
+      hints: [
+        "A slice with a negative start works on any list: lst[-2:] gives the last two items.",
+        "Use len(lst) < 2 to handle the short-list case — return lst as-is.",
+        "Call the function with the four-song list and print the result.",
+      ],
+      solution: "def last_two(lst):\n    if len(lst) < 2:\n        return lst\n    return lst[-2:]\n\nprint(last_two([\"Bohemian Rhapsody\", \"Stairway to Heaven\", \"Hotel California\", \"Imagine\"]))",
+    },
   ],
   codex: {
     topic: "indexing and slicing",
@@ -256,6 +344,19 @@ window.CODELAB.lessons.push({
       code: "names = [\"Ada\", \"Grace\", \"Linus\"]\nfor name in names:\n    print(name)\n",
     },
     {
+      type: "exercise",
+      rung: 1,
+      prompt: "Predict what this loop prints — it combines looping from Chapter 2 with string indexing from Chapter 1. Trace it step by step before running.",
+      starter: "tracks = [\"Imagine\", \"Bohemian Rhapsody\", \"Stairway\"]\nfor track in tracks:\n    print(track[0])",
+      check: { type: "output", expected: "I\nB\nS" },
+      hints: [
+        "The loop visits each string in tracks one at a time.",
+        "track[0] gives the first character of whatever string track currently holds.",
+        "Three strings → three iterations → three lines of output.",
+      ],
+      solution: "tracks = [\"Imagine\", \"Bohemian Rhapsody\", \"Stairway\"]\nfor track in tracks:\n    print(track[0])",
+    },
+    {
       type: "example",
       note: "The index-based way — and its failure mode. Adding 1 to len() causes an IndexError on the last step.",
       code: "names = [\"Ada\", \"Grace\", \"Linus\"]\nfor i in range(len(names) + 1):  # BUG: one step too many\n    print(names[i])              # IndexError on the last iteration\n",
@@ -277,6 +378,29 @@ window.CODELAB.lessons.push({
       type: "example",
       note: "Python's shortcut: sum() does the same thing in one line.",
       code: "scores = [72, 88, 95, 60]\nprint(sum(scores))  # 315\n",
+    },
+    {
+      type: "exercise",
+      rung: 2,
+      prompt: "Arrange these lines to compute the total listening time for a playlist and print it.",
+      starter: "",
+      check: {
+        type: "parsons",
+        lines: [
+          "durations = [3.5, 4.2, 2.8, 5.1, 3.9]",
+          "total = 0",
+          "for mins in durations:",
+          "    total = total + mins",
+          "print(round(total, 1))",
+        ],
+        distractors: ["    print(total)", "total = total + durations"],
+      },
+      hints: [
+        "The accumulator must start at 0 before the loop.",
+        "The update line goes inside the loop — it must be indented.",
+        "Print after the loop ends, not inside it.",
+      ],
+      solution: "durations = [3.5, 4.2, 2.8, 5.1, 3.9]\ntotal = 0\nfor mins in durations:\n    total = total + mins\nprint(round(total, 1))",
     },
     {
       type: "text",
@@ -341,6 +465,18 @@ window.CODELAB.lessons.push({
     },
     {
       type: "exercise",
+      rung: 3,
+      prompt: "The code below prints album lengths from shortest to longest. Change it to print from **longest to shortest** — one small change.",
+      starter: "lengths = [47, 52, 43, 38, 61]  # album lengths in minutes\nranked = sorted(lengths)\nprint(ranked)",
+      check: { type: "output", expected: "[61, 52, 47, 43, 38]" },
+      hints: [
+        "sorted() accepts a keyword argument that reverses the order.",
+        "Try sorted(lengths, reverse=True).",
+      ],
+      solution: "lengths = [47, 52, 43, 38, 61]\nranked = sorted(lengths, reverse=True)\nprint(ranked)",
+    },
+    {
+      type: "exercise",
       rung: 6,
       prompt: "Write a complete grade-average program. Read five scores from `input()`, store them in a list, compute the average, and print `Average: X.XX` and a grade letter on the next line. Grade rules: A if average >= 90, B if >= 80, C if >= 70, D if >= 60, otherwise F.",
       starter: "",
@@ -392,6 +528,18 @@ window.CODELAB.lessons.push({
       code: "point = (3, 4)\nprint(point[0])   # 3 — reading is fine\n\npoint[0] = 99     # TypeError: tuple does not support item assignment\n",
     },
     {
+      type: "exercise",
+      rung: 1,
+      prompt: "Predict what this code prints. Tuple unpacking assigns each item to a named variable in one line.",
+      starter: "title, plays = (\"Blinding Lights\", 3200)\nprint(title)\nprint(plays * 2)",
+      check: { type: "output", expected: "Blinding Lights\n6400" },
+      hints: [
+        "Tuple unpacking assigns left-to-right: title gets the first item, plays gets the second.",
+        "plays is 3200, and 3200 * 2 = 6400.",
+      ],
+      solution: "title, plays = (\"Blinding Lights\", 3200)\nprint(title)\nprint(plays * 2)",
+    },
+    {
       type: "example",
       note: "A list is mutable — the same assignment works fine.",
       code: "coords = [3, 4]\ncoords[0] = 99    # fine — lists are mutable\nprint(coords)     # [99, 4]\n",
@@ -440,6 +588,28 @@ window.CODELAB.lessons.push({
       type: "example",
       note: "Building a set from a list automatically removes duplicates.",
       code: "rolls = [3, 6, 3, 1, 6, 2]\nrolls_set = set(rolls)\nprint(rolls_set)        # {1, 2, 3, 6} — each value once, any order\nprint(5 in rolls_set)   # False\nprint(3 in rolls_set)   # True\n",
+    },
+    {
+      type: "exercise",
+      rung: 2,
+      prompt: "Arrange these lines to find songs that appear in both playlists and print them in alphabetical order.",
+      starter: "",
+      check: {
+        type: "parsons",
+        lines: [
+          "spotify = {\"Hey Jude\", \"Let It Be\", \"Come Together\"}",
+          "apple = {\"Let It Be\", \"Yesterday\", \"Hey Jude\"}",
+          "both = spotify & apple",
+          "print(sorted(both))",
+        ],
+        distractors: ["both = spotify | apple", "print(both)"],
+      },
+      hints: [
+        "You need both sets defined before you can intersect them.",
+        "The `&` operator finds items in both sets.",
+        "sorted() turns the set into a sorted list for a consistent output.",
+      ],
+      solution: "spotify = {\"Hey Jude\", \"Let It Be\", \"Come Together\"}\napple = {\"Let It Be\", \"Yesterday\", \"Hey Jude\"}\nboth = spotify & apple\nprint(sorted(both))",
     },
     {
       type: "text",
@@ -540,6 +710,19 @@ window.CODELAB.lessons.push({
       code: "tel = {'Alice': '555-1234', 'Bob': '555-5678'}\n\nprint(tel['Alice'])   # '555-1234'\n\ntel['Charlie'] = '555-9999'   # add a new entry\nprint(tel['Charlie'])         # '555-9999'\n",
     },
     {
+      type: "exercise",
+      rung: 1,
+      prompt: "Predict what this code prints. A dict stores stream counts, then adds a new entry.",
+      starter: "plays = {'Billie Eilish': 45, 'Taylor Swift': 67}\nplays['Olivia Rodrigo'] = 38\nprint(plays['Taylor Swift'])\nprint(len(plays))",
+      check: { type: "output", expected: "67\n3" },
+      hints: [
+        "plays['Taylor Swift'] looks up the value for that key.",
+        "After adding 'Olivia Rodrigo' the dict has three entries.",
+        "len() on a dict counts key-value pairs.",
+      ],
+      solution: "plays = {'Billie Eilish': 45, 'Taylor Swift': 67}\nplays['Olivia Rodrigo'] = 38\nprint(plays['Taylor Swift'])\nprint(len(plays))",
+    },
+    {
       type: "text",
       md: "**The [[KeyError]] crash.** What happens if you ask for a key that does not exist? Python raises a `KeyError` — the dict equivalent of \"word not found\". This is not a bug in Python; it is honest feedback. The anti-pattern is to assume the key is always there and let the program crash on real data.",
     },
@@ -569,6 +752,42 @@ window.CODELAB.lessons.push({
       type: "example",
       note: "Letter-frequency counter. Without .get() the first new letter raises KeyError.",
       code: "word = 'banana'\ncounts = {}\n\nfor ch in word:\n    # Wrong (crashes on first new letter):\n    # counts[ch] = counts[ch] + 1\n\n    # Right — .get(ch, 0) returns 0 if ch not seen yet:\n    counts[ch] = counts.get(ch, 0) + 1\n\nprint(counts)   # {'b': 1, 'a': 3, 'n': 2}\n",
+    },
+    {
+      type: "exercise",
+      rung: 2,
+      prompt: "Arrange these lines to count how many times each letter appears in \"mississippi\" and print the count for 's'.",
+      starter: "",
+      check: {
+        type: "parsons",
+        lines: [
+          "text = \"mississippi\"",
+          "counts = {}",
+          "for ch in text:",
+          "    counts[ch] = counts.get(ch, 0) + 1",
+          "print(counts['s'])",
+        ],
+        distractors: ["    counts[ch] = counts[ch] + 1", "print(counts['m'])"],
+      },
+      hints: [
+        "The empty dict must come before the loop.",
+        "The update line goes inside the loop — it must be indented.",
+        "Print after the loop, using the key 's' to look up its count.",
+      ],
+      solution: "text = \"mississippi\"\ncounts = {}\nfor ch in text:\n    counts[ch] = counts.get(ch, 0) + 1\nprint(counts['s'])",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "This code should print the total stream count across all songs, but it crashes with a TypeError. Find and fix the one wrong line.",
+      starter: "song_plays = {'Blinding Lights': 3200, 'Shape of You': 2800, 'Dance Monkey': 2500}\ntotal = 0\nfor song in song_plays:\n    total = total + song\nprint(total)",
+      check: { type: "output", expected: "8500" },
+      hints: [
+        "When you write `for song in song_plays`, what does `song` hold on each step?",
+        "`song` is the key — a string like 'Blinding Lights', not the number.",
+        "You need the value: `song_plays[song]` gives you the integer play count.",
+      ],
+      solution: "song_plays = {'Blinding Lights': 3200, 'Shape of You': 2800, 'Dance Monkey': 2500}\ntotal = 0\nfor song in song_plays:\n    total = total + song_plays[song]\nprint(total)",
     },
     {
       type: "text",
@@ -654,6 +873,28 @@ window.CODELAB.lessons.push({
       code: "seats = [\n    ['A1', 'A2', 'A3'],\n    ['B1', 'B2', 'B3'],\n    ['C1', 'C2', 'C3'],\n]\n\nprint(seats[1][2])   # 'B3' — row 1, column 2\n",
     },
     {
+      type: "exercise",
+      rung: 2,
+      prompt: "Arrange these lines to build a 3×3 score grid and print the value in the middle of the grid.",
+      starter: "",
+      check: {
+        type: "parsons",
+        lines: [
+          "scores = [[10, 20, 30], [40, 50, 60], [70, 80, 90]]",
+          "mid_row = len(scores) // 2",
+          "mid_col = len(scores[0]) // 2",
+          "print(scores[mid_row][mid_col])",
+        ],
+        distractors: ["print(scores[0][0])", "mid_row = len(scores) / 2"],
+      },
+      hints: [
+        "The grid has 3 rows and 3 columns, so the middle row and column are both at index 1.",
+        "Integer division of 3//2 = 1.",
+        "scores[1][1] is the centre cell.",
+      ],
+      solution: "scores = [[10, 20, 30], [40, 50, 60], [70, 80, 90]]\nmid_row = len(scores) // 2\nmid_col = len(scores[0]) // 2\nprint(scores[mid_row][mid_col])",
+    },
+    {
       type: "text",
       md: "**Nested loops traverse nested data.** To visit every seat you need two `for` loops: one for the rows, one for the seats inside each row. The outer loop gives you a row (a list); the inner loop gives you each item in that row. This mirrors the structure of the data exactly. A common mistake is writing a single loop and wondering why you get lists instead of seat labels — one loop only unwraps one layer.",
     },
@@ -661,6 +902,19 @@ window.CODELAB.lessons.push({
       type: "example",
       note: "Nested for loops print every seat. The outer loop gives each row-list; the inner loop gives each seat string.",
       code: "seats = [\n    ['A1', 'A2', 'A3'],\n    ['B1', 'B2', 'B3'],\n    ['C1', 'C2', 'C3'],\n]\n\nfor row in seats:\n    for seat in row:\n        print(seat, end=' ')\n    print()   # newline after each row\n",
+    },
+    {
+      type: "exercise",
+      rung: 3,
+      prompt: "The code below prints every seat in the grid. Change it so it prints only the **last seat in each row**, one per line (`A3`, `B3`, `C3`).",
+      starter: "seats = [\n    ['A1', 'A2', 'A3'],\n    ['B1', 'B2', 'B3'],\n    ['C1', 'C2', 'C3'],\n]\nfor row in seats:\n    for seat in row:\n        print(seat)",
+      check: { type: "output", expected: "A3\nB3\nC3" },
+      hints: [
+        "You do not need the inner loop at all — just access one item from each row.",
+        "row[-1] gives you the last element of any list.",
+        "Replace the inner for loop with a single print(row[-1]).",
+      ],
+      solution: "seats = [\n    ['A1', 'A2', 'A3'],\n    ['B1', 'B2', 'B3'],\n    ['C1', 'C2', 'C3'],\n]\nfor row in seats:\n    print(row[-1])",
     },
     {
       type: "text",
@@ -758,38 +1012,100 @@ window.CODELAB.lessons.push({
     frequency: "How many times a particular value appears in a collection. A frequency count tells you which outcomes happened most often.",
   },
   content: [
-    {
+{
       type: "text",
       md: "**Why import?** Python keeps its standard library in separate modules that are not loaded unless you ask. This is a deliberate design choice: a program that only does maths should not pay the startup cost of loading audio, network, or statistics code. The keyword `import` is your request — it tells Python exactly which toolbox to open.\n\nOnce you write `import random`, Python loads the `random` module and binds it to the name `random`. Every tool inside is then available with **dot notation**: the part before the dot names the toolbox, the part after names the tool inside it. `random.randint(1, 6)` means *go into the `random` toolbox and use its `randint` tool*. Writing `random.randint(...)` rather than just `randint(...)` keeps the toolbox name visible in every call — in Chapter 7 you will see exactly why that matters.",
     },
-    {
+{
       type: "example",
       note: "Import random, then roll one die ten times. randint(1, 6) includes both 1 and 6 — unlike range, which stops before the last number.",
       code: "import random\n\nrolls = []\nfor _ in range(10):\n    face = random.randint(1, 6)\n    rolls.append(face)\n\nprint(rolls)\n",
     },
     {
+      type: "exercise",
+      rung: 1,
+      prompt: "This code builds a frequency dict from a fixed list of rolls (no randomness). Predict what it prints.",
+      starter: "rolls = [3, 1, 4, 1, 5, 9, 2, 6]\ncounts = {}\nfor face in rolls:\n    counts[face] = counts.get(face, 0) + 1\nprint(counts[1])\nprint(len(counts))",
+      check: { type: "output", expected: "2\n7" },
+      hints: [
+        "Trace which number appears twice: 1 appears at index 1 and index 3.",
+        "Count the unique values: {1, 2, 3, 4, 5, 6, 9} — that is 7 distinct faces.",
+        "counts[1] looks up the count for the key 1.",
+      ],
+      solution: "rolls = [3, 1, 4, 1, 5, 9, 2, 6]\ncounts = {}\nfor face in rolls:\n    counts[face] = counts.get(face, 0) + 1\nprint(counts[1])\nprint(len(counts))",
+    },
+{
       type: "text",
       md: "**randint vs range — the off-by-one trap.** `range(1, 6)` stops at 5, never reaching 6. That is the design of `range`. `random.randint(1, 6)` is **inclusive on both ends** — it can return 1, 2, 3, 4, 5, or 6. Python made this choice because dice, card ranks, and real-world ranges are almost always stated inclusively. The anti-pattern is writing `random.randint(1, 5)` when you mean a six-sided die: you will never roll a 6 and your data will look wrong for reasons that are hard to spot.\n\n`random.choice(seq)` is the companion tool: give it any sequence and it picks one item at random. `random.choice(['red', 'blue', 'green'])` returns one colour. Use `randint` when you want a number in a range; use `choice` when you already have a list of options.",
     },
-    {
+{
       type: "example",
       note: "Count how many times each face appeared. This is the frequency counter pattern — the same pattern used in the letter counter in Lesson 4.5.",
       code: "import random\n\ncounts = {}\nfor _ in range(10):\n    face = random.randint(1, 6)\n    counts[face] = counts.get(face, 0) + 1\n\nprint(counts)\n",
     },
     {
+      type: "exercise",
+      rung: 2,
+      prompt: "Arrange these lines to count how many times each face appeared in a list of rolls and print the total number of distinct faces rolled.",
+      starter: "",
+      check: {
+        type: "parsons",
+        lines: [
+          "rolls = [3, 6, 3, 1, 6, 2, 3]",
+          "counts = {}",
+          "for face in rolls:",
+          "    counts[face] = counts.get(face, 0) + 1",
+          "print(len(counts))",
+        ],
+        distractors: ["    counts[face] = counts[face] + 1", "print(sum(counts))"],
+      },
+      hints: [
+        "The empty dict must come before the loop.",
+        "The update line is indented one level inside the for loop.",
+        "After the loop, len(counts) counts distinct keys — four faces appeared: {1, 2, 3, 6}.",
+      ],
+      solution: "rolls = [3, 6, 3, 1, 6, 2, 3]\ncounts = {}\nfor face in rolls:\n    counts[face] = counts.get(face, 0) + 1\nprint(len(counts))",
+    },
+{
       type: "text",
       md: "**The frequency counter pattern.** The line `counts[face] = counts.get(face, 0) + 1` is doing three things at once. `counts.get(face, 0)` safely reads the current count for `face`, returning 0 if the key does not exist yet — this avoids the `KeyError` you would get with `counts[face] += 1` on a missing key. Then it adds 1 and stores the result back. This is the [[accumulator pattern]] applied to a dictionary instead of a single variable. Name it, remember it: every time you want to count things, reach for this pattern.\n\nThe anti-pattern is `counts[face] += 1` without the `.get` guard. Python raises a `KeyError` the first time it sees a new face because the key does not exist yet. The fix is always `.get(key, 0)`.",
     },
-    {
+{
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete `roll_stats(n, sides)` so it rolls an `n`-sided die `n` times and returns a frequency dict. The check calls `roll_stats(100, 6)` and prints the total number of rolls recorded — it should always be 100 regardless of which faces came up.",
+      starter: "import random\n\ndef roll_stats(n, sides):\n    counts = {}\n    for _ in range(n):\n        face = random.randint(1, sides)\n        pass  # update counts for this face\n    return counts\n\nresult = roll_stats(100, 6)\nprint(sum(result.values()))\n",
+      check: { type: "output", expected: "100" },
+      hints: [
+        "Replace `pass` with the frequency counter update: `counts[face] = counts.get(face, 0) + 1`.",
+        "After the loop, `return counts` is already there — you only need to fill in the update line.",
+        "`sum(result.values())` adds up all the counts. If you rolled 100 times, the total must be 100.",
+      ],
+      solution: "import random\n\ndef roll_stats(n, sides):\n    counts = {}\n    for _ in range(n):\n        face = random.randint(1, sides)\n        counts[face] = counts.get(face, 0) + 1\n    return counts\n\nresult = roll_stats(100, 6)\nprint(sum(result.values()))\n",
+    },
+{
       type: "example",
       note: "Build labels and values lists from the counts dict, then plot a bar chart. Change 10 to 1000 to see the law of large numbers smooth out the bars.",
       code: "import random\n\ncounts = {}\nfor _ in range(10):\n    face = random.randint(1, 6)\n    counts[face] = counts.get(face, 0) + 1\n\nlabels = []\nfor i in range(1, 7):\n    labels.append(str(i))\n\nvalues = []\nfor i in range(1, 7):\n    values.append(counts.get(i, 0))\n\nbar(labels, values)\n",
     },
     {
+      type: "exercise",
+      rung: 4,
+      prompt: "This code builds a bar chart but crashes with a `KeyError`. The bug is on the values-building line. Fix it so the chart works even if a face never appeared.",
+      starter: "counts = {1: 3, 3: 5, 5: 2}  # only odd faces rolled\nlabels = []\nfor i in range(1, 7):\n    labels.append(str(i))\nvalues = []\nfor i in range(1, 7):\n    values.append(counts[i])  # bug: KeyError if face never appeared\nbar(labels, values)\nprint(len(values))",
+      check: { type: "output", expected: "6" },
+      hints: [
+        "counts[i] crashes if key i is not in the dict — faces 2, 4, 6 are missing here.",
+        "The safe version uses .get(i, 0): returns the count or 0 if never rolled.",
+        "Change counts[i] to counts.get(i, 0).",
+      ],
+      solution: "counts = {1: 3, 3: 5, 5: 2}\nlabels = []\nfor i in range(1, 7):\n    labels.append(str(i))\nvalues = []\nfor i in range(1, 7):\n    values.append(counts.get(i, 0))\nbar(labels, values)\nprint(len(values))",
+    },
+{
       type: "text",
       md: "**Why build labels and values separately?** `bar` wants two parallel lists: one of strings for the axis labels, one of numbers for the bar heights. You could pass any strings you like — `['one','two','three','four','five','six']` would work too. The key point is that `labels[0]` must describe `values[0]`, `labels[1]` must describe `values[1]`, and so on. This parallel-lists design comes up constantly in data visualisation and in the `zip` function you will meet in Lesson 4.8.\n\nTry increasing the roll count from 10 to 1000. With only 10 rolls the bars are lumpy and uneven. With 1000 rolls each face appears roughly 167 times and the bars nearly level out. This is the law of large numbers: more data, more predictable averages.",
     },
-    {
+{
       type: "exercise",
       rung: 3,
       prompt: "The program below rolls 20 dice and builds a frequency dict. Do two things: change the roll count from 20 to 100, then fill in the `pass` line so the values list gets the count for each face (use `counts.get(i, 0)`). The check prints the length of the values list.",
@@ -803,20 +1119,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "import random\ncounts = {}\nfor _ in range(100):\n    face = random.randint(1, 6)\n    counts[face] = counts.get(face, 0) + 1\nlabels = []\nfor i in range(1, 7):\n    labels.append(str(i))\nvalues = []\nfor i in range(1, 7):\n    values.append(counts.get(i, 0))\nprint(len(values))\n",
     },
-    {
-      type: "exercise",
-      rung: 5,
-      prompt: "Complete `roll_stats(n, sides)` so it rolls an `n`-sided die `n` times and returns a frequency dict. The check calls `roll_stats(100, 6)` and prints the total number of rolls recorded — it should always be 100 regardless of which faces came up.",
-      starter: "import random\n\ndef roll_stats(n, sides):\n    counts = {}\n    for _ in range(n):\n        face = random.randint(1, sides)\n        pass  # update counts for this face\n    return counts\n\nresult = roll_stats(100, 6)\nprint(sum(result.values()))\n",
-      check: { type: "output", expected: "100" },
-      hints: [
-        "Replace `pass` with the frequency counter update: `counts[face] = counts.get(face, 0) + 1`.",
-        "After the loop, `return counts` is already there — you only need to fill in the update line.",
-        "`sum(result.values())` adds up all the counts. If you rolled 100 times, the total must be 100.",
-      ],
-      solution: "import random\n\ndef roll_stats(n, sides):\n    counts = {}\n    for _ in range(n):\n        face = random.randint(1, sides)\n        counts[face] = counts.get(face, 0) + 1\n    return counts\n\nresult = roll_stats(100, 6)\nprint(sum(result.values()))\n",
-    },
-    {
+{
       type: "exercise",
       rung: 6,
       prompt: "A dataset of 100 dice rolls has already been summarised for you as `counts = {1:18, 2:15, 3:17, 4:16, 5:19, 6:15}`. Write a program that builds the `labels` and `values` lists (using for loops, no shortcuts), calls `bar(labels, values)` to draw the chart, and then prints the total number of rolls. The check expects the total to print as `100`.",
@@ -830,7 +1133,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "counts = {1:18, 2:15, 3:17, 4:16, 5:19, 6:15}\n\nlabels = []\nfor i in range(1, 7):\n    labels.append(str(i))\n\nvalues = []\nfor i in range(1, 7):\n    values.append(counts.get(i, 0))\n\nbar(labels, values)\nprint(sum(values))\n",
     },
-  ],
+],
   codex: {
     topic: "import and frequency",
     pattern: "import random\ncounts = {}\nfor _ in range(n):\n    k = random.randint(1, sides)\n    counts[k] = counts.get(k, 0) + 1",
@@ -853,42 +1156,49 @@ window.CODELAB.lessons.push({
     zip: "A built-in Python function that pairs elements from two lists one by one, stopping when the shorter list runs out.",
   },
   content: [
-    {
+{
       type: "text",
       md: "**From loops to lists.** In Lesson 2.7 you made a four-on-the-floor kick pattern by writing four `sample('kick')` calls inside a loop. That works, but the rhythm is hard-coded into the loop structure — to change the pattern you have to change the code. Today you store the whole [[pattern]] in a list first, then loop over it. Change the list, change the music. The code stays the same.\n\nThis is the [[DRY]] principle again, now applied to music. Instead of writing out every hit individually, you write the pattern once as data and let the loop do the work. A list of 1s and 0s is a drum grid — exactly what a real DAW uses under the hood.",
     },
-    {
+{
       type: "example",
       note: "Store a melody in a list and play each note. Change melody[0] to 59 and only that one note shifts — everything else stays the same.",
       code: "melody = [60, 62, 64, 65, 67]\n\nfor note in melody:\n    play(note)\n    sleep(0.5)\n",
     },
     {
+      type: "exercise",
+      rung: 1,
+      prompt: "Predict what this code prints before running it.",
+      starter: "melody = [60, 62, 64, 65, 67]\nprint(len(melody))\nprint(melody[2])",
+      check: { type: "output", expected: "5\n64" },
+      hints: [
+        "len() counts items in the list.",
+        "melody[2] is the third item — index 2 counts from 0.",
+      ],
+      solution: "melody = [60, 62, 64, 65, 67]\nprint(len(melody))\nprint(melody[2])",
+    },
+{
       type: "text",
       md: "**Lists as sheet music.** When you write `melody = [60, 62, 64, 65, 67]`, you are writing sheet music as data. `for note in melody` reads it left to right, one note at a time. You can now pass `melody` to a function, store it in a file, or reverse it — all without rewriting the play/sleep calls. This is the power of separating *what to play* from *how to play it*.\n\nThe anti-pattern is writing `play(60); play(62); play(64); play(65); play(67)` directly. Try adding a note. You edit five lines instead of one list. Worse, if you want to play the melody backwards later you have to rewrite everything again.",
     },
-    {
+{
       type: "example",
       note: "A drum pattern as a list. enumerate gives you both the step index and the beat value — use the index when you need to know which step you are on.",
       code: "kick = [1, 0, 0, 0, 1, 0, 0, 0]\n\nfor i, beat in enumerate(kick):\n    if beat == 1:\n        sample('kick')\n    sleep(0.25)\n",
     },
     {
-      type: "text",
-      md: "**Why enumerate?** `for beat in kick` gives you the value but not its position. `for i, beat in enumerate(kick)` gives you both. Use `for beat in` when the position does not matter; use `enumerate` when you need to know *which* step you are on — for example, to print `'Beat 3 is active'` or to compare two patterns at the same index.\n\nCritical: inside `for i, beat in enumerate(kick)`, assigning `beat = 1` changes the local variable, not the list. To actually change the list you must write `kick[i] = 1`. This is one of the most common beginner mistakes with `enumerate`.",
+      type: "exercise",
+      rung: 4,
+      prompt: "This code should print how many active beats are in a steady hi-hat pattern (all 8 should fire), but it prints 0. Fix the one wrong comparison.",
+      starter: "hihat = [1, 1, 1, 1, 1, 1, 1, 1]\ncount = 0\nfor i, beat in enumerate(hihat):\n    if beat == 0:  # bug\n        count += 1\nprint(count)",
+      check: { type: "output", expected: "8" },
+      hints: [
+        "A beat fires when its value is 1, not 0.",
+        "Change the comparison from `== 0` to `== 1`.",
+      ],
+      solution: "hihat = [1, 1, 1, 1, 1, 1, 1, 1]\ncount = 0\nfor i, beat in enumerate(hihat):\n    if beat == 1:\n        count += 1\nprint(count)",
     },
-    {
-      type: "example",
-      note: "zip pairs two lists step by step — like threading two needles at once. It stops when the shorter list runs out.",
-      code: "melody = [60, 62, 64, 65, 67]\nkick   = [1,  0,  1,  0,  1]\n\nfor note, beat in zip(melody, kick):\n    play(note)\n    if beat == 1:\n        sample('kick')\n    sleep(0.5)\n",
-    },
-    {
-      type: "text",
-      md: "**zip stops at the shorter list — always.** If `melody` has 5 notes and `kick` has 8 steps, `zip` produces only 5 pairs and silently drops the last 3 kick steps. This is a deliberate Python design choice: zip never pads or crashes, it just stops. The failure mode is when your two lists are different lengths by accident — you lose data without an error message. Good practice: make sure both lists are the same length before you zip them, or print `len(melody), len(kick)` to verify.\n\n`zip` is a CS concept called a **parallel traversal** — moving through two sequences in lockstep. You will use it any time you have two lists that are meant to go together: notes and durations, x-coordinates and y-coordinates, labels and values.",
-    },
-    {
-      type: "text",
-      md: "**Reversing a list safely.** Python gives you two ways to reverse a list. `kick.reverse()` mutates the list in place and returns `None` — so `new = kick.reverse()` gives you `None`, not a reversed list. That is the trap. `list(reversed(kick))` creates a brand-new reversed list and leaves `kick` untouched. Use `list(reversed(...))` whenever you need the original and the reversed version to both exist.",
-    },
-    {
+{
       type: "exercise",
       rung: 3,
       prompt: "The snare list below has all zeros. Change exactly two values to `1` so the snare falls on beats 3 and 7 (index 2 and index 6 in zero-based counting). The check verifies that exactly two `sample('snare')` calls are made.",
@@ -901,7 +1211,16 @@ window.CODELAB.lessons.push({
       ],
       solution: "snare = [0, 0, 1, 0, 0, 0, 1, 0]\nfor i, beat in enumerate(snare):\n    if beat == 1:\n        sample('snare')\n    sleep(0.25)\n",
     },
-    {
+{
+      type: "text",
+      md: "**Why enumerate?** `for beat in kick` gives you the value but not its position. `for i, beat in enumerate(kick)` gives you both. Use `for beat in` when the position does not matter; use `enumerate` when you need to know *which* step you are on — for example, to print `'Beat 3 is active'` or to compare two patterns at the same index.\n\nCritical: inside `for i, beat in enumerate(kick)`, assigning `beat = 1` changes the local variable, not the list. To actually change the list you must write `kick[i] = 1`. This is one of the most common beginner mistakes with `enumerate`.",
+    },
+{
+      type: "example",
+      note: "zip pairs two lists step by step — like threading two needles at once. It stops when the shorter list runs out.",
+      code: "melody = [60, 62, 64, 65, 67]\nkick   = [1,  0,  1,  0,  1]\n\nfor note, beat in zip(melody, kick):\n    play(note)\n    if beat == 1:\n        sample('kick')\n    sleep(0.5)\n",
+    },
+{
       type: "exercise",
       rung: 5,
       prompt: "Complete `play_melody` so it uses `zip` to pair each note with its duration, then calls `play(note)` and `sleep(dur)` for each pair. The check verifies the four play calls.",
@@ -914,7 +1233,15 @@ window.CODELAB.lessons.push({
       ],
       solution: "def play_melody(notes, durations):\n    for note, dur in zip(notes, durations):\n        play(note)\n        sleep(dur)\n\nplay_melody([60, 62, 64, 65], [1, 1, 2, 1])\n",
     },
-    {
+{
+      type: "text",
+      md: "**zip stops at the shorter list — always.** If `melody` has 5 notes and `kick` has 8 steps, `zip` produces only 5 pairs and silently drops the last 3 kick steps. This is a deliberate Python design choice: zip never pads or crashes, it just stops. The failure mode is when your two lists are different lengths by accident — you lose data without an error message. Good practice: make sure both lists are the same length before you zip them, or print `len(melody), len(kick)` to verify.\n\n`zip` is a CS concept called a **parallel traversal** — moving through two sequences in lockstep. You will use it any time you have two lists that are meant to go together: notes and durations, x-coordinates and y-coordinates, labels and values.",
+    },
+{
+      type: "text",
+      md: "**Reversing a list safely.** Python gives you two ways to reverse a list. `kick.reverse()` mutates the list in place and returns `None` — so `new = kick.reverse()` gives you `None`, not a reversed list. That is the trap. `list(reversed(kick))` creates a brand-new reversed list and leaves `kick` untouched. Use `list(reversed(...))` whenever you need the original and the reversed version to both exist.",
+    },
+{
       type: "exercise",
       rung: 5,
       prompt: "Complete `reverse_pattern` so it returns a new reversed list without changing the original. Use `list(reversed(pattern))`. The check prints the result.",
@@ -927,7 +1254,7 @@ window.CODELAB.lessons.push({
       ],
       solution: "def reverse_pattern(pattern):\n    return list(reversed(pattern))\n\nprint(reverse_pattern([1, 2, 3, 4]))\n",
     },
-    {
+{
       type: "exercise",
       rung: 6,
       prompt: "Write a complete program that defines `melody = [60, 64, 67, 72, 67, 64, 60, 64]` and plays each note with `sleep(0.5)` between notes. Then play the same melody reversed (use `list(reversed(melody))`). Print `'Done'` at the end. The check verifies the final print.",
@@ -941,10 +1268,488 @@ window.CODELAB.lessons.push({
       ],
       solution: "melody = [60, 64, 67, 72, 67, 64, 60, 64]\n\nfor note in melody:\n    play(note)\n    sleep(0.5)\n\nrev = list(reversed(melody))\nfor note in rev:\n    play(note)\n    sleep(0.5)\n\nprint('Done')\n",
     },
-  ],
+],
   codex: {
     topic: "list as pattern",
     pattern: "pattern = [1, 0, 0, 0, 1, 0, 0, 0]\nfor i, beat in enumerate(pattern):\n    if beat == 1:\n        sample('kick')\n    sleep(0.25)",
     note: "Store musical sequences in lists so one edit changes the whole pattern. Use enumerate when you need the index; use zip to pair two lists in lockstep; use list(reversed()) to avoid mutating the original.",
+  },
+});
+
+/* ── Lesson 4.9 ─────────────────────────────────────────────────────── */
+window.CODELAB.lessons.push({
+  id: "c4s9",
+  chapter: 4,
+  strand: "plot",
+  lang: "py",
+  timeBudgetMin: 25,
+  title: "Collect, Process, Chart",
+  glossary: {
+    "pipeline": "A series of steps where the output of one step becomes the input of the next. A data pipeline takes raw input, processes it into a structure, and produces output — like a bar chart.",
+    "frequency map": "A dict where each key is an item and each value is how many times that item appeared. It is the standard way to count things in Python.",
+    "letter frequency": "How often each letter of the alphabet appears in a piece of text. In English, 'e' is always the most common letter — a fact codebreakers use to crack substitution ciphers.",
+  },
+  content: [
+{
+      type: "text",
+      md: "**Raw data is useless until you process and show it.** Real programs follow a [[pipeline]]: take raw input, collect it into a structure, then visualise the result. In Lesson 4.7 you called `bar()` with lists you wrote by hand. Now you will build those lists yourself from real data. The three steps are always the same: collect into a [[frequency map]], sort the keys into a labels list, pull the matching counts into a values list, call `bar(labels, values)`.",
+    },
+{
+      type: "text",
+      md: "**Step 1 — collect.** `text.split()` splits text into a list of words (Lesson 1.5). Loop and count each word into a dict using `counts.get(word, 0) + 1` — the accumulator pattern from Lesson 4.5. Every new word starts at 0; every repeat adds 1. No KeyErrors, no special cases. The same pattern counts words, characters, dice rolls, or anything else.",
+    },
+{
+      type: "example",
+      note: "Anti-pattern: counts[word] += 1 crashes with KeyError the first time any word appears.",
+      code: "counts = {}\nfor word in \"we will rock you\".split():\n    counts[word] += 1   # KeyError: 'we'\n                        # key doesn't exist yet on the first pass",
+    },
+{
+      type: "text",
+      md: "**Steps 2 and 3 — sort, then chart.** `sorted(counts)` returns keys in alphabetical order. A list comprehension `[counts[w] for w in labels]` pulls the matching count for each label. Pass both to `bar(labels, values)`. **Visualise, don't dump** — the human eye reads a bar chart far faster than a dict printed to the screen. But count individual characters instead of words and the pipeline reveals something surprising.",
+    },
+{
+      type: "example",
+      note: "Letter frequency on a real sentence — 'o' tops this pangram; on any large English text, 'e' always wins.",
+      code: "def letter_freq(text):\n    counts = {}\n    for ch in text.lower():\n        if ch.isalpha():          # skip spaces, digits, punctuation\n            counts[ch] = counts.get(ch, 0) + 1\n    labels = sorted(counts, key=counts.get, reverse=True)\n    values = [counts[c] for c in labels]\n    bar(labels, values)\n    print(labels[0])\n\nletter_freq(\"the quick brown fox jumps over the lazy dog\")\n# 'o' appears 4 times here — try it on a paragraph of any English book and 'e' takes first",
+    },
+{
+      type: "exercise",
+      rung: 1,
+      prompt: "What does this code print? Trace which letter appears more than once in 'the quick brown fox', then count the distinct letters — .isalpha() skips spaces.",
+      starter: "text = \"the quick brown fox\"\ncounts = {}\nfor ch in text.lower():\n    if ch.isalpha():\n        counts[ch] = counts.get(ch, 0) + 1\nlabels = sorted(counts, key=counts.get, reverse=True)\nprint(len(counts))\nprint(labels[0])",
+      check: { type: "output", expected: "15\no" },
+      hints: [
+        ".isalpha() skips spaces and punctuation — count only the actual letters.",
+        "Scan the text carefully for a repeated letter. Only one letter appears more than once.",
+        "sorted(counts, key=counts.get, reverse=True) puts the highest count first — that repeated letter is labels[0].",
+      ],
+      solution: "text = \"the quick brown fox\"\ncounts = {}\nfor ch in text.lower():\n    if ch.isalpha():\n        counts[ch] = counts.get(ch, 0) + 1\nlabels = sorted(counts, key=counts.get, reverse=True)\nprint(len(counts))\nprint(labels[0])",
+    },
+{
+      type: "exercise",
+      rung: 2,
+      prompt: "Arrange these lines into letter_freq — the letter frequency function from the lesson. It counts every alpha character, sorts by frequency, draws a bar chart, and prints the most common letter.",
+      starter: "",
+      check: {
+        type: "parsons",
+        lines: [
+          "def letter_freq(text):",
+          "    counts = {}",
+          "    for ch in text.lower():",
+          "        if ch.isalpha():",
+          "            counts[ch] = counts.get(ch, 0) + 1",
+          "    labels = sorted(counts, key=counts.get, reverse=True)",
+          "    values = [counts[c] for c in labels]",
+          "    bar(labels, values)",
+          "    print(labels[0])",
+          "letter_freq(\"we will rock you\")",
+        ],
+        distractors: [
+          "        if ch.isdigit():",
+          "    bar(values, labels)",
+        ],
+      },
+      hints: [
+        "The dict must be ready before the loop counts into it.",
+        "isdigit() returns True for numbers — isalpha() returns True for letters. You want letters.",
+        "bar() needs labels first, values second — the order matters.",
+      ],
+      solution: "def letter_freq(text):\n    counts = {}\n    for ch in text.lower():\n        if ch.isalpha():\n            counts[ch] = counts.get(ch, 0) + 1\n    labels = sorted(counts, key=counts.get, reverse=True)\n    values = [counts[c] for c in labels]\n    bar(labels, values)\n    print(labels[0])\nletter_freq(\"we will rock you\")",
+    },
+{
+      type: "exercise",
+      rung: 3,
+      prompt: "letter_freq currently sorts letters in alphabet order, so the first bar is 'b' not the most common letter. Change the one sort line to sort by frequency instead. After your fix the function prints labels[0] — it should be 'o', not 'b'.",
+      starter: "def letter_freq(text):\n    counts = {}\n    for ch in text.lower():\n        if ch.isalpha():\n            counts[ch] = counts.get(ch, 0) + 1\n    labels = sorted(counts)          # change this line only\n    values = [counts[c] for c in labels]\n    bar(labels, values)\n    print(labels[0])\n\nletter_freq(\"the quick brown fox\")",
+      check: { type: "output", expected: "o" },
+      hints: [
+        "sorted(counts) sorts by key name — 'b' (for 'brown') is first alphabetically.",
+        "sorted() accepts a key= argument. key=counts.get sorts by each letter's count.",
+        "Add reverse=True so the highest count comes first. Which letter in 'the quick brown fox' appears twice?",
+      ],
+      solution: "def letter_freq(text):\n    counts = {}\n    for ch in text.lower():\n        if ch.isalpha():\n            counts[ch] = counts.get(ch, 0) + 1\n    labels = sorted(counts, key=counts.get, reverse=True)\n    values = [counts[c] for c in labels]\n    bar(labels, values)\n    print(labels[0])\n\nletter_freq(\"the quick brown fox\")",
+    },
+{
+      type: "text",
+      md: "**[[Letter frequency]] unlocks secrets.** Every language has a fingerprint. In English, 'e' is the most common letter in any large text. Codebreakers used this to crack shift ciphers: shift every letter by the same amount, and the most common letter in the coded result is almost surely 'e'. The same counter loop works on any sequence — words, letters, or numbers.",
+    },
+{
+      type: "text",
+      md: "**The same pattern works on any numeric dict.** When the dict already maps names to numbers — planet moon counts, game high scores, country populations — there is no counting loop. `sorted(data, key=data.get, reverse=True)[:n]` gives the top n keys by value. Alphabetical sort would put Earth first; sort by value puts Saturn first. This is how every leaderboard and ranking chart works.",
+    },
+{
+      type: "example",
+      note: "Planet moon counts — Saturn leads with 146 moons. Sorted by value, not by name.",
+      code: "moons = {\n    'Saturn':  146,\n    'Jupiter': 95,\n    'Uranus':  27,\n    'Neptune': 16,\n    'Mars':    2,\n    'Earth':   1,\n}\nnames = sorted(moons, key=moons.get, reverse=True)\nvalues = [moons[n] for n in names]\nbar(names, values)\nprint(names[0])  # planet with the most moons",
+    },
+{
+      type: "exercise",
+      rung: 4,
+      prompt: "This planet chart crashes with a NameError before it draws anything. Find the wrong variable name and fix it — one word needs to change.",
+      starter: "moons = {\n    'Saturn':  146,\n    'Jupiter': 95,\n    'Uranus':  27,\n}\ntop = sorted(moons, key=moons.get, reverse=True)[:2]\nvalues = [counts[n] for n in top]   # NameError: name 'counts' is not defined\nbar(top, values)\nprint(top[0])",
+      check: { type: "output", expected: "Saturn" },
+      hints: [
+        "Run the code and read the NameError — it names the variable that doesn't exist.",
+        "The dict holding the moon counts is called moons, not counts.",
+        "Replace counts[n] with moons[n] in the list comprehension.",
+      ],
+      solution: "moons = {\n    'Saturn':  146,\n    'Jupiter': 95,\n    'Uranus':  27,\n}\ntop = sorted(moons, key=moons.get, reverse=True)[:2]\nvalues = [moons[n] for n in top]\nbar(top, values)\nprint(top[0])",
+    },
+{
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete giant_moons: (1) replace avg = 0 with the real average (sum of all moon counts divided by the number of planets); (2) replace 0 in the values list with each planet's actual moon count. The function charts above-average planets and prints how many there are. Saturn (146) and Jupiter (95) beat the average — the answer is 2.",
+      starter: "moons = {\n    'Saturn':  146,\n    'Jupiter': 95,\n    'Uranus':  27,\n    'Neptune': 16,\n    'Mars':    2,\n    'Earth':   1,\n}\n\ndef giant_moons(data):\n    avg = 0             # replace: sum(data.values()) / len(data)\n    giants = sorted([k for k in data if data[k] > avg], key=data.get, reverse=True)\n    values = [0 for k in giants]  # replace 0 with data[k]\n    bar(giants, values)\n    print(len(giants))\n\ngiant_moons(moons)",
+      check: { type: "output", expected: "2" },
+      hints: [
+        "sum(data.values()) totals all moon counts. len(data) is the number of planets.",
+        "With avg = 0, every planet qualifies (all moon counts > 0) — output is 6, not 2.",
+        "In [0 for k in giants], k holds each planet name. Replace 0 with data[k] to get its moon count.",
+      ],
+      solution: "moons = {\n    'Saturn':  146,\n    'Jupiter': 95,\n    'Uranus':  27,\n    'Neptune': 16,\n    'Mars':    2,\n    'Earth':   1,\n}\n\ndef giant_moons(data):\n    avg = sum(data.values()) / len(data)\n    giants = sorted([k for k in data if data[k] > avg], key=data.get, reverse=True)\n    values = [data[k] for k in giants]\n    bar(giants, values)\n    print(len(giants))\n\ngiant_moons(moons)",
+    },
+{
+      type: "text",
+      md: "**Sort by count, not by name.** `sorted(counts)` gives alphabetical order — it puts 'fantasy' at the top of Bohemian Rhapsody's opening line, even though 'is' and 'this' both appear twice while 'fantasy' appears once. Use `sorted(counts, key=counts.get, reverse=True)` to sort by value, highest first. Then slice `[:n]` to keep only the top n. The most important bar is now on the left, where the eye looks first.",
+    },
+{
+      type: "example",
+      note: "Anti-pattern: alphabetical sort buries the most common word — 'fantasy' leads even though 'is' appears twice.",
+      code: "# Bohemian Rhapsody opening — 'is' and 'this' both appear twice\ncounts = {'is': 2, 'this': 2, 'the': 1, 'real': 1, 'life': 1, 'just': 1, 'fantasy': 1}\nlabels = sorted(counts)            # alphabetical: 'fantasy' is first\nprint(labels[0])                   # 'fantasy' — but 'is' is more common!",
+    },
+{
+      type: "example",
+      note: "top_words on a real song — 'you' dominates 'We Will Rock You' because the song is literally about rocking you.",
+      code: "def top_words(text, n):\n    counts = {}\n    for word in text.split():\n        counts[word] = counts.get(word, 0) + 1\n    top = sorted(counts, key=counts.get, reverse=True)[:n]\n    values = [counts[w] for w in top]\n    bar(top, values)\n    print(top[0])\n\nverse = \"buddy youre a boy make a big noise playing in the street gonna be a big man someday you got mud on your face you big disgrace kicking your can all over the place we will rock you we will rock you\"\ntop_words(verse, 5)\n# you(4)  a(3)  big(3)  your(2)  we(2)",
+    },
+{
+      type: "exercise",
+      rung: 6,
+      prompt: "Write letter_vs_word(text) that runs two bar chart analyses on the same text: (1) count letters with .isalpha(), sort alphabetically, and call bar() with the letter names and counts; (2) count words, sort by frequency highest first, take the top 5, call bar() with those words and counts; (3) print the number of unique letters then the number of unique words. Call it on 'we will rock you we will rock you'.",
+      starter: "",
+      check: { type: "output", expected: "10\n4" },
+      hints: [
+        "Two dicts: counts_ch for letters (loop over text.lower(), if ch.isalpha()), counts_w for words (loop over text.split()).",
+        "For letters: alpha = sorted(counts_ch) gives alphabet order. bar(alpha, [counts_ch[c] for c in alpha]).",
+        "For words: top5 = sorted(counts_w, key=counts_w.get, reverse=True)[:5]. bar(top5, [counts_w[w] for w in top5]).",
+        "print(len(counts_ch)) then print(len(counts_w)) at the end.",
+      ],
+      solution: "def letter_vs_word(text):\n    counts_ch = {}\n    for ch in text.lower():\n        if ch.isalpha():\n            counts_ch[ch] = counts_ch.get(ch, 0) + 1\n    alpha = sorted(counts_ch)\n    bar(alpha, [counts_ch[c] for c in alpha])\n    counts_w = {}\n    for word in text.split():\n        counts_w[word] = counts_w.get(word, 0) + 1\n    top5 = sorted(counts_w, key=counts_w.get, reverse=True)[:5]\n    bar(top5, [counts_w[w] for w in top5])\n    print(len(counts_ch))\n    print(len(counts_w))\n\nletter_vs_word(\"we will rock you we will rock you\")",
+    },
+{
+      type: "exercise",
+      rung: 6,
+      prompt: "Write word_trend(text, keyword) that scans the text word by word, keeping a running count of how many times keyword has appeared so far. At every position, append the current count to a list called running — whether or not the word matched. After scanning, call plot() with position indices and running as the x and y lists. Print the final count. Call it with 'we will rock you we will rock you' and keyword='rock'. 'rock' is at positions 2 and 6, so running = [0, 0, 1, 1, 1, 1, 2, 2] and the output is '2'.",
+      starter: "",
+      check: { type: "output", expected: "2" },
+      hints: [
+        "words = text.split(). Start with count = 0 and running = [].",
+        "In the loop: if word == keyword: count += 1. Then running.append(count) on every iteration.",
+        "After the loop: plot(list(range(len(words))), running) draws the trend. print(count) prints the total.",
+      ],
+      solution: "def word_trend(text, keyword):\n    words = text.split()\n    count = 0\n    running = []\n    for word in words:\n        if word == keyword:\n            count += 1\n        running.append(count)\n    plot(list(range(len(words))), running)\n    print(count)\n\nword_trend(\"we will rock you we will rock you\", \"rock\")",
+    },
+],
+  codex: {
+    topic: "data pipeline: collect → sort → chart",
+    pattern: "counts = {}\nfor item in data:\n    counts[item] = counts.get(item, 0) + 1\nlabels = sorted(counts, key=counts.get, reverse=True)\nvalues = [counts[k] for k in labels]\nbar(labels, values)",
+    note: "Collect with .get(k, 0)+1, sort by value with key=counts.get and reverse=True, then bar(). The same pattern counts words, letters, dice rolls, or song plays from any numeric dict.",
+  },
+});
+
+/* ── Lesson 4.10 ─────────────────────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c4s10",
+  chapter: 4,
+  strand: "sound",
+  lang: "py",
+  timeBudgetMin: 25,
+  title: "Art and Music: Ch1+Ch2+Ch3+Ch4",
+  glossary: {
+    "data-driven": "When a program's behaviour is controlled by data rather than hardcoded formulas. Change the data, change the output, without rewriting the logic.",
+    "interval": "The distance in semitones between two notes. A major scale uses intervals [0, 2, 4, 5, 7, 9, 11] above the root.",
+    "melodic contour": "The rise and fall of a melody's pitches over time. Plot it with plot(steps, intervals) where steps = [0, 1, 2, ...] and intervals are the pitch values — a high interval makes the line climb, a low one makes it drop.",
+  },
+  content: [
+{
+      type: "text",
+      md: "**Four chapters, one stack.** In Chapter 1 you learned primitives: `play()`, `forward()`, `print()`. Chapter 2 gave you loops to repeat them. Chapter 3 gave you functions to name and reuse them. Chapter 4 gives you collections — and collections change everything. In c3s9 the melody was `play(root + i)`: a formula produced every note. Now the melody IS a list. Write `play(root + interval) for interval in intervals`. Change the list, change the music. No new function, no rewriting. That is [[data-driven]] programming: behaviour controlled by data.",
+    },
+{
+      type: "text",
+      md: "**Lists as drawing instructions.** In c3s9, `draw_spiral` used `start + i * 10` to grow the distance — a formula defined the shape. Now store the distances in a list: `lengths = [10, 20, 40, 80, 160]`. Loop over it with `for length in lengths`. The shape is data now, not a formula. Swap the list, swap the drawing — same function, different art. CS principle: **DRY** — one function that takes data is better than five hardcoded calls.",
+    },
+{
+      type: "example",
+      note: "Anti-pattern: five separate forward() calls — changing the shape means rewriting all five.",
+      code: "pencolor(\"red\")\nforward(10)\nright(90)\npencolor(\"orange\")\nforward(20)\nright(90)\npencolor(\"yellow\")\nforward(40)\nright(90)\n# ... and so on",
+    },
+{
+      type: "text",
+      md: "**Pair two lists with zip.** `zip(colours, lengths)` pairs up one colour and one length at a time, giving you a `(colour, length)` tuple each iteration. Use both in one loop body. This is the `zip` pattern from Lesson 4.6 — here it lets you describe the full drawing as two lists of data. Change any value in either list and exactly that step of the drawing changes; nothing else does.",
+    },
+{
+      type: "example",
+      note: "Data-driven art: two lists, one loop, one function — change the data, change the drawing.",
+      code: "def draw_palette(colours, lengths):\n    for colour, length in zip(colours, lengths):\n        pencolor(colour)\n        forward(length)\n        right(60)\n\ncolours = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']\nlengths = [20, 40, 60, 80, 100, 80]\ndraw_palette(colours, lengths)",
+    },
+{
+      type: "exercise",
+      rung: 3,
+      prompt: "draw_palette uses right(60), which closes into a hexagon after six steps. Change the turn angle to 91 so the path spirals outward instead. The first three turtle calls should be: set colour 'red', move 20, turn 91.",
+      starter: "def draw_palette(colours, lengths):\n    for colour, length in zip(colours, lengths):\n        pencolor(colour)\n        forward(length)\n        right(60)   # change to 91\n\ncolours = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']\nlengths = [20, 40, 60, 80, 100, 80]\ndraw_palette(colours, lengths)",
+      mockInput: [],
+      check: {
+        type: "calls",
+        calls: [
+          {fn:"color",val:"red"},{fn:"forward",val:20},{fn:"right",val:91},
+          {fn:"color",val:"orange"},{fn:"forward",val:40},{fn:"right",val:91},
+        ],
+      },
+      hints: [
+        "Only one number needs to change — the argument to right().",
+        "right(60) divides a circle into 6 equal steps (360 ÷ 60 = 6). right(91) never closes, so it spirals.",
+        "Change right(60) to right(91) inside the loop.",
+      ],
+      solution: "def draw_palette(colours, lengths):\n    for colour, length in zip(colours, lengths):\n        pencolor(colour)\n        forward(length)\n        right(91)\n\ncolours = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']\nlengths = [20, 40, 60, 80, 100, 80]\ndraw_palette(colours, lengths)",
+    },
+{
+      type: "text",
+      md: "**The [[interval]] list defines the scale.** In c3s9 you played `play(root + i)` — every note was one semitone above the last. Real scales skip unevenly. A major scale goes `[0, 2, 4, 5, 7, 9, 11]` — the gaps between notes are 2, 2, 1, 2, 2, 2, 1 semitones. A pentatonic scale goes `[0, 2, 4, 7, 9]` — only five notes, spaced differently. Store the intervals in a list and loop over it: `play(root + interval)`. One function. Swap the list, swap the scale.",
+    },
+{
+      type: "example",
+      note: "Anti-pattern: hardcoded MIDI numbers — to play Happy Birthday in G instead of C, every single number must change.",
+      code: "# Happy Birthday in C — hardcoded absolute MIDI notes\nplay(60)  # C\nplay(60)  # C\nplay(62)  # D\nplay(60)  # C\nplay(65)  # F\nplay(64)  # E\n# To play in G instead: all six numbers change to 67, 67, 69, 67, 72, 71",
+    },
+{
+      type: "text",
+      md: "**One function, any scale.** Write `play_scale(root, intervals)` and call it with different lists. `major = [0, 2, 4, 5, 7]` and `pentatonic = [0, 2, 4, 7, 9]` give completely different sounds from the same function. The list IS the scale. This is **separation of concerns**: the function knows how to play; the list knows which notes. Changing the scale never touches the function — only the data changes.",
+    },
+{
+      type: "example",
+      note: "play_scale works with any list of intervals — change the list, change the scale.",
+      code: "def play_scale(root, intervals):\n    for interval in intervals:\n        play(root + interval)\n        sleep(0.25)\n\nmajor = [0, 2, 4, 5, 7]\nplay_scale(60, major)   # plays C major fragment",
+    },
+{
+      type: "text",
+      md: "**Zip melody and rhythm.** A melody is a list of intervals; a rhythm is a list of durations. `zip(intervals, durations)` pairs them step by step: each loop gives you one note and one duration. Play the note then sleep for its duration. This gives full control over both pitch and timing from data — the same structure real music software uses internally. Change a duration in the list and that note gets longer; no other note changes.",
+    },
+{
+      type: "example",
+      note: "Smoke on the Water as data — change any interval to transpose the riff, any duration to change the feel.",
+      code: "def play_melody(root, intervals, durations):\n    for interval, dur in zip(intervals, durations):\n        play(root + interval)\n        sleep(dur)\n\n# Smoke on the Water — Deep Purple (G Bb C  G Bb C# C)\nsmoke = [0, 3, 5, 0, 3, 6, 5]\ntiming = [0.5, 0.5, 1.0, 0.5, 0.5, 0.25, 1.5]\nplay_melody(55, smoke, timing)  # root 55 = G3",
+    },
+{
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete play_melody so it plays each interval (as root + interval) and sleeps for the matching duration. zip pairs the two lists step by step. With Smoke on the Water [0,3,5,...] at root=55, the first note is 55, the second is 58.",
+      starter: "def play_melody(root, intervals, durations):\n    for interval, dur in zip(intervals, durations):\n        pass  # play(root + interval), then sleep(dur)\n\nsmoke = [0, 3, 5, 0, 3, 6, 5]\ntiming = [0.5, 0.5, 1.0, 0.5, 0.5, 0.25, 1.5]\nplay_melody(55, smoke, timing)",
+      mockInput: [],
+      check: {
+        type: "calls",
+        calls: [
+          {fn:"play",note:55},
+          {fn:"play",note:58},
+        ],
+      },
+      hints: [
+        "zip(intervals, durations) gives you one (interval, dur) pair per loop — already unpacked for you.",
+        "smoke[0] = 0, root = 55. play(55 + 0) = play(55). smoke[1] = 3. play(55 + 3) = play(58).",
+        "sleep(dur) uses the duration from the timing list — it changes each note.",
+      ],
+      solution: "def play_melody(root, intervals, durations):\n    for interval, dur in zip(intervals, durations):\n        play(root + interval)\n        sleep(dur)\n\nsmoke = [0, 3, 5, 0, 3, 6, 5]\ntiming = [0.5, 0.5, 1.0, 0.5, 0.5, 0.25, 1.5]\nplay_melody(55, smoke, timing)",
+    },
+{
+      type: "text",
+      md: "**A dict can hold the whole drumkit.** In Lesson 4.8 you stored one beat pattern in a list. A drum machine has many instruments. Store each pattern as a value in a dict: `beats = {'kick': [1,0,0,0,1,0,0,0], 'hihat': [1,1,1,1,1,1,1,1]}`. Loop over `beats.items()`: for each instrument name and its pattern, loop through the hits and call `sample(instrument)` when the hit is 1. Adding a new instrument is one new line in the dict — no new variable, no new loop. CS principle: **one data structure over many variables**.",
+    },
+{
+      type: "example",
+      note: "Anti-pattern: a separate variable and loop per instrument — adding a third means more copy-paste.",
+      code: "kick  = [1, 0, 0, 0, 1, 0, 0, 0]\nhihat = [1, 1, 1, 1, 1, 1, 1, 1]\nfor hit in kick:\n    if hit: sample('kick')\nfor hit in hihat:     # another loop — grows every time you add an instrument\n    if hit: sample('hihat')",
+    },
+{
+      type: "example",
+      note: "Dict-driven drumkit: one loop over .items(), any number of instruments — just add a line. Here it's the We Will Rock You stomp-stomp-CLAP pattern.",
+      code: "def play_kit(beats):\n    for instrument, pattern in beats.items():\n        for hit in pattern:\n            if hit:\n                sample(instrument)\n\nwwry = {\n    'kick':  [1, 1, 0, 0, 1, 1, 0, 0],  # stomp stomp\n    'snare': [0, 0, 1, 0, 0, 0, 1, 0],  # CLAP\n    'hihat': [1, 1, 1, 1, 1, 1, 1, 1],  # steady 8ths\n}\nplay_kit(wwry)",
+    },
+{
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete play_kit so it plays the WWRY stomp-stomp-CLAP pattern — sample() the instrument name for every hit of 1 in its pattern.",
+      starter: "def play_kit(beats):\n    for instrument, pattern in beats.items():\n        for hit in pattern:\n            if hit:\n                pass   # call sample() with the instrument name\n\nwwry = {\n    'kick':  [1, 1, 0, 0, 1, 1, 0, 0],  # stomp stomp\n    'snare': [0, 0, 1, 0, 0, 0, 1, 0],  # CLAP\n    'hihat': [1, 1, 1, 1, 1, 1, 1, 1],  # steady 8ths\n}\nplay_kit(wwry)",
+      mockInput: [],
+      check: {
+        type: "calls",
+        calls: [
+          {fn:"sample",name:"kick"},
+          {fn:"sample",name:"kick"},
+          {fn:"sample",name:"kick"},
+          {fn:"sample",name:"kick"},
+          {fn:"sample",name:"snare"},
+          {fn:"sample",name:"snare"},
+          {fn:"sample",name:"hihat"},
+          {fn:"sample",name:"hihat"},
+          {fn:"sample",name:"hihat"},
+          {fn:"sample",name:"hihat"},
+        ],
+      },
+      hints: [
+        "The outer loop gives you instrument (a string) and pattern (a list) for each instrument.",
+        "When hit is 1 (truthy), that beat should sound — the if hit: check is already there.",
+        "sample(instrument) plays the sound named by the string key.",
+      ],
+      solution: "def play_kit(beats):\n    for instrument, pattern in beats.items():\n        for hit in pattern:\n            if hit:\n                sample(instrument)\n\nwwry = {\n    'kick':  [1, 1, 0, 0, 1, 1, 0, 0],\n    'snare': [0, 0, 1, 0, 0, 0, 1, 0],\n    'hihat': [1, 1, 1, 1, 1, 1, 1, 1],\n}\nplay_kit(wwry)",
+    },
+{
+      type: "exercise",
+      rung: 6,
+      prompt: "Write a We Will Rock You drum machine program. play_kit is already defined. Define the wwry dict with three instruments (kick, snare, hihat) using the stomp-stomp-CLAP pattern. Call play_kit(wwry). Then count the total hits for each instrument (sum of 1s in each pattern), chart them with bar() sorted alphabetically, and print the total number of hits across all three instruments. Total should be 14.",
+      starter: "def play_kit(beats):\n    for instrument, pattern in beats.items():\n        for hit in pattern:\n            if hit:\n                sample(instrument)\n\n# define wwry dict and complete the rest here",
+      check: { type: "output", expected: "14" },
+      hints: [
+        "wwry = {'kick': [1,1,0,0,1,1,0,0], 'snare': [0,0,1,0,0,0,1,0], 'hihat': [1,1,1,1,1,1,1,1]}",
+        "Call play_kit(wwry) to play all three patterns.",
+        "hits = {} then for instrument, pattern in wwry.items(): hits[instrument] = sum(pattern)",
+        "names = sorted(hits) then bar(names, [hits[n] for n in names]). print(sum(hits.values())) for the total.",
+      ],
+      solution: "def play_kit(beats):\n    for instrument, pattern in beats.items():\n        for hit in pattern:\n            if hit:\n                sample(instrument)\n\nwwry = {\n    'kick':  [1, 1, 0, 0, 1, 1, 0, 0],\n    'snare': [0, 0, 1, 0, 0, 0, 1, 0],\n    'hihat': [1, 1, 1, 1, 1, 1, 1, 1],\n}\nplay_kit(wwry)\nhits = {}\nfor instrument, pattern in wwry.items():\n    hits[instrument] = sum(pattern)\nnames = sorted(hits)\nbar(names, [hits[n] for n in names])\nprint(sum(hits.values()))",
+    },
+{
+      type: "text",
+      md: "**One list, two outputs.** A list of intervals drives a melody. The same list can drive a spiral: use `interval * 8 + 16` as the forward distance and `right(45)` for the turn. A higher note means a longer step, so the shape changes with the tune. The art and the music come from the same data. Change one number in the list and both outputs change together. This is the deepest level of [[data-driven]] thinking: the data IS the program.",
+    },
+{
+      type: "example",
+      note: "Ode to Joy drives both sound and spiral — higher notes make longer steps, so the arch of the melody becomes an arch in the drawing.",
+      code: "def art_and_music(root, intervals):\n    for interval in intervals:\n        play(root + interval)\n        forward(interval * 8 + 16)\n        right(45)\n        sleep(0.25)\n\n# Ode to Joy — E E F G G F E D (from C root)\n# spiral widens as melody climbs to G (interval 7), tightens as it falls back\node_to_joy = [4, 4, 5, 7, 7, 5, 4, 2]\nart_and_music(60, ode_to_joy)",
+    },
+{
+      type: "exercise",
+      rung: 4,
+      prompt: "art_and_music has a bug — it plays the root note every time instead of moving up the melody. Fix it so each note is root + interval. With Ode to Joy [4,4,5,7,7,5,4,2] at root=60, the first three notes should be 64, 64, 65.",
+      starter: "def art_and_music(root, intervals):\n    for interval in intervals:\n        play(root)              # bug: missing + interval\n        forward(interval * 8 + 16)\n        right(45)\n        sleep(0.25)\n\node_to_joy = [4, 4, 5, 7, 7, 5, 4, 2]\nart_and_music(60, ode_to_joy)",
+      mockInput: [],
+      check: {
+        type: "calls",
+        calls: [
+          {fn:"play",note:64},{fn:"forward",val:48},{fn:"right",val:45},
+          {fn:"play",note:64},{fn:"forward",val:48},{fn:"right",val:45},
+          {fn:"play",note:65},{fn:"forward",val:56},{fn:"right",val:45},
+        ],
+      },
+      hints: [
+        "play(root) always plays the same note — root never changes in the loop.",
+        "The variable interval holds the current offset from root. You need to add it.",
+        "Change play(root) to play(root + interval).",
+      ],
+      solution: "def art_and_music(root, intervals):\n    for interval in intervals:\n        play(root + interval)\n        forward(interval * 8 + 16)\n        right(45)\n        sleep(0.25)\n\node_to_joy = [4, 4, 5, 7, 7, 5, 4, 2]\nart_and_music(60, ode_to_joy)",
+    },
+{
+      type: "text",
+      md: "**A line chart reveals the [[melodic contour]].** Lesson 4.9 used `bar()` to answer 'which notes appear most?' A line chart answers a different question: 'how does the melody move over time?' Build the x-axis with `steps = list(range(len(melody)))` — that gives positions 0, 1, 2, … Pass the melody list as the y-axis. Call `plot(steps, melody)`. The line climbs on high intervals and drops on low ones — you can read the arc of the tune at a glance. `bar()` shows frequency; `plot()` shows contour. Same list, completely different insight.",
+    },
+{
+      type: "example",
+      note: "Melodic contour as a line chart — the line climbs on high intervals and drops on low ones.",
+      code: "def melody_contour(melody):\n    steps = list(range(len(melody)))\n    plot(steps, melody)\n\n# Twinkle Twinkle Little Star — C C G G A A G\ntwinkle = [0, 0, 7, 7, 9, 9, 7]\nmelody_contour(twinkle)\n# flat at 0 (CC), leaps to 7 (GG) at 'little', climbs to 9 (AA) at 'star', settles at 7",
+    },
+{
+      type: "text",
+      md: "**Song structure is just list arithmetic.** A verse is a list of intervals; a chorus is a different list; a bridge is a third. Python's `+` concatenates lists: `verse + bridge + verse` gives ABA form — 21 notes from two short motifs. `verse * 2` repeats it twice without retyping. Change one note in the verse and every repetition updates. The whole song is data; the loop stays untouched.",
+    },
+{
+      type: "example",
+      note: "ABA song form from list concatenation — verse + bridge + verse, 7+7+7 = 21 notes.",
+      code: "verse  = [0, 0, 7, 7, 9, 9, 7]    # Twinkle Twinkle: C C G G A A G\nbridge = [5, 5, 4, 4, 2, 2, 0]    # descending phrase: F F E E D D C\nsong   = verse + bridge + verse    # ABA structure — 21 notes\nprint(len(song))\nfor interval in song:\n    play(60 + interval)\n    sleep(0.3)",
+    },
+{
+      type: "exercise",
+      rung: 1,
+      prompt: "Predict what this prints. The verse and bridge are each 7-note fragments. How long is ABA form, and what interval sits at index 7?",
+      starter: "verse  = [0, 0, 7, 7, 9, 9, 7]\nbridge = [5, 5, 4, 4, 2, 2, 0]\nsong   = verse + bridge + verse\nprint(len(song))\nprint(song[7])",
+      check: { type: "output", expected: "21\n5" },
+      hints: [
+        "Each fragment has 7 notes. ABA form is verse + bridge + verse — three fragments concatenated.",
+        "7 + 7 + 7 = 21.",
+        "Index 7 is the first element after the verse ends — that's where the bridge starts. bridge[0] is 5.",
+      ],
+      solution: "verse  = [0, 0, 7, 7, 9, 9, 7]\nbridge = [5, 5, 4, 4, 2, 2, 0]\nsong   = verse + bridge + verse\nprint(len(song))\nprint(song[7])",
+    },
+{
+      type: "text",
+      md: "**BPM controls the feel.** `step = 60 / bpm` converts beats per minute to seconds per step: 60 BPM = 1 second, 90 BPM = 0.67 s, 180 BPM = 0.33 s. One number resets the energy of the entire piece. Play Ode to Joy at 90 BPM and it sounds solemn; at 180 BPM the same notes sound frantic. This is **separation of concerns**: the play loop is behaviour; the tempo is data that controls that behaviour.",
+    },
+{
+      type: "example",
+      note: "play_at_bpm on Ode to Joy — 90 BPM sounds solemn; 180 BPM sounds frantic. Same notes, different energy.",
+      code: "def play_at_bpm(melody, root, bpm):\n    step = 60 / bpm\n    for interval in melody:\n        play(root + interval)\n        sleep(step)\n\n# Ode to Joy — E E F G G F E D (from C root)\node = [4, 4, 5, 7, 7, 5, 4, 2]\nplay_at_bpm(ode, 60, 90)    # solemn and measured\nplay_at_bpm(ode, 60, 180)   # frantic — same melody, completely different feel",
+    },
+{
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete play_at_bpm. Two things need fixing: replace step = 0 with the correct BPM formula, then replace pass with the two lines that play the note and sleep. Call it with Ode to Joy at root=60, bpm=120.",
+      starter: "def play_at_bpm(melody, root, bpm):\n    step = 0          # replace: 60 / bpm\n    for interval in melody:\n        pass          # play(root + interval), then sleep(step)\n\node = [4, 4, 5, 7, 7, 5, 4, 2]\nplay_at_bpm(ode, 60, 120)",
+      mockInput: [],
+      check: {
+        type: "calls",
+        calls: [
+          {fn:"play",note:64},
+          {fn:"play",note:64},
+          {fn:"play",note:65},
+        ],
+      },
+      hints: [
+        "At 120 BPM there are 120 beats per minute. 60 seconds ÷ 120 beats = 0.5 seconds per beat. So step = 60 / bpm.",
+        "ode[0] = 4, root = 60. play(60 + 4) = play(64).",
+        "sleep(step) uses the variable you computed at the top of the function — not a fixed number.",
+      ],
+      solution: "def play_at_bpm(melody, root, bpm):\n    step = 60 / bpm\n    for interval in melody:\n        play(root + interval)\n        sleep(step)\n\node = [4, 4, 5, 7, 7, 5, 4, 2]\nplay_at_bpm(ode, 60, 120)",
+    },
+{
+      type: "text",
+      md: "**Three outputs from one list.** `song_analysis` is the deepest idea in this chapter. One melody list drives three things at once: `play()` so you hear the notes, `plot()` so you see the melodic contour as a line chart, and `bar()` so you see which intervals appear most often. Change one interval in the list and all three outputs update. **The data IS the program.** This is what data-driven means at its fullest.",
+    },
+{
+      type: "example",
+      note: "song_analysis on Twinkle Twinkle — one list drives sound, shape, and frequency chart simultaneously.",
+      code: "def song_analysis(melody, root, bpm=120):\n    step = 60 / bpm\n    steps = list(range(len(melody)))\n    for interval in melody:\n        play(root + interval)\n        sleep(step)\n    plot(steps, melody)   # melodic contour as line chart\n    counts = {}\n    for n in melody:\n        counts[str(n)] = counts.get(str(n), 0) + 1\n    labels = sorted(counts, key=counts.get, reverse=True)\n    bar(labels, [counts[k] for k in labels])\n    print(labels[0])      # most common interval\n\ntwinkle = [0, 0, 7, 7, 9, 9, 7]\nsong_analysis(twinkle, 60, 120)\n# prints '7' — G (interval 7) appears 3 times in Twinkle Twinkle",
+    },
+{
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete song_analysis — the play loop and plot call are done. Add the frequency count: count how many times each interval appears (use str(n) as the key), sort by count highest first, call bar(), and print the most common interval then its count on the next line. With Ode to Joy [4,4,5,7,7,5,4,2] the answer is '4' appearing 3 times.",
+      starter: "def song_analysis(melody, root, bpm=120):\n    step = 60 / bpm\n    steps = list(range(len(melody)))\n    for interval in melody:\n        play(root + interval)\n        sleep(step)\n    plot(steps, melody)\n    pass  # add: count frequencies, sort by count desc, bar(), print most common + its count\n\node_to_joy = [4, 4, 5, 7, 7, 5, 4, 2]\nsong_analysis(ode_to_joy, 60, 90)",
+      mockInput: [],
+      check: { type: "output", expected: "4\n3" },
+      hints: [
+        "counts = {} then for n in melody: counts[str(n)] = counts.get(str(n), 0) + 1",
+        "labels = sorted(counts, key=counts.get, reverse=True) gives intervals by frequency, highest first.",
+        "bar(labels, [counts[k] for k in labels]) charts them.",
+        "print(labels[0]) prints the most common interval; print(counts[labels[0]]) prints how many times it appears.",
+      ],
+      solution: "def song_analysis(melody, root, bpm=120):\n    step = 60 / bpm\n    steps = list(range(len(melody)))\n    for interval in melody:\n        play(root + interval)\n        sleep(step)\n    plot(steps, melody)\n    counts = {}\n    for n in melody:\n        counts[str(n)] = counts.get(str(n), 0) + 1\n    labels = sorted(counts, key=counts.get, reverse=True)\n    bar(labels, [counts[k] for k in labels])\n    print(labels[0])\n    print(counts[labels[0]])\n\node_to_joy = [4, 4, 5, 7, 7, 5, 4, 2]\nsong_analysis(ode_to_joy, 60, 90)",
+    },
+{
+      type: "exercise",
+      rung: 6,
+      prompt: "Write song_analysis(melody, root, bpm) from scratch — all three outputs. It should: compute step = 60 / bpm, play each note, plot the melodic contour, count interval frequencies (str(n) key), sort by count desc, call bar(), and print the most common interval then its count. Call it with twinkle = [0, 0, 7, 7, 9, 9, 7] at root=60, bpm=120. The most common interval is '7' (G appears 3 times in Twinkle Twinkle).",
+      starter: "twinkle = [0, 0, 7, 7, 9, 9, 7]\n# write song_analysis(melody, root, bpm) here, then call song_analysis(twinkle, 60, 120)",
+      check: { type: "output", expected: "7\n3" },
+      hints: [
+        "step = 60 / bpm converts BPM to seconds per step. steps = list(range(len(melody))).",
+        "Play loop: for interval in melody: play(root + interval), sleep(step). Then plot(steps, melody).",
+        "Count: for n in melody: counts[str(n)] = counts.get(str(n), 0) + 1",
+        "labels = sorted(counts, key=counts.get, reverse=True). bar(labels, [counts[k] for k in labels]). Then print labels[0] and counts[labels[0]].",
+      ],
+      solution: "def song_analysis(melody, root, bpm):\n    step = 60 / bpm\n    steps = list(range(len(melody)))\n    for interval in melody:\n        play(root + interval)\n        sleep(step)\n    plot(steps, melody)\n    counts = {}\n    for n in melody:\n        counts[str(n)] = counts.get(str(n), 0) + 1\n    labels = sorted(counts, key=counts.get, reverse=True)\n    bar(labels, [counts[k] for k in labels])\n    print(labels[0])\n    print(counts[labels[0]])\n\ntwinkle = [0, 0, 7, 7, 9, 9, 7]\nsong_analysis(twinkle, 60, 120)",
+    },
+],
+  codex: {
+    topic: "data-driven art, music, and analysis",
+    pattern: "# BPM-driven playback\nstep = 60 / bpm\nfor interval in melody:\n    play(root + interval)\n    sleep(step)\n\n# song_analysis: one list → play + plot + bar\nplot(list(range(len(melody))), melody)\ncounts = {}\nfor n in melody:\n    counts[str(n)] = counts.get(str(n), 0) + 1",
+    note: "Store melody as intervals. step = 60/bpm controls tempo. song_analysis drives play(), plot(), and bar() from the same list — the deepest form of data-driven programming. Drum patterns are dicts of lists: one loop over .items() plays any number of instruments.",
   },
 });

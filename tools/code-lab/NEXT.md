@@ -112,14 +112,36 @@ All 10 lessons authored (c3s0–c3s9). All harness checks pass.
 - 3.8 rung-6 Write: word_inspector("racecar") → "Vowels: 3 / Palindrome: True / RACECAR"
 - 3.9 rung-6 Write (drawing): draw_snowflake() → 6-branch snowflake on canvas
 
-### Phase D — Chapter 4 (Collections) ← NEXT
+### Phase D — Chapter 4 (Collections) ✅ COMPLETE
 
-**Pre-chapter gate: COMPLETE.** AUTHORING.md updated with all undocumented
-conventions from c1–c3 (rung ladder, codex/glossary format, content block types,
-lesson schema, bold-lead pattern, anti-pattern labeling, strand semantics).
-All structural, design, and writing decisions from c1–c3 are now locked in writing.
+All 10 lessons authored (c4s1–c4s10), all harness checks pass, gate verified.
 
-Work chapter by chapter per CURRICULUM.md. Requires explicit user approval to begin.
+| ID | Title | Rungs |
+|----|-------|-------|
+| c4s1 | Lists: One Name for Many Values | 1, 4, 2, 3, 5, 6 |
+| c4s2 | Indexing and Slicing | 1, 3, 1, 4, 5, 6 |
+| c4s3 | Looping Over Lists | 1, 2, 3, 5, 3, 6 |
+| c4s4 | Tuples and Sets | 1, 2, 3, 4, 5, 6 |
+| c4s5 | Look It Up: Dictionaries | 1, 2, 4, 3, 5, 6 |
+| c4s6 | Containers Inside Containers | 2, 3, 1, 5, 4, 6 |
+| c4s7 | Data into Charts | 1, 2, 5, 4, 3, 6 |
+| c4s8 | Lists as Music | 1, 4, 3, 5, 5, 6 |
+| c4s9 | Collect, Process, Chart | 1, 2, 3, 4, 5, 6, 6 |
+| c4s10 | Art and Music: Ch1+Ch2+Ch3+Ch4 | 3, 5, 5, 6, 4, 1, 5, 5, 6 |
+
+**Pre-chapter gate: COMPLETE.** Lesson quality audit (commit `e827d76`) added
+AUTHORING.md Rules 6–8 (exercise diversity, build-up, complete coverage) and
+brought all 36 lessons to those standards.
+
+**Gate checklist — verified by running each solution through
+`tests/mocks/runner.py` (same mock-injecting runner `tests/run.js` inv1 already
+trusts) and diffing actual stdout against the value below:**
+- 4.1 `c4s1` rung-1 Predict: `bpm=[80,120,140,96]` → `80\n96\n4` ✅
+- 4.3 `c4s3` rung-3 Modify: sorted BPMs with `reverse=True` → `[61, 52, 47, 43, 38]` ✅
+- 4.5 `c4s5` rung-4 Fix: frequency counter bug (`total + song` key bug) → `8500` ✅
+- 4.8 `c4s8` rung-1 Predict: `len(melody)/melody[2]` → `5\n64` ✅
+- 4.9 `c4s9` rung-6 Write: `letter_vs_word(text)` → `10\n4`; `word_trend(text, keyword)` → `2` ✅
+- 4.10 `c4s10` rung-6 Write: `song_analysis(melody, root, bpm)` → `7\n3` ✅
 
 ### Phase D — Chapter 0 (pre-syntax hook)
 Author Chapter 0 sections: First Sound, Algorithms Are Exact, Guide the Robot,

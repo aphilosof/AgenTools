@@ -355,6 +355,7 @@
     var checkB = (ex.check && !predict) ? el("button", "btn secondary", "check") : null; if (checkB) actions.appendChild(checkB);
     var hintB = (ex.hints && ex.hints.length && !predict) ? el("button", "btn secondary", "hint") : null; if (hintB) actions.appendChild(hintB);
     var solB = (ex.solution && !predict) ? el("button", "btn ghost", "solution") : null; if (solB) actions.appendChild(solB);
+    var resetB = el("button", "btn ghost", "reset"); actions.appendChild(resetB);
     ep.appendChild(actions);
 
     var outBox = el("div", "output inpanel-output");
@@ -398,6 +399,17 @@
       if (hintIdx >= ex.hints.length) hintB.disabled = true;
     });
     if (solB) solB.addEventListener("click", showModel);
+    resetB.addEventListener("click", function () {
+      var fresh = effectiveStarter(ex.starter);
+      if (!predict) { edv.setValue(fresh); CL.storage.setCode(key, fresh); }
+      if (predBox) predBox.value = "";
+      outBox.innerHTML = "";
+      outBox.appendChild(el("div", "out-line info", predict ? "press run to check your guess." : "press run to execute your code."));
+      hintHost.innerHTML = "";
+      modelHost.innerHTML = "";
+      hintIdx = 0;
+      if (hintB) hintB.disabled = false;
+    });
     return wrap;
   }
 
@@ -618,6 +630,9 @@
       solBtn.id = "btn-solution";
       actions.appendChild(solBtn);
     }
+    var rstBtn = el("button", "btn ghost", "reset");
+    rstBtn.id = "btn-reset";
+    actions.appendChild(rstBtn);
     var stopBtn = el("button", "btn secondary", "stop");
     stopBtn.id = "btn-stop";
     stopBtn.style.display = "none";
@@ -763,6 +778,7 @@
       var lastLine = null;
       return {
         getValue: function () { return cm.getValue(); },
+        setValue: function (v) { cm.setValue(v); },
         focus: function () { cm.focus(); },
         highlightLine: function (n) {
           if (lastLine != null) { cm.removeLineClass(lastLine, "background", "cm-stepline"); lastLine = null; }
@@ -782,7 +798,7 @@
     if (placeholder) ta.placeholder = placeholder;
     if (onChange) ta.addEventListener("input", function () { onChange(ta.value); });
     host.appendChild(ta);
-    return { getValue: function () { return ta.value; }, focus: function () { ta.focus(); }, highlightLine: function () {} };
+    return { getValue: function () { return ta.value; }, setValue: function (v) { ta.value = v; }, focus: function () { ta.focus(); }, highlightLine: function () {} };
   }
 
   // Lesson/section navigation: top prev/next, clickable progress circles, and the
@@ -1043,6 +1059,23 @@
     if (checkBtn) checkBtn.addEventListener("click", function () { execute(true); });
     if (hintBtn) hintBtn.addEventListener("click", showNextHint);
     if (solBtn) solBtn.addEventListener("click", revealSolution);
+    var rstBtn2 = document.getElementById("btn-reset");
+    if (rstBtn2) rstBtn2.addEventListener("click", function () {
+      var starter = state.lesson.starterCode || "";
+      editor.setValue(starter);
+      state.code = starter;
+      CL.storage.setCode(state.lesson.id, starter);
+      outBox.innerHTML = "";
+      outBox.appendChild(el("div", "out-line info", "press run to execute your code."));
+      if (hintHost) hintHost.innerHTML = "";
+      if (modelHost) modelHost.innerHTML = "";
+      hintIdx = 0;
+      if (hintBtn) hintBtn.disabled = false;
+      if (stage) stage.style.display = "none";
+      stepperEl.style.display = "none";
+      editor.highlightLine(null);
+      steps = []; stepIdx = 0;
+    });
     stopBtn.addEventListener("click", doStop);
 
     // F5 runs (matches the terminal key-hint). Re-wired each render, so drop the
