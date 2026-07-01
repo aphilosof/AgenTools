@@ -296,16 +296,24 @@ Approved structure from 5-reviewer curriculum audit. Lessons authored in commit 
 | 4.5 | Data into Charts | `plot`/`bar` → *dice-roll statistics* | plot | 6 Write |
 | 4.6 | Lists as Music | `play_pattern` melodies; a drum pattern as a list of 1s and 0s | sound | 6 Write |
 
-## Chapter 5 — Thinking in Code (~5) · *stop-point: feels complete here*
-*Goal: code design and debugging as explicit skills. Style channel turns on.*
+## Chapter 5 — Thinking in Code (~6) · *stop-point: feels complete here*
+*Goal: code design and debugging as explicit skills. Style channel turns on.
+No new syntax — every lesson applies Ch1–4 skills to the practice of writing
+and fixing your own code.*
+
+Revised via a 5-reviewer curriculum audit (Downey, Resnick, Severance, Guzdial,
+Ko lenses), synthesized and fact-checked against the actual Ch3/Ch4 lesson
+source (c3s4/c3s9 already teach call frames; c4s6 already teaches
+aliasing/mutation — no new lesson needed for either). Approved table:
 
 | # | Lesson | Idea / objective | Strand | Rung |
 |---|---|---|---|---|
-| 5.1 | Decomposition | Break a big problem into small functions | core | 6 Write |
-| 5.2 | Naming Things Well | Readable names; the style channel begins | core | 4 Fix |
-| 5.3 | Don't Repeat Yourself | Spot and remove repetition | core | 4 Fix |
-| 5.4 | The Debugging Protocol | Read bottom line → find line → walk the stack → hypothesis → test (required in bosses hereafter) | core | 4 Fix |
-| 5.5 | Checkpoint Projects | Number-guessing game; text-statistics tool; refactor a messy 40-line song | mixed | 6 Write · checkpoint |
+| 5.1 | Decomposition & Naming | Blank-page decomposition of a new problem + incremental build-and-test; naming as a debugging aid (cognitive cost, not aesthetics); boolean naming; shadowing built-ins | core | 2 Arrange · 1 Predict · 4 Fix · 6 Write |
+| 5.2 | Generalizing Repetition | DRY revisited harder: spotting *near*-duplication, generalize-and-parameterize, and when *not* to DRY (premature abstraction) | core | 1 Predict · 3 Modify · 4 Fix |
+| 5.3 | Reading Someone Else's Code | Tracing unfamiliar code with the stepper before touching it; spotting code smells (magic numbers, deep nesting, giant functions) — prerequisite for 5.6's refactor | core | 1 Predict (×2) |
+| 5.4 | Debugging: Reading the Crime Scene | Traceback-as-call-stack (recap of c3s4 frames, not new); "crash line ≠ bug line"; named error-class → fix-move map (NameError/TypeError/IndexError/KeyError/ValueError/ZeroDivisionError/AttributeError-from-None) | core | 1 Predict · 4 Fix |
+| 5.5 | Debugging: The Scientist's Method | Hypothesis → predict → test → revise as a loop (not a checklist); hypothesis-gated Fix; print-as-instrument; minimal reproducible example; **silent wrong-answer bugs** (no traceback) as a distinct category | core | 4 Fix (hypothesis-gated) · 1 Predict (silent bug) |
+| 5.6 | Checkpoint Projects | Number-guessing game; text-statistics tool; refactor a messy 40-line song — each seeded with ≥1 silent bug and ≥1 multi-frame bug, each combining ≥2 earlier chapters | mixed | 6 Write · checkpoint |
 
 ## Chapter 6 — Classes and Objects (~6)
 *Goal: objects as things with properties and abilities. Hard cap: attributes, methods, instances. No inheritance anywhere.*

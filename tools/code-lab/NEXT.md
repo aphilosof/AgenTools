@@ -143,6 +143,29 @@ trusts) and diffing actual stdout against the value below:**
 - 4.9 `c4s9` rung-6 Write: `letter_vs_word(text)` → `10\n4`; `word_trend(text, keyword)` → `2` ✅
 - 4.10 `c4s10` rung-6 Write: `song_analysis(melody, root, bpm)` → `7\n3` ✅
 
+### Phase E — Chapter 5 (Thinking in Code) ← NEXT
+
+**Pre-chapter gate: COMPLETE.** 5-reviewer curriculum audit run (Downey, Resnick,
+Severance, Guzdial, Ko lenses), synthesized, fact-checked against actual Ch3/Ch4
+lesson source, and approved. Full table recorded in CURRICULUM.md. Key findings:
+- Debugging was under-scoped in the original 5-lesson plan relative to how
+  central it's declared ("required in bosses hereafter") — split into two
+  lessons (5.4 crime-scene/traceback, 5.5 hypothesis-driven method + silent bugs).
+- Silent wrong-answer bugs (no traceback, just wrong output) were entirely
+  unaddressed — now a first-class category in 5.5.
+- A call-stack lesson and an aliasing/mutation lesson were considered and
+  dropped after verification: c3s4/c3s9 already teach call frames, c4s6 already
+  teaches aliasing — no re-teaching needed, only a recap callback in 5.4.
+- DRY reframed as "Generalizing Repetition" (5.2) since basic DRY is already
+  taught 5+ times since Ch3 — the new content is spotting near-duplication and
+  knowing when *not* to DRY.
+- Added 5.3 "Reading Someone Else's Code" as a prerequisite for the 5.6
+  checkpoint's messy-song refactor (no lesson previously taught reading
+  unfamiliar code cold).
+
+Now authoring lesson by lesson per CURRICULUM.md's Chapter 5 table, following
+the same process as Ch1–4 (see "Authoring a new lesson" below).
+
 ### Phase D — Chapter 0 (pre-syntax hook)
 Author Chapter 0 sections: First Sound, Algorithms Are Exact, Guide the Robot,
 Repeat and Decide, The Sandwich Bug. These come before Chapter 1 in the nav.
