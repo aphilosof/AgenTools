@@ -196,3 +196,138 @@ window.CODELAB.lessons.push({
     note: "Split a problem by its verbs — one function, one job, tested alone before it's wired into the rest. A name should say what a value is or does; two names that look almost alike (count/counts) are a bug waiting to happen.",
   },
 });
+
+/* ── Lesson 5.2 ─────────────────────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c5s2",
+  chapter: 5,
+  strand: "core",
+  lang: "py",
+  timeBudgetMin: 22,
+  title: "Generalizing Repetition",
+  glossary: {
+    "near-duplicate": "Two blocks of code that are not identical text but do the same job in the same way, differing only in one or two values.",
+  },
+  content: [
+    {
+      type: "text",
+      md: "**You already know DRY — here's the version that's easy to miss.** Since Lesson 3.1's `repeat_line`, you've spotted repetition when it was **identical** copy-pasted text. That's the easy case. The harder case is a **[[near-duplicate]]**: two functions that don't look alike at a glance — different variable names, maybe a different accumulator — but do the exact same job with one number swapped out. Near-duplicates hide from a quick read, which is exactly why they're worth training your eye for.",
+    },
+    {
+      type: "text",
+      md: "**The technique: find what varies, make it a parameter.** Line up the two blocks and ask: what's the ONE thing that's different between them? Usually it's a single value — a threshold, a label, a count. Write one function that takes that value as a parameter instead of hardcoding it, and both original blocks become one call each with a different argument.",
+    },
+    {
+      type: "example",
+      note: "count_above_100 and count_above_130 are near-duplicates — same loop, different number. count_above(tracks, threshold) replaces both.",
+      code: "bpm = [80, 120, 140, 96]\n\n# Near-duplicates:\ndef count_above_100(tracks):\n    count = 0\n    for t in tracks:\n        if t > 100:\n            count += 1\n    return count\n\ndef count_above_130(tracks):\n    count = 0\n    for t in tracks:\n        if t > 130:\n            count += 1\n    return count\n\n# One generalized function replaces both:\ndef count_above(tracks, threshold):\n    count = 0\n    for t in tracks:\n        if t > threshold:\n            count += 1\n    return count\n\nprint(count_above(bpm, 100))\nprint(count_above(bpm, 130))\n",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "Trace the two calls to `count_above` above. Predict what each one prints before running it.",
+      starter: "bpm = [80, 120, 140, 96]\n\ndef count_above(tracks, threshold):\n    count = 0\n    for t in tracks:\n        if t > threshold:\n            count += 1\n    return count\n\nprint(count_above(bpm, 100))\nprint(count_above(bpm, 130))\n",
+      check: { type: "output", expected: "2\n1" },
+      hints: [
+        "For the first call, threshold is 100 — count how many of 80, 120, 140, 96 are greater than 100.",
+        "120 and 140 are both above 100. Only 140 is above 130.",
+        "First call prints 2, second call prints 1.",
+      ],
+      solution: "bpm = [80, 120, 140, 96]\n\ndef count_above(tracks, threshold):\n    count = 0\n    for t in tracks:\n        if t > threshold:\n            count += 1\n    return count\n\nprint(count_above(bpm, 100))\nprint(count_above(bpm, 130))\n",
+    },
+    {
+      type: "example",
+      note: "The same near-duplicate shape shows up on a fresh dataset — count_above_80 and count_above_90 differ only in one number.",
+      code: "scores = [88, 72, 95, 61, 84]\n\ndef count_above_80(values):\n    count = 0\n    for v in values:\n        if v > 80:\n            count += 1\n    return count\n\ndef count_above_90(values):\n    count = 0\n    for v in values:\n        if v > 90:\n            count += 1\n    return count\n\nprint(count_above_80(scores))\nprint(count_above_90(scores))\n",
+    },
+    {
+      type: "exercise",
+      rung: 5,
+      prompt: "Combine `count_above_80` and `count_above_90` above into one function, `count_above(values, cutoff)`, using the same generalize-and-parameterize move from the bpm example. Call it twice with the two cutoffs.",
+      starter: "scores = [88, 72, 95, 61, 84]\n\ndef count_above(values, cutoff):\n    pass  # combine count_above_80 and count_above_90 into one function\n\nprint(count_above(scores, 80))\nprint(count_above(scores, 90))\n",
+      check: { type: "output", expected: "3\n1" },
+      hints: [
+        "The loop body is identical to count_above_80 and count_above_90 — only the compared number changes.",
+        "Replace the hardcoded 80 or 90 with the cutoff parameter.",
+        "count = 0, loop over values, if v > cutoff: count += 1, then return count.",
+      ],
+      solution: "scores = [88, 72, 95, 61, 84]\n\ndef count_above(values, cutoff):\n    count = 0\n    for v in values:\n        if v > cutoff:\n            count += 1\n    return count\n\nprint(count_above(scores, 80))\nprint(count_above(scores, 90))\n",
+    },
+    {
+      type: "text",
+      md: "**Near-identical code invites a different kind of bug.** When you build the \"other half\" of a near-duplicate by copying one block and editing it, it's easy to change the number but forget to change something else — like the message the block prints. The two blocks looked so alike that the mistake is hard to spot just by reading.",
+    },
+    {
+      type: "example",
+      note: "Bug: the loss branch was copy-pasted from the win branch, and the text never got updated.",
+      code: "def announce_result(name, won):\n    if won:\n        print(name, \"wins!\")\n        print(\"Great game!\")\n    else:\n        print(name, \"wins!\")   # copy-paste slip -- this is the losing branch\n        print(\"Nice try -- practice makes perfect.\")\n\nannounce_result(\"Ravi\", True)\nannounce_result(\"Mia\", False)\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "The losing branch of `announce_result` was copy-pasted from the winning branch, and the message never got updated — it says \"wins!\" even when `won` is `False`. Fix the copy-pasted line so the losing branch prints `\"<name> didn't win this time.\"`",
+      starter: "def announce_result(name, won):\n    if won:\n        print(name, \"wins!\")\n        print(\"Great game!\")\n    else:\n        print(name, \"wins!\")\n        print(\"Nice try -- practice makes perfect.\")\n\nannounce_result(\"Ravi\", True)\nannounce_result(\"Mia\", False)\n",
+      check: { type: "output", expected: "Ravi wins!\nGreat game!\nMia didn't win this time.\nNice try -- practice makes perfect." },
+      hints: [
+        "The else branch is supposed to run when won is False — a losing message, not a winning one.",
+        "Both branches currently print the same first line — that's the copy-paste slip.",
+        "Change the else branch's first print to name, \"didn't win this time.\"",
+      ],
+      solution: "def announce_result(name, won):\n    if won:\n        print(name, \"wins!\")\n        print(\"Great game!\")\n    else:\n        print(name, \"didn't win this time.\")\n        print(\"Nice try -- practice makes perfect.\")\n\nannounce_result(\"Ravi\", True)\nannounce_result(\"Mia\", False)\n",
+    },
+    {
+      type: "text",
+      md: "**True duplication has a sharper cost: the two copies quietly drift apart.** `grade_math` and `grade_science` below started as identical copies of the same formula. Then a 5-point curve was added to fix low math grades — but only the math copy got the edit. Nothing crashes. The science grade is just wrong, silently, because the two copies no longer agree on what \"grade\" means.",
+    },
+    {
+      type: "example",
+      note: "grade_math and grade_science started identical. Only grade_math got the curve fix -- the bug is that they've drifted apart, not that either one crashes.",
+      code: "math_scores = [70, 82, 91]\nscience_scores = [65, 78, 88]\n\ndef grade_math(scores):\n    curved = [s + 5 for s in scores]   # a 5-point curve, added after complaints\n    return sum(curved) / len(curved)\n\ndef grade_science(scores):\n    return sum(scores) / len(scores)   # never got the same curve\n\nprint(grade_math(math_scores))\nprint(grade_science(science_scores))\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "`grade_math` and `grade_science` were identical until a 5-point curve was added to `grade_math` only. Replace both with one shared function, `grade(scores)`, that applies the curve, so a future curve change only has to happen in one place. Call it once for each subject.",
+      starter: "math_scores = [70, 82, 91]\nscience_scores = [65, 78, 88]\n\ndef grade_math(scores):\n    curved = [s + 5 for s in scores]\n    return sum(curved) / len(curved)\n\ndef grade_science(scores):\n    return sum(scores) / len(scores)\n\nprint(grade_math(math_scores))\nprint(grade_science(science_scores))\n",
+      check: { type: "output", expected: "86.0\n82.0" },
+      hints: [
+        "Write one function, grade(scores), using grade_math's body (the one with the curve) since that's the intended behavior.",
+        "Delete grade_math and grade_science entirely — there should be only one function left.",
+        "Call grade(math_scores) then grade(science_scores).",
+      ],
+      solution: "math_scores = [70, 82, 91]\nscience_scores = [65, 78, 88]\n\ndef grade(scores):\n    curved = [s + 5 for s in scores]\n    return sum(curved) / len(curved)\n\nprint(grade(math_scores))\nprint(grade(science_scores))\n",
+    },
+    {
+      type: "exercise",
+      rung: 3,
+      prompt: "The teacher changes the curve from +5 to +8 points. Because `grade` is now one shared function, you only need to change the curve in one place and both subjects update. Make that change.",
+      starter: "math_scores = [70, 82, 91]\nscience_scores = [65, 78, 88]\n\ndef grade(scores):\n    curved = [s + 5 for s in scores]\n    return sum(curved) / len(curved)\n\nprint(grade(math_scores))\nprint(grade(science_scores))\n",
+      check: { type: "output", expected: "89.0\n85.0" },
+      hints: [
+        "There is exactly one line with a +5 on it now, since the two functions were merged.",
+        "Change + 5 to + 8 inside grade.",
+        "Both print lines use the same grade function, so both update from this one change.",
+      ],
+      solution: "math_scores = [70, 82, 91]\nscience_scores = [65, 78, 88]\n\ndef grade(scores):\n    curved = [s + 8 for s in scores]\n    return sum(curved) / len(curved)\n\nprint(grade(math_scores))\nprint(grade(science_scores))\n",
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "Write `count_moons_above(data, threshold)` using the same generalize-and-parameterize move as `count_above` earlier in this lesson — it should count how many planets in the `moons` dictionary have more moons than `threshold`. Call it twice: once with threshold 50, once with threshold 20.",
+      starter: "moons = {\"Saturn\": 146, \"Jupiter\": 95, \"Uranus\": 27, \"Neptune\": 16, \"Mars\": 2, \"Earth\": 1}\n\n# write count_moons_above here, then call it with 50 and with 20\n",
+      check: { type: "output", expected: "2\n3" },
+      hints: [
+        "Loop over the dictionary's values with moons.values(), or over the keys and look up data[key].",
+        "count = 0; for v in data.values(): if v > threshold: count += 1; return count.",
+        "count_moons_above(moons, 50) counts Saturn and Jupiter. count_moons_above(moons, 20) also includes Uranus.",
+      ],
+      solution: "moons = {\"Saturn\": 146, \"Jupiter\": 95, \"Uranus\": 27, \"Neptune\": 16, \"Mars\": 2, \"Earth\": 1}\n\ndef count_moons_above(data, threshold):\n    count = 0\n    for v in data.values():\n        if v > threshold:\n            count += 1\n    return count\n\nprint(count_moons_above(moons, 50))\nprint(count_moons_above(moons, 20))\n",
+    },
+  ],
+  codex: {
+    topic: "generalizing repetition",
+    pattern: "def count_above(tracks, threshold):\n    count = 0\n    for t in tracks:\n        if t > threshold:\n            count += 1\n    return count",
+    note: "A near-duplicate is two blocks that do the same job with one value different — find that value, make it a parameter. True duplication is sharper: two copies quietly drift apart the moment only one gets updated.",
+  },
+});
