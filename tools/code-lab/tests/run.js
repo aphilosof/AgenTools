@@ -127,7 +127,7 @@ function isExemptFromCodex(lesson) {
   return lesson.chapter === 0 || lesson.kind === "checkpoint";
 }
 
-// A check returns { status: "pass"|"fail"|"skip", failures: string[], reason? }.
+// A check returns { status: "pass"|"fail"|"skip"|"warn", failures: string[], reason?, diagnostics? }.
 function pass() {
   return { status: "pass", failures: [] };
 }
@@ -136,6 +136,11 @@ function fail(failures) {
 }
 function skip(reason) {
   return { status: "skip", failures: [], reason };
+}
+// "warn" surfaces something worth a human/AI look (e.g. AUTHORING.md rule 11)
+// without failing the build — never a silent pass, never a blocking failure.
+function warn(diagnostics) {
+  return { status: "warn", failures: [], diagnostics };
 }
 
 /* ===================== schema validation ===================== */
@@ -468,6 +473,59 @@ function checkErrorClasses(content, deps) {
   return failures.length ? fail(failures) : pass();
 }
 
+// Invariant 10 (warning, all chapters): a Write exercise's starter should only
+// give the student functions they already wrote earlier in the SAME lesson
+// (AUTHORING.md rule 11 — see Lesson 3.7's groove() for the blank standard).
+// This can't be verified mechanically (it requires checking the earlier
+// exercise actually taught that exact function), so it warns for a human/AI
+// review rather than failing the build outright.
+function checkWriteStarterScaffolding(content) {
+  const diagnostics = [];
+  for (const l of content.lessons) {
+    const exercises = (l.content || []).filter((b) => b.type === "exercise");
+    exercises.forEach((ex, i) => {
+      if (ex.rung !== 6) return;
+      const starter = ex.starter || "";
+      const totalDefs = (starter.match(/\bdef \w+\(/g) || []).length;
+      const stubDefs = (starter.match(/:\s*\n\s*pass\b/g) || []).length;
+      const realDefs = totalDefs - stubDefs;
+      if (realDefs >= 2) {
+        diagnostics.push(
+          `${l.id} exercise ${i}: Write starter has ~${realDefs} fully-implemented function(s) — ` +
+          `confirm each was written by the student earlier in this exact lesson (AUTHORING.md rule 11), or blank it out.`
+        );
+      }
+    });
+  }
+  return diagnostics.length ? warn(diagnostics) : pass();
+}
+
+// Invariant 11 (chapter >= 6 only — Ch1-5 already verified healthy by hand):
+// sound and drawing strands must be real function calls somewhere in the
+// chapter, not just themed data (AUTHORING.md rule 9); a bar()-heavy chapter
+// must also use plot() at least once for genuinely sequential data
+// (AUTHORING.md rule 10).
+function checkChapterStrandDiversity(content) {
+  const byChapter = {};
+  for (const l of content.lessons) {
+    if (!(l.chapter >= 6)) continue;
+    const text = (l.content || []).map((b) => (b.code || "") + (b.starter || "") + (b.solution || "")).join("\n");
+    (byChapter[l.chapter] = byChapter[l.chapter] || []).push(text);
+  }
+  const failures = [];
+  for (const chapter of Object.keys(byChapter)) {
+    const all = byChapter[chapter].join("\n");
+    const sound = /\bplay\(|\bsample\(/.test(all);
+    const draw = /\bforward\(|\bright\(|\bpenup\(|\bpencolor\(/.test(all);
+    const barCount = (all.match(/\bbar\(/g) || []).length;
+    const plot = /\bplot\(/.test(all);
+    if (!sound) failures.push(`chapter ${chapter}: no play()/sample() call anywhere in the chapter — sound strand is missing real practice (AUTHORING.md rule 9)`);
+    if (!draw) failures.push(`chapter ${chapter}: no forward()/right()/penup()/pencolor() call anywhere in the chapter — drawing strand is missing real practice (AUTHORING.md rule 9)`);
+    if (barCount >= 3 && !plot) failures.push(`chapter ${chapter}: bar() used ${barCount} times but plot() is never used — check for sequential data that would read better as a line chart (AUTHORING.md rule 10)`);
+  }
+  return failures.length ? fail(failures) : pass();
+}
+
 /* ===================== check registry ===================== */
 
 function buildChecks(content, knownIds, deps) {
@@ -482,6 +540,8 @@ function buildChecks(content, knownIds, deps) {
     { name: "inv7: time budgets", run: () => checkTimeBudgets(content) },
     { name: "inv8: misconceptions registered & hinted", run: () => checkMisconceptions(content, knownIds) },
     { name: "inv9: errorClasses have translations", run: () => checkErrorClasses(content, deps) },
+    { name: "inv10: Write-exercise starters earned, not given away (AUTHORING.md rule 11)", run: () => checkWriteStarterScaffolding(content) },
+    { name: "inv11: chapter-wide strand & chart diversity, chapter >= 6 (AUTHORING.md rules 9-10)", run: () => checkChapterStrandDiversity(content) },
   ];
 }
 
@@ -504,12 +564,17 @@ function report(results, { lessons, arena }) {
   console.log(`Code Lab harness — ${lessons.length} lesson(s), ${arena.length} arena challenge(s)\n`);
   let failed = 0;
   let skipped = 0;
+  let warned = 0;
   for (const r of results) {
     if (r.status === "pass") {
       console.log(`  PASS  ${r.name}`);
     } else if (r.status === "skip") {
       skipped++;
       console.log(`  SKIP  ${r.name}  — ${r.reason}`);
+    } else if (r.status === "warn") {
+      warned++;
+      console.log(`  WARN  ${r.name}`);
+      for (const d of r.diagnostics) console.log(`          - ${d}`);
     } else {
       failed++;
       console.log(`  FAIL  ${r.name}`);
@@ -517,10 +582,11 @@ function report(results, { lessons, arena }) {
     }
   }
   console.log("");
+  const suffix = [skipped ? `${skipped} skipped` : "", warned ? `${warned} warned` : ""].filter(Boolean).join(", ");
   if (failed > 0) {
-    console.log(`${failed} check(s) failed${skipped ? `, ${skipped} skipped` : ""}.`);
+    console.log(`${failed} check(s) failed${suffix ? `, ${suffix}` : ""}.`);
   } else {
-    console.log(`All checks passed${skipped ? ` (${skipped} skipped)` : ""}.`);
+    console.log(`All checks passed${suffix ? ` (${suffix})` : ""}.`);
   }
   return failed === 0;
 }

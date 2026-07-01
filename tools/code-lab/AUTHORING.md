@@ -181,6 +181,8 @@ Six exercise types exist, ordered from easiest to hardest. Use them by name — 
 
 The `rung:` field exists only in the lesson data schema as a sort key. It is an implementation detail — never surface it to the student, never use the word "rung" anywhere the student or author reads.
 
+**Progression is mandatory, not just available — check PLAN.md directly before authoring a chapter.** PLAN.md states: *"Early chapters live on rungs 1 to 4. By Chapter 5 most challenges sit on rungs 5 and 6, and from Chapter 8 onward writing from scratch is the default."* `schema.md`'s note that "Sections from Chapter 5 onward use 5–6" is **not stale documentation** — it is this same rule, and PLAN.md is its source of truth. Before authoring or reviewing any chapter numbered 5+, re-read PLAN.md's rung-progression paragraph directly; do not rely on memory of AUTHORING.md's type table alone, and do not assume a schema.md note is outdated without checking PLAN.md first. This does not mean forcing every exercise into Complete or Write — a lesson whose point is reading (predicting output) or diagnosing (fixing broken code) legitimately stays Predict/Fix-heavy. It means auditing lessons whose point is *building* something (decomposition, generalization, checkpoints) and confirming those lean Complete/Write with a mostly-blank starter.
+
 **Exercises are not a one-per-type quota.** A single example may have two Predict exercises (one simple trace, one harder), two Fix exercises (different bugs), two Complete exercises, and two Write exercises. The type names describe *what the student does*, not how many of each are allowed. Use as many exercises as the concept needs, particularly for important concepts where mastery requires varied practice.
 
 **Exercise count must grow with chapter number.** As chapters advance, concepts are deeper and students need more practice to consolidate them. The expected minimums:
@@ -404,6 +406,35 @@ After writing or reviewing a lesson, list every distinct concept the text introd
 
 This check is also the job of the reviewer agent (Step 0 in the process). But the author must not leave obvious gaps hoping the reviewer will catch them.
 
+### 9. Real strand practice — not flavor data
+
+Naming a variable `bpm` or `song_title` does not satisfy the five-strand requirement (PLAN.md: *"Exercises in every chapter draw on recurring real-world strands, so each concept gets practiced on several kinds of problems before moving on."*). An exercise only counts as practicing the sound, plot, or drawing strand if its `code`/`starter`/`solution` actually calls `play()`/`sample()`, `bar()`/`plot()`, or `forward()`/`right()`/`penup()`/`pencolor()`. Music- or art-themed *numbers* used only in arithmetic (a bpm list you only sum or compare, never play) are still the "core" strand wearing a costume.
+
+**Anti-pattern to avoid (this actually happened in Chapter 5):** an entire chapter used song/tempo data throughout, but only 2 of 32 exercises ever called `play()`, and zero called any turtle or plot function.
+
+**How to audit:** grep the lesson file's `code`/`starter`/`solution` fields for `play(|sample(|forward(|right(|bar(|plot(`. If a "sound" or "plot" strand tag has zero hits, or if a whole chapter has near-zero hits across all its strand-flavored lessons, that's a gap, not a style choice.
+
+### 10. Chart-type diversity
+
+`bar()` compares discrete categories (song titles, planet names, word counts) where order carries no meaning. `plot()` shows a trend over a real sequence (a week, a tracklist, a step count) — the same distinction Lesson 4.7 already teaches for melodic contour ("`bar()` shows frequency; `plot()` shows contour"). Don't default to `bar()` for everything just because it was the first one taught. When a lesson's data has a natural order, use `plot()` instead of, or alongside, `bar()`.
+
+**How to audit:** if a lesson or chapter uses `bar()` three or more times, check whether at least one dataset in that chapter is genuinely sequential (time, position, order) and would be clearer as a `plot()` line.
+
+### 11. Blank-starter integrity for Write exercises
+
+A Write exercise's `starter` may only include an already-fully-written function if the student wrote that **exact** function themselves in an earlier exercise of the **same** lesson (legitimate build-up — see `c3s8`'s `word_inspector`, which reuses `count_vowels`/`is_palindrome` the student completed two exercises earlier in that same lesson). Any other function the exercise is nominally teaching must be left for the student to write, matching Lesson 3.7's `groove()` standard:
+
+```
+def groove(bpm=120):
+    pass
+
+groove()
+```
+
+**Anti-pattern to avoid (this actually happened in Chapter 5):** a "Write" exercise gave the student 2 of 3 functions fully implemented and asked for only one small piece — that is a Complete exercise pretending to be a Write exercise, and it teaches far less than the rung implies.
+
+**How to audit:** for every Write exercise, count the fully-implemented (non-`pass`) function bodies in `starter`. If there are two or more, confirm each one was written by the student earlier in this exact lesson — not simply "logically related" or "similar to something from an earlier chapter." If it wasn't earned in this lesson, blank it out. `npm test` prints a non-blocking warning for any Write exercise with 2+ pre-written functions — treat every warning as a prompt to make this exact check, not as noise to ignore.
+
 ### Pre-commit audit checklist
 
 Before marking any lesson (new or edited) as done, run through this list:
@@ -417,6 +448,9 @@ Before marking any lesson (new or edited) as done, run through this list:
 - [ ] Diversity: no two exercises in the lesson do the same operation on the same concept. Each one is distinct in what it asks the student to do.
 - [ ] Build-up: exercises from chapter 2 onwards use concepts from earlier chapters as scaffolding. Capstone exercises combine at least two chapters' concepts explicitly.
 - [ ] Coverage: every concept introduced in the lesson's text blocks has at least one exercise that tests it.
+- [ ] Strand reality: sound/plot/drawing strand exercises actually call `play()`/`sample()`/`bar()`/`plot()`/`forward()`/`right()` — not just themed data.
+- [ ] Chart diversity: if `bar()` is used 3+ times in the chapter, at least one genuinely sequential dataset uses `plot()` instead.
+- [ ] Write-exercise blank starters: every Write exercise's pre-written code was earned by the student earlier in the same lesson, or is absent.
 - [ ] Tests green: `npm test` passes with all solutions executing and all invariants passing.
 
 ## The bar
