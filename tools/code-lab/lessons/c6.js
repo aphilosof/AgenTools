@@ -624,3 +624,111 @@ window.CODELAB.lessons.push({
     note: "A method's job isn't finished just because it computes something — it has to actually call play()/sleep() (or return the right value) to have any effect. By default, == between instances compares identity, not attribute values.",
   },
 });
+
+/* ── Lesson 6.7 ─────────────────────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c6s7",
+  chapter: 6,
+  strand: "plot",
+  lang: "py",
+  timeBudgetMin: 22,
+  title: "A Drawing Class",
+  glossary: {},
+  content: [
+    {
+      type: "text",
+      md: "**A `Spiral` draws itself, and grows itself, one step at a time.** `step(self)` is a mutator (Lesson 6.3) that does two jobs: it draws using `forward()`/`right()`, and it grows `self.size` for next time. Each call leaves the instance a little bigger than the last.",
+    },
+    {
+      type: "example",
+      note: "Every step() call draws one side, then grows size by 5 for the next call — that's what turns a fixed shape into an expanding spiral.",
+      code: "class Spiral:\n    def __init__(self, size, angle):\n        self.size = size\n        self.angle = angle\n\n    def step(self):\n        forward(self.size)\n        right(self.angle)\n        self.size += 5\n\ns = Spiral(20, 90)\nfor i in range(4):\n    s.step()\nprint(s.size)\n",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "`step()` is called 4 times. Trace `self.size` growing by 5 after each call. Predict the final printed size.",
+      starter: "class Spiral:\n    def __init__(self, size, angle):\n        self.size = size\n        self.angle = angle\n\n    def step(self):\n        forward(self.size)\n        right(self.angle)\n        self.size += 5\n\ns = Spiral(20, 90)\nfor i in range(4):\n    s.step()\nprint(s.size)\n",
+      check: { type: "output", expected: "40" },
+      hints: [
+        "size starts at 20 and grows by 5 every step() call.",
+        "After 4 calls: 20, 25, 30, 35, 40 — size ends at 40 after the fourth call's += runs.",
+        "print(s.size) shows 40.",
+      ],
+      solution: "class Spiral:\n    def __init__(self, size, angle):\n        self.size = size\n        self.angle = angle\n\n    def step(self):\n        forward(self.size)\n        right(self.angle)\n        self.size += 5\n\ns = Spiral(20, 90)\nfor i in range(4):\n    s.step()\nprint(s.size)\n",
+    },
+    {
+      type: "exercise",
+      rung: 5,
+      prompt: "Complete `step(self)` — it should draw one side (`forward(self.size)`, `right(self.angle)`), then grow `self.size` by 5 for next time.",
+      starter: "class Spiral:\n    def __init__(self, size, angle):\n        self.size = size\n        self.angle = angle\n\n    def step(self):\n        pass  # forward(self.size), right(self.angle), then self.size += 5\n\ns = Spiral(20, 90)\ns.step()\ns.step()\ns.step()\n",
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "forward", val: 20 }, { fn: "right", val: 90 },
+          { fn: "forward", val: 25 }, { fn: "right", val: 90 },
+          { fn: "forward", val: 30 }, { fn: "right", val: 90 },
+        ],
+      },
+      hints: [
+        "Three lines, in order: forward(self.size), right(self.angle), self.size += 5.",
+        "The growth line must come after the drawing lines, so this step draws at the OLD size before growing.",
+        "forward(self.size)\\nright(self.angle)\\nself.size += 5",
+      ],
+      solution: "class Spiral:\n    def __init__(self, size, angle):\n        self.size = size\n        self.angle = angle\n\n    def step(self):\n        forward(self.size)\n        right(self.angle)\n        self.size += 5\n\ns = Spiral(20, 90)\ns.step()\ns.step()\ns.step()\n",
+    },
+    {
+      type: "text",
+      md: "**Forgetting the growth line is a silent bug — the drawing still runs, it just never expands.** Nothing crashes. Every side comes out the exact same length, because `self.size` never changes.",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "Every side of this spiral comes out the same length — it never expands. `step()` draws correctly but forgot to grow `self.size` afterward. Fix it.",
+      starter: "class Spiral:\n    def __init__(self, size, angle):\n        self.size = size\n        self.angle = angle\n\n    def step(self):\n        forward(self.size)\n        right(self.angle)\n\ns = Spiral(20, 90)\ns.step()\ns.step()\ns.step()\n",
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "forward", val: 20 }, { fn: "right", val: 90 },
+          { fn: "forward", val: 25 }, { fn: "right", val: 90 },
+          { fn: "forward", val: 30 }, { fn: "right", val: 90 },
+        ],
+      },
+      hints: [
+        "self.size is set once in __init__ and never changes anywhere in step().",
+        "Growing self.size needs its own line inside step(), after the drawing calls.",
+        "Add self.size += 5 as the last line of step().",
+      ],
+      solution: "class Spiral:\n    def __init__(self, size, angle):\n        self.size = size\n        self.angle = angle\n\n    def step(self):\n        forward(self.size)\n        right(self.angle)\n        self.size += 5\n\ns = Spiral(20, 90)\ns.step()\ns.step()\ns.step()\n",
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "Write the `Spiral` class from scratch. Create `square_spiral = Spiral(15, 90)` and `star_spiral = Spiral(15, 144)` — same starting size, different angles. Call `step()` on `square_spiral` 3 times, then on `star_spiral` 3 times.",
+      starter: "# write class Spiral here, then create square_spiral and star_spiral\n# and call step() on each 3 times\n",
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "forward", val: 15 }, { fn: "right", val: 90 },
+          { fn: "forward", val: 20 }, { fn: "right", val: 90 },
+          { fn: "forward", val: 25 }, { fn: "right", val: 90 },
+          { fn: "forward", val: 15 }, { fn: "right", val: 144 },
+          { fn: "forward", val: 20 }, { fn: "right", val: 144 },
+          { fn: "forward", val: 25 }, { fn: "right", val: 144 },
+        ],
+      },
+      hints: [
+        "Same Spiral class as the examples above: __init__(self, size, angle) and step() that draws then grows.",
+        "square_spiral.step() three times in a row, then star_spiral.step() three times.",
+        "144 degrees is the classic angle for a 5-pointed star shape — 90 makes a square-ish spiral instead.",
+      ],
+      solution: "class Spiral:\n    def __init__(self, size, angle):\n        self.size = size\n        self.angle = angle\n\n    def step(self):\n        forward(self.size)\n        right(self.angle)\n        self.size += 5\n\nsquare_spiral = Spiral(15, 90)\nstar_spiral = Spiral(15, 144)\nsquare_spiral.step()\nsquare_spiral.step()\nsquare_spiral.step()\nstar_spiral.step()\nstar_spiral.step()\nstar_spiral.step()\n",
+    },
+  ],
+  codex: {
+    topic: "a class that draws",
+    pattern: "class Spiral:\n    def __init__(self, size, angle):\n        self.size = size\n        self.angle = angle\n\n    def step(self):\n        forward(self.size)\n        right(self.angle)\n        self.size += 5",
+    note: "step() both draws (forward/right) and grows itself (self.size += 5) — a mutator method with a visible, on-canvas effect. Forgetting the growth line is silent: nothing crashes, the shape just never expands.",
+  },
+});
