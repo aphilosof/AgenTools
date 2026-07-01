@@ -540,7 +540,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "**A `Note` bundles pitch and duration with the action of playing itself.** `self.pitch` and `self.duration` are just attributes — the new part is `play(self)`, a method that calls the real `play()`/`sleep()` functions from Lesson 1.7. Naming the method `play` doesn't clash with the built-in `play()` function — inside the method, `play(self.pitch)` (no `self.` in front) still means the engine function, not the method itself.",
+      md: "**A `Note` bundles pitch and duration with the action of playing itself.** `self.pitch` and `self.duration` are just attributes, built the same way every attribute has been since Lesson 6.1. The new part is the method `play(self)`, which calls the real `play()`/`sleep()` functions from Lesson 1.7 — an actual sound, not a stored number pretending to be one.\n\nNaming the method `play` looks like it should clash with the built-in `play()` function, but it doesn't, and it's worth knowing exactly why. Inside the method's own body, writing `play(self.pitch)` — with no `self.` in front — never looks at the class at all. Python only checks `self.something` when you write the dot. A bare name like `play` is looked up the ordinary way, the same rule from Lesson 3.4: check local names first, then the enclosing scope, then the built-ins — and the method itself was never given a local name called `play`. So `play(self.pitch)` finds the engine function every time, and `self.play()` is the only way to reach the method.",
     },
     {
       type: "example",
@@ -562,7 +562,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**A melody is a list of `Note` instances.** Lesson 4.6 built melodies as plain lists of numbers. Now each note can also know its own duration, and a list comprehension (Lesson 4.6) builds the whole sequence in one line.",
+      md: "**A melody is a list of `Note` instances — and each note now carries its own duration with it.** Lesson 4.8 built melodies as plain lists of numbers: one list of pitches, and if some notes needed to last longer, a second, separate list of durations you had to keep in step with the first. A list of `Note` objects doesn't need two lists kept in sync — every note's pitch and duration travel together, on the same object. A list comprehension, the tool Lesson 4.9 used to build a list in one line, builds the whole sequence of notes at once.",
     },
     {
       type: "exercise",
@@ -585,7 +585,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**A method that computes but never acts is a silent bug.** Below, `play(self)` builds a description and returns it, but never actually calls the engine's `play()`/`sleep()`. Nothing crashes. Nothing plays, either — because nobody captures or uses the returned string.",
+      md: "**A method that computes but never acts is a silent bug — Lesson 5.5's category again, now inside a class.** Below, `play(self)` builds a description of what it *would* play, as a string, and returns it. That's a perfectly normal thing for a method to do — except this method's entire job was supposed to be making a sound, not describing one. Nothing crashes. Nothing plays, either, because nobody even captures or prints the string it hands back. The method runs to completion and looks fine, right up until you notice the silence.",
     },
     {
       type: "exercise",
@@ -602,7 +602,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**Two notes with identical pitch and duration are still not `==`.** By default, `==` between two instances checks whether they're the *same object* — not whether their attributes match. `n1 == n2` compares identity here, not content, and this course doesn't cover changing that.",
+      md: "**Two notes with identical pitch and duration are still not `==`.** For numbers and strings, `==` has always compared the *values* — `2 == 2` is `True` because two is two. Instances default to a different rule: `==` asks \"are these two names pointing at the exact same object?\" — not \"do their attributes match?\" `n1` and `n2` hold matching attributes but are still two separate `Note` objects, built by two separate calls, so `n1 == n2` is `False`. This course doesn't cover changing that rule — just knowing it compares identity by default, not content, is enough to stop it from being a surprise.",
     },
     {
       type: "exercise",
@@ -638,7 +638,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "**A `Spiral` draws itself, and grows itself, one step at a time.** `step(self)` is a mutator (Lesson 6.3) that does two jobs: it draws using `forward()`/`right()`, and it grows `self.size` for next time. Each call leaves the instance a little bigger than the last.",
+      md: "**A `Spiral` draws itself, and grows itself, one step at a time.** Lesson 2.7 built a spiral with a `for` loop, using the loop variable itself as the growing step size — `forward(i * 5)` inside `for i in range(36)`. A `Spiral` instance keeps that growing number as an attribute instead, so the shape remembers its own size between calls without a loop holding everything together. `step(self)` is a mutator, the same category as Lesson 6.3's `take_damage` — it does two jobs in one call: it draws the next side with `forward()`/`right()`, using the *current* size, then grows `self.size` for whichever call comes next. Each call leaves the instance a little bigger than the last, and that's what turns a fixed shape into an expanding spiral.",
     },
     {
       type: "example",
@@ -680,7 +680,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**Forgetting the growth line is a silent bug — the drawing still runs, it just never expands.** Nothing crashes. Every side comes out the exact same length, because `self.size` never changes.",
+      md: "**Forgetting the growth line is a silent bug, exactly the category Lesson 5.5 named — the drawing still runs, it just never expands.** Nothing crashes. There's no traceback pointing anywhere. `forward()` and `right()` both get called correctly, every single time — the only thing wrong is that `self.size` is the same number on every call, so every side comes out identical, and a shape that was supposed to grow just draws a plain, repeating polygon instead.",
     },
     {
       type: "exercise",
@@ -746,7 +746,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "**Checkpoint: everything from this chapter, in one program.** A `Synth` bundles a name and a root note, exactly like `Creature` bundled a name and hp. `play_note` is a mutator-flavored method — well, it doesn't change `self`, so it's actually a query in this case, matching Lesson 6.3's own distinction. Two `Synth` instances playing together is a **duet**: two independent objects, each doing its own job, interacting through the same melody.",
+      md: "**Checkpoint: everything from this chapter, in one program.** A `Synth` bundles a name and a root note, exactly the same shape `Creature` used for a name and hp — a new domain, the same idea. `play_note` doesn't fit neatly into Lesson 6.3's mutator-or-query split, and that's worth naming honestly rather than forcing it: it doesn't change any attribute, and it doesn't return a value either. Its whole job is a side effect — making a sound happen, out in the world, right now. Not every method has to mutate or return; some exist purely to *do* something. Two `Synth` instances playing together is a **duet**: two independent objects, each holding its own root note, taking turns acting on the same shared melody.",
     },
     {
       type: "example",
@@ -781,7 +781,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**A duet needs two genuinely separate voices — the same aliasing trap from Lesson 6.4 applies here.** `bass = lead` doesn't make a second voice. It makes `bass` another name for the exact same `Synth`.",
+      md: "**A duet needs two genuinely separate voices — the same aliasing trap from Lesson 6.4 applies here.** `bass = lead` doesn't make a second voice, for the exact same reason `storm = blaze` didn't make a second creature: there's no `Synth(...)` call on the right-hand side, just an existing name. `bass` becomes a second label on the one `Synth` object `lead` already names, not an independent voice with its own root note.",
     },
     {
       type: "exercise",
