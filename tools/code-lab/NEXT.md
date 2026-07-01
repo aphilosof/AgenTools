@@ -163,28 +163,36 @@ lesson source, and approved. Full table recorded in CURRICULUM.md. Key findings:
   checkpoint's messy-song refactor (no lesson previously taught reading
   unfamiliar code cold).
 
-All 6 lessons authored (c5s1–c5s6), all harness checks pass (`npm test` green
-across 42 lessons).
+All 7 lessons authored (c5s1–c5s7), all harness checks pass (`npm test` green
+across 43 lessons).
 
-| ID | Title | Rungs |
-|----|-------|-------|
-| c5s1 | Decomposition & Naming | 1, 2, 4, 4, 3, 4, 6 |
-| c5s2 | Generalizing Repetition | 1, 5, 4, 4, 3, 6 |
-| c5s3 | Reading Someone Else's Code | 1, 1, 1, 1 |
-| c5s4 | Debugging: Reading the Crime Scene | 1, 4, 4, 4 |
-| c5s5 | Debugging: The Scientist's Method | 4, 1, 1, 4 |
-| c5s6 | Checkpoint Projects | 1, 5, 4, 5, 4, 5, 4 |
+| ID | Title | Exercise types |
+|----|-------|----------------|
+| c5s1 | Decomposition & Naming | Predict, Write, Complete, Fix, Modify, Fix, Write, Write, Write |
+| c5s2 | Generalizing Repetition | Predict, Complete, Fix, Fix, Modify, Complete, Complete, Write |
+| c5s3 | Reading Someone Else's Code | Predict x5 |
+| c5s4 | Debugging: Reading the Crime Scene | Predict, Fix x3 |
+| c5s5 | Debugging: The Scientist's Method | Fix, Predict, Predict, Fix |
+| c5s6 | Checkpoint Projects | Predict, Write, Fix, Write, Fix, Complete, Fix |
+| c5s7 | Practice: New Problems, Same Skills | Predict, Arrange, Modify, Fix, Complete, Write, Write |
 
-**Gate checklist — verified by running each solution through
-`tests/mocks/runner.py` (the deterministic runner, same one `tests/run.js`
-inv1 uses) and diffing actual output against the value below. All items are
-text/calls output, no browser-only visual checks needed for this chapter:**
-- c5s1 ex7 (moons capstone, Write): `describe_moons(moons)` → `Most moons: Saturn (146)\nFewest moons: Earth (1)` ✅
-- c5s2 ex6 (moons capstone, Write): `count_moons_above(moons, 50)` then `count_moons_above(moons, 20)` → `2\n3` ✅
-- c5s4 ex4 (IndexError misdirection, Fix): `announce_top(titles)` → `Winner: Dance Monkey` ✅
-- c5s5 ex4 (silent bug, Fix): `count_dance_tracks([80,110,140,96])` with corrected `>` → `1` ✅
-- c5s6 ex3 (number-guessing decomposed + fixed, Fix): → `Too low!\nToo high!\nCorrect!\nAttempts: 3` ✅
-- c5s6 ex7 (messy-song refactor, unused-parameter Fix): `play_phrase([0,0,7], 65)` → play(65), play(65), play(72) ✅
+**Two correction rounds after initial authoring** (user caught both — see
+`code-lab-five-strands-and-writing.md` and `no-rung-term.md` in memory):
+1. Almost every exercise used bpm/song data as flavor text without ever
+   calling `play()`/`forward()`/`bar()` — fixed by converting several
+   exercises to genuinely play, draw, or chart.
+2. Several exercises labeled "Complete" gave away 2 of 3 functions fully
+   written and asked for only one small piece — nowhere near as blank as
+   the course's own standard (Lesson 3.7's `groove()`:
+   `def groove(bpm=120):\n    pass\n\ngroove()\n`). Fixed by making those
+   genuinely blank Write exercises, and added lesson 5.7 with 7 more
+   exercises across four new real domains (flower turtle pattern,
+   major/minor musical scale, Olympic medal counts, a week of real
+   temperatures charted and played as a melody).
+
+Sound appears in all 7 lessons, drawing in 6/7, plotting in 5/7 (verified
+by grepping `starter`+`solution` text for `play(`/`forward(`/`bar(`, not
+just skimming titles).
 
 Chapter 5 complete: content, engine, and docs. Next: Chapter 0 (pre-syntax
 hook) or Chapters 6+ per CURRICULUM.md.

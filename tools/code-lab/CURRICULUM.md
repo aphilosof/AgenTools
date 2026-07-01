@@ -314,6 +314,7 @@ aliasing/mutation — no new lesson needed for either). Approved table:
 | 5.4 | Debugging: Reading the Crime Scene | Traceback-as-call-stack (recap of c3s4 frames, not new); "crash line ≠ bug line"; named error-class → fix-move map (NameError/TypeError/IndexError/KeyError/ValueError/ZeroDivisionError/AttributeError-from-None) | core | 1 Predict · 4 Fix |
 | 5.5 | Debugging: The Scientist's Method | Hypothesis → predict → test → revise as a loop (not a checklist); hypothesis-gated Fix; print-as-instrument; minimal reproducible example; **silent wrong-answer bugs** (no traceback) as a distinct category | core | 4 Fix (hypothesis-gated) · 1 Predict (silent bug) |
 | 5.6 | Checkpoint Projects | Number-guessing game; text-statistics tool; refactor a messy 40-line song — each seeded with ≥1 silent bug and ≥1 multi-frame bug, each combining ≥2 earlier chapters | mixed | 6 Write · checkpoint |
+| 5.7 | Practice: New Problems, Same Skills | Added after review: decomposition/naming/generalizing/debugging practiced on 4 fresh real domains (flower turtle pattern, major/minor scale, Olympic medal counts, weekly temperatures charted + played) — explicit callbacks to specific earlier lessons as required scaffolding | mixed | Predict, Arrange, Modify, Fix, Complete, Write |
 
 ## Chapter 6 — Classes and Objects (~6)
 *Goal: objects as things with properties and abilities. Hard cap: attributes, methods, instances. No inheritance anywhere.*
