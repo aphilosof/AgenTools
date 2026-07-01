@@ -194,8 +194,52 @@ Sound appears in all 7 lessons, drawing in 6/7, plotting in 5/7 (verified
 by grepping `starter`+`solution` text for `play(`/`forward(`/`bar(`, not
 just skimming titles).
 
-Chapter 5 complete: content, engine, and docs. Next: Chapter 0 (pre-syntax
-hook) or Chapters 6+ per CURRICULUM.md.
+Chapter 5 complete: content, engine, and docs.
+
+### Phase F — Chapter 6 (Classes and Objects) ← NEXT
+
+**Pre-chapter gate: COMPLETE.** 5-reviewer curriculum audit run (Downey,
+Resnick, Severance, Guzdial, Ko lenses), synthesized and approved. Full table
+recorded in CURRICULUM.md. Key findings — near-unanimous across 4-5 of 5
+reviewers:
+- `self` needs an explicit desugaring demo (`rex.bark()` ≡ `Creature.bark(rex)`,
+  shown and run, not just described) — this is the confusion point, and no
+  prose substitutes for the student running both forms themselves.
+- Instance independence must be proven immediately after `__init__` (a Predict
+  exercise), not deferred to a later "many instances" lesson — it's literally
+  the same reference/aliasing model `c4s6` already taught, not new content.
+- The original 6-lesson proposal had **zero Fix exercises** despite two new,
+  genuinely confusing error types (`TypeError` from a missing `self`,
+  `AttributeError` from a never-set/misspelled attribute).
+- "Many Instances" isn't new content — it's `__init__` working correctly —
+  and gets rescoped as a comparing/diagnosing lesson (which instance is
+  broken, and why) instead of "make more objects."
+- A mutable-class-attribute-as-shared-state gotcha (`inventory = []` written
+  as a class attribute, silently shared across every instance) sits directly
+  in the proposed `Creature`+inventory example and needs its own Fix exercise.
+- `Note`/`Synth` must call the real `play()` engine function — the Chapter 5
+  near-miss (themed data with no real strand calls), recurring in class form,
+  would repeat if not caught here. A dedicated drawing-strand lesson (6.7,
+  `Spiral`) was added specifically so Chapter 6 satisfies the new automated
+  `inv11` chapter-diversity check (`tests/run.js`), which now hard-fails any
+  chapter ≥ 6 missing real sound or drawing calls.
+- Expanded from 6 to 8 lessons — classes are a bigger conceptual leap than
+  Ch4's collections (which got 10 lessons for a smaller jump).
+
+**Also fixed as part of this audit (not chapter-6 content, general cleanup):**
+- CURRICULUM.md's Chapter 4/5 headers said "~6" lessons each when the shipped
+  files have 10 and 7 respectively — corrected to reflect actual shipped state.
+- Lesson 5.4's `AttributeError` glossary/Codex note needs a rewrite once
+  Chapter 6 introduces a second common cause (never-set/misspelled attribute,
+  vs. the existing None-propagation cause) — the Codex/error-registry engine
+  is one note per error class, not appendable (verified against
+  `src/js/checker.js`/errors registry), so the existing note gets extended in
+  place, not duplicated.
+
+Now authoring lesson by lesson per CURRICULUM.md's Chapter 6 table, following
+the same process as Ch1–5 (see "Authoring a new lesson" below) — including
+Rule 9 (real strand calls), Rule 10 (chart diversity), and Rule 11 (genuinely
+blank Write exercises) from AUTHORING.md.
 
 ### Phase D — Chapter 0 (pre-syntax hook)
 Author Chapter 0 sections: First Sound, Algorithms Are Exact, Guide the Robot,

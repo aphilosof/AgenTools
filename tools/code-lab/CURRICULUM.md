@@ -284,7 +284,7 @@ Approved structure from 5-reviewer curriculum audit. Lessons authored in commit 
 - 3.8 rung-6 Write: word_inspector("racecar") → "Vowels: 3 / Palindrome: True / RACECAR"
 - 3.9 rung-6 Write (drawing): draw_snowflake() → 6-branch snowflake on canvas
 
-## Chapter 4 — Collections (~6)
+## Chapter 4 — Collections (10 shipped — table below predates the lesson-quality audit and capstone additions; see `lessons/c4.js` c4s1–c4s10 for the actual shipped content)
 *Goal: storing many values; lists and dictionaries.*
 
 | # | Lesson | Idea / objective | Strand | Rung |
@@ -296,7 +296,7 @@ Approved structure from 5-reviewer curriculum audit. Lessons authored in commit 
 | 4.5 | Data into Charts | `plot`/`bar` → *dice-roll statistics* | plot | 6 Write |
 | 4.6 | Lists as Music | `play_pattern` melodies; a drum pattern as a list of 1s and 0s | sound | 6 Write |
 
-## Chapter 5 — Thinking in Code (~6) · *stop-point: feels complete here*
+## Chapter 5 — Thinking in Code (7 shipped) · *stop-point: feels complete here*
 *Goal: code design and debugging as explicit skills. Style channel turns on.
 No new syntax — every lesson applies Ch1–4 skills to the practice of writing
 and fixing your own code.*
@@ -316,17 +316,34 @@ aliasing/mutation — no new lesson needed for either). Approved table:
 | 5.6 | Checkpoint Projects | Number-guessing game; text-statistics tool; refactor a messy 40-line song — each seeded with ≥1 silent bug and ≥1 multi-frame bug, each combining ≥2 earlier chapters | mixed | 6 Write · checkpoint |
 | 5.7 | Practice: New Problems, Same Skills | Added after review: decomposition/naming/generalizing/debugging practiced on 4 fresh real domains (flower turtle pattern, major/minor scale, Olympic medal counts, weekly temperatures charted + played) — explicit callbacks to specific earlier lessons as required scaffolding | mixed | Predict, Arrange, Modify, Fix, Complete, Write |
 
-## Chapter 6 — Classes and Objects (~6)
+## Chapter 6 — Classes and Objects (8 planned)
 *Goal: objects as things with properties and abilities. Hard cap: attributes, methods, instances. No inheritance anywhere.*
 
-| # | Lesson | Idea / objective | Strand | Rung |
-|---|---|---|---|---|
-| 6.1 | Objects Have Properties | A `Pet` class; attributes hold state | core | 5 Complete |
-| 6.2 | `__init__` | Build an instance with starting values | core | 5 Complete |
-| 6.3 | Methods | Abilities that act on the object's own data | core | 6 Write |
-| 6.4 | Many Instances | Many objects from one class → game `Creature` with stats + inventory | core | 6 Write |
-| 6.5 | A `Note` Class | Model pitch + duration | sound | 6 Write |
-| 6.6 | A `Synth` Class | Sound settings; two instances play a duet | sound | 6 Write · checkpoint |
+Revised via a 5-reviewer curriculum audit (Downey, Resnick, Severance, Guzdial,
+Ko lenses), synthesized and approved. Near-unanimous findings that reshaped the
+original 6-lesson proposal: `self` needs an explicit desugaring demonstration
+(`rex.bark()` ≡ `Creature.bark(rex)`, shown and run, not just described);
+instance independence must be proven immediately after `__init__` (Predict),
+not deferred to a later lesson — it's the same reference/aliasing model
+`c4s6` already taught, not new content; the original plan had zero Fix
+exercises despite two new, genuinely confusing error types; "Many Instances"
+isn't new content, it's `__init__` working correctly, and gets rescoped as a
+comparing/diagnosing lesson instead; a mutable-class-attribute-as-shared-state
+gotcha sits directly in the proposed `Creature`+inventory example and needs
+its own Fix exercise. `Note`/`Synth` must call the real `play()` engine
+function, not just carry unplayed attributes (the Chapter 5 near-miss,
+recurring in class form, per Rule 9). Approved table:
+
+| # | Lesson | Idea / objective | Strand |
+|---|---|---|---|
+| 6.1 | Objects Bundle Data and Behavior | Same data modeled as a dict, then a class — motivates "why not just a dict"; one consistent `Creature` class, plain attributes set by hand (no `__init__` yet) so repetitive setup is genuinely felt | core |
+| 6.2 | `__init__` and Independent Instances | `__init__` fixes 6.1's repetition; independence proven immediately via Predict (two instances, predict each one's starting attributes); the `print(instance)` memory-address landmine defused | core |
+| 6.3 | Methods and `self` | `self` as the explicit subject via side-by-side desugaring; attribute vs. local-variable lifetime (inverts Ch3's scope lesson, named explicitly); mutator vs. query methods (callback to Ch4's `append`/`.upper()`); Fix for the missing-`self` `TypeError` | core |
+| 6.4 | Comparing and Debugging Instances | Rescoped as diagnosis: Predict tracing state across interleaved calls on two instances; Fix for an aliasing mixup (`c2 = c1` vs `c2 = Creature(...)`, callback to `c4s6`); Fix for an attribute-typo `AttributeError`; named callback to Lesson 5.5's hypothesis loop | core |
+| 6.5 | Instances With Collections | A list-valued attribute (inventory); Fix for the mutable-class-attribute-shared-state gotcha (`inventory = []` as a class attribute, silently shared across every instance) | data |
+| 6.6 | A `Note` Class | `Note.play()` calls the real engine `play()`/`sleep()`, not just stores pitch/duration; brief Predict on the identity-vs-value equality surprise (`n1 == n2` is `False` by default even with identical attributes) | sound |
+| 6.7 | A Drawing Class | A turtle-wrapping class (e.g. `Spiral`) with real `forward()`/`right()` calls; multiple instances drawing different patterns | plot |
+| 6.8 | A Synth Duet | Two instances interacting (first style-blocking checkpoint per PLAN.md); some open design room within the spec, not one hidden exact answer | sound · checkpoint |
 
 ## Chapter 7 — Modules, Packages, and Real Data (~7)
 *Goal: using code you didn't write, and handling real data.*

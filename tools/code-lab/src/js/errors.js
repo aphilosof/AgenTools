@@ -64,7 +64,7 @@
     },
     AttributeError: {
       codex: "err-attr", title: "No such thing",
-      plain: function () { return "That value doesn’t have the thing you asked for after the dot. Check the spelling, or that the value is the type you think it is."; },
+      plain: function () { return "That value doesn’t have the thing you asked for after the dot. Check the spelling, check that the value is the type you think it is, or — for your own objects — check that it was actually set (often in __init__) before this line ran."; },
     },
     ModuleNotFoundError: {
       codex: "err-module", title: "Module not found",
