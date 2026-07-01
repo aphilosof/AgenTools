@@ -732,3 +732,95 @@ window.CODELAB.lessons.push({
     note: "step() both draws (forward/right) and grows itself (self.size += 5) — a mutator method with a visible, on-canvas effect. Forgetting the growth line is silent: nothing crashes, the shape just never expands.",
   },
 });
+
+/* ── Lesson 6.8 ─────────────────────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c6s8",
+  chapter: 6,
+  strand: "sound",
+  lang: "py",
+  timeBudgetMin: 25,
+  title: "A Synth Duet",
+  glossary: {},
+  content: [
+    {
+      type: "text",
+      md: "**Checkpoint: everything from this chapter, in one program.** A `Synth` bundles a name and a root note, exactly like `Creature` bundled a name and hp. `play_note` is a mutator-flavored method — well, it doesn't change `self`, so it's actually a query in this case, matching Lesson 6.3's own distinction. Two `Synth` instances playing together is a **duet**: two independent objects, each doing its own job, interacting through the same melody.",
+    },
+    {
+      type: "example",
+      note: "One Synth voice, playing a real melody.",
+      code: "class Synth:\n    def __init__(self, name, root):\n        self.name = name\n        self.root = root\n\n    def play_note(self, interval, duration):\n        play(self.root + interval)\n        sleep(duration)\n\nlead = Synth(\"Lead\", 60)\nlead.play_note(0, 0.4)\nlead.play_note(7, 0.4)\n",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "Trace `lead`'s two notes. Predict the events in order — you won't see printed output, but reason through what pitches get played (root 60, intervals 0 then 7).",
+      starter: "class Synth:\n    def __init__(self, name, root):\n        self.name = name\n        self.root = root\n\n    def play_note(self, interval, duration):\n        play(self.root + interval)\n        sleep(duration)\n\nlead = Synth(\"Lead\", 60)\nlead.play_note(0, 0.4)\nlead.play_note(7, 0.4)\n",
+      check: { type: "calls", calls: [{ fn: "play", note: 60 }, { fn: "play", note: 67 }] },
+      hints: [
+        "play_note(interval, duration) plays self.root + interval.",
+        "lead.root is 60. The first call's interval is 0, the second is 7.",
+        "60 + 0 = 60, then 60 + 7 = 67.",
+      ],
+      solution: "class Synth:\n    def __init__(self, name, root):\n        self.name = name\n        self.root = root\n\n    def play_note(self, interval, duration):\n        play(self.root + interval)\n        sleep(duration)\n\nlead = Synth(\"Lead\", 60)\nlead.play_note(0, 0.4)\nlead.play_note(7, 0.4)\n",
+    },
+    {
+      type: "exercise",
+      rung: 1,
+      prompt: "Now two voices, interleaved: `lead` (root 60) plays the melody `[0, 7]`, and `bass` (root 36) plays interval 0 after each of lead's notes. Predict the four events in order.",
+      starter: "class Synth:\n    def __init__(self, name, root):\n        self.name = name\n        self.root = root\n\n    def play_note(self, interval, duration):\n        play(self.root + interval)\n        sleep(duration)\n\nmelody = [0, 7]\nlead = Synth(\"Lead\", 60)\nbass = Synth(\"Bass\", 36)\nfor interval in melody:\n    lead.play_note(interval, 0.4)\n    bass.play_note(0, 0.4)\n",
+      check: { type: "calls", calls: [{ fn: "play", note: 60 }, { fn: "play", note: 36 }, { fn: "play", note: 67 }, { fn: "play", note: 36 }] },
+      hints: [
+        "The loop runs twice, once per melody interval, and each time plays lead's note then bass's note.",
+        "First pass: lead plays 60 + 0 = 60, bass plays 36 + 0 = 36.",
+        "Second pass: lead plays 60 + 7 = 67, bass plays 36 + 0 = 36.",
+      ],
+      solution: "class Synth:\n    def __init__(self, name, root):\n        self.name = name\n        self.root = root\n\n    def play_note(self, interval, duration):\n        play(self.root + interval)\n        sleep(duration)\n\nmelody = [0, 7]\nlead = Synth(\"Lead\", 60)\nbass = Synth(\"Bass\", 36)\nfor interval in melody:\n    lead.play_note(interval, 0.4)\n    bass.play_note(0, 0.4)\n",
+    },
+    {
+      type: "text",
+      md: "**A duet needs two genuinely separate voices — the same aliasing trap from Lesson 6.4 applies here.** `bass = lead` doesn't make a second voice. It makes `bass` another name for the exact same `Synth`.",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "Both notes play at 60 — `bass` never plays its own root. `bass = lead` made `bass` another name for the same `Synth`, not a separate voice. Fix it so `bass` is a real, independent `Synth` named \"Bass\" with root 36.",
+      starter: "class Synth:\n    def __init__(self, name, root):\n        self.name = name\n        self.root = root\n\n    def play_note(self, interval, duration):\n        play(self.root + interval)\n        sleep(duration)\n\nlead = Synth(\"Lead\", 60)\nbass = lead\nlead.play_note(0, 0.4)\nbass.play_note(0, 0.4)\n",
+      check: { type: "calls", calls: [{ fn: "play", note: 60 }, { fn: "play", note: 36 }] },
+      hints: [
+        "bass = lead aliases the same object — exactly Lesson 6.4's storm = blaze bug.",
+        "bass needs its own Synth(...) call, not a copy of lead's name.",
+        "bass = Synth(\"Bass\", 36)",
+      ],
+      solution: "class Synth:\n    def __init__(self, name, root):\n        self.name = name\n        self.root = root\n\n    def play_note(self, interval, duration):\n        play(self.root + interval)\n        sleep(duration)\n\nlead = Synth(\"Lead\", 60)\nbass = Synth(\"Bass\", 36)\nlead.play_note(0, 0.4)\nbass.play_note(0, 0.4)\n",
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "Write the full duet from scratch. Write `Synth` with `__init__(self, name, root)` and `play_note(self, interval, duration)`. Create `lead` (any name you like, root 60) and `bass` (any name you like, root 36) — the names are yours to choose. Using Twinkle Twinkle's intervals `[0, 0, 7, 7, 9, 9, 7]`, for each interval have `lead` play it (duration 0.4) then `bass` play interval `0` (duration 0.4).",
+      starter: "melody = [0, 0, 7, 7, 9, 9, 7]\n\n# write class Synth here, then create lead and bass,\n# and play the duet: lead plays each interval, bass plays 0 after each one\n",
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "play", note: 60 }, { fn: "play", note: 36 }, { fn: "play", note: 60 }, { fn: "play", note: 36 },
+          { fn: "play", note: 67 }, { fn: "play", note: 36 }, { fn: "play", note: 67 }, { fn: "play", note: 36 },
+          { fn: "play", note: 69 }, { fn: "play", note: 36 }, { fn: "play", note: 69 }, { fn: "play", note: 36 },
+          { fn: "play", note: 67 }, { fn: "play", note: 36 },
+        ],
+      },
+      hints: [
+        "Same Synth class as every example in this lesson: __init__(self, name, root) and play_note(self, interval, duration).",
+        "lead = Synth(\"your name here\", 60); bass = Synth(\"your name here\", 36) — the name strings aren't checked, only root matters.",
+        "for interval in melody: lead.play_note(interval, 0.4); bass.play_note(0, 0.4)",
+      ],
+      solution: "melody = [0, 0, 7, 7, 9, 9, 7]\n\nclass Synth:\n    def __init__(self, name, root):\n        self.name = name\n        self.root = root\n\n    def play_note(self, interval, duration):\n        play(self.root + interval)\n        sleep(duration)\n\nlead = Synth(\"Lead\", 60)\nbass = Synth(\"Bass\", 36)\nfor interval in melody:\n    lead.play_note(interval, 0.4)\n    bass.play_note(0, 0.4)\n",
+    },
+  ],
+  codex: {
+    topic: "chapter 6 checkpoint",
+    pattern: "class Synth:\n    def __init__(self, name, root):\n        self.name = name\n        self.root = root\n\n    def play_note(self, interval, duration):\n        play(self.root + interval)\n        sleep(duration)",
+    note: "A duet is two independent instances, each with its own state, interacting through the same piece of music. Every bug in this checkpoint is one this chapter specifically trained you to find: an aliasing mixup, a mutable-state slip, a missing self.",
+  },
+});
