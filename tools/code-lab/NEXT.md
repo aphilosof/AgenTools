@@ -196,7 +196,7 @@ just skimming titles).
 
 Chapter 5 complete: content, engine, and docs.
 
-### Phase F — Chapter 6 (Classes and Objects) ← NEXT
+### Phase F — Chapter 6 (Classes and Objects) ✅ COMPLETE
 
 **Pre-chapter gate: COMPLETE.** 5-reviewer curriculum audit run (Downey,
 Resnick, Severance, Guzdial, Ko lenses), synthesized and approved. Full table
@@ -236,10 +236,30 @@ reviewers:
   `src/js/checker.js`/errors registry), so the existing note gets extended in
   place, not duplicated.
 
-Now authoring lesson by lesson per CURRICULUM.md's Chapter 6 table, following
-the same process as Ch1–5 (see "Authoring a new lesson" below) — including
-Rule 9 (real strand calls), Rule 10 (chart diversity), and Rule 11 (genuinely
-blank Write exercises) from AUTHORING.md.
+All 8 lessons authored (c6s1–c6s8), all harness checks pass (`npm test` green
+across 51 lessons, including the new `inv11` chapter-diversity check).
+
+| ID | Title | Exercise types |
+|----|-------|----------------|
+| c6s1 | Objects Bundle Data and Behavior | Predict, Predict, Fix, Write |
+| c6s2 | `__init__` and Independent Instances | Predict, Predict, Complete, Write |
+| c6s3 | Methods and self | Predict x4, Fix, Write |
+| c6s4 | Comparing and Debugging Instances | Predict, Fix, Predict, Fix, Write |
+| c6s5 | Instances With Collections | Predict, Predict, Fix, Write |
+| c6s6 | A Note Class | Complete, Write, Fix, Predict |
+| c6s7 | A Drawing Class | Predict, Complete, Fix, Write |
+| c6s8 | A Synth Duet (checkpoint) | Predict, Predict, Fix, Write |
+
+35 exercises total. Real sound (`play()`/`sleep()`) in 6.6/6.8, real drawing
+(`forward()`/`right()`) in 6.7 — verified via `inv11`, not just by lesson
+titles. Every near-unanimous audit finding applied: `self`'s explicit
+desugaring demo, independence proven immediately (not deferred), the
+missing-`self`/attribute-typo error types each get a Fix exercise, "Many
+Instances" rescoped to a diagnosis lesson, the mutable-class-attribute
+gotcha given its own lesson (6.5), and the checkpoint (6.8) leaves instance
+names unchecked as genuine open design room while keeping pitch/rhythm exact.
+
+Chapter 6 complete: content, engine (errors.js AttributeError note), and docs.
 
 ### Phase D — Chapter 0 (pre-syntax hook)
 Author Chapter 0 sections: First Sound, Algorithms Are Exact, Guide the Robot,
