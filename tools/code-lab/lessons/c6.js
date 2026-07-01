@@ -27,11 +27,11 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "**You already know how to bundle related data.** Lesson 4.5 used a dictionary to group a creature's facts under one name: `creature = {\"name\": \"Blaze\", \"hp\": 100}`. That still works fine. But a dictionary can only hold data — it can't also hold an action that belongs to that specific creature, like *roar* or *heal*. For that, you need a **[[class]]**: a blueprint that bundles data **and** the actions that act on it, in one place.",
+      md: "**You already know how to bundle related data — a dictionary.** `creature = {\"name\": \"Blaze\", \"hp\": 100}` groups a creature's facts under one name, exactly the way Lesson 4.5 taught. Reading one back is easy: `creature[\"name\"]` gives you `\"Blaze\"`.\n\nNow give that creature an action — say, a roar. A dictionary has nowhere to put it; a dict only holds values, never behavior. Your only option is a separate function that takes the dictionary in every time you need it: `def roar(creature): return creature[\"name\"] + \" roars!\"`. That works, but look at what's missing: nothing actually *connects* `roar` to `creature` except you remembering to pass it in correctly, every single call. As a program grows, every action related to a creature ends up as a loose function scattered nearby, each one re-handed the same data by hand.",
     },
     {
       type: "text",
-      md: "**A class is a blueprint; an [[instance]] is a made thing.** Think of a cookie cutter and a cookie. The cutter (the class) is one shape, defined once. Every cookie (an instance) is a separate, real thing stamped out from that shape. You can make as many cookies as you want from one cutter, and eating one doesn't touch the others.",
+      md: "**A class bundles the data and the actions that belong to it, in one place.** The data becomes **[[attribute]]**s, read and set with a dot instead of brackets. The actions — Lesson 6.3 adds those — become **methods**, written *inside* the class, so they're never separated from the data they act on. A **[[class]]** is the blueprint that describes this bundle; an **[[instance]]** is one specific, real thing built from it. Think of a cookie cutter and a cookie: the cutter (the class) is one shape, defined once; every cookie (an instance) is a separate, real thing stamped out from that shape, and eating one never touches the others.",
     },
     {
       type: "example",
@@ -53,7 +53,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**`class Creature: pass` makes an empty blueprint.** `pass` just means \"no body yet\" — Python requires *something* inside a block, and `pass` is a placeholder that does nothing. `blaze = Creature()` makes one actual [[instance]] from that blueprint. At that moment `blaze` has no attributes at all — the next two lines create them, one at a time, by assigning to `blaze.name` and `blaze.hp`. This is exactly like assigning to a new dictionary key: the attribute didn't exist before the assignment line ran, and it does after.",
+      md: "**`class Creature: pass` makes an empty blueprint — no attributes, no actions, nothing yet.** `pass` just means \"no body yet.\" Python requires *something* indented inside every block — the same rule as `if`, `for`, and `def` — and `pass` satisfies it without doing anything. `blaze = Creature()` makes one actual [[instance]] from that empty blueprint. At the moment it's created, `blaze` has no attributes at all. The next two lines create them, one at a time, by assigning to `blaze.name` and `blaze.hp`. This is exactly like assigning to a brand-new dictionary key: the attribute didn't exist before that line ran, and it does after. Nothing needed the class to \"declare\" it in advance — Python creates it the moment you write to it.",
     },
     {
       type: "example",
@@ -75,7 +75,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**Attribute names are exact — Python won't guess what you meant.** `blaze.name` and `blaze.Name` are two completely different attributes, the same way `score` and `Score` would be two different variables. If you set `blaze.name` but read `blaze.Name`, Python raises `AttributeError` — it does not know they're \"supposed\" to be the same thing.",
+      md: "**Attribute names are exact — Python won't guess what you meant.** `blaze.name` and `blaze.Name` are two completely different attributes, the same way `score` and `Score` would be two different variables. Python never checks a class for a fixed list of \"allowed\" attribute names. An attribute is just whatever name you last assigned to — so a typo isn't rejected at the point where it's made. It only shows up later, when something tries to *read* a name you never actually wrote to, and gets `AttributeError` instead.",
     },
     {
       type: "exercise",
@@ -126,7 +126,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "**`__init__` fixes last lesson's repetition.** Building `blaze` took three separate lines: create it, set `name`, set `hp`. `__init__` (say it \"eye-knit, eye-knit\" or \"dunder init\" — the double underscores are pronounced \"dunder\") lets you write all three in one line: `blaze = Creature(\"Blaze\", 100)`. Python calls `__init__` automatically, the instant `Creature(...)` runs, and hands it whatever values you passed.",
+      md: "**`__init__` fixes last lesson's repetition.** Building `blaze` in Lesson 6.1 took three lines — `blaze = Creature()`, `blaze.name = \"Blaze\"`, `blaze.hp = 100`. Every new creature needed the same three lines again, one attribute at a time. Forget one, or typo an attribute name, and you don't find out until something tries to read the missing piece. `__init__` (pronounced \"dunder init\" — the double underscores are \"dunder,\" short for *double underscore*) collapses that into one line: `blaze = Creature(\"Blaze\", 100)`. Python calls `__init__` automatically, the instant `Creature(...)` runs. It hands `__init__` whatever values you passed, so the attributes get set correctly, every time, in one place.",
     },
     {
       type: "example",
@@ -148,7 +148,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**Two instances never share their attribute values.** `blaze` and `storm` are both built from the same `Creature` blueprint, but each one is a separate object with its own private `name` and `hp`. Changing `blaze.hp` cannot touch `storm.hp` — they don't know about each other at all.",
+      md: "**Two instances never share their attribute values.** `blaze` and `storm` are both built from the same `Creature` blueprint. But each `Creature(...)` call runs `__init__` fresh, on a brand-new object, with its own private `name` and `hp`. Changing `blaze.hp` cannot touch `storm.hp`. They're two separate pieces of memory that just happen to share one blueprint — the same way two different lists don't affect each other, even holding the same kind of values.",
     },
     {
       type: "exercise",
@@ -217,7 +217,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "**A [[method]] is a function that lives inside a class.** Parameters, `return`, default arguments — everything from Chapter 3 still applies. There's one new rule. A method's first parameter is always the instance it was called on. By convention, that parameter is named **[[self]]**.",
+      md: "**A [[method]] is a function that lives inside a class — and it never makes you hand the object back in.** Lesson 6.1's stand-alone `roar(creature)` needed the creature passed in as an argument, every single call: `roar(blaze)`. A method skips that. `blaze.roar()` already knows which creature it's about, because Python quietly passes `blaze` in for you. Every method declares a first parameter to receive it. By convention, that parameter is named **[[self]]**. Everything else about methods — parameters, `return`, default arguments — still works exactly as Chapter 3 taught.",
     },
     {
       type: "example",
@@ -239,24 +239,24 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**`self` is not a Python keyword — it's just a parameter name everyone agrees to use.** Python does not check that a method's first parameter is spelled `self`. It just uses whatever name is there for the instance. Renaming it still works exactly the same way, which proves there's no magic — but every Python programmer uses `self` by convention, and code that doesn't is harder for anyone else to read.",
+      md: "**`self` is not a Python keyword — it's just a parameter name everyone agrees to use.** Compare that to `def`, `class`, or `if`: try renaming any of those and Python refuses to run at all. `self` is nothing like them. Python doesn't check that a method's first parameter is spelled `self` — it just hands the instance to whatever name is sitting in that first spot. Rename it to `me`, or `banana`, and the program below still runs exactly the same way. That's proof there's no hidden magic tied to the word itself. Every Python programmer still writes `self`, though, for the same reason everyone drives on the same side of the road: nothing stops you from doing otherwise, but code that doesn't is harder for anyone else — including future you — to read.",
     },
     {
       type: "exercise",
-      rung: 1,
-      prompt: "This class uses `me` instead of `self` everywhere. Predict the printed line — does it still work?",
-      starter: "class Creature:\n    def __init__(me, name, hp):\n        me.name = name\n        me.hp = hp\n\n    def roar(me):\n        return me.name + \" roars!\"\n\nblaze = Creature(\"Blaze\", 100)\nprint(blaze.roar())\n",
+      rung: 3,
+      prompt: "Prove to yourself that `self` is just a name. Rename every `self` in this class to `me` — the parameter in both method definitions, and every `self.` inside them. Don't change what the class does.",
+      starter: "class Creature:\n    def __init__(self, name, hp):\n        self.name = name\n        self.hp = hp\n\n    def roar(self):\n        return self.name + \" roars!\"\n\nblaze = Creature(\"Blaze\", 100)\nprint(blaze.roar())\n",
       check: { type: "output", expected: "Blaze roars!" },
       hints: [
-        "me is just a parameter name here, doing exactly the job self usually does.",
-        "Nothing about how Python calls the method changed — only the name of the first parameter.",
-        "The output is identical to using self: Blaze roars!",
+        "Every self needs renaming — both parameter spots, and every self. inside the two method bodies.",
+        "Nothing about how Python calls the method changes — only the name of the first parameter.",
+        "def __init__(me, name, hp): me.name = name; me.hp = hp; def roar(me): return me.name + \" roars!\"",
       ],
       solution: "class Creature:\n    def __init__(me, name, hp):\n        me.name = name\n        me.hp = hp\n\n    def roar(me):\n        return me.name + \" roars!\"\n\nblaze = Creature(\"Blaze\", 100)\nprint(blaze.roar())\n",
     },
     {
       type: "text",
-      md: "**Some methods change the instance; some just report on it.** `take_damage` is a *mutator* — it changes `self.hp`, the same category as Lesson 4.1's `.append()`. `is_alive` is a *query* — it only reads and returns a value, like `.upper()` on a string, without changing anything.",
+      md: "**Some methods change the instance; some just report on it.** `take_damage` is a *mutator* — it changes `self.hp`, the same job Lesson 4.1's `.append()` does to a list. `is_alive` is a *query* — it only reads `self.hp` and returns `True` or `False`, the same job `.upper()` does to a string: look, compute, hand back an answer, and leave the original untouched. Knowing which kind of method you're writing matters before you write it. A mutator's whole reason to exist is to change something; a query that secretly changes state too is a method quietly doing more than its name promises.",
     },
     {
       type: "example",
@@ -278,7 +278,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**A local variable inside a method still disappears when the method returns — exactly like Lesson 3.4's functions.** `self.hp` is different: it lives on the instance, not in the method's own frame, so it survives after the method call ends. Two separate calls to `take_damage` both see the *same* `self.hp` left over from the call before — that's the opposite of a local variable, and it's the whole reason attributes are useful.",
+      md: "**A local variable inside a method still disappears when the method returns — exactly like Lesson 3.4's functions.** `note` below is created fresh and thrown away every single call; it never remembers last time. `self.hp` does the opposite. It doesn't live in the method's own frame at all — it lives on the instance, which is still sitting in memory long after the method call ends. Two separate calls to `take_damage` both see the *same* `self.hp` left over from the call before. That's the entire reason attributes exist: to hold state that a function's ordinary locals can't.",
     },
     {
       type: "exercise",
@@ -295,7 +295,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "**Forgetting `self` in a method definition crashes with a message that looks like a lie.** `roar()` below is missing its `self` parameter. Python still auto-supplies `blaze` when you call `blaze.roar()` — but `roar` wasn't written to accept anything, so you get `TypeError: roar() takes 0 positional arguments but 1 was given`. You didn't type an argument at the call site. Python is telling you about the *instance* it silently tried to pass in.",
+      md: "**Forgetting `self` in a method definition crashes with a message that looks like a lie.** `roar()` below is missing its `self` parameter. Read the crash literally: `TypeError: roar() takes 0 positional arguments but 1 was given`. You typed `blaze.roar()` with nothing inside the parentheses — so where did that \"1\" come from? It's `blaze`. Every dot-call still auto-supplies the instance as the first argument, whether or not the method was written to receive it. `roar()` promised to take zero parameters; Python tried to hand it one anyway, and the two don't match. The message isn't lying — it's counting an argument you never saw yourself type.",
     },
     {
       type: "exercise",
