@@ -1,11 +1,21 @@
-/* plot.js — tiny chart helper: plot(xs, ys) and bar(labels, values) drawing
-   to canvas, themed via CSS custom properties. Records calls for checking.
-   Mirrored Python/JS surface.
+/* plot.js — tiny chart helper: plot(xs, ys), dotplot(xs, ys), and
+   bar(labels, values) drawing to canvas, themed via CSS custom properties.
+   Records calls for checking. Mirrored Python/JS surface.
 
    Commands run in the Pyodide worker and record events; this module draws the
    most recent chart onto the canvas. Events (tuples from Python):
-     ('plot', xs, ys|null)  — line chart; if ys is null, xs is plotted vs index
-     ('bar', labels, values) — bar chart */
+     ('plot', xs, ys|null)     — line chart with a connecting line + dots;
+                                  if ys is null, xs is plotted vs index. Use
+                                  for sequential/trend data where connecting
+                                  the points is meaningful (time, order).
+     ('dotplot', xs, ys|null) — dots only, no connecting line. Use for
+                                  paired/unordered comparisons where a line
+                                  would wrongly imply a trend between points.
+     ('bar', labels, values)   — bar chart, for categorical comparisons
+     ('piano_roll', notes, starts, durations)
+                               — each note a block: pitch up the y-axis (MIDI),
+                                  time across the x-axis. starts[i]/durations[i]
+                                  give the block's left edge and width. */
 
 (function () {
   "use strict";
@@ -82,8 +92,49 @@
           ctx.fillText(String(labels[i]), bx, H - pad + 13);
         });
 
+      } else if (cmd[0] === "piano_roll") {
+        // note blocks: pitch (MIDI) up the y-axis, time across the x-axis
+        var notes = cmd[1], starts = cmd[2], durs = cmd[3];
+        var ends = notes.map(function (_, i) { return (starts[i] || 0) + (durs[i] || 0); });
+        var maxT = maxOf(ends, 1);
+        // pad the pitch range by a semitone each side so edge blocks aren't flush to the axes
+        var loP = minOf(notes, notes[0] !== undefined ? notes[0] : 0) - 1;
+        var hiP = maxOf(notes, notes[0] !== undefined ? notes[0] : 0) + 1;
+        var rangeP = hiP - loP || 1, rangeT = maxT || 1;
+        var plotH = H - pad - pad / 2;
+        function pxT(t) { return pad + (t / rangeT) * (W - pad - pad / 2); }
+        function pyP(p) { return (H - pad) - (p - loP) / rangeP * plotH; }
+
+        drawYTicks(ctx, pad, H, loP, hiP, axis, txt);
+
+        // time tick labels along the x-axis (4 divisions), matching drawYTicks' style
+        ctx.textAlign = "center";
+        for (var tt = 0; tt <= 4; tt++) {
+          var tv = maxT * tt / 4;
+          var tx = pxT(tv);
+          ctx.fillStyle = txt;
+          ctx.fillText(niceNum(tv), tx, H - pad + 13);
+          ctx.strokeStyle = axis;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(tx, H - pad);
+          ctx.lineTo(tx, H - pad + 3);
+          ctx.stroke();
+        }
+
+        // one block per note; height is a fraction of a pitch row so rows read apart
+        var rowH = plotH / rangeP;
+        var blockH = Math.max(rowH * 0.7, 3);
+        ctx.fillStyle = accent;
+        notes.forEach(function (p, i) {
+          var x0 = pxT(starts[i] || 0);
+          var bw = Math.max(pxT((starts[i] || 0) + (durs[i] || 0)) - x0, 1);
+          ctx.fillRect(x0, pyP(p) - blockH / 2, bw, blockH);
+        });
+
       } else {
-        // line chart
+        // line chart ("plot") or dot-only scatter ("dotplot") — same axes, different marks
+        var isDotplot = cmd[0] === "dotplot";
         var xs = cmd[1], ys = cmd[2];
         if (!ys) { ys = xs; xs = xs.map(function (_, i) { return i; }); }
         var maxX = maxOf(xs, xs[0] !== undefined ? xs[0] + 1 : 1);
@@ -111,22 +162,25 @@
           });
         }
 
-        // line
-        ctx.strokeStyle = accent;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        xs.forEach(function (x, i) {
-          var X = px(x), Y = py(ys[i]);
-          if (i === 0) ctx.moveTo(X, Y);
-          else         ctx.lineTo(X, Y);
-        });
-        ctx.stroke();
+        // connecting line — only for "plot" (a trend/sequence); a dotplot never
+        // implies order or connection between points, so it draws no line at all
+        if (!isDotplot) {
+          ctx.strokeStyle = accent;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          xs.forEach(function (x, i) {
+            var X = px(x), Y = py(ys[i]);
+            if (i === 0) ctx.moveTo(X, Y);
+            else         ctx.lineTo(X, Y);
+          });
+          ctx.stroke();
+        }
 
-        // dots at each data point
+        // dots at each data point (both chart types)
         ctx.fillStyle = accent;
         xs.forEach(function (x, i) {
           ctx.beginPath();
-          ctx.arc(px(x), py(ys[i]), 3, 0, 2 * Math.PI);
+          ctx.arc(px(x), py(ys[i]), isDotplot ? 4 : 3, 0, 2 * Math.PI);
           ctx.fill();
         });
       }

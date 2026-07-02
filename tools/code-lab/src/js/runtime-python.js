@@ -63,7 +63,11 @@
     "  \"    _events.append(('plot', list(xs), (list(ys) if ys is not None else None)))\",",
     "  'def bar(labels, values):',",
     "  \"    _events.append(('bar', [str(_l) for _l in labels], [float(_v) for _v in values]))\",",
-    "  'for _f in (set_tempo, sleep, play, sample, play_pattern, forward, backward, left, right, penup, pendown, pencolor, goto, home, plot, bar):',",
+    "  'def dotplot(xs, ys=None):',",
+    "  \"    _events.append(('dotplot', list(xs), (list(ys) if ys is not None else None)))\",",
+    "  'def piano_roll(notes, starts, durations):',",
+    "  \"    _events.append(('piano_roll', [int(_n) for _n in notes], [float(_s) for _s in starts], [float(_d) for _d in durations]))\",",
+    "  'for _f in (set_tempo, sleep, play, sample, play_pattern, forward, backward, left, right, penup, pendown, pencolor, goto, home, plot, bar, dotplot, piano_roll):',",
     "  '    setattr(builtins, _f.__name__, _f)',",
     // Mock input(): consumes from a queue pre-loaded per run so student code using
     // input() works in exercises without blocking the worker on real stdin.

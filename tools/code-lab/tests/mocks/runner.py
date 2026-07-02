@@ -9,6 +9,7 @@ browser:
   ['play', note, durSeconds, atSeconds] | ['sample', name, atSeconds]
   ['t_forward'|'t_back'|'t_left'|'t_right', value] | ['t_penup'|'t_pendown'|'t_home']
   ['t_color', name] | ['t_goto', x, y] | ['plot', xs, ys|None] | ['bar', labels, values]
+  ['dotplot', xs, ys|None] | ['piano_roll', notes, starts, durations]
 
 Uses only the local interpreter — no network, no paid APIs.
 """
@@ -37,9 +38,11 @@ def goto(x, y): _events.append(['t_goto', float(x), float(y)])
 def home(): _events.append(['t_home'])
 def plot(xs, ys=None): _events.append(['plot', list(xs), (list(ys) if ys is not None else None)])
 def bar(labels, values): _events.append(['bar', [str(_l) for _l in labels], [float(_v) for _v in values]])
+def dotplot(xs, ys=None): _events.append(['dotplot', list(xs), (list(ys) if ys is not None else None)])
+def piano_roll(notes, starts, durations): _events.append(['piano_roll', [int(_n) for _n in notes], [float(_s) for _s in starts], [float(_d) for _d in durations]])
 
 for _f in (set_tempo, sleep, play, sample, play_pattern,
-           forward, backward, left, right, penup, pendown, pencolor, goto, home, plot, bar):
+           forward, backward, left, right, penup, pendown, pencolor, goto, home, plot, bar, dotplot, piano_roll):
     setattr(builtins, _f.__name__, _f)
 
 # Accept either a plain source string or {"code": "...", "mockInput": [...]}

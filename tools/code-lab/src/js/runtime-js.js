@@ -37,6 +37,8 @@
     "function home() { _events.push(['t_home']); }",
     "function plot(xs, ys) { _events.push(['plot', Array.from(xs).map(Number), ys ? Array.from(ys).map(Number) : null]); }",
     "function bar(labels, values) { _events.push(['bar', Array.from(labels).map(String), Array.from(values).map(Number)]); }",
+    "function dotplot(xs, ys) { _events.push(['dotplot', Array.from(xs).map(Number), ys ? Array.from(ys).map(Number) : null]); }",
+    "function piano_roll(notes, starts, durations) { _events.push(['piano_roll', Array.from(notes).map(Number), Array.from(starts).map(Number), Array.from(durations).map(Number)]); }",
     // Capture console.log → stdout, console.error → stderr.
     "var _log = console.log, _err = console.error;",
     "console.log = function() { postMessage({ type: 'stdout', text: Array.prototype.slice.call(arguments).map(String).join(' ') + '\\n' }); };",
