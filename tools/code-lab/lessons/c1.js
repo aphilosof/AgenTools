@@ -1,681 +1,655 @@
-/* Chapter 1 — all sections in the content[] interleaved format.
-   Section order follows HTTLACS/Think Python sequencing:
-   c1s1 Output · c1s2 Values & Types · c1s3 Variables · c1s4 Expressions
-   c1s5 Strings · c1s6 Input · c1s7 First Drawing & Sound */
+/* Chapter 1 — Basics
+   Rebuilt to CODELAB_FULL_REPORT.md + CODELAB_CH1_REBUILT.md.
+   Lessons: c1s1 Output & print · c1s2 Values & types · c1s3 Variables &
+            assignment · c1s4 Expressions & math · c1s5 Strings & text ·
+            c1s6 Text templates · c1s7 Input · c1s8 Drawing, Sound & your
+            first real program (finale). */
 
-/* ── Lesson 1.1 ─────────────────────────────────────────────────────── */
+/* ── Lesson 1.1 — Output & print ─────────────────────────────────────── */
 
 window.CODELAB.lessons.push({
   id: "c1s1",
   chapter: 1,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 15,
-  title: "Output and print",
+  timeBudgetMin: 12,
+  title: "Output & print",
   glossary: {
-    argument: "A value you place inside a function's parentheses. It is what the function works on. In print(\"Hello\"), the argument is the string \"Hello\".",
-    string: "A sequence of characters enclosed in quotation marks. The quotes are boundary markers — they tell Python where the text begins and ends but are never part of the text itself.",
-    "function": "A named instruction that performs a specific task. You run a function by writing its name followed by parentheses. Python comes with many built-in functions; print is one of them.",
+    string: "Text inside quotes. The quotes mark where the text starts and ends — they are not part of the text itself.",
   },
   content: [
-{
+    {
       type: "text",
-      md: "A Python program runs silently by default. It can calculate, compare, and store values without ever showing you what it found. The `print` [[function]] is the instruction that makes it speak: it takes whatever you place inside its parentheses — its [[argument]] — displays it on the screen, and then moves to the next line. Remove `print` from your program and its work happens invisibly. Add it back and the result becomes readable.",
+      md: "A Python program stays silent unless you tell it to speak. `print` is how it speaks: you hand it something inside the parentheses, and it shows up on the screen.",
     },
-{
+    {
       type: "example",
-      note: "The simplest complete program that produces visible output. Run it and notice that the quotation marks around Hello! do not appear in what prints — they are boundary markers, not part of the text.",
-      code: "print(\"Hello!\")\n",
+      note: "Run it. The quotes don't show — they just mark where the text starts and ends. Change the title to your favourite song and run again.",
+      code: "print(\"Blinding Lights\")\n",
     },
-{
-      type: "exercise",
-      rung: 4,
-      prompt: "This program crashes instead of printing. Run it, read the error message carefully — it tells you exactly what Python tried to do and where it went wrong. Then fix the code so it prints Hello.",
-      starter: "print(Hello)\n",
-      check: { type: "output", expected: "Hello" },
-      hints: [
-        "The error is NameError: name 'Hello' is not defined. Python read Hello as a variable name — something it expected to find a stored value in — and found nothing there.",
-        "Without quotation marks, Python treats any bare word as a variable or instruction, not as text to display.",
-        "Wrap the word in quotes so Python reads it as a string: print(\"Hello\")",
-      ],
-      solution: "print(\"Hello\")\n",
-    },
-{
-      type: "text",
-      md: "Text that you want to display must sit inside quotation marks, which turns it into a [[string]]. The quotes tell Python where the text begins and ends; they are never part of the content itself. Python accepts both single and double quotes and treats them as identical — `'Hello'` and `\"Hello\"` mean exactly the same thing. The practical reason to know both: when your text contains an apostrophe, wrap the whole thing in double quotes. Writing `\"it's fine\"` keeps the apostrophe inside as a plain character rather than a signal that the string has ended.",
-    },
-{
-      type: "example",
-      note: "Two separate print calls produce two separate lines, in the order they appear in the program. Python reads and executes your code from top to bottom, one statement at a time — so the order you write things in is the order they happen.",
-      code: "print(\"Code\")\nprint(\"Lab\")\n",
-    },
-{
-      type: "exercise",
-      rung: 3,
-      prompt: "This program prints Code and Lab on two separate lines. Change it so both words appear on a single line reading Code Lab, with a space between them — using one print call instead of two.",
-      starter: "print(\"Code\")\nprint(\"Lab\")\n",
-      check: { type: "output", expected: "Code Lab" },
-      hints: [
-        "Two separate print calls always produce two separate lines. To get one line, you need one print call.",
-        "A single print can take multiple arguments separated by commas. It puts one space between them automatically.",
-        "Replace both lines with a single call: print(\"Code\", \"Lab\")",
-      ],
-      solution: "print(\"Code\", \"Lab\")\n",
-    },
-{
-      type: "text",
-      md: "**Scripts vs the interactive prompt.** When you type Python at a command line (the REPL — Read Evaluate Print Loop), any expression you type shows its result automatically. Type `7 * 3` and you see `21` with no `print`. But in a script — a file you save and run — only `print()` produces visible output. Everything else runs silently. This is intentional: a script decides exactly what to show and what to keep internal. Most programs you will write are scripts, so `print()` is the deliberate voice of the program.",
-    },
-{
-      type: "text",
-      md: "You can give `print` more than one argument by separating them with commas. It places a single space between each one on its own. Arguments don't have to be text — numbers and math work too. When `print` sees a calculation, it works it out first and shows the answer, not the calculation itself.",
-    },
-{
-      type: "example",
-      note: "A text label and a calculation side by side. Python evaluates 7 * 3 first, getting 21, then print displays the label and the result with one space between them.",
-      code: "print(\"Score:\", 7 * 3)\n",
-    },
-{
-      type: "example",
-      note: "Four calls showing the range of what print can display: a string, a number, an expression, and a label paired with a calculation. Run each one in your head before you run the code.",
-      code: "print(\"hello\")\nprint(42)\nprint(10 + 5)\nprint(\"Total:\", 3 * 8)\n",
-    },
-{
+    {
       type: "exercise",
       rung: 1,
-      prompt: "Before you run this, predict exactly what appears on the screen — the exact words and which line each one lands on. Write your prediction in the box, then run to check.",
+      prompt: "Before you run it, what shows up, and on which lines? Write your guess, then run to check.",
       starter: "print(\"ready\")\nprint(\"set\")\nprint(\"go\")\n",
       check: { type: "output", expected: "ready\nset\ngo" },
       hints: [
-        "Each print call writes one piece of output, then moves to the next line.",
-        "Python runs these three calls from top to bottom, so the output appears in the same order as the code.",
-        "You should see three separate lines: ready, then set, then go.",
+        "Each `print` gets its own line.",
+        "They run top to bottom.",
+        "ready, then set, then go.",
       ],
       solution: "print(\"ready\")\nprint(\"set\")\nprint(\"go\")\n",
     },
-{
+    {
+      type: "text",
+      md: "Text you want to show goes inside quotes — that turns it into a [[string]]. Single or double quotes both work. Use double quotes when your text has an apostrophe in it, like `\"it's fine\"`, so the apostrophe doesn't cut the string short.",
+    },
+    {
+      type: "example",
+      note: "Two prints, two lines, in the order you wrote them.",
+      code: "print(\"Code\")\nprint(\"Lab\")\n",
+    },
+    {
+      type: "exercise",
+      rung: 3,
+      prompt: "This prints Code and Lab on two lines. Make both words show on one line reading `Code Lab`, using a single print.",
+      starter: "print(\"Code\")\nprint(\"Lab\")\n",
+      check: { type: "output", expected: "Code Lab" },
+      hints: [
+        "One print can take more than one thing, separated by a comma.",
+        "A comma puts a space between them for you.",
+        "print(\"Code\", \"Lab\")",
+      ],
+      solution: "print(\"Code\", \"Lab\")\n",
+    },
+    {
+      type: "text",
+      md: "You can hand `print` more than one thing at once — separate them with commas, and it puts a space between each. They don't have to be text: `print(\"Score:\", 7 * 3)` works out the maths first and shows `Score: 21`.",
+    },
+    {
+      type: "example",
+      note: "Python does the maths first, then prints the label and the answer with a space between.",
+      code: "print(\"Score:\", 7 * 3)\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "This crashes. Run it, read the error — it tells you what went wrong — then fix it so it prints `Hello`.",
+      starter: "print(Hello)\n",
+      check: { type: "output", expected: "Hello" },
+      hints: [
+        "`Hello` has no quotes, so Python thinks it's a variable name and can't find one.",
+        "Text needs quotes to be a string.",
+        "print(\"Hello\")",
+      ],
+      solution: "print(\"Hello\")\n",
+    },
+    {
       type: "exercise",
       rung: 6,
-      prompt: "Write a program from scratch that prints exactly these three lines:\n\nPython speaks.\nSo do I.\nLet's begin.\n\nPay attention to punctuation. The apostrophe in the third line will end your string early if you use the wrong kind of quotes.",
+      prompt: "From an empty editor, print exactly these three lines:\n`Python speaks.`\n`So do I.`\n`Let's begin.`\nWatch the apostrophe in the last line — wrap it in double quotes so it doesn't end your string early.",
       starter: "",
       check: { type: "output", expected: "Python speaks.\nSo do I.\nLet's begin." },
       hints: [
-        "Three lines of output means three separate print calls, one for each line.",
-        "Let's contains an apostrophe. If you wrap it in single quotes, Python reads the apostrophe as the closing quote and breaks the string. Use double quotes for that line: print(\"Let's begin.\")",
-        "Three prints in order: print(\"Python speaks.\"), then print(\"So do I.\"), then print(\"Let's begin.\")",
+        "Three separate print lines.",
+        "For the last one use double quotes: \"Let's begin.\"",
+        "print(\"Let's begin.\")",
       ],
       solution: "print(\"Python speaks.\")\nprint(\"So do I.\")\nprint(\"Let's begin.\")\n",
     },
-],
+  ],
   codex: {
-    topic: "printing",
-    pattern: "print(value)\nprint(a, b, c)",
-    note: "Displays its arguments on screen and moves to the next line. Multiple arguments are joined with one space. Text must be in quotes; numbers and expressions need no quotes.",
+    topic: "print",
+    pattern: "print(\"text\")\nprint(\"a\", \"b\")   # space between",
+    note: "print shows whatever you put in its parentheses, then moves to a new line. Hand it several things separated by commas and it prints them with a space between.",
   },
 });
 
-/* ── Lesson 1.2 ─────────────────────────────────────────────────────── */
+/* ── Lesson 1.2 — Values & types ─────────────────────────────────────── */
 
 window.CODELAB.lessons.push({
   id: "c1s2",
   chapter: 1,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 15,
-  title: "Values and types",
+  timeBudgetMin: 13,
+  title: "Values & types",
   glossary: {
-    value: "One of the basic things a program works with — a number, a piece of text, a yes-or-no answer.",
-    type: "The category a value belongs to. The type decides what you are allowed to do with the value and what operators mean.",
-    integer: "A whole number like 7 or -20. Python's type name is int. Integers are exact and have no size limit.",
-    float: "A number with a decimal point like 3.14. Python's type name is float. Floats sacrifice a tiny amount of accuracy for a huge range.",
-    boolean: "The value True or False. Python's type name is bool. Used for yes-or-no questions and decisions.",
-    concatenation: "Joining two strings end to end using +. No space is added between them automatically.",
-    "TypeError": "An error Python raises when you use an operator on types it cannot handle together — for example, adding a number to a string.",
+    "type": "The kind of thing a value is — a whole number (int), a decimal (float), text (str), or a yes/no (bool). The type decides what you can do with the value.",
   },
   content: [
     {
       type: "text",
-      md: "A **[[value]]** is one of the basic things a program works with — a number, a piece of text, a yes-or-no answer. You have already made several without noticing: in `print(\"Hello!\")`, the text `\"Hello!\"` is a value, and so is `7 * 3`. Almost everything a program does is some action on values: displaying them, comparing them, combining them, calculating with them. Values are the raw material; the rest of programming is what you do with them.",
-    },
-    {
-      type: "text",
-      md: "Every value has a **[[type]]** — the category it belongs to. The type is not just a label; it decides what you are allowed to do with the value. Four types will carry you a long way.\n\nA whole number like `7` or `-20` is an **[[integer]]**, type `int`. Python's integers are exact and have no size limit.\n\nA number with a decimal point like `3.14` is a **[[float]]**. Floats trade a tiny amount of accuracy for a huge range: `0.1 + 0.2` gives `0.30000000000000004`, not `0.3`. That is normal in every language.\n\nText like `\"Hello!\"` is a **string**, type `str`. The quotes mark where the text begins and ends — they are never part of the value itself.\n\nThe answers `True` and `False` are **[[boolean]]** values, type `bool`. `5 > 3` is `True`; `5 < 3` is `False`. You will use them once you start making decisions in Chapter 2.",
+      md: "Everything your program works with is a **value**: a number, some text, a yes-or-no. Every value has a [[type]] — the kind of thing it is — and the type decides what you're allowed to do with it.",
     },
     {
       type: "example",
-      note: "type() tells you a value's category. Run this and read each result. Notice especially the last line: type(\"7\") reports str, not int — the quotes alone change the type.",
-      code: "print(type(7))\nprint(type(3.14))\nprint(type(\"Hello!\"))\nprint(type(True))\nprint(type(\"7\"))   # str, not int\n",
+      note: "type() tells you a value's kind. Four values, four types.",
+      code: "print(type(7))\nprint(type(3.14))\nprint(type(\"hello\"))\nprint(type(True))\n",
     },
     {
       type: "text",
-      md: "**Why types exist.** Inside the computer, every value is stored as a pattern of bits — ones and zeros. The number `65` and the letter `A` happen to share the same bit pattern in many encodings. The *type* is what tells Python how to interpret those bits: as a whole number, a decimal, characters to display, or a truth value. Without types, the computer could not tell whether `+` should add or join, or whether `65` means arithmetic or text. Types make interpretation unambiguous.",
+      md: "Four types will carry you a long way. A whole number like `7` is an **int**. A decimal like `3.14` is a **float**. Text in quotes is a **str**. `True` and `False` are **bools** — you'll use those in Chapter 2 to make decisions.",
     },
     {
       type: "text",
-      md: "The difference between `7` and `\"7\"` is real. `7` is the number seven. `\"7\"` is a one-character string that happens to look like a digit. The quotes alone changed the type, and the type changes what operators do.",
+      md: "The quotes change everything. `7` is the number seven. `\"7\"` is text that happens to look like a digit. They look the same, but the type changes what the operators do.",
     },
     {
       type: "example",
-      note: "The + symbol does two completely different things. Which one it does depends on the types beside it.",
-      code: "print(7 + 7)       # adds two integers: 14\nprint(\"7\" + \"7\")   # joins two strings: 77\n",
-    },
-    {
-      type: "text",
-      md: "Between numbers, `+` **adds**. Between strings, `+` **joins them end to end** — an operation called **[[concatenation]]**. The symbol is the same; the types choose the meaning.\n\nThe `*` operator works the same way. Between numbers it **multiplies**: `7 * 3` gives `21`. Between a string and a whole number it **repeats** the string: `\"ab\" * 3` gives `\"ababab\"`, and `\"-\" * 20` gives a line of twenty dashes in one step. The types of the values decide what your code means.",
-    },
-    {
-      type: "example",
-      note: "Predict the output before you run. The same * symbol does two completely different things depending on the types.",
-      code: "print(7 * 3)\nprint(\"ab\" * 3)\n",
+      note: "Same +, two different jobs. Between numbers it adds; between strings it joins.",
+      code: "print(7 + 7)       # 14 — adds\nprint(\"7\" + \"7\")   # 77 — joins\n",
     },
     {
       type: "exercise",
       rung: 1,
-      prompt: "Before you run this, predict exactly what each line prints and write down why the three results look different. Then run to check.",
+      prompt: "Predict all three lines, and note why the last two look different. Then run.",
       starter: "print(2 + 3)\nprint(\"2\" + \"3\")\nprint(\"hi\" * 3)\n",
       check: { type: "output", expected: "5\n23\nhihihi" },
       hints: [
-        "2 + 3: both are integers, so + adds them: 5.",
-        "\"2\" + \"3\": both are strings (the quotes make them text), so + joins the characters: 23.",
-        "\"hi\" * 3: a string times a number repeats the string three times: hihihi.",
+        "`+` between numbers adds; between strings it joins.",
+        "`*` repeats a string.",
+        "5, then 23, then hihihi.",
       ],
       solution: "print(2 + 3)\nprint(\"2\" + \"3\")\nprint(\"hi\" * 3)\n",
     },
     {
+      type: "exercise",
+      rung: 3,
+      prompt: "This adds 2 and 3 and prints 5. Change it so it *joins* them as text instead, printing `23`.",
+      starter: "print(2 + 3)\n",
+      check: { type: "output", expected: "23" },
+      hints: [
+        "Text in quotes joins instead of adding.",
+        "Put quotes around each digit.",
+        "print(\"2\" + \"3\")",
+      ],
+      solution: "print(\"2\" + \"3\")\n",
+    },
+    {
       type: "text",
-      md: "Mixing types does not behave one single way — and that is why you cannot ignore them.\n\n`7 + 3.14` **adapts**: when you mix an `int` and a `float`, Python quietly promotes the integer to a float and gives you `10.14`.\n\n`7 + \"3\"` **refuses** with a `[[TypeError]]`. Python cannot tell whether you mean addition (`10`) or joining (`\"73\"`), so rather than guess it stops: `TypeError: unsupported operand type(s) for +: 'int' and 'str'`. Refusing to guess is safer than a silent wrong answer.\n\n`\"7\" * 3` **silently** gives `\"777\"` — string repetition, not multiplication. No error; just not what you might expect.",
+      md: "Mix a number and text with `+` and Python stops with a **TypeError** — it won't guess whether you meant to add or join. Convert first: `int(\"3\")` turns text into a number, and `str(7)` turns a number into text.",
     },
     {
       type: "example",
-      note: "int + float adapts quietly, giving a float result. Run this and look at the decimal point in the output.",
-      code: "print(7 + 3.14)\n",
-    },
-    {
-      type: "text",
-      md: "**Why floats are imprecise.** Try `0.1 + 0.2` in Python — you get `0.30000000000000004`. This happens in every language, not just Python. Computers store numbers in binary (base 2). The value `0.1` in binary is like `1/3` in decimal — it repeats forever with no exact end. The computer stores the closest value it can fit. This is not a Python bug; it is how all CPUs work. For money, Python's `decimal` module stores numbers without this error. For most work, the tiny gap does not matter.",
-    },
-    {
-      type: "text",
-      md: "To turn one type into another, call the type name as a function. Each one builds a new value and leaves the original alone. `int(\"7\")` gives `7`; `int(3.9)` gives `3` — it **drops the fraction**, not rounds; `float(\"3.5\")` gives `3.5`; `str(7)` gives `\"7\"`; `bool(0)` gives `False` and `bool(5)` gives `True`.\n\nYou may sometimes see the value `None` — for example, if you store the result of `print()` in a variable and print that. `None` has its own type (`NoneType`) and means \"nothing here\". You cannot do arithmetic with it. If you see it unexpectedly, a function likely did not return the value you expected.",
-    },
-    {
-      type: "example",
-      note: "Conversion in action. Note int(3.9) — it drops the fraction entirely rather than rounding.",
-      code: "print(int(\"7\"))\nprint(float(\"3.5\"))\nprint(str(42))\nprint(int(3.9))    # drops the fraction — does NOT round\n",
+      note: "int() and str() convert between types so + knows what you mean.",
+      code: "print(int(\"3\") + 7)   # 10\nprint(str(7) + \"!\")   # 7!\n",
     },
     {
       type: "exercise",
       rung: 4,
-      prompt: "This crashes with a TypeError. Read the error — it names the two types on each side of +. Fix the code so it prints 10.",
+      prompt: "This crashes with a TypeError — it's adding a number and text. Convert the text so it prints `10`.",
       starter: "print(7 + \"3\")\n",
       check: { type: "output", expected: "10" },
       hints: [
-        "The error is TypeError: Python cannot use + between an int and a str.",
-        "\"3\" is text. To add it to 7 numerically, you need the number 3, not the string.",
-        "int(\"3\") converts the text \"3\" to the number 3. Or simply remove the quotes so Python reads 3 as a number.",
+        "Python won't add a number to text.",
+        "Wrap the `\"3\"` in `int()`.",
+        "print(7 + int(\"3\"))",
       ],
       solution: "print(7 + int(\"3\"))\n",
     },
     {
       type: "exercise",
       rung: 6,
-      prompt: "Starting from an empty editor, write a program that converts the string \"20\" into a number, adds 5 to it, and prints the result. It should print 25.",
+      prompt: "From scratch: take the text `\"20\"`, turn it into a number, add 5, and print the result. It should print `25`.",
       starter: "",
       check: { type: "output", expected: "25" },
       hints: [
-        "\"20\" is text — you cannot add a number to a string directly.",
-        "int(\"20\") converts the string \"20\" to the integer 20.",
-        "Then add 5 and print: print(int(\"20\") + 5).",
+        "`\"20\"` is text — convert it with `int()`.",
+        "Then add 5.",
+        "print(int(\"20\") + 5)",
       ],
       solution: "print(int(\"20\") + 5)\n",
     },
   ],
   codex: {
-    topic: "types",
-    pattern: "type(v)   int(v)   float(v)   str(v)   bool(v)",
-    note: "Every value has a type: int (whole numbers), float (decimals), str (text), bool (True/False). type() reveals it. Operators behave differently by type: + adds numbers but concatenates strings; * multiplies numbers but repeats strings. Convert with int(), float(), str().",
+    topic: "values & types",
+    pattern: "type(7)      # int\ntype(3.14)   # float\nint(\"3\")     # text -> number\nstr(7)       # number -> text",
+    note: "Every value has a type: int, float, str, bool. The type decides what operators do — 7 + 7 adds, \"7\" + \"7\" joins. Convert with int() and str().",
   },
 });
 
-/* ── Lesson 1.3 ─────────────────────────────────────────────────────── */
+/* ── Lesson 1.3 — Variables & assignment ─────────────────────────────── */
 
 window.CODELAB.lessons.push({
   id: "c1s3",
   chapter: 1,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 12,
-  title: "Variables and assignment",
+  timeBudgetMin: 14,
+  title: "Variables & assignment",
   glossary: {
-    variable: "A name you choose that refers to a value. When you write the name later, Python replaces it with the stored value.",
-    assignment: "The instruction that links a name to a value. Written as name = value. The = sign is not equality — it is an action: store this value under this name.",
+    variable: "A name you pick that points to a value, so you can store it and use it later. You can repoint the name to a different value anytime.",
   },
   content: [
-{
+    {
       type: "text",
-      md: "So far your programs work with values directly — you typed `7 * 3` and Python computed it right there. That works once, but what if you want to keep a result and use it later? That is what **[[variable|variables]]** are for. A [[variable]] is a name you choose that refers to a value. Whenever you write the name later in your code, Python looks up the value stored there and uses it.",
+      md: "So far every value is used the moment you write it. A [[variable]] lets you keep one and use it later. A variable is a name you pick that points to a value.",
     },
-{
-      type: "text",
-      md: "The instruction that creates this link is called **[[assignment]]**, written as `name = value`. Read `score = 100` as \"let score refer to 100\". Python evaluates the right side first, then links the name on the left to that result. The `=` sign is **not** asking whether two things are equal — it is an action: evaluate the right, then store the result under the name on the left.",
-    },
-{
-      type: "text",
-      md: "**Python variables vs maths variables.** In maths, `x = 5` is a permanent fact — `x` is always `5`. In Python, `x = 5` means 'right now, `x` refers to 5' — and that can change at any time. Think of a Python variable as a sticky note attached to a value. Writing `x = 10` later removes the sticky note from `5` and attaches it to `10`. The old value is not changed; only the name's pointer changes.\n\nThe direction matters too. `score = 100` stores 100 under `score`. Writing `100 = score` is a `SyntaxError` — Python always reads the left side of `=` as a name to store into, never as a value to compare. In maths, `5 = x` is a valid statement; in Python, it crashes. A number on the left of `=` makes no sense as a storage destination.",
-    },
-{
+    {
       type: "example",
-      note: "Store a value in a variable, then print it. The print sees the name score and looks up what it refers to.",
+      note: "score now points to 100. Write the name and Python looks up what it points to.",
       code: "score = 100\nprint(score)\n",
     },
-{
-      type: "exercise",
-      rung: 4,
-      prompt: "This should print 15, but it crashes. Read the error message — it tells you exactly which name Python could not find. Fix the mistake so the program prints 15.",
-      starter: "points = 10\ntotal = pints + 5\nprint(total)\n",
-      check: { type: "output", expected: "15" },
-      hints: [
-        "The error is NameError — Python looked up a name and found nothing stored under it.",
-        "Look at the second line. The variable is called points, not pints.",
-        "Fix the typo: total = points + 5.",
-      ],
-      solution: "points = 10\ntotal = points + 5\nprint(total)\n",
-    },
-{
+    {
       type: "text",
-      md: "A variable's value can change. Writing the name on the left side of `=` again simply points it at a new value — the old link disappears. Watch this in the **stepper** on the right: after the first line, the variable table shows `score → 100`. After the second line, it changes to `score → 200`. The name stays the same; what it refers to changes.",
+      md: "The `=` doesn't mean \"is equal to.\" It's a command: work out the right side, then point the name on the left at the result. Read `score = 100` as \"let score point to 100.\"",
     },
-{
+    {
+      type: "text",
+      md: "In maths, `x = 5` is forever. In Python it just means \"right now, x points to 5\" — and you can repoint it anytime. Think of the name as a sticky note you can move to a different value.",
+    },
+    {
       type: "example",
-      note: "Reassignment replaces the old value. Each print shows what the name refers to at that moment.",
+      note: "The second line moves the sticky note. Watch the variable table in the stepper change from 100 to 200.",
       code: "score = 100\nprint(score)\nscore = 200\nprint(score)\n",
     },
-{
+    {
       type: "exercise",
       rung: 1,
-      prompt: "Before you run this, trace through it step by step in your head. After each line, what does the variable table show? What does the program print?",
+      prompt: "Trace it line by line. After each line, what does `x` point to? What prints at the end?",
       starter: "x = 5\nx = 10\nprint(x)\n",
       check: { type: "output", expected: "10" },
       hints: [
-        "After x = 5, the variable table shows x → 5.",
-        "After x = 10, x is rebound: the table now shows x → 10. The old 5 is gone.",
-        "print(x) looks up x and finds 10. Output: 10.",
+        "First line: x points to 5.",
+        "Second line moves it to 10.",
+        "It prints 10.",
       ],
       solution: "x = 5\nx = 10\nprint(x)\n",
     },
-{
+    {
+      type: "text",
+      md: "Python works out the whole right side *before* repointing the name — so you can use a variable's current value to set its next one: `score = score + 5`. There's a shortcut for that: `score += 5` means the same thing. A `#` starts a **comment** — Python ignores everything after it on the line.",
+    },
+    {
+      type: "example",
+      note: "The right side (10 + 5) is worked out first, then stored back in score.",
+      code: "score = 10\nscore = score + 5   # 10 + 5 = 15\nprint(score)\n",
+    },
+    {
+      type: "exercise",
+      rung: 4,
+      prompt: "This should print 15 but crashes. Read the error — it names the word Python can't find — and fix the typo.",
+      starter: "points = 10\ntotal = pints + 5\nprint(total)\n",
+      check: { type: "output", expected: "15" },
+      hints: [
+        "`pints` is not the name you created.",
+        "You stored the value under `points`.",
+        "Change `pints` to `points`.",
+      ],
+      solution: "points = 10\ntotal = points + 5\nprint(total)\n",
+    },
+    {
       type: "exercise",
       rung: 3,
-      prompt: "Right now this ends by printing Bob. Change the second assignment so the program prints Charlie instead.",
+      prompt: "Right now this ends by printing Bob. Change the second line so it prints `Charlie` instead.",
       starter: "name = \"Alice\"\nname = \"Bob\"\nprint(name)\n",
       check: { type: "output", expected: "Charlie" },
       hints: [
-        "The last print shows whatever name currently refers to.",
-        "name = \"Bob\" is the second assignment — it overwrites Alice. Change the string on its right side.",
-        "Change name = \"Bob\" to name = \"Charlie\".",
+        "The last value the name points to is what prints.",
+        "Change the second assignment.",
+        "name = \"Charlie\"",
       ],
       solution: "name = \"Alice\"\nname = \"Charlie\"\nprint(name)\n",
     },
-{
-      type: "text",
-      md: "Python always evaluates the right side of `=` completely before doing anything with the left. That means you can use the current value of a variable to compute the next one. Look at the example below: Python reads `score + 5` (which is `10 + 5`), gets `15`, then stores that under `score`, replacing the old `10`.\n\n**A quick note on comments.** As programs grow, you will want to leave notes for yourself or anyone reading the code. A comment starts with `#` and continues to the end of the line — Python ignores it entirely. You can also put `#` in front of a whole line to switch it off without deleting it, which is handy when you are debugging.",
-    },
-{
-      type: "example",
-      note: "The right side is evaluated before the name is updated. After this code, score holds 15 — not 10.",
-      code: "score = 10\nscore = score + 5  # 10 + 5 = 15\nprint(score)\n",
-    },
-{
+    {
       type: "exercise",
       rung: 6,
-      prompt: "Write a program that stores the string \"Alex\" in a variable called name and the number 11 in a variable called age. Then print them on one line: Alex is 11",
+      prompt: "From scratch: store the name `Alex` in a variable called `name` and the number 11 in `age`. Then print them on one line: `Alex is 11`.",
       starter: "",
       check: { type: "output", expected: "Alex is 11" },
       hints: [
-        "You need two assignment lines: one for name, one for age.",
-        "A comma between arguments in print puts a space between them automatically.",
-        "print(name, \"is\", age) will output the name, then is, then the number.",
+        "Two assignments first.",
+        "Then one print with commas.",
+        "print(name, \"is\", age)",
       ],
       solution: "name = \"Alex\"\nage = 11\nprint(name, \"is\", age)\n",
     },
-],
+  ],
   codex: {
-    topic: "variables",
-    pattern: "name = value\nname = name + 1",
-    note: "Assignment binds a name to a value. Python evaluates the right side first, then stores the result under the left-side name. Reassignment replaces the old binding. # starts a comment Python ignores.",
+    topic: "variables & assignment",
+    pattern: "score = 100      # let score point to 100\nscore = score + 5\nscore += 5       # same shortcut",
+    note: "A variable is a name pointing to a value. = works out the right side, then repoints the name. Move the sticky note anytime; += adds to the current value.",
   },
 });
 
-/* ── Lesson 1.4 ─────────────────────────────────────────────────────── */
+/* ── Lesson 1.4 — Expressions & math ─────────────────────────────────── */
 
 window.CODELAB.lessons.push({
   id: "c1s4",
   chapter: 1,
   strand: "numbers",
   lang: "py",
-  timeBudgetMin: 12,
-  title: "Expressions and math",
+  timeBudgetMin: 13,
+  title: "Expressions & math",
   glossary: {
-    expression: "Any combination of values and operators that Python can evaluate to produce a result. 7 * 3 is an expression. So is \"hi\" + \"there\". So is a variable name on its own.",
-    "operator": "A symbol that combines values to produce a new value. + - * / are operators.",
+    expression: "Anything Python can work out to a value — like `7 * 3` or `10 - 4`, or even just `7`. You can print it, store it, or drop it inside a bigger expression.",
   },
   content: [
-{
+    {
       type: "text",
-      md: "Every value you have typed so far — `7`, `3.14`, `\"Hello\"` — is itself an **[[expression]]**. But an expression can be more than a bare value: it is anything Python can evaluate to produce a result. `7 * 3` is an expression that produces `21`. `10 - 4` is an expression that produces `6`. The result is just another value, and you can do anything with it: print it, store it in a variable, or use it inside a bigger expression.",
+      md: "An [[expression]] is anything Python can work out to a value: `7 * 3`, `10 - 4`, even just `7`. You can print the result, store it in a variable, or drop it inside a bigger expression.",
     },
-{
+    {
       type: "text",
-      md: "Python has the arithmetic operators you would expect, plus a few especially useful ones. `+` adds, `-` subtracts, `*` multiplies. `/` **always gives a float**: `7 / 2` is `3.5`, and even `6 / 2` is `3.0`, not `3`. `//` is **floor division** — divide and drop the remainder: `7 // 2` is `3`. `%` gives the **remainder**: `7 % 3` is `1` (seven divided by three leaves one over). `**` raises to a power: `2 ** 8` is `256`.",
+      md: "The operators: `+ - *` you know. `/` divides and always gives a decimal — `6 / 2` is `3.0`, not `3`. `//` divides and drops the leftover — `7 // 2` is `3`. `%` gives the leftover — `7 % 3` is `1`. `**` is powers — `2 ** 8` is `256`.",
     },
-{
-      type: "text",
-      md: "**Why `/` always gives a float in Python 3.** In Python 2, `7 / 2` gave `3` — the remainder was silently dropped. This caused a constant class of bugs where programmers expected a decimal and got a truncated integer with no error or warning. Python 3 fixed this by making `/` always produce a float (`3.5`), so the behaviour is predictable. Use `//` explicitly when you want the whole-number part. Explicit is better than implicit — one of Python's core design principles.\n\n**Why `%` is more useful than it looks.** The remainder operator has two uses that come up constantly. First: even and odd. `n % 2` is `0` for even numbers and `1` for odd ones — you will use this in Chapter 2 to make decisions. Second: cycling. If you want to pick colour number `i` from a set of 3 colours, `i % 3` gives `0`, `1`, `2`, `0`, `1`, `2`, ... no matter how large `i` gets. This is called **clock arithmetic** — the same maths your phone uses to display 12:00 instead of 24:00. You will use it extensively in loops, music patterns, and drawing.",
-    },
-{
+    {
       type: "example",
-      note: "Division always gives a float, even when the answer is a whole number. Floor division keeps only the whole part.",
-      code: "print(7 / 2)    # float: 3.5\nprint(7 // 2)   # floor: 3\nprint(7 % 3)    # remainder: 1\nprint(2 ** 8)   # power: 256\n",
+      note: "Notice / gives a decimal even when it divides evenly.",
+      code: "print(7 / 2)    # 3.5\nprint(7 // 2)   # 3\nprint(7 % 3)    # 1\nprint(2 ** 8)   # 256\n",
     },
-{
+    {
       type: "exercise",
       rung: 3,
-      prompt: "This calculates the number of seconds in 5 minutes (5 × 60 = 300). Change it to calculate the number of seconds in 3 hours instead. It should print 10800.",
+      prompt: "This works out the seconds in 5 minutes (5 × 60). Change it to the seconds in 3 hours instead. It should print `10800`.",
       starter: "print(5 * 60)\n",
       check: { type: "output", expected: "10800" },
       hints: [
-        "One hour is 60 minutes. One minute is 60 seconds.",
-        "3 hours × 60 minutes × 60 seconds — you can chain multiplications.",
+        "An hour is 60 minutes, a minute is 60 seconds.",
+        "3 × 60 × 60.",
         "print(3 * 60 * 60)",
       ],
       solution: "print(3 * 60 * 60)\n",
     },
-{
+    {
       type: "text",
-      md: "Python follows the same order of operations as maths: `**` is worked out first, then `*` `/` `//` `%` (left to right), then `+` `-` (left to right). Use **parentheses** to override this order — anything inside parentheses is worked out first. When in doubt, add parentheses to make your intention clear.",
+      md: "Python does maths in the usual order: powers first, then `* / // %`, then `+ -`. **Parentheses** jump the queue — whatever's inside is worked out first. When in doubt, add them.",
     },
-{
+    {
       type: "example",
-      note: "The parentheses change everything. Work out both lines in your head before running.",
-      code: "print(3 + 4 * 2)    # 11: * first, then +\nprint((3 + 4) * 2)  # 14: () first, then *\n",
+      note: "The parentheses change the answer. Work out both before running.",
+      code: "print(3 + 4 * 2)     # 11\nprint((3 + 4) * 2)   # 14\n",
     },
-{
+    {
       type: "exercise",
       rung: 1,
-      prompt: "Before you run this, work out each answer in your head. The order of operations is the key — write your predictions, then run to check.",
+      prompt: "Work out each line in your head — order of operations is the key. Then run to check.",
       starter: "print(2 + 3 * 4)\nprint((2 + 3) * 4)\nprint(10 % 3)\n",
       check: { type: "output", expected: "14\n20\n1" },
       hints: [
-        "2 + 3 * 4: multiplication before addition, so 3 * 4 = 12 first, then 2 + 12 = 14.",
-        "(2 + 3) * 4: parentheses first, so 2 + 3 = 5 first, then 5 * 4 = 20.",
-        "10 % 3: 10 divided by 3 is 3 remainder 1. The % operator gives the remainder.",
+        "`*` before `+`.",
+        "Parentheses first on line 2.",
+        "`10 % 3` is the remainder, 1.",
       ],
       solution: "print(2 + 3 * 4)\nprint((2 + 3) * 4)\nprint(10 % 3)\n",
     },
-{
+    {
       type: "text",
-      md: "An expression produces a value. You can use that value anywhere: print it directly, store it in a variable, or use it inside another expression. The example below shows both styles producing the same output. Store a result when you need it more than once, or when a name makes the code clearer.",
+      md: "`%` has a handy trick: `n % 2` is `0` for even numbers and `1` for odd ones. You'll use that in Chapter 2 to make decisions.",
     },
-{
-      type: "example",
-      note: "Both approaches print the same thing — the only difference is whether you store the result first.",
-      code: "print(7 * 3 + 1)\nresult = 7 * 3 + 1\nprint(result)\n",
-    },
-{
+    {
       type: "exercise",
       rung: 4,
-      prompt: "This should print the average of 10, 20, and 30, which is 20.0. But because of how Python applies operator order, it calculates something different. Add parentheses to fix it.",
+      prompt: "This should print the average of 10, 20, and 30 — which is 20.0 — but the order of operations divides only the 30 first. Add parentheses to fix it.",
       starter: "print(10 + 20 + 30 / 3)\n",
       check: { type: "output", expected: "20.0" },
       hints: [
-        "Python divides 30 by 3 first (getting 10.0), then adds 10 + 20 + 10.0 = 40.0. That is not the average.",
-        "An average adds all the numbers together first, then divides. You need to group the addition.",
-        "Wrap the whole sum in parentheses: (10 + 20 + 30) / 3.",
+        "Right now only `30 / 3` happens first.",
+        "Add the three numbers before dividing.",
+        "print((10 + 20 + 30) / 3)",
       ],
       solution: "print((10 + 20 + 30) / 3)\n",
     },
-],
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "From scratch: a song is 3 minutes and 45 seconds long. Print its total length in seconds. (3 × 60, plus 45.)",
+      starter: "",
+      check: { type: "output", expected: "225" },
+      hints: [
+        "Minutes to seconds first.",
+        "Then add the 45.",
+        "print(3 * 60 + 45)",
+      ],
+      solution: "print(3 * 60 + 45)\n",
+    },
+  ],
   codex: {
-    topic: "expressions",
-    pattern: "+ - * / // % **",
-    note: "An expression combines values and operators to produce a new value. Order: ** first, then * / // %, then + -. Use parentheses to control the order. / always gives a float; // gives the whole-number part only.",
+    topic: "expressions & math",
+    pattern: "/   decimal divide (7/2 = 3.5)\n//  drop the leftover (7//2 = 3)\n%   the leftover (7%3 = 1)\n**  powers (2**8 = 256)",
+    note: "An expression works out to a value. Order: powers, then * / // %, then + -. Parentheses jump the queue. n % 2 is 0 for even, 1 for odd.",
   },
 });
 
-/* ── Lesson 1.5 ─────────────────────────────────────────────────────── */
+/* ── Lesson 1.5 — Strings & text ─────────────────────────────────────── */
 
 window.CODELAB.lessons.push({
   id: "c1s5",
   chapter: 1,
   strand: "words",
   lang: "py",
-  timeBudgetMin: 20,
-  title: "Working with strings",
+  timeBudgetMin: 14,
+  title: "Strings & text",
   glossary: {
-    concatenation: "Joining two strings end to end using +. No space is added between them automatically.",
-    method: "A function that belongs to a specific type, called with a dot after the value. \"hello\".upper() is a method call on a string.",
-    "f-string": "A string that starts with f before the quote. Any variable or expression inside curly braces {} is evaluated and inserted. f\"Hello {name}\" inserts the value of name.",
-    join: "A string method that joins a list of strings into one, putting the separator between each pair. \", \".join([\"a\",\"b\",\"c\"]) gives \"a, b, c\".",
+    method: "A built-in tool that belongs to a value. You call one with a dot after the value, then the tool's name and parentheses — like `title.upper()`.",
   },
   content: [
     {
       type: "text",
-      md: "You already know that `+` joins strings end to end — **[[concatenation]]** — and that `*` repeats a string a whole number of times. Now that you understand types and variables, these operators make more sense: they are type-dependent. `+` adds numbers but joins strings; `*` multiplies numbers but repeats strings.",
-    },
-    {
-      type: "text",
-      md: "When you use `+` to join strings, you control exactly what appears. No space is added unless you put one there yourself. That is the key difference between `,` and `+` inside `print`: a comma puts one space between arguments for you; `+` adds nothing of its own. `print(\"hot\", \"dog\")` shows `hot dog`; `print(\"hot\" + \"dog\")` shows `hotdog`. Same words, two different tools.",
+      md: "Strings come with built-in tools called [[method|methods]]. You call one by putting a dot after the string, then the tool's name and parentheses.",
     },
     {
       type: "example",
-      note: "+ joins with no gap; a space in quotes is itself a piece of text you can join in.",
-      code: "print(\"Code\" + \"Lab\")          # CodeLab\nprint(\"Code\" + \" \" + \"Lab\")    # Code Lab\n",
+      note: "upper() shouts it; title() capitalises each word. The original is untouched.",
+      code: "title = \"blinding lights\"\nprint(title.upper())\nprint(title.title())\n",
     },
     {
       type: "text",
-      md: "The `*` operator repeats a string a whole number of times. Python works out `*` before `+`, so you can combine both in one expression: `\"Ho\" * 3 + \"!\"` gives `\"HoHoHo!\"`.",
+      md: "A few you'll use constantly: `s.upper()` makes it all capitals, `s.lower()` all lowercase, `s.strip()` trims spaces off the ends. `len(s)` counts the characters — that one's a plain function, so it's `len(title)`, not `title.len()`.",
     },
     {
       type: "example",
-      note: "Predict the output of each line before running. Work out the repetition first, then the join.",
-      code: "print(\"ab\" * 3)\nprint(\"Ho\" * 3 + \"!\")\nprint(\"=\" * 3 + \" MENU \" + \"=\" * 3)\n",
+      note: "strip() cleans off the extra spaces; len() counts characters.",
+      code: "song = \"  Hey Jude  \"\nprint(song.strip())\nprint(len(\"Python\"))\n",
     },
     {
       type: "text",
-      md: "Strings also come with built-in tools called **[[method|methods]]**. A method is a function that belongs to a specific type. You call it by writing a dot after the value, then the method name and parentheses.\n\n`s.upper()` gives a copy with every letter capitalised; `s.lower()` gives all lowercase; `s.strip()` removes leading and trailing spaces; `s.split()` splits on spaces and returns a list of words. `len(s)` gives the number of characters — unlike the others, `len` is a standalone function, so you write `len(word)`, not `word.len()`.",
-    },
-    {
-      type: "text",
-      md: "**Strings are immutable — methods return copies.** Calling `word.upper()` does not change `word`. It creates and returns a brand-new string with every letter capitalised. The original is untouched. To keep the result, assign it: `loud = word.upper()`. This is not a quirk — it is a guarantee called **immutability**: once a string is created, its characters cannot change. The only way to 'change' a string is to build a new one from it. Most confusion about string methods comes from forgetting this and expecting `word` to change after calling a method on it.",
+      md: "Here's the catch everyone hits once: `title.upper()` does **not** change `title`. It hands back a brand-new string and leaves the original alone. Strings can't be changed once they're made. To keep the shouted version, store it: `loud = title.upper()`.",
     },
     {
       type: "example",
-      note: "Methods transform a string and give back a new one — the original is not changed.",
-      code: "word = \"Python\"\nprint(word.upper())\nprint(word.lower())\nprint(len(word))\n",
+      note: "loud is new; word is exactly as it was.",
+      code: "word = \"python\"\nloud = word.upper()\nprint(loud)\nprint(word)   # still lowercase\n",
     },
     {
-      type: "example",
-      note: "strip() cleans up extra spaces. split() breaks a sentence into a list of words.",
-      code: "sentence = \"  hello world  \"\nprint(sentence.strip())\nprint(sentence.strip().split())\n",
+      type: "exercise",
+      rung: 1,
+      prompt: "Predict both lines, then run.",
+      starter: "word = \"hello\"\nprint(word.upper())\nprint(len(word))\n",
+      check: { type: "output", expected: "HELLO\n5" },
+      hints: [
+        "`upper()` capitalises everything.",
+        "`len` counts the letters.",
+        "HELLO, then 5.",
+      ],
+      solution: "word = \"hello\"\nprint(word.upper())\nprint(len(word))\n",
     },
     {
       type: "exercise",
       rung: 3,
-      prompt: "Right now this prints CodeLab — the two words stuck together. Change it so it prints Code Lab with a space between, but do it with + joining, not by adding a comma.",
-      starter: "print(\"Code\" + \"Lab\")\n",
-      check: { type: "output", expected: "Code Lab" },
-      hints: [
-        "+ glues the exact text with no gap. You have to add the space yourself.",
-        "A single space in quotes, \" \", is a valid string — join it in between the two words.",
-        "Join three pieces: \"Code\" + \" \" + \"Lab\".",
-      ],
-      solution: "print(\"Code\" + \" \" + \"Lab\")\n",
-    },
-    {
-      type: "exercise",
-      rung: 4,
-      prompt: "A student wanted hot dog — two words with a space — but got hotdog instead. There is no error; the output is just wrong. Fix it so it prints hot dog.",
-      starter: "print(\"hot\" + \"dog\")\n",
-      check: { type: "output", expected: "hot dog" },
-      hints: [
-        "The words ran together because + joins with no automatic space.",
-        "Two fixes work: use a comma instead of +, or join a space string in the middle.",
-        "Simplest fix: print(\"hot\", \"dog\") — the comma inserts one space.",
-      ],
-      solution: "print(\"hot\", \"dog\")\n",
-    },
-    {
-      type: "exercise",
-      rung: 6,
-      prompt: "Starting from an empty editor, build a name banner. Print three lines: a row of exactly ten dashes, then Hi, Sam!, then another row of ten dashes:\n\n----------\nHi, Sam!\n----------\n\nUse * to make the dash rows instead of typing ten dashes by hand.",
-      starter: "",
-      check: { type: "output", expected: "----------\nHi, Sam!\n----------" },
-      hints: [
-        "To make ten dashes in one go, repeat the dash character: \"-\" * 10.",
-        "The middle line is ordinary text: print(\"Hi, Sam!\").",
-        "Three print calls: dash row, greeting, dash row again.",
-      ],
-      solution: "print(\"-\" * 10)\nprint(\"Hi, Sam!\")\nprint(\"-\" * 10)\n",
-    },
-    {
-      type: "exercise",
-      rung: 3,
-      prompt: "This prints PYTHON IS FUN in capitals. Change the method call so it prints python is fun in all lowercase instead.",
+      prompt: "This shouts the phrase in capitals. Change the method so it prints `python is fun` in all lowercase instead.",
       starter: "print(\"Python is fun\".upper())\n",
       check: { type: "output", expected: "python is fun" },
       hints: [
-        "upper() gives all capitals. You want the opposite.",
-        "Every string method that changes case has a counterpart.",
-        "Replace .upper() with .lower().",
+        "There's a method that's the opposite of `upper`.",
+        "It's `lower`.",
+        ".lower()",
       ],
       solution: "print(\"Python is fun\".lower())\n",
     },
     {
       type: "exercise",
-      rung: 5,
-      prompt: "This prints HELLO. Add one more line below it that prints the number of letters in the word: 5.",
-      starter: "word = \"hello\"\nprint(word.upper())\n",
-      check: { type: "output", expected: "HELLO\n5" },
+      rung: 4,
+      prompt: "This tries to shout the word, but it still prints lowercase. `upper()` hands back a new string instead of changing `word` — you have to store it. Fix it so it prints `HELLO`.",
+      starter: "word = \"hello\"\nword.upper()\nprint(word)\n",
+      check: { type: "output", expected: "HELLO" },
       hints: [
-        "You need a second print call that shows the length.",
-        "len() gives the number of characters in a string. You call it as len(value), not as a method.",
-        "Add: print(len(word))",
+        "`word.upper()` on its own is thrown away.",
+        "Store the result back in `word`.",
+        "word = word.upper()",
       ],
-      solution: "word = \"hello\"\nprint(word.upper())\nprint(len(word))\n",
+      solution: "word = \"hello\"\nword = word.upper()\nprint(word)\n",
     },
     {
+      type: "exercise",
+      rung: 6,
+      prompt: "From scratch: store the song title `\"bohemian rhapsody\"` in a variable, print it in title case (`Bohemian Rhapsody`), then print how many characters long it is including the space.",
+      starter: "",
+      check: { type: "output", expected: "Bohemian Rhapsody\n17" },
+      hints: [
+        "`title()` capitalises each word.",
+        "`len()` counts every character, spaces included.",
+        "print(len(title))",
+      ],
+      solution: "title = \"bohemian rhapsody\"\nprint(title.title())\nprint(len(title))\n",
+    },
+  ],
+  codex: {
+    topic: "strings & text",
+    pattern: "s.upper()   s.lower()   s.strip()\nlen(s)      # a plain function\nloud = s.upper()   # store the new string",
+    note: "Methods are tools you call with a dot: s.upper(). They return a NEW string — the original never changes — so store the result. len(s) counts characters.",
+  },
+});
+
+/* ── Lesson 1.6 — Text templates ─────────────────────────────────────── */
+
+window.CODELAB.lessons.push({
+  id: "c1s6",
+  chapter: 1,
+  strand: "words",
+  lang: "py",
+  timeBudgetMin: 15,
+  title: "Text templates",
+  glossary: {
+    "f-string": "A string with an `f` before the opening quote, so you can drop a variable straight inside `{curly braces}` instead of joining text with +.",
+  },
+  content: [
+    {
       type: "text",
-      md: "**f-strings — the modern way to slot values into text.** Joining strings with `+` gets awkward once variables are involved: you need `str()` for every number, and the expression becomes a chain of pieces. Python's **[[f-string]]** is cleaner. Write `f` before the opening quote, then put any variable or expression inside curly braces `{}`. Python evaluates whatever is inside and slots the result in.\n\n`f\"Hello {name}\"` is equivalent to `\"Hello \" + name`, but far easier to read at a glance.",
+      md: "Building text out of variables with `+` gets ugly — you need `str()` around every number. An [[f-string]] is cleaner: put an `f` before the quote, then drop any variable inside `{curly braces}`.",
     },
     {
       type: "example",
-      note: "An f-string inserts any variable into the text — no + or str() needed.",
-      code: "name = \"Sam\"\nage = 11\nprint(f\"Hello {name}\")\nprint(f\"{name} is {age} years old.\")\n",
+      note: "No +, no str() — the variables slot straight in.",
+      code: "name = \"Alex\"\nage = 11\nprint(f\"{name} is {age} years old.\")\n",
     },
     {
       type: "text",
-      md: "**`:.2f` — always two decimal places.** Inside an f-string you can add a *format spec* after a colon: `{price:.2f}` means 'format this number with exactly 2 decimal places.' Python rounds and pads automatically: `3.5` becomes `3.50`; `12.999` becomes `13.00`. This is the standard way to print prices and measurements.",
+      md: "Inside the braces you can add a format after a colon. `{price:.2f}` shows exactly two decimal places — `3.5` becomes `3.50`. That's how you print prices and tidy numbers.",
     },
     {
       type: "example",
-      note: ":.2f rounds to 2 decimal places and always shows exactly 2 digits after the point.",
-      code: "price = 3.5\nprint(f\"Price: ${price:.2f}\")\ntip = price * 0.2\ntotal = price + tip\nprint(f\"With tip: ${total:.2f}\")\n",
+      note: ":.2f rounds and pads to two decimals.",
+      code: "price = 3.5\nprint(f\"Total: ${price:.2f}\")\n",
     },
     {
       type: "exercise",
       rung: 3,
-      prompt: "This builds a greeting with + and str(). Rewrite the print call as a single f-string — the output must stay exactly: Hello Sam, you are 11 years old.",
+      prompt: "This builds a greeting with `+` and `str()`. Rewrite the print as a single f-string — the output must stay exactly `Hello Sam, you are 11 years old.`",
       starter: "name = \"Sam\"\nage = 11\nprint(\"Hello \" + name + \", you are \" + str(age) + \" years old.\")\n",
       check: { type: "output", expected: "Hello Sam, you are 11 years old." },
       hints: [
-        "An f-string starts with f before the quote: f\"...\".",
-        "Put variables inside curly braces: {name} and {age}.",
-        "print(f\"Hello {name}, you are {age} years old.\")",
+        "Put an `f` before the quote.",
+        "Drop `name` and `age` in braces.",
+        "f\"Hello {name}, you are {age} years old.\"",
       ],
       solution: "name = \"Sam\"\nage = 11\nprint(f\"Hello {name}, you are {age} years old.\")\n",
     },
     {
       type: "exercise",
       rung: 5,
-      prompt: "price and tax are already set up. Add one print line using an f-string with :.2f that outputs exactly: Total: $4.50",
-      starter: "price = 4.0\ntax = 0.5\ntotal = price + tax\n",
+      prompt: "`price` and `tax` are set up. Add one print using an f-string with `:.2f` that outputs exactly `Total: $4.50`.",
+      starter: "price = 4.0\ntax = 0.5\ntotal = price + tax\n# print the total\n",
       check: { type: "output", expected: "Total: $4.50" },
       hints: [
-        "You need to print total formatted to 2 decimal places.",
-        "Inside the f-string braces, add :.2f after the variable name: {total:.2f}.",
+        "Use an f-string.",
+        "Format `total` with `:.2f`.",
         "print(f\"Total: ${total:.2f}\")",
       ],
       solution: "price = 4.0\ntax = 0.5\ntotal = price + tax\nprint(f\"Total: ${total:.2f}\")\n",
     },
     {
       type: "text",
-      md: "`split()` with no argument splits on spaces. You can also split on a specific separator by passing it: `\"red,green,blue\".split(\",\")` gives `[\"red\", \"green\", \"blue\"]` — the separator is not included in the pieces.\n\n**`[[join]]()` is the reverse.** It is called on the separator and takes a list of strings: `\" | \".join([\"red\", \"green\", \"blue\"])` gives `\"red | green | blue\"`. The separator goes first — it reads oddly at first, but it is consistent: `join` belongs to the separator string, the thing that goes *between* the pieces.",
+      md: "`split()` breaks a string into a list of pieces: `\"red,green,blue\".split(\",\")` gives `['red', 'green', 'blue']`. `join()` is the reverse — you call it on the separator: `\" - \".join(parts)` glues the pieces back with ` - ` between them.",
     },
     {
       type: "example",
-      note: "split(',') breaks at commas; join puts pieces back together with any separator you choose.",
-      code: "colours = \"red,green,blue\"\nparts = colours.split(\",\")\nprint(parts)\nprint(\" | \".join(parts))\n",
+      note: "split breaks apart at each comma; join puts them back with your separator.",
+      code: "colours = \"red,green,blue\"\nparts = colours.split(\",\")\nprint(parts)\nprint(\" - \".join(parts))\n",
     },
     {
       type: "exercise",
       rung: 4,
-      prompt: "This should print rock → paper → scissors, but the join call is wrong — it passes the original unsplit string instead of the list. Fix the one mistake.",
+      prompt: "This should print `rock → paper → scissors`, but `join` was handed the original string instead of the split-up list. Fix the one wrong word.",
       starter: "items = \"rock,paper,scissors\"\nparts = items.split(\",\")\nprint(\" → \".join(items))\n",
       check: { type: "output", expected: "rock → paper → scissors" },
       hints: [
-        ".join() needs a list, not the original string.",
-        "You already split items into parts — join the list, not the original.",
-        "Change .join(items) to .join(parts).",
+        "`join` needs the list, not the original string.",
+        "You already made the list — it's `parts`.",
+        "\" → \".join(parts)",
       ],
       solution: "items = \"rock,paper,scissors\"\nparts = items.split(\",\")\nprint(\" → \".join(parts))\n",
     },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "From scratch: store your name in one variable and a score of 95 in another. Using one f-string, print `Alex scored 95 points!`.",
+      starter: "",
+      check: { type: "output", expected: "Alex scored 95 points!" },
+      hints: [
+        "Two variables.",
+        "One f-string with both in braces.",
+        "f\"{name} scored {score} points!\"",
+      ],
+      solution: "name = \"Alex\"\nscore = 95\nprint(f\"{name} scored {score} points!\")\n",
+    },
   ],
   codex: {
-    topic: "string operations",
-    pattern: "f\"{x}\"   f\"{price:.2f}\"   s.split(\",\")   \"|\".join(lst)   s.upper()   s.lower()   s.strip()   s.split()   len(s)",
-    note: "f-strings slot values into text: f\"{name}\" inserts name. :.2f formats to 2 decimal places. split(',') breaks on a separator; join puts pieces back together. Methods return copies — the original string is unchanged.",
+    topic: "text templates",
+    pattern: "f\"{name} is {age}\"      # drop variables in\nf\"${price:.2f}\"          # two decimals\n\"a,b\".split(\",\")   \" - \".join(parts)",
+    note: "An f-string drops variables straight into text with {braces}; :.2f shows two decimals. split breaks a string into a list; join glues a list back with a separator.",
   },
 });
 
-/* ── Lesson 1.6 ─────────────────────────────────────────────────────── */
+/* ── Lesson 1.7 — Input ──────────────────────────────────────────────── */
 
 window.CODELAB.lessons.push({
-  id: "c1s6",
+  id: "c1s7",
   chapter: 1,
   strand: "core",
   lang: "py",
   timeBudgetMin: 12,
   title: "Input",
-  glossary: {
-    "input": "A built-in function that displays a prompt and waits for the user to type something. It always returns the answer as a string, even if the user types digits.",
-  },
   content: [
     {
       type: "text",
-      md: "So far your programs decide everything — all values are written directly in the code and the output is always the same. Real programs ask the user questions. Python's `[[input]]()` function displays a prompt, waits for the person to type something and press Enter, and hands the answer back as a **string**. Always a string, no matter what the user typed.",
+      md: "Every program so far decides everything itself. `input()` lets it ask the person a question and use their answer.",
+    },
+    {
+      type: "example",
+      note: "input() shows the question, waits for typing, and hands back what they typed. The space after the ? keeps it from looking cramped.",
+      code: "name = input(\"What's your name? \")\nprint(\"Hi,\", name)\n",
     },
     {
       type: "text",
-      md: "The pattern is `name = input(\"What is your name? \")`. When Python hits this line, it prints `What is your name? `, then waits. Whatever the user types — say, `Alex` — gets stored in `name`. Then `print(\"Hello,\", name)` says `Hello, Alex`.\n\nNotice the space at the end of the prompt string: `\"What is your name? \"`. Without it, the cursor appears right after the question mark, which looks cramped.",
+      md: "The big thing to remember: `input()` **always** gives back text, even if they type a number. Type `11` and you get the string `\"11\"`. Try `age + 1` on that and Python stops with a TypeError. Wrap it in `int()` to get a real number: `age = int(input(\"Your age? \"))`.",
     },
     {
-      type: "text",
-      md: "The most important thing to remember: `input()` **always** returns a string. If you ask someone their age and they type `11`, you get the string `\"11\"`, not the number `11`. If you then try `print(age + 1)`, Python stops with a `TypeError` — it cannot add a string and a number.\n\nThe fix is to convert: wrap `input()` in `int()`. Write `age = int(input(\"Your age? \"))`. Now `age` holds an integer, and `age + 1` works.",
-    },
-    {
-      type: "text",
-      md: "**Why `input()` always returns a string — the system boundary principle.** The function receives a stream of characters from the keyboard. It has no way to know whether you meant the digits `11` as the number eleven or as text you plan to join with other text. Deciding what characters *mean* is the program's job. This is a general principle: anything arriving from outside your program — the keyboard, a file, a network — arrives as raw text and must be interpreted deliberately. `int()` is your interpretation: 'these characters represent a whole number, convert them.' If they do not represent a valid number, Python raises a `ValueError`. You will handle that in Chapter 2.",
+      type: "example",
+      note: "int() turns the typed text into a number, so age + 1 works.",
+      code: "age = int(input(\"Your age? \"))\nprint(\"Next year you'll be\", age + 1)\n",
     },
     {
       type: "exercise",
       rung: 3,
-      prompt: "This greets the user with Hello, Alex. — a full stop at the end. Change it so it prints Welcome, Alex! with an exclamation mark instead.",
+      prompt: "This greets with `Hello, Alex.` Change it to `Welcome, Alex!` — swap the word and turn the full stop into an exclamation mark.",
       starter: "name = input(\"Name: \")\nprint(\"Hello,\", name + \".\")\n",
       mockInput: ["Alex"],
       check: { type: "output", expected: "Name: Welcome, Alex!" },
       hints: [
-        "The greeting text is inside the print call. Change the word Hello to Welcome.",
-        "The punctuation at the end is part of the string joined to name. Change \".\" to \"!\".",
+        "Change `Hello` to `Welcome`.",
+        "Change the `.` to `!`.",
         "print(\"Welcome,\", name + \"!\")",
       ],
       solution: "name = input(\"Name: \")\nprint(\"Welcome,\", name + \"!\")\n",
@@ -683,111 +657,103 @@ window.CODELAB.lessons.push({
     {
       type: "exercise",
       rung: 5,
-      prompt: "The first line reads a number from the user. Add one more line below it that prints double that number. With input 7, it should print 14.",
-      starter: "n = int(input(\"Enter a number: \"))\n",
+      prompt: "The first line reads a number. Add one line that prints double it. With input 7, it should print 14.",
+      starter: "n = int(input(\"Enter a number: \"))\n# print double n\n",
       mockInput: ["7"],
       check: { type: "output", expected: "Enter a number: 14" },
       hints: [
-        "n already holds the integer. You need to print n multiplied by 2.",
-        "print(n * 2) goes on the line after the input call.",
-        "Add: print(n * 2)",
+        "`n` already holds the number.",
+        "Double it with `* 2`.",
+        "print(n * 2)",
       ],
       solution: "n = int(input(\"Enter a number: \"))\nprint(n * 2)\n",
     },
     {
+      type: "text",
+      md: "That's the whole rule: whatever comes in from the keyboard is text, so if you want to do maths with it, convert it with `int()` first.",
+    },
+    {
       type: "exercise",
       rung: 6,
-      prompt: "Write an age greeter. Use input() with empty parentheses (no prompt text) to read a name, then a number for the age. Print: Hi Alex, next year you will be 12.\n\nThe inputs will be Alex and 11.",
+      prompt: "From scratch: use empty `input()` (no prompt text) to read a name, then a number for age. Print `Hi Alex, next year you'll be 12.` (Inputs: Alex, then 11.)",
       starter: "",
       mockInput: ["Alex", "11"],
-      check: { type: "output", expected: "Hi Alex, next year you will be 12." },
+      check: { type: "output", expected: "Hi Alex, next year you'll be 12." },
       hints: [
-        "Two input() calls: one for the name (a string), one for the age. Convert the age to an integer.",
-        "To build the message, you can use + to join strings. str(age + 1) converts the next year's age to text.",
-        "print(\"Hi \" + name + \", next year you will be \" + str(age + 1) + \".\")",
+        "Read the name, then `int(input())` for age.",
+        "Use an f-string with `{age + 1}`.",
+        "f\"Hi {name}, next year you'll be {age + 1}.\"",
       ],
-      solution: "name = input()\nage = int(input())\nprint(\"Hi \" + name + \", next year you will be \" + str(age + 1) + \".\")\n",
+      solution: "name = input()\nage = int(input())\nprint(f\"Hi {name}, next year you'll be {age + 1}.\")\n",
     },
   ],
   codex: {
     topic: "input",
-    pattern: "s = input()   n = int(input(\"prompt \"))",
-    note: "input() always returns a string. Wrap in int() or float() before doing arithmetic. The optional prompt string is displayed before waiting; leave a space at the end so the cursor is not crowded against the question.",
+    pattern: "name = input(\"Your name? \")\nage = int(input(\"Your age? \"))   # text -> number",
+    note: "input() asks the user and hands back what they typed — always as text. Wrap it in int() when you need a number to do maths with.",
   },
 });
 
-/* ── Lesson 1.7 ─────────────────────────────────────────────────────── */
+/* ── Lesson 1.8 — Drawing, Sound & your first real program (finale) ──── */
 
 window.CODELAB.lessons.push({
-  id: "c1s7",
+  id: "c1s8",
   chapter: 1,
   strand: "sound",
   lang: "py",
-  timeBudgetMin: 15,
-  title: "First Drawing and Sound",
+  timeBudgetMin: 16,
+  title: "Drawing, Sound & your first real program",
   glossary: {
-    "MIDI": "A numbering system for musical notes. Middle C on a piano is note 60. Each number up is one semitone higher; each number down is one semitone lower. An octave is 12 semitones.",
-    forward: "A turtle command. forward(n) moves the drawing cursor n units in the direction it is currently facing.",
-    right: "A turtle command. right(a) turns the drawing cursor a degrees to the right without moving it.",
-    play: "A sound command. play(note) plays a MIDI note number. 60 is middle C.",
-    sleep: "A sound command. sleep(beats) advances the sound clock by that many beats before the next note plays.",
+    MIDI: "A standard that gives every musical note a number. Middle C is 60, and each step up is one semitone higher.",
   },
   content: [
     {
       type: "text",
-      md: "Python can draw with a **turtle** — a cursor that moves around a canvas, leaving a line behind it. `forward(n)` moves forward `n` units; `backward(n)` moves backward; `right(a)` turns right by `a` degrees without moving; `left(a)` turns left. The turtle starts at the centre of the canvas, pointing right.",
-    },
-    {
-      type: "text",
-      md: "**What is a function call?** `forward(100)` is a **function call**: `forward` names the action, and the parentheses trigger it. The value inside — `100` — is the *argument*, the input you pass in. Without the parentheses, `forward` is just a reference to the function — it does not run it. The parentheses are the on-switch. You have been using function calls since Lesson 1.1: `print(\"Hello\")` follows the same pattern. Name, parentheses, arguments inside. Reading `forward(100)` as 'call forward with 100 as the input' is the right mental model for every function call you will ever write.",
+      md: "Time for the fun part — Python can draw and play sound. The **turtle** is a pen that moves around the screen. `forward(n)` moves it `n` steps; `right(a)` turns it `a` degrees on the spot; `left(a)` turns the other way. It starts in the middle, facing right.",
     },
     {
       type: "example",
-      note: "A square: move forward, turn right 90 degrees, repeat four times. Each side is 100 units long.",
+      note: "Forward, turn right 90 degrees, four times — a square.",
       code: "forward(100)\nright(90)\nforward(100)\nright(90)\nforward(100)\nright(90)\nforward(100)\nright(90)\n",
+    },
+    {
+      type: "text",
+      md: "To close any shape, all the turns add up to 360°. A square: 360 ÷ 4 = 90° each. A triangle: 360 ÷ 3 = 120°. (The reference chart lists the angle for every regular shape.)",
     },
     {
       type: "exercise",
       rung: 3,
-      prompt: "This draws a square with sides of 100 units. Change all four forward() calls so the sides are 150 units long instead.",
+      prompt: "This draws a square with 100-step sides. Change all four `forward` calls so the sides are 150 steps instead.",
       starter: "forward(100)\nright(90)\nforward(100)\nright(90)\nforward(100)\nright(90)\nforward(100)\nright(90)\n",
       check: {
         type: "calls",
         calls: [
-          { fn: "forward", val: 150 },
-          { fn: "right", val: 90 },
-          { fn: "forward", val: 150 },
-          { fn: "right", val: 90 },
-          { fn: "forward", val: 150 },
-          { fn: "right", val: 90 },
-          { fn: "forward", val: 150 },
-          { fn: "right", val: 90 },
+          { fn: "forward", val: 150 }, { fn: "right", val: 90 },
+          { fn: "forward", val: 150 }, { fn: "right", val: 90 },
+          { fn: "forward", val: 150 }, { fn: "right", val: 90 },
+          { fn: "forward", val: 150 }, { fn: "right", val: 90 },
         ],
       },
       hints: [
-        "There are four forward() calls, one per side. Each one needs to change.",
-        "Replace each 100 with 150 — keep the right(90) calls the same.",
-        "forward(150), right(90) repeated four times.",
+        "Only the `forward` numbers change.",
+        "There are four of them.",
+        "forward(150) each time.",
       ],
       solution: "forward(150)\nright(90)\nforward(150)\nright(90)\nforward(150)\nright(90)\nforward(150)\nright(90)\n",
     },
     {
       type: "text",
-      md: "**Why a square turns 90 degrees four times.** A turtle that draws a closed shape returns to exactly where it started, facing exactly the same direction. To do that, its total turning must add up to 360 degrees — a full circle. For a square with 4 equal corners, each turn is 360 ÷ 4 = 90 degrees. For an equilateral triangle: 360 ÷ 3 = 120. For a regular hexagon: 360 ÷ 6 = 60. This formula works for any regular polygon — you will use it explicitly in Chapter 2.",
-    },
-    {
-      type: "text",
-      md: "The sound commands use **[[MIDI]]** numbers — a standard where every note on a keyboard gets a number. **Middle C is 60**. Each number up is one semitone higher; going up 12 reaches the same note one octave higher. A few useful reference points: 60 = C, 62 = D, 64 = E, 65 = F, 67 = G, 69 = A, 71 = B, 72 = C again (one octave up).\n\n`play(note)` plays that note. `sleep(beats)` sets a gap before the next note — at the default tempo, `sleep(1)` is half a second.",
+      md: "For sound, `play(note)` plays a note by its number. Middle C is 60, and each step up is one semitone — the [[MIDI]] chart lists them. `sleep(1)` waits a beat before the next note.",
     },
     {
       type: "example",
-      note: "Three notes — C, E, G — the notes of a C major chord, played one after the other with a beat between them.",
+      note: "Three notes of a C major chord, one after another. Change 64 to 65 and you swap the E for an F.",
       code: "play(60)   # C\nsleep(1)\nplay(64)   # E\nsleep(1)\nplay(67)   # G\n",
     },
     {
       type: "exercise",
       rung: 3,
-      prompt: "This plays three notes: 60 (C), 64 (E), and 67 (G). Change the middle note to 65 to swap the E for an F.",
+      prompt: "This plays 60 (C), 64 (E), 67 (G). Change the middle note to 65 to swap the E for an F.",
       starter: "play(60)\nsleep(1)\nplay(64)\nsleep(1)\nplay(67)\n",
       check: {
         type: "calls",
@@ -798,16 +764,16 @@ window.CODELAB.lessons.push({
         ],
       },
       hints: [
-        "The middle note is the second play() call.",
-        "64 is E; 65 is F. Change the number in the second play() call.",
-        "Change play(64) to play(65).",
+        "Only the middle note changes.",
+        "64 becomes 65.",
+        "play(65)",
       ],
       solution: "play(60)\nsleep(1)\nplay(65)\nsleep(1)\nplay(67)\n",
     },
     {
       type: "exercise",
       rung: 6,
-      prompt: "A square turns 4 × 90° = 360°. A triangle needs 3 turns that also add up to 360°. Write the commands to draw an equilateral triangle with sides of 100 units. Do not use a loop — just the raw turtle calls.",
+      prompt: "From scratch: a triangle's turns add up to 360°, so each is 360 ÷ 3 = 120°. Draw an equilateral triangle with 100-step sides — just raw `forward`/`right` calls, no loop yet.",
       starter: "",
       check: {
         type: "calls",
@@ -818,24 +784,51 @@ window.CODELAB.lessons.push({
         ],
       },
       hints: [
-        "A triangle has 3 equal sides and 3 equal turns. 360 ÷ 3 = 120 degrees per turn.",
-        "Each side: forward(100). Each turn: right(120). You need 3 of each.",
-        "Six lines total: forward(100), right(120), forward(100), right(120), forward(100), right(120).",
+        "Three sides, three turns.",
+        "Each turn is 120°.",
+        "forward(100), right(120), three times.",
       ],
       solution: "forward(100)\nright(120)\nforward(100)\nright(120)\nforward(100)\nright(120)\n",
     },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "From scratch: make a name banner. Store your name in a variable. Print a row of 20 dashes, then `>>> Alex <<<` using an f-string, then another row of 20 dashes. Use `\"-\" * 20` for the dash rows — don't type twenty dashes by hand. (Name: Alex.)",
+      starter: "",
+      check: { type: "output", expected: "--------------------\n>>> Alex <<<\n--------------------" },
+      hints: [
+        "\"-\" * 20 makes the dash row.",
+        "Use an f-string for the middle line.",
+        "print(f\">>> {name} <<<\")",
+      ],
+      solution: "name = \"Alex\"\nprint(\"-\" * 20)\nprint(f\">>> {name} <<<\")\nprint(\"-\" * 20)\n",
+    },
+    {
+      type: "exercise",
+      rung: 6,
+      prompt: "From scratch — your first real program. Ask for a name with empty `input()`. Print a welcome line with an f-string: `Welcome, Alex!`. Then play a four-note signature tune — 60, 64, 67, 72 — with `sleep(1)` between each note. (Input: Alex. The checker listens for your tune.)",
+      starter: "",
+      mockInput: ["Alex"],
+      check: {
+        type: "calls",
+        calls: [
+          { fn: "play", note: 60 },
+          { fn: "play", note: 64 },
+          { fn: "play", note: 67 },
+          { fn: "play", note: 72 },
+        ],
+      },
+      hints: [
+        "Read the name, then print the welcome with an f-string.",
+        "Play the four notes with `sleep(1)` between them.",
+        "60, 64, 67, 72 — a C major arpeggio.",
+      ],
+      solution: "name = input()\nprint(f\"Welcome, {name}!\")\nplay(60)\nsleep(1)\nplay(64)\nsleep(1)\nplay(67)\nsleep(1)\nplay(72)\n",
+    },
   ],
   codex: {
-    topic: "drawing and sound",
-    pattern: "forward(n)   right(a)   play(note)   sleep(beats)",
-    note: "forward/right draw with the turtle. right(90) turns 90 degrees. play() takes a MIDI number: 60 = middle C, each +1 is one semitone higher. sleep() sets a gap in beats before the next note.",
+    topic: "drawing & sound",
+    pattern: "forward(n)   right(a)     # turtle\nplay(note)   sleep(beats)  # sound",
+    note: "The turtle draws: forward moves, right turns (a closed shape's turns total 360). play(note) plays a MIDI note (middle C = 60); sleep waits a beat.",
   },
 });
-
-/* ── Preserved sections (demoted from Chapter 1 early draft) ──────────
-   These were authored as c1s2, c1s3, c1s4 in an earlier draft and are
-   kept here as reference material:
-   - Old c1s2 (Combining text): content now incorporated into c1s5
-   - Old c1s3 (Comments): content folded into c1s3 variables lesson
-   - Old c1s4 (sep and end): moved to Chapter 2 when authored
-   ─────────────────────────────────────────────────────────────────── */
