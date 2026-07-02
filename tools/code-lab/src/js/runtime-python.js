@@ -110,7 +110,7 @@
     "  \"    linecache.cache['<student>'] = (len(src), None, src.splitlines(keepends=True), '<student>')\",",
     "  '    sys.settrace(_tracer)',",
     "  '    try:',",
-    "  \"        exec(compile(src, '<student>', 'exec'), {})\",",
+    "  \"        exec(compile(src, '<student>', 'exec'), {'__name__': '__main__'})\",",
     "  '    except BaseException as _e:',",
     "  \"        _frames = [_f for _f in _tb.extract_tb(_e.__traceback__) if _f.filename == '<student>']\",",
     "  \"        _head = ('Traceback (most recent call last):' + chr(10)) if _frames else ''\",",

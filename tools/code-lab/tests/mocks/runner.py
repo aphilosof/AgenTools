@@ -67,7 +67,7 @@ err = None
 real_stdout = sys.stdout
 try:
     sys.stdout = buf
-    exec(compile(src, '<student>', 'exec'), {})
+    exec(compile(src, '<student>', 'exec'), {'__name__': '__main__'})
 except BaseException as e:
     sys.stdout = real_stdout
     err = ''.join(traceback.format_exception_only(type(e), e)).strip()
