@@ -13,7 +13,7 @@ window.CODELAB.lessons.push({
   chapter: 8,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 18,
   title: "A real program, alive",
   content: [
     {
@@ -96,7 +96,7 @@ window.CODELAB.lessons.push({
   chapter: 8,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 18,
   title: "Planning a program",
   content: [
     {
@@ -175,8 +175,11 @@ window.CODELAB.lessons.push({
   chapter: 8,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 15,
+  timeBudgetMin: 16,
   title: "Handling errors, deeper",
+  glossary: {
+    "finally": "A block after try/except that runs no matter what — success, caught error, even an early return. Used for cleanup.",
+  },
   content: [
     {
       type: "text",
@@ -219,7 +222,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "The `finally` clause runs **no matter what** — success, caught error, even an early `return`. It's for cleanup or a \"done\" signal.",
+      md: "The [[finally]] clause runs **no matter what** — success, caught error, even an early `return`. It's for cleanup or a \"done\" signal.",
     },
     {
       type: "exercise",
@@ -263,7 +266,7 @@ window.CODELAB.lessons.push({
   chapter: 8,
   strand: "words",
   lang: "py",
-  timeBudgetMin: 15,
+  timeBudgetMin: 24,
   title: "Comprehensions",
   glossary: {
     comprehension: "A one-expression way to build a list (or dict) from a loop: `[expr for x in iterable]`, optionally with `if` to filter. The same loop-and-append, folded into one line.",
@@ -374,12 +377,16 @@ window.CODELAB.lessons.push({
   chapter: 8,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 14,
+  timeBudgetMin: 18,
   title: "Testing your own code",
+  glossary: {
+    "assert": "Checks that a condition you believe is true really is. If it's false, the program stops with an AssertionError and your message.",
+    AssertionError: "The error an assert raises when its condition is false — its message tells you what was expected.",
+  },
   content: [
     {
       type: "text",
-      md: "`assert condition, \"message\"` checks something you believe is true. If it's false, the program stops with an `AssertionError` and your message. Always include the message — without it, the crash tells you nothing. Group asserts into a `test_*()` function, one behavior per assert.",
+      md: "`assert condition, \"message\"` checks something you believe is true. If it's false, the program stops with an [[AssertionError]] and your message. Always include the message — without it, the crash tells you nothing. Group [[assert]]s into a `test_*()` function, one behavior per assert.",
     },
     {
       type: "example",
@@ -453,12 +460,15 @@ window.CODELAB.lessons.push({
   chapter: 8,
   strand: "words",
   lang: "py",
-  timeBudgetMin: 15,
+  timeBudgetMin: 20,
   title: "raise + a real project",
+  glossary: {
+    "raise": "Deliberately triggers an error with your own message — a way for your function to reject bad input.",
+  },
   content: [
     {
       type: "text",
-      md: "Your own functions can `raise` an error when given bad input — `raise ValueError(\"Input cannot be empty\")` stops the program with your message, exactly like a built-in error. A validator that raises early keeps the rest of the program clean.",
+      md: "Your own functions can [[raise]] an error when given bad input — `raise ValueError(\"Input cannot be empty\")` stops the program with your message, exactly like a built-in error. A validator that raises early keeps the rest of the program clean.",
     },
     {
       type: "example",
@@ -536,7 +546,7 @@ window.CODELAB.lessons.push({
   chapter: 8,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 18,
+  timeBudgetMin: 24,
   title: "Finale: the chapter challenge",
   content: [
     {
@@ -578,7 +588,7 @@ window.CODELAB.lessons.push({
     {
       type: "exercise",
       rung: 6,
-      prompt: "From scratch: write `flatten(list_of_lists)` (a `for`+`.extend()` loop), then `test_flatten()` with three asserts (message form) — empty input `[]`, a single sublist `[[1]]`, and two sublists `[[1,2],[3]]` — and print `passed`. Call `test_flatten()`.",
+      prompt: "From scratch: write `flatten(list_of_lists)` (a `for`+`.extend()` loop), then `test_flatten()` with three asserts (message form) — empty input `[]`, a single sublist, and two sublists `[[1,2],[3]]` — and print `passed`. Call `test_flatten()`.",
       starter: "",
       check: { type: "output", expected: "passed" },
       hints: [
