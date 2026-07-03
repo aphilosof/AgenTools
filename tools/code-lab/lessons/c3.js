@@ -12,15 +12,16 @@ window.CODELAB.lessons.push({
   chapter: 3,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 12,
+  timeBudgetMin: 18,
   title: "Why functions",
   glossary: {
+    "function": "A named block of code you can run by name, as many times as you like. def writes it; the name with () runs it.",
     DRY: "Short for \"Don't Repeat Yourself\" — write a piece of code once and reuse it by name, instead of copying it around where a change would have to be made in every copy.",
   },
   content: [
     {
       type: "text",
-      md: "You already repeat code with a loop. But some things repeat that a loop can't help with — the same block used in different places. Copying it is the problem functions solve.",
+      md: "You already repeat code with a loop. But some things repeat that a loop can't help with — the same block used in different places. Copying it is the problem [[function]]s solve.",
     },
     {
       type: "example",
@@ -113,7 +114,7 @@ window.CODELAB.lessons.push({
   chapter: 3,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 12,
+  timeBudgetMin: 22,
   title: "Defining a function",
   content: [
     {
@@ -205,7 +206,7 @@ window.CODELAB.lessons.push({
   chapter: 3,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 21,
   title: "Parameters",
   glossary: {
     parameter: "The blank in a function's definition — a name that waits for a value. In `def double(n):`, `n` is a parameter.",
@@ -214,7 +215,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "A function gets far more useful when you can hand it different values each time. Those inputs are [[parameter|parameters]]. In `def double(n):`, `n` is a parameter — a blank waiting for a value. When you call `double(7)`, the value 7 is the [[argument]], and `n` becomes 7 inside. Parameter = the blank in the definition; argument = the real value in the call.",
+      md: "A function gets far more useful when you can hand it different values each time. Those inputs are [[parameter]]s. In `def double(n):`, `n` is a parameter — a blank waiting for a value. When you call `double(7)`, the value 7 is the [[argument]], and `n` becomes 7 inside. Parameter = the blank in the definition; argument = the real value in the call.",
     },
     {
       type: "example",
@@ -301,12 +302,16 @@ window.CODELAB.lessons.push({
   chapter: 3,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 15,
+  timeBudgetMin: 28,
   title: "Return values",
+  glossary: {
+    "return": "Hands a value back from a function to the code that called it, so it can be stored or used further.",
+    "None": "Python's 'nothing' value. A function with no return hands back None.",
+  },
   content: [
     {
       type: "text",
-      md: "`print` shows an answer on the screen. `return` hands it back to the rest of your program, so you can store it, add to it, or pass it on.",
+      md: "`print` shows an answer on the screen. [[return]] hands it back to the rest of your program, so you can store it, add to it, or pass it on.",
     },
     {
       type: "example",
@@ -315,7 +320,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "If a function only prints, it hands back nothing — the special value `None`. Try to use that in maths and you get a TypeError, because `None` isn't a number. The rule: if you need the answer anywhere else, `return` it.",
+      md: "If a function only prints, it hands back nothing — the special value [[None]]. Try to use that in maths and you get a TypeError, because `None` isn't a number. The rule: if you need the answer anywhere else, `return` it.",
     },
     {
       type: "example",
@@ -406,7 +411,7 @@ window.CODELAB.lessons.push({
   chapter: 3,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 12,
+  timeBudgetMin: 16,
   title: "Scope",
   content: [
     {
@@ -476,7 +481,7 @@ window.CODELAB.lessons.push({
   chapter: 3,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 18,
   title: "Default values",
   glossary: {
     "default": "A value a parameter falls back on when the caller doesn't supply one. Written in the def like `greeting=\"Hello\"`.",
@@ -568,7 +573,7 @@ window.CODELAB.lessons.push({
   chapter: 3,
   strand: "plot",
   lang: "py",
-  timeBudgetMin: 16,
+  timeBudgetMin: 23,
   title: "Functions that draw",
   content: [
     {
@@ -703,7 +708,7 @@ window.CODELAB.lessons.push({
   chapter: 3,
   strand: "sound",
   lang: "py",
-  timeBudgetMin: 16,
+  timeBudgetMin: 22,
   title: "Functions that play",
   glossary: {
     transposition: "Moving a whole melody up or down by the same number of semitones, so it keeps its shape but starts on a different note.",
@@ -819,7 +824,7 @@ window.CODELAB.lessons.push({
   chapter: 3,
   strand: "words",
   lang: "py",
-  timeBudgetMin: 14,
+  timeBudgetMin: 20,
   title: "Practice: word tools",
   content: [
     {
@@ -902,7 +907,7 @@ window.CODELAB.lessons.push({
   chapter: 3,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 18,
+  timeBudgetMin: 24,
   title: "Finale: Art & Music",
   content: [
     {
