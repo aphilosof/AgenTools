@@ -12,7 +12,7 @@ window.CODELAB.lessons.push({
   chapter: 2,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 23,
   title: "Comparisons & booleans",
   glossary: {
     comparison: "A question with a True/False answer, like `age >= 13`. Python works it out to True or False, just like it works out a sum to a number.",
@@ -112,15 +112,17 @@ window.CODELAB.lessons.push({
   chapter: 2,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 25,
   title: "if / else",
   glossary: {
+    "if": "A statement that runs an indented block only when its condition is true.",
+    "else": "The block that runs when the if condition is false. Exactly one of if/else runs.",
     branch: "One of the two paths through an if/else — the indented block that runs when the condition is true, or the else block that runs when it is false. Exactly one branch runs.",
   },
   content: [
     {
       type: "text",
-      md: "A comparison gives `True` or `False`. `if` uses that answer to choose what the program does next.",
+      md: "A comparison gives `True` or `False`. [[if]] uses that answer to choose what the program does next.",
     },
     {
       type: "example",
@@ -129,7 +131,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "The `if` line ends with a colon, and the lines inside are indented four spaces — that's how Python knows they belong to the `if`. `else` catches everything the `if` didn't.",
+      md: "The `if` line ends with a colon, and the lines inside are indented four spaces — that's how Python knows they belong to the `if`. [[else]] catches everything the `if` didn't.",
     },
     {
       type: "text",
@@ -220,7 +222,7 @@ window.CODELAB.lessons.push({
   chapter: 2,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 11,
+  timeBudgetMin: 18,
   title: "Truthiness",
   content: [
     {
@@ -299,12 +301,15 @@ window.CODELAB.lessons.push({
   chapter: 2,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 20,
   title: "elif: many branches",
+  glossary: {
+    elif: "Short for 'else if' — an extra condition checked only when the ones above it were false.",
+  },
   content: [
     {
       type: "text",
-      md: "Two choices is `if`/`else`. For more, `elif` adds extra conditions in between. Python checks them top to bottom and runs the **first** one that's true, then skips the rest.",
+      md: "Two choices is `if`/`else`. For more, [[elif]] adds extra conditions in between. Python checks them top to bottom and runs the **first** one that's true, then skips the rest.",
     },
     {
       type: "example",
@@ -382,15 +387,18 @@ window.CODELAB.lessons.push({
   chapter: 2,
   strand: "sound",
   lang: "py",
-  timeBudgetMin: 16,
+  timeBudgetMin: 25,
   title: "while loops",
   glossary: {
+    "while": "A loop that repeats its body as long as its condition stays true.",
+    "infinite loop": "A loop whose condition never becomes false, so it never stops on its own — you have to interrupt it.",
+    "break": "A statement that stops a loop immediately, jumping out of it.",
     accumulator: "A running total you build up in a loop: start a variable at 0, add to it each time around, and read it once after the loop ends.",
   },
   content: [
     {
       type: "text",
-      md: "A `while` loop repeats its body as long as its condition stays true.",
+      md: "A [[while]] loop repeats its body as long as its condition stays true.",
     },
     {
       type: "example",
@@ -399,7 +407,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "A while loop has three parts: set the variable before, test it at the top, and change it inside. Miss the update and the condition never becomes false — an **infinite loop**. Click Stop, then add the missing change.",
+      md: "A while loop has three parts: set the variable before, test it at the top, and change it inside. Miss the update and the condition never becomes false — an [[infinite loop]]. Click Stop, then add the missing change.",
     },
     {
       type: "exercise",
@@ -438,7 +446,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "`while True:` runs forever until a `break` stops it — handy for \"keep going until…\". Here it climbs a note each beat until it passes 67.",
+      md: "`while True:` runs forever until a [[break]] stops it — handy for \"keep going until…\". Here it climbs a note each beat until it passes 67.",
     },
     {
       type: "example",
@@ -496,12 +504,16 @@ window.CODELAB.lessons.push({
   chapter: 2,
   strand: "plot",
   lang: "py",
-  timeBudgetMin: 15,
+  timeBudgetMin: 22,
   title: "for and range",
+  glossary: {
+    "for": "A loop that runs once for each item in a sequence — like each number that range produces.",
+    range: "A built-in that produces a sequence of numbers to loop over. range(stop) counts from 0 up to but not including stop.",
+  },
   content: [
     {
       type: "text",
-      md: "A `for` loop counts for you. `for i in range(5):` runs five times with `i` equal to 0, 1, 2, 3, 4. You can't forget to update a counter, so it's cleaner than `while` when you know the count.",
+      md: "A [[for]] loop counts for you. `for i in range(5):` runs five times with `i` equal to 0, 1, 2, 3, 4. You can't forget to update a counter, so it's cleaner than `while` when you know the count.",
     },
     {
       type: "example",
@@ -510,7 +522,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "`range` has three forms: `range(stop)` starts at 0; `range(start, stop)`; `range(start, stop, step)`. The stop is never included — `range(2, 10, 2)` is 2, 4, 6, 8. If you don't need the number, name it `_`.",
+      md: "[[range]] has three forms: `range(stop)` starts at 0; `range(start, stop)`; `range(start, stop, step)`. The stop is never included — `range(2, 10, 2)` is 2, 4, 6, 8. If you don't need the number, name it `_`.",
     },
     {
       type: "example",
@@ -626,7 +638,7 @@ window.CODELAB.lessons.push({
   chapter: 2,
   strand: "sound",
   lang: "py",
-  timeBudgetMin: 15,
+  timeBudgetMin: 22,
   title: "Loops make art & beats",
   content: [
     {
@@ -739,12 +751,17 @@ window.CODELAB.lessons.push({
   chapter: 2,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 14,
+  timeBudgetMin: 23,
   title: "Reading errors & debugging",
+  glossary: {
+    SyntaxError: "The error Python gives when code breaks its grammar rules — a missing colon, bracket, or quote.",
+    IndentationError: "The error Python gives when a line's indentation doesn't line up the way it expects.",
+    NameError: "The error Python gives when you use a name it doesn't recognise — often a typo, or a variable used before it's set.",
+  },
   content: [
     {
       type: "text",
-      md: "Errors aren't the enemy — they tell you exactly what went wrong and where. Three steps: read the error type and message (the word before the colon: `SyntaxError`, `IndentationError`, `TypeError`, `NameError`), go to the line it names, and understand the cause before changing anything.",
+      md: "Errors aren't the enemy. They tell you what went wrong, and where. First, read the error type — the word before the colon. You'll meet [[SyntaxError]], [[IndentationError]], `TypeError`, and [[NameError]]. Then go to the line it names. Understand the cause before you change anything.",
     },
     {
       type: "example",
@@ -831,12 +848,17 @@ window.CODELAB.lessons.push({
   chapter: 2,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 21,
   title: "try / except",
+  glossary: {
+    "try": "Wraps risky code so that if it fails, Python jumps to the matching except instead of crashing.",
+    "except": "Catches a named error from the try block and runs its own code instead of crashing.",
+    ValueError: "The error Python gives when a value is the right type but not usable — like int(\"hello\"), text that isn't a number.",
+  },
   content: [
     {
       type: "text",
-      md: "Some lines can fail — like `int(\"hello\")`. `try`/`except` lets you catch the failure and keep going instead of crashing.",
+      md: "Some lines can fail — like `int(\"hello\")`. [[try]]/[[except]] lets you catch the failure and keep going instead of crashing.",
     },
     {
       type: "example",
@@ -876,7 +898,7 @@ window.CODELAB.lessons.push({
     {
       type: "exercise",
       rung: 4,
-      prompt: "This means to catch the ValueError from `int(\"hello\")`, but it names the wrong error, so the program still crashes. Fix the except line so it prints `not a number`.",
+      prompt: "This means to catch the [[ValueError]] from `int(\"hello\")`, but it names the wrong error, so the program still crashes. Fix the except line so it prints `not a number`.",
       starter: "try:\n    n = int(\"hello\")\nexcept ZeroDivisionError:\n    print(\"not a number\")\n",
       check: { type: "output", expected: "not a number" },
       hints: [
@@ -924,7 +946,7 @@ window.CODELAB.lessons.push({
   chapter: 2,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 18,
+  timeBudgetMin: 25,
   title: "Finale: Guess & Grade",
   content: [
     {
