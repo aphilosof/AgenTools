@@ -13,9 +13,10 @@ window.CODELAB.lessons.push({
   chapter: 7,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 18,
   title: "import: the standard library",
   glossary: {
+    ImportError: "The error Python gives when an import fails — usually a misspelled or miscapitalised name.",
     module: "A collection of ready-made names (functions, values) you bring in with `import`. `import math` opens the math module; you reach a name inside it with a dot, like `math.sqrt`.",
   },
   content: [
@@ -43,7 +44,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "`from math import sqrt` carries just that name in, so you call it without the `math.` prefix. Get the name wrong — even the capitalization — and Python stops with an `ImportError`.",
+      md: "`from math import sqrt` carries just that name in, so you call it without the `math.` prefix. Get the name wrong — even the capitalization — and Python stops with an [[ImportError]].",
     },
     {
       type: "exercise",
@@ -99,8 +100,11 @@ window.CODELAB.lessons.push({
   chapter: 7,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 20,
   title: "Writing your own module",
+  glossary: {
+    AttributeError: "The error Python gives when you ask a value for an attribute or method it doesn't have.",
+  },
   content: [
     {
       type: "text",
@@ -143,7 +147,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "One more trap: don't name your own file after a standard-library module. Name a file `random.py` and `import random` loads *your* file, not Python's — so `random.randint` won't exist and you get an `AttributeError`. The fix isn't code, it's the filename: rename it to something that doesn't clash.",
+      md: "One more trap: don't name your own file after a standard-library module. Name a file `random.py` and `import random` loads *your* file, not Python's — so `random.randint` won't exist and you get an [[AttributeError]]. The fix isn't code, it's the filename: rename it to something that doesn't clash.",
     },
     {
       type: "exercise",
@@ -186,7 +190,7 @@ window.CODELAB.lessons.push({
   chapter: 7,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 16,
+  timeBudgetMin: 30,
   title: "Using a library (an API)",
   glossary: {
     API: "The contract of a function or library — what goes in and what comes out — so you can use it without reading the code inside.",
@@ -376,7 +380,7 @@ window.CODELAB.lessons.push({
   chapter: 7,
   strand: "words",
   lang: "py",
-  timeBudgetMin: 15,
+  timeBudgetMin: 20,
   title: "Facts from messy text",
   content: [
     {
@@ -459,7 +463,7 @@ window.CODELAB.lessons.push({
   chapter: 7,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 16,
+  timeBudgetMin: 20,
   title: "Saving & loading (files + JSON)",
   glossary: {
     JSON: "A text format for saving data. `json.dumps(obj)` turns an object into JSON text; `json.loads(s)` turns text back into an object. `json.dump`/`json.load` do the same with a file.",
@@ -545,12 +549,15 @@ window.CODELAB.lessons.push({
   chapter: 7,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 15,
+  timeBudgetMin: 20,
   title: "A taste of SQL",
+  glossary: {
+    SQL: "The language for storing and querying records in a database. Its core statements here: CREATE TABLE, INSERT, and SELECT.",
+  },
   content: [
     {
       type: "text",
-      md: "A database is better than a JSON file when you have many records and want fast, structured search. `sqlite3.connect(path)` opens (or creates) a database. The pattern: make a cursor, `execute` SQL on it, `fetchall` the results. Three SQL statements are enough here: `CREATE TABLE IF NOT EXISTS`, `INSERT INTO`, and `SELECT`.",
+      md: "A database is better than a JSON file when you have many records and want fast, structured search. `sqlite3.connect(path)` opens (or creates) a database. The pattern: make a cursor, `execute` [[SQL]] on it, `fetchall` the results. Three SQL statements are enough here: `CREATE TABLE IF NOT EXISTS`, `INSERT INTO`, and `SELECT`.",
     },
     {
       type: "example",
@@ -632,7 +639,7 @@ window.CODELAB.lessons.push({
   chapter: 7,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 18,
+  timeBudgetMin: 24,
   title: "Finale: the music library",
   content: [
     {
