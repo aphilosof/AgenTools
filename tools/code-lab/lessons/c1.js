@@ -12,15 +12,16 @@ window.CODELAB.lessons.push({
   chapter: 1,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 12,
+  timeBudgetMin: 23,
   title: "Output & print",
   glossary: {
+    "print": "The instruction that shows a value on the screen, then moves to a new line.",
     string: "Text inside quotes. The quotes mark where the text starts and ends — they are not part of the text itself.",
   },
   content: [
     {
       type: "text",
-      md: "A Python program stays silent unless you tell it to speak. `print` is how it speaks: you hand it something inside the parentheses, and it shows up on the screen.",
+      md: "A Python program stays silent unless you tell it to speak. [[print]] is how it speaks: you hand it something inside the parentheses, and it shows up on the screen.",
     },
     {
       type: "example",
@@ -112,15 +113,21 @@ window.CODELAB.lessons.push({
   chapter: 1,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 25,
   title: "Values & types",
   glossary: {
+    value: "Any single piece of data your program works with — a number, some text, a yes/no.",
     "type": "The kind of thing a value is — a whole number (int), a decimal (float), text (str), or a yes/no (bool). The type decides what you can do with the value.",
+    "int": "A whole number, like 7 or -3 (short for 'integer').",
+    "float": "A number with a decimal point, like 3.14 or 3.0.",
+    "str": "Text — characters inside quotes (short for 'string').",
+    "bool": "A yes/no value — either True or False (short for 'boolean').",
+    TypeError: "The error Python gives when you combine values whose types don't fit — like adding a number to text.",
   },
   content: [
     {
       type: "text",
-      md: "Everything your program works with is a **value**: a number, some text, a yes-or-no. Every value has a [[type]] — the kind of thing it is — and the type decides what you're allowed to do with it.",
+      md: "Everything your program works with is a [[value]]: a number, some text, a yes-or-no. Every value has a [[type]] — the kind of thing it is — and the type decides what you're allowed to do with it.",
     },
     {
       type: "example",
@@ -129,7 +136,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "Four types will carry you a long way. A whole number like `7` is an **int**. A decimal like `3.14` is a **float**. Text in quotes is a **str**. `True` and `False` are **bools** — you'll use those in Chapter 2 to make decisions.",
+      md: "Four types will carry you a long way. A whole number like `7` is an [[int]]. A decimal like `3.14` is a [[float]]. Text in quotes is a [[str]]. `True` and `False` are [[bool]]s — you'll use those in Chapter 2 to make decisions.",
     },
     {
       type: "text",
@@ -168,7 +175,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "Mix a number and text with `+` and Python stops with a **TypeError** — it won't guess whether you meant to add or join. Convert first: `int(\"3\")` turns text into a number, and `str(7)` turns a number into text.",
+      md: "Mix a number and text with `+` and Python stops with a [[TypeError]] — it won't guess whether you meant to add or join. Convert first: `int(\"3\")` turns text into a number, and `str(7)` turns a number into text.",
     },
     {
       type: "example",
@@ -187,6 +194,10 @@ window.CODELAB.lessons.push({
         "print(7 + int(\"3\"))",
       ],
       solution: "print(7 + int(\"3\"))\n",
+    },
+    {
+      type: "text",
+      md: "Curious? Try `0.1 + 0.2` — you'll get `0.30000000000000004`. Computers can't store some decimals exactly. It almost never matters; just don't be surprised.",
     },
     {
       type: "exercise",
@@ -216,10 +227,11 @@ window.CODELAB.lessons.push({
   chapter: 1,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 14,
+  timeBudgetMin: 24,
   title: "Variables & assignment",
   glossary: {
     variable: "A name you pick that points to a value, so you can store it and use it later. You can repoint the name to a different value anytime.",
+    comment: "A note in the code after a #. Python ignores it — it's there for the human reader.",
   },
   content: [
     {
@@ -259,7 +271,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "Python works out the whole right side *before* repointing the name — so you can use a variable's current value to set its next one: `score = score + 5`. There's a shortcut for that: `score += 5` means the same thing. A `#` starts a **comment** — Python ignores everything after it on the line.",
+      md: "Python works out the whole right side *before* repointing the name — so you can use a variable's current value to set its next one: `score = score + 5`. There's a shortcut for that: `score += 5` means the same thing. A `#` starts a [[comment]] — Python ignores everything after it on the line.",
     },
     {
       type: "example",
@@ -320,7 +332,7 @@ window.CODELAB.lessons.push({
   chapter: 1,
   strand: "numbers",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 22,
   title: "Expressions & math",
   glossary: {
     expression: "Anything Python can work out to a value — like `7 * 3` or `10 - 4`, or even just `7`. You can print it, store it, or drop it inside a bigger expression.",
@@ -419,7 +431,7 @@ window.CODELAB.lessons.push({
   chapter: 1,
   strand: "words",
   lang: "py",
-  timeBudgetMin: 14,
+  timeBudgetMin: 23,
   title: "Strings & text",
   glossary: {
     method: "A built-in tool that belongs to a value. You call one with a dot after the value, then the tool's name and parentheses — like `title.upper()`.",
@@ -427,7 +439,7 @@ window.CODELAB.lessons.push({
   content: [
     {
       type: "text",
-      md: "Strings come with built-in tools called [[method|methods]]. You call one by putting a dot after the string, then the tool's name and parentheses.",
+      md: "Strings come with built-in tools called [[method]]s. You call one by putting a dot after the string, then the tool's name and parentheses.",
     },
     {
       type: "example",
@@ -519,7 +531,7 @@ window.CODELAB.lessons.push({
   chapter: 1,
   strand: "words",
   lang: "py",
-  timeBudgetMin: 15,
+  timeBudgetMin: 25,
   title: "Text templates",
   glossary: {
     "f-string": "A string with an `f` before the opening quote, so you can drop a variable straight inside `{curly braces}` instead of joining text with +.",
@@ -619,12 +631,15 @@ window.CODELAB.lessons.push({
   chapter: 1,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 12,
+  timeBudgetMin: 19,
   title: "Input",
+  glossary: {
+    "input": "The instruction that pauses, waits for the person to type an answer, and hands it back as text.",
+  },
   content: [
     {
       type: "text",
-      md: "Every program so far decides everything itself. `input()` lets it ask the person a question and use their answer.",
+      md: "Every program so far decides everything itself. [[input]]() lets it ask the person a question and use their answer.",
     },
     {
       type: "example",
@@ -701,15 +716,16 @@ window.CODELAB.lessons.push({
   chapter: 1,
   strand: "sound",
   lang: "py",
-  timeBudgetMin: 16,
+  timeBudgetMin: 30,
   title: "Drawing, Sound & your first real program",
   glossary: {
+    turtle: "A pen that moves around the screen to draw. forward moves it; right and left turn it.",
     MIDI: "A standard that gives every musical note a number. Middle C is 60, and each step up is one semitone higher.",
   },
   content: [
     {
       type: "text",
-      md: "Time for the fun part — Python can draw and play sound. The **turtle** is a pen that moves around the screen. `forward(n)` moves it `n` steps; `right(a)` turns it `a` degrees on the spot; `left(a)` turns the other way. It starts in the middle, facing right.",
+      md: "Time for the fun part — Python can draw and play sound. The [[turtle]] is a pen that moves around the screen. `forward(n)` moves it `n` steps; `right(a)` turns it `a` degrees on the spot; `left(a)` turns the other way. It starts in the middle, facing right.",
     },
     {
       type: "example",
@@ -743,7 +759,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "For sound, `play(note)` plays a note by its number. Middle C is 60, and each step up is one semitone — the [[MIDI]] chart lists them. `sleep(1)` waits a beat before the next note.",
+      md: "For sound, `play(note)` plays a note by its number. Those numbers are called [[MIDI]] notes — middle C is 60, and each step up is one semitone. The reference chart lists them. `sleep(1)` waits a beat before the next note.",
     },
     {
       type: "example",
