@@ -12,7 +12,7 @@ window.CODELAB.lessons.push({
   chapter: 5,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 14,
+  timeBudgetMin: 16,
   title: "Decomposition",
   content: [
     {
@@ -86,7 +86,7 @@ window.CODELAB.lessons.push({
   chapter: 5,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 14,
+  timeBudgetMin: 22,
   title: "Naming",
   content: [
     {
@@ -173,7 +173,7 @@ window.CODELAB.lessons.push({
   chapter: 5,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 12,
+  timeBudgetMin: 18,
   title: "Generalizing repetition",
   glossary: {
     "near-duplicate": "Two pieces of code that do the same job with one value swapped — usually copy-pasted and lightly edited. Replace both with one function that takes that value as a parameter.",
@@ -334,9 +334,10 @@ window.CODELAB.lessons.push({
   chapter: 5,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 14,
+  timeBudgetMin: 16,
   title: "Debugging: the traceback",
   glossary: {
+    IndexError: "The error Python gives when you ask for a list position that doesn't exist — like item 3 of a 3-item list (whose positions are 0, 1, 2).",
     traceback: "The list of function calls that were open when the program broke, outermost first and the crash site last. It shows where Python noticed the problem, not always where the mistake is.",
   },
   content: [
@@ -391,7 +392,7 @@ window.CODELAB.lessons.push({
     {
       type: "exercise",
       rung: 4,
-      prompt: "This crashes with `IndexError` inside `draw_winner`. `top_three_sides` correctly returns three items (indexes 0, 1, 2) — the bug is that `draw_winner` asks for index 3. The winner is the first one. Fix the index so it draws the winning shape and returns `6`.",
+      prompt: "This crashes with [[IndexError]] inside `draw_winner`. `top_three_sides` correctly returns three items (indexes 0, 1, 2) — the bug is that `draw_winner` asks for index 3. The winner is the first one. Fix the index so it draws the winning shape and returns `6`.",
       starter: "def top_three_sides(polygon_sides):\n    return polygon_sides[0:3]\n\ndef draw_winner(polygon_sides):\n    top = top_three_sides(polygon_sides)\n    winner = top[3]\n    for i in range(winner):\n        forward(50)\n        right(360 / winner)\n    return winner\n\nsides_list = [6, 4, 3]\nprint(draw_winner(sides_list))\n",
       check: { type: "output", expected: "6" },
       hints: [
@@ -416,9 +417,10 @@ window.CODELAB.lessons.push({
   chapter: 5,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 14,
+  timeBudgetMin: 16,
   title: "Debugging: the scientist's method",
   glossary: {
+    "minimal example": "The smallest input you can check by hand, with a known answer — used to test a suspect function on its own.",
     "silent bug": "A bug that doesn't crash — the program runs cleanly but prints a wrong answer. You catch it by comparing the output against a value you worked out another way.",
   },
   content: [
@@ -446,7 +448,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "Test the suspect alone, on the smallest input you can check by hand — a **minimal example**. Pick numbers where you already know the answer. A tiny input tells you instantly whether the function is wrong. A strange number on the real dataset might be a bug, or just surprising data.",
+      md: "Test the suspect alone, on the smallest input you can check by hand — a [[minimal example]]. Pick numbers where you already know the answer. A tiny input tells you instantly whether the function is wrong. A strange number on the real dataset might be a bug, or just surprising data.",
     },
     {
       type: "exercise",
@@ -506,7 +508,7 @@ window.CODELAB.lessons.push({
   chapter: 5,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 18,
+  timeBudgetMin: 30,
   title: "Finale: the playlist analyst",
   content: [
     {
