@@ -13,11 +13,10 @@ window.CODELAB.lessons.push({
   chapter: 6,
   strand: "sound",
   lang: "py",
-  timeBudgetMin: 14,
+  timeBudgetMin: 16,
   title: "Objects bundle data & behavior",
   glossary: {
     "class": "A blueprint that keeps a thing's data and the code that acts on it together under one name — a cookie cutter you stamp out instances with.",
-    method: "A function that belongs to a class and acts on `self`, the particular instance it was called on.",
   },
   content: [
     {
@@ -31,7 +30,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "The class version bundles the describing right in. `__init__` sets up each song's data when you make it (more on that next lesson). `describe` is a [[method]] — a function that belongs to the class and acts on `self`, the particular song it was called on.",
+      md: "The class version bundles the describing right in. `__init__` sets up each song's data when you make it (more on that next lesson). `describe` is a method — a function that belongs to the class and acts on `self`, the particular song it was called on.",
     },
     {
       type: "example",
@@ -92,7 +91,7 @@ window.CODELAB.lessons.push({
   chapter: 6,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 14,
   title: "__init__",
   glossary: {
     instance: "One object made from a class. Each instance has its own data on its own `self`, so two of them never share.",
@@ -161,7 +160,7 @@ window.CODELAB.lessons.push({
   chapter: 6,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 16,
+  timeBudgetMin: 20,
   title: "Methods & self",
   glossary: {
     self: "The first parameter of every method — the particular instance the method was called on. Not a keyword; just the name everyone agrees to use.",
@@ -251,15 +250,12 @@ window.CODELAB.lessons.push({
   chapter: 6,
   strand: "core",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 14,
   title: "Comparing & debugging objects",
-  glossary: {
-    aliasing: "When two names point at the same object, so changing it through one name changes it for both. Assigning one name to another (storm = blaze) never makes a copy.",
-  },
   content: [
     {
       type: "text",
-      md: "The [[aliasing]] trap from lists applies to objects too. `storm = blaze` does **not** make a second creature — there's no `Creature(...)` on the right side, just an existing name. `storm` becomes a second label on the one creature `blaze` already names. Change one, and \"both\" change, because they're the same object.",
+      md: "The aliasing trap from lists applies to objects too. `storm = blaze` does **not** make a second creature — there's no `Creature(...)` on the right side, just an existing name. `storm` becomes a second label on the one creature `blaze` already names. Change one, and \"both\" change, because they're the same object.",
     },
     {
       type: "example",
@@ -386,7 +382,7 @@ window.CODELAB.lessons.push({
   chapter: 6,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 15,
+  timeBudgetMin: 20,
   title: "A class that owns its data",
   content: [
     {
@@ -473,7 +469,7 @@ window.CODELAB.lessons.push({
   chapter: 6,
   strand: "sound",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 14,
   title: "A Note class",
   content: [
     {
@@ -557,11 +553,8 @@ window.CODELAB.lessons.push({
   chapter: 6,
   strand: "plot",
   lang: "py",
-  timeBudgetMin: 15,
+  timeBudgetMin: 16,
   title: "A drawing class",
-  glossary: {
-    "silent bug": "A bug that doesn't crash — the program runs, but the result is quietly wrong. Here: a spiral whose sides never grow because the growth line is missing.",
-  },
   content: [
     {
       type: "text",
@@ -587,7 +580,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "Forgetting the growth line is a [[silent bug]] — the category from Chapter 5. Nothing crashes: `forward` and `right` still fire every time. The only symptom is that every side is the same length, so a shape meant to grow just draws a plain repeating polygon.",
+      md: "Forgetting the growth line is a silent bug — the category from Chapter 5. Nothing crashes: `forward` and `right` still fire every time. The only symptom is that every side is the same length, so a shape meant to grow just draws a plain repeating polygon.",
     },
     {
       type: "exercise",
@@ -665,7 +658,7 @@ window.CODELAB.lessons.push({
   chapter: 6,
   strand: "sound",
   lang: "py",
-  timeBudgetMin: 18,
+  timeBudgetMin: 22,
   title: "Finale: the synth band",
   content: [
     {
