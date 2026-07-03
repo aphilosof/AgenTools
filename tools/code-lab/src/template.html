@@ -2,9 +2,18 @@
 <html lang="en" data-theme="magazine">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Code Lab</title>
 <!-- built {{BUILD_DATE}} -->
+<!-- Installable web app: iOS "Add to Home Screen" launches fullscreen.
+     Icon is inlined below (best-effort); host src/pwa/apple-touch-icon.png
+     beside course.html for a guaranteed icon. Regenerate: node build/gen-pwa-icon.js -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Code Lab">
+<meta name="theme-color" content="#12203a">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAACTElEQVR42u3csRGAIBAAQWqwAuug/5Y0MNEamDE6NrgG/ndIGBjHOV+p0jAEAS0BLQEtAS2gJaAloCWgJaAFtAS0BLQEtAS0gJaAloCWgJaAFtAS0BLQEtAS0AJaAloCWgJaAlpAS0BLQEtAS0ALaAloCWgJaAFtEAJaAloCWgJaQEtAS0BLQP/UdT8WD3QLNNRA50CDDXQSNNhAJ0GDDXQSNNRA50CDDXQSNNhAJ0GDDXQSNNRA50CDDXQSNNhAJ0GDDXQSNNRA50CDDXQSNNhAJ0GDDXQSNNRA50CDDXQSNNhAJ0GDDXQSNNhAJ0FDDXQONNhAJ0GDDXQSNNhAJ0FDDXQONNhAJ0GDDXQSNNhAJ0FDDXQ2oIEGG2igwQYaaKiBBhpsoIHeGjbQYAMNNNRAAw020ECDDTTQG8MGWinYQMsJDTTIQAMNMtBAgww00G4KgQYZaKBBBhpokIEGGmagvSkEGmiQgQYaZKCBhhlooEEG2u+jQAMNMtBAwww00CADnQcNJtAJ0EACnQENI9AJ0BACnQANH9AJ0NABnQANG9AZ0KABnQANGNAJ0GABnQANFNAZ0DABnQANEdAJ0PAAnQANDdAZ0MAAnQANCtAJ0IAAnQANBtAZ0FAAnQANA9AJ0BAAnQBt+UBnQFs80BLQEtAS0BLQAloCWgJaAlpAG4KAloCWgJaAFtAS0BLQEtAS0AJaAloCWgJaAlpAS0BLQEtAS0ALaAloCWgJaAloAS0BLQEtAS0BLaAloCWgJaAloAW0BLQEtLTcB/rm9rmuuevjAAAAAElFTkSuQmCC">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
