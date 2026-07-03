@@ -8,7 +8,22 @@
   "use strict";
   var CL = (window.CL = window.CL || {});
 
-  var KEY = "codelab.save.v2"; // bump the suffix on a breaking schema change
+  // Per-profile save isolation. The active profile id lives in a top-level key
+  // (codelab.currentProfile, managed by profile-panel.js). The "default"
+  // profile keeps the original un-suffixed key, so progress saved before
+  // profiles existed is preserved and simply becomes the first profile.
+  var BASE_KEY = "codelab.save.v2"; // bump the suffix on a breaking schema change
+  function currentProfileId() {
+    try {
+      return window.localStorage.getItem("codelab.currentProfile") || "default";
+    } catch (e) {
+      return "default";
+    }
+  }
+  function saveKeyFor(id) {
+    return id && id !== "default" ? BASE_KEY + "." + id : BASE_KEY;
+  }
+  var KEY = saveKeyFor(currentProfileId());
   // code: { lessonId: lastEditedSource }, solved: { lessonId: true }
   var DEFAULTS = { theme: "magazine", lessonIdx: 0, code: {}, solved: {} };
 
@@ -74,6 +89,15 @@
     // Escape hatch for later steps and debugging; returns a copy.
     snapshot: function () {
       return Object.assign({}, state);
+    },
+    // Profile helpers used by profile-panel.js. currentProfile() reflects the
+    // id this module scoped its save key to at load; profileSaveKey(id) lets
+    // the panel remove a deleted profile's save without duplicating the naming.
+    currentProfile: function () {
+      return currentProfileId();
+    },
+    profileSaveKey: function (id) {
+      return saveKeyFor(id);
     },
   };
 })();
