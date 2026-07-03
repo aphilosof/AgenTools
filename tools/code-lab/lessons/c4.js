@@ -14,7 +14,7 @@ window.CODELAB.lessons.push({
   chapter: 4,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 12,
+  timeBudgetMin: 22,
   title: "Lists: one name for many values",
   glossary: {
     list: "One name that holds many values in order, written in square brackets with commas between the items.",
@@ -120,7 +120,7 @@ window.CODELAB.lessons.push({
   chapter: 4,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 24,
   title: "Reaching into a list",
   glossary: {
     index: "A number in square brackets that picks one position in a list or string, counting from 0 at the left.",
@@ -220,7 +220,7 @@ window.CODELAB.lessons.push({
   chapter: 4,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 14,
+  timeBudgetMin: 22,
   title: "Changing a list",
   content: [
     {
@@ -317,11 +317,8 @@ window.CODELAB.lessons.push({
   chapter: 4,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 15,
+  timeBudgetMin: 32,
   title: "Looping over a list",
-  glossary: {
-    accumulator: "A running total you build in a loop: start a variable at 0, add to it each time around, and read it after the loop.",
-  },
   content: [
     {
       type: "text",
@@ -334,7 +331,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "The [[accumulator]] pattern, from Chapter 2, works on lists. Start a total at 0, add to it inside the loop, read it after. `sum(lst)` does the same in one step. An average is `sum(lst) / len(lst)` — but guard the empty list, or dividing by `len` of 0 raises a `ZeroDivisionError`.",
+      md: "The accumulator pattern, from Chapter 2, works on lists. Start a total at 0, add to it inside the loop, read it after. `sum(lst)` does the same in one step. An average is `sum(lst) / len(lst)` — but guard the empty list, or dividing by `len` of 0 raises a `ZeroDivisionError`.",
     },
     {
       type: "example",
@@ -443,7 +440,7 @@ window.CODELAB.lessons.push({
   chapter: 4,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 12,
+  timeBudgetMin: 20,
   title: "Tuples & sets",
   glossary: {
     tuple: "A list that can't change, written with parentheses like `(\"As It Was\", 174)`. Good for a fixed record whose parts belong together.",
@@ -535,10 +532,11 @@ window.CODELAB.lessons.push({
   chapter: 4,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 14,
+  timeBudgetMin: 24,
   title: "Dictionaries",
   glossary: {
     dictionary: "A collection that looks up a value by a name (a \"key\") instead of a position, written with curly braces like `{\"Saturn\": 146}`.",
+    KeyError: "The error Python gives when you ask a dictionary for a key it doesn't have. Use .get(key, fallback) to avoid it.",
   },
   content: [
     {
@@ -552,7 +550,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "Asking for a key that isn't there raises a `KeyError`. `moons.get(\"Pluto\", 0)` returns `0` instead of crashing when the key is missing.",
+      md: "Asking for a key that isn't there raises a [[KeyError]]. `moons.get(\"Pluto\", 0)` returns `0` instead of crashing when the key is missing.",
     },
     {
       type: "exercise",
@@ -647,7 +645,7 @@ window.CODELAB.lessons.push({
   chapter: 4,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 14,
+  timeBudgetMin: 23,
   title: "Nesting",
   glossary: {
     aliasing: "When two names point at the same list, so changing it through one name changes it for both. Slice a copy (`row[:]`) to get a separate list.",
@@ -755,8 +753,11 @@ window.CODELAB.lessons.push({
   chapter: 4,
   strand: "plot",
   lang: "py",
-  timeBudgetMin: 15,
+  timeBudgetMin: 24,
   title: "Data into charts",
+  glossary: {
+    random: "Python's random module — import it to get random numbers, like random.randint(1, 6).",
+  },
   content: [
     {
       type: "text",
@@ -795,7 +796,7 @@ window.CODELAB.lessons.push({
     },
     {
       type: "text",
-      md: "`import random` opens Python's random toolbox. `random.randint(1, 6)` gives a whole number from 1 to 6, including both ends. Roll many times, collect the results, and a chart shows the distribution.",
+      md: "`import random` opens Python's [[random]] toolbox. `random.randint(1, 6)` gives a whole number from 1 to 6, including both ends. Roll many times, collect the results, and a chart shows the distribution.",
     },
     {
       type: "exercise",
@@ -851,7 +852,7 @@ window.CODELAB.lessons.push({
   chapter: 4,
   strand: "sound",
   lang: "py",
-  timeBudgetMin: 13,
+  timeBudgetMin: 18,
   title: "Lists as music",
   content: [
     {
@@ -951,7 +952,7 @@ window.CODELAB.lessons.push({
   chapter: 4,
   strand: "data",
   lang: "py",
-  timeBudgetMin: 18,
+  timeBudgetMin: 24,
   title: "Finale: The Playlist Studio",
   content: [
     {
